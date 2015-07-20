@@ -52,12 +52,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\OperationType.cs" />
+    <Compile Include="Exceptions\NoSuchAttributeException.cs" />
     <Compile Include="ResourceManagementClientPool.cs" />
     <Compile Include="Schema\AttributeValue.cs" />
     <Compile Include="Schema\AttributeValueChange.cs" />
     <Compile Include="ResourceManagementClient.cs" />
     <Compile Include="Exceptions\TooManyResultsException.cs" />
     <Compile Include="ResourceObject.cs" />
+    <Compile Include="Schema\AttributeValueCollection.cs" />
     <Compile Include="ServiceImplementation\HeaderConstants.cs" />
     <Compile Include="ServiceImplementation\ResourceObjectSerializer.cs" />
     <Compile Include="ServiceImplementation\ISearchResults.cs" />

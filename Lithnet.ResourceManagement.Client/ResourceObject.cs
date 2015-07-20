@@ -9,6 +9,7 @@ using System.Xml.Serialization;
 using System.Xml;
 using Lithnet.ResourceManagement.Client.ResourceManagementService;
 using System.Runtime.Serialization;
+using System.Collections.ObjectModel;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -34,13 +35,21 @@ namespace Lithnet.ResourceManagement.Client
 
         public ObjectTypeDefinition ObjectType { get; private set; }
 
-        private Dictionary<string, AttributeValue> attributes;
+        private AttributeValueCollection attributes;
+
+        public AttributeValueCollection Attributes
+        {
+            get
+            {
+                return this.attributes;
+            }
+        }
 
         public UniqueIdentifier ObjectID
         {
             get
             {
-                if (this.attributes.ContainsKey("ObjectID"))
+                if (this.attributes.ContainsAttribute("ObjectID"))
                 {
                     return this.attributes["ObjectID"].Value as UniqueIdentifier;
                 }
@@ -55,7 +64,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             get
             {
-                if (this.attributes.ContainsKey("DisplayName"))
+                if (this.attributes.ContainsAttribute("DisplayName"))
                 {
                     return this.attributes["DisplayName"].GetValue<string>();
                 }
@@ -82,7 +91,7 @@ namespace Lithnet.ResourceManagement.Client
         private ResourceObject(OperationType opType)
         {
             this.ModificationType = opType;
-            this.attributes = new Dictionary<string, AttributeValue>();
+            this.attributes = new AttributeValueCollection();
             this.AttributesToIgnore = new List<string>();
             AttributesToIgnore.Add("Creator");
             AttributesToIgnore.Add("CreatedTime");
@@ -248,31 +257,23 @@ namespace Lithnet.ResourceManagement.Client
             this.ProcessIncomingAttributeValues(values);
         }
 
-        public AttributeValue this[string attributeName]
-        {
-            get
-            {
-                return this.attributes[attributeName];
-            }
-        }
-
         public Dictionary<string, List<AttributeValueChange>> PendingChanges
         {
             get
             {
                 Dictionary<string, List<AttributeValueChange>> changeList = new Dictionary<string, List<AttributeValueChange>>();
 
-                foreach (var attribute in this.attributes.Values)
+                foreach (AttributeValue attributeValue in this.attributes)
                 {
-                    IList<AttributeValueChange> changes = attribute.ValueChanges;
+                    IList<AttributeValueChange> changes = attributeValue.ValueChanges;
 
                     if (changes.Count > 0)
                     {
-                        changeList.Add(attribute.AttributeName, new List<AttributeValueChange>());
+                        changeList.Add(attributeValue.AttributeName, new List<AttributeValueChange>());
 
                         foreach (var change in changes)
                         {
-                            changeList[attribute.AttributeName].Add(change);
+                            changeList[attributeValue.AttributeName].Add(change);
                         }
                     }
                 }
@@ -283,9 +284,9 @@ namespace Lithnet.ResourceManagement.Client
 
         public void UndoChanges()
         {
-            foreach (var attribute in this.attributes.Values)
+            foreach (var attributeValue in this.attributes)
             {
-                attribute.UndoChanges();
+                attributeValue.UndoChanges();
             }
         }
 
@@ -325,7 +326,7 @@ namespace Lithnet.ResourceManagement.Client
 
         public bool HasValue(string name)
         {
-            if (!this.attributes.ContainsKey(name))
+            if (!this.attributes.ContainsAttribute(name))
             {
                 return false;
             }
@@ -335,7 +336,7 @@ namespace Lithnet.ResourceManagement.Client
 
         public T GetValue<T>(string name)
         {
-            if (!this.attributes.ContainsKey(name))
+            if (!this.attributes.ContainsAttribute(name))
             {
                 return default(T);
             }
@@ -345,7 +346,7 @@ namespace Lithnet.ResourceManagement.Client
 
         public IList<T> GetValues<T>(string name)
         {
-            if (!this.attributes.ContainsKey(name))
+            if (!this.attributes.ContainsAttribute(name))
             {
                 return new List<T>();
             }
@@ -388,6 +389,11 @@ namespace Lithnet.ResourceManagement.Client
             this.attributes[name].AddValue(value);
         }
 
+        public void AddValue(string name, object value)
+        {
+            this.attributes[name].AddValue(value);
+        }
+
         public void RemoveValue(string name, byte[] value)
         {
             this.attributes[name].RemoveValue(value);
@@ -419,6 +425,11 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         public void RemoveValue(string name, Guid value)
+        {
+            this.attributes[name].RemoveValue(value);
+        }
+
+        public void RemoveValue(string name, object value)
         {
             this.attributes[name].RemoveValue(value);
         }
@@ -459,6 +470,11 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         public void SetValue(string name, Guid value)
+        {
+            this.attributes[name].SetValue(value);
+        }
+
+        public void SetValue(string name, object value)
         {
             this.attributes[name].SetValue(value);
         }
@@ -511,9 +527,9 @@ namespace Lithnet.ResourceManagement.Client
             }
 
             AttributeTypeDefinition objectID = this.ObjectType["ObjectID"];
-            if (!this.attributes.ContainsKey("ObjectID"))
+            if (!this.attributes.ContainsAttribute("ObjectID"))
             {
-                this.attributes.Add("ObjectID", new AttributeValue(objectID, id));
+                this.attributes.Add(new AttributeValue(objectID, id));
             }
             else
             {
@@ -527,9 +543,9 @@ namespace Lithnet.ResourceManagement.Client
 
         internal void CommitChanges()
         {
-            foreach (var attribute in this.attributes.Values)
+            foreach (AttributeValue attributeValues in this.attributes)
             {
-                attribute.Commit();
+                attributeValues.Commit();
             }
         }
 
@@ -593,7 +609,7 @@ namespace Lithnet.ResourceManagement.Client
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("Object Type: " + this.ObjectTypeName);
 
-            foreach (AttributeValue value in this.attributes.Values)
+            foreach (AttributeValue value in this.attributes)
             {
                 sb.AppendLine(string.Format("{0}: {1}", value.AttributeName, value.ToString()));
             }
@@ -605,7 +621,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             foreach (AttributeTypeDefinition attributeDefinition in this.ObjectType)
             {
-                if (!this.attributes.ContainsKey(attributeDefinition.SystemName))
+                if (!this.attributes.ContainsAttribute(attributeDefinition.SystemName))
                 {
                     this.attributes.Add(attributeDefinition.SystemName, new AttributeValue(attributeDefinition));
                 }
@@ -616,11 +632,11 @@ namespace Lithnet.ResourceManagement.Client
         {
             Dictionary<string, IList<string>> values = new Dictionary<string, IList<string>>();
 
-            foreach (KeyValuePair<string, AttributeValue> kvp in this.attributes)
+            foreach (AttributeValue kvp in this.attributes)
             {
-                if (!kvp.Value.IsNull)
+                if (!kvp.IsNull)
                 {
-                    values.Add(kvp.Key, kvp.Value.GetSerializationValues());
+                    values.Add(kvp.AttributeName, kvp.GetSerializationValues());
                 }
             }
 

@@ -37,7 +37,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 }
             }
 
-            r["AccountName"].SetValue("rnewing2");
+            r.Attributes["AccountName"].SetValue("rnewing2");
 
             Debug.WriteLine("Pending changes after value mod");
 

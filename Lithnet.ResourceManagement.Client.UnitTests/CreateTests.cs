@@ -20,9 +20,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             c.Open();
 
             ResourceObject r = new ResourceObject("Person");
-            r["AccountName"].SetValue("zzztest1");
-            r["Domain"].SetValue(Environment.GetEnvironmentVariable("USERDOMAIN"));
-            r["organizationalRelationships"].SetValue(new List<string>() { "OR0001", "OR0002" });
+            r.Attributes["AccountName"].SetValue("zzztest1");
+            r.Attributes["Domain"].SetValue(Environment.GetEnvironmentVariable("USERDOMAIN"));
+            r.Attributes["organizationalRelationships"].SetValue(new List<string>() { "OR0001", "OR0002" });
 
             c.Create(r);
         }
