@@ -1,0 +1,173 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9EDCC4ED-2317-42A8-86F4-A6D228BBF9DB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Lithnet.ResourceManagement.Client</RootNamespace>
+    <AssemblyName>Lithnet.ResourceManagement.Client</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.ResourceManagement">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>\\idm-d1ps1-v02\c$\Program Files\Microsoft Forefront Identity Manager\2010\Service\Microsoft.ResourceManagement.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Enums\OperationType.cs" />
+    <Compile Include="ResourceManagementClientPool.cs" />
+    <Compile Include="Schema\AttributeValue.cs" />
+    <Compile Include="Schema\AttributeValueChange.cs" />
+    <Compile Include="ResourceManagementClient.cs" />
+    <Compile Include="Exceptions\TooManyResultsException.cs" />
+    <Compile Include="ResourceObject.cs" />
+    <Compile Include="ServiceImplementation\HeaderConstants.cs" />
+    <Compile Include="ServiceImplementation\ResourceObjectSerializer.cs" />
+    <Compile Include="ServiceImplementation\ISearchResults.cs" />
+    <Compile Include="ServiceImplementation\Namespaces.cs" />
+    <Compile Include="ServiceImplementation\SearchClient.cs" />
+    <Compile Include="ServiceImplementation\ResourceFactoryClient.cs" />
+    <Compile Include="ServiceImplementation\SearchResultsAsync.cs" />
+    <Compile Include="ServiceImplementation\SearchResults.cs" />
+    <Compile Include="ServiceImplementation\ServiceFaultTranslator.cs" />
+    <Compile Include="Utilities\AttributeValueEqualityComparer.cs" />
+    <Compile Include="Enums\AttributeType.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Exceptions\ReadOnlyValueModificationException.cs" />
+    <Compile Include="Schema\AttributeTypeDefinition.cs" />
+    <Compile Include="Schema\ObjectTypeDefinition.cs" />
+    <Compile Include="Schema\Schema.cs" />
+    <Compile Include="Service References\ResourceManagementService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="ServiceImplementation\MessageComposer.cs" />
+    <Compile Include="ServiceImplementation\ResourceClient.cs" />
+    <Compile Include="ServiceImplementation\SerializerBodyWriter.cs" />
+    <Compile Include="Utilities\Extensions.cs" />
+    <Compile Include="Utilities\GenericExtensions.cs" />
+    <Compile Include="Utilities\TypeConverter.cs" />
+    <Compile Include="Exceptions\UnsupportedDataTypeException.cs" />
+    <Compile Include="Utilities\MessageExtensions.cs" />
+    <Compile Include="Utilities\XpathFilterBuilder.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\DataSources\System.ServiceModel.Channels.Message.datasource" />
+    <None Include="Service References\ResourceManagementService\addressing.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ResourceManagementService\Arrays.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ResourceManagementService\bindings.wsdl" />
+    <None Include="Service References\ResourceManagementService\DirectoryAccess.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ResourceManagementService\enumeration.wsdl" />
+    <None Include="Service References\ResourceManagementService\enumeration.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ResourceManagementService\Message.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ResourceManagementService\mex.wsdl" />
+    <None Include="Service References\ResourceManagementService\Microsoft.ResourceManagement.WebServices.Exceptions.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ResourceManagementService\Microsoft.ResourceManagement.WebServices.Faults.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ResourceManagementService\Microsoft.ResourceManagement.WebServices.WSAddressing.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ResourceManagementService\Microsoft.ResourceManagement.WebServices.WSEnumeration.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ResourceManagementService\Microsoft.ResourceManagement.WebServices.WSResourceManagement.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ResourceManagementService\Microsoft.ResourceManagement.WebServices.WSTransfer.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ResourceManagementService\ResourceManagement.wsdl" />
+    <None Include="Service References\ResourceManagementService\ResourceManagement.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ResourceManagementService\ResourceManagement1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ResourceManagementService\service.wsdl" />
+    <None Include="Service References\ResourceManagementService\service.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ResourceManagementService\transfer.wsdl" />
+    <None Include="Service References\ResourceManagementService\transfer.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\ResourceManagementService\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ResourceManagementService\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ResourceManagementService\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ResourceManagementService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

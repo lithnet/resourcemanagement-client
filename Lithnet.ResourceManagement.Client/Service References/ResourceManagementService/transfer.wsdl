@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://schemas.xmlsoap.org/ws/2004/09/transfer" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://schemas.xmlsoap.org/ws/2004/09/transfer" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://schemas.xmlsoap.org/ws/2004/09/transfer/Imports">
+      <xsd:import namespace="http://schemas.microsoft.com/Message" />
+      <xsd:import namespace="http://schemas.xmlsoap.org/ws/2004/09/transfer" />
+      <xsd:import namespace="http://schemas.microsoft.com/2006/11/IdentityManagement/DirectoryAccess" />
+      <xsd:import namespace="http://schemas.xmlsoap.org/ws/2004/08/addressing" />
+      <xsd:import namespace="http://schemas.microsoft.com/2006/11/ResourceManagement" />
+      <xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.Faults" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.Exceptions" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSAddressing" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSResourceManagement" />
+      <xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSTransfer" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="Resource_Get_InputMessage">
+    <wsdl:part xmlns:q1="http://schemas.microsoft.com/Message" name="request" type="q1:MessageBody" />
+  </wsdl:message>
+  <wsdl:message name="Resource_Get_OutputMessage">
+    <wsdl:part xmlns:q2="http://schemas.microsoft.com/Message" name="GetResult" type="q2:MessageBody" />
+  </wsdl:message>
+  <wsdl:message name="Resource_Get_InvalidRepresentation_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidRepresentation" />
+  </wsdl:message>
+  <wsdl:message name="Resource_Get_UnwillingToPerform_FaultMessage">
+    <wsdl:part xmlns:q3="http://schemas.microsoft.com/2006/11/IdentityManagement/DirectoryAccess" name="detail" element="q3:UnwillingToPerform" />
+  </wsdl:message>
+  <wsdl:message name="Resource_Get_EndpointUnavailable_FaultMessage">
+    <wsdl:part name="detail" element="wsa:EndpointUnavailable" />
+  </wsdl:message>
+  <wsdl:message name="Resource_Get_PermissionDenied_FaultMessage">
+    <wsdl:part xmlns:q4="http://schemas.microsoft.com/2006/11/ResourceManagement" name="detail" element="q4:PermissionDenied" />
+  </wsdl:message>
+  <wsdl:message name="Resource_Put_InputMessage">
+    <wsdl:part xmlns:q5="http://schemas.microsoft.com/Message" name="request" type="q5:MessageBody" />
+  </wsdl:message>
+  <wsdl:message name="Resource_Put_OutputMessage">
+    <wsdl:part xmlns:q6="http://schemas.microsoft.com/Message" name="PutResult" type="q6:MessageBody" />
+  </wsdl:message>
+  <wsdl:message name="Resource_Put_AnonymousInteractionRequiredFault_FaultMessage">
+    <wsdl:part xmlns:q7="http://schemas.microsoft.com/2006/11/ResourceManagement" name="detail" element="q7:AnonymousInteractionRequiredFault" />
+  </wsdl:message>
+  <wsdl:message name="Resource_Put_InvalidRepresentation_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidRepresentation" />
+  </wsdl:message>
+  <wsdl:message name="Resource_Put_AuthorizationRequiredFault_FaultMessage">
+    <wsdl:part xmlns:q8="http://schemas.microsoft.com/2006/11/ResourceManagement" name="detail" element="q8:AuthorizationRequiredFault" />
+  </wsdl:message>
+  <wsdl:message name="Resource_Put_PermissionDenied_FaultMessage">
+    <wsdl:part xmlns:q9="http://schemas.microsoft.com/2006/11/ResourceManagement" name="detail" element="q9:PermissionDenied" />
+  </wsdl:message>
+  <wsdl:message name="Resource_Put_AuthenticationRequiredFault_FaultMessage">
+    <wsdl:part xmlns:q10="http://schemas.microsoft.com/2006/11/ResourceManagement" name="detail" element="q10:AuthenticationRequiredFault" />
+  </wsdl:message>
+  <wsdl:message name="Resource_Put_UnwillingToPerform_FaultMessage">
+    <wsdl:part xmlns:q11="http://schemas.microsoft.com/2006/11/IdentityManagement/DirectoryAccess" name="detail" element="q11:UnwillingToPerform" />
+  </wsdl:message>
+  <wsdl:message name="Resource_Put_EndpointUnavailable_FaultMessage">
+    <wsdl:part name="detail" element="wsa:EndpointUnavailable" />
+  </wsdl:message>
+  <wsdl:message name="Resource_Delete_InputMessage">
+    <wsdl:part xmlns:q12="http://schemas.microsoft.com/Message" name="request" type="q12:MessageBody" />
+  </wsdl:message>
+  <wsdl:message name="Resource_Delete_OutputMessage">
+    <wsdl:part xmlns:q13="http://schemas.microsoft.com/Message" name="DeleteResult" type="q13:MessageBody" />
+  </wsdl:message>
+  <wsdl:message name="Resource_Delete_PermissionDenied_FaultMessage">
+    <wsdl:part xmlns:q14="http://schemas.microsoft.com/2006/11/ResourceManagement" name="detail" element="q14:PermissionDenied" />
+  </wsdl:message>
+  <wsdl:message name="Resource_Delete_EndpointUnavailable_FaultMessage">
+    <wsdl:part name="detail" element="wsa:EndpointUnavailable" />
+  </wsdl:message>
+  <wsdl:message name="Resource_Delete_InvalidRepresentation_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidRepresentation" />
+  </wsdl:message>
+  <wsdl:message name="Resource_Delete_AuthenticationRequiredFault_FaultMessage">
+    <wsdl:part xmlns:q15="http://schemas.microsoft.com/2006/11/ResourceManagement" name="detail" element="q15:AuthenticationRequiredFault" />
+  </wsdl:message>
+  <wsdl:message name="Resource_Delete_AuthorizationRequiredFault_FaultMessage">
+    <wsdl:part xmlns:q16="http://schemas.microsoft.com/2006/11/ResourceManagement" name="detail" element="q16:AuthorizationRequiredFault" />
+  </wsdl:message>
+  <wsdl:message name="Resource_Delete_UnwillingToPerform_FaultMessage">
+    <wsdl:part xmlns:q17="http://schemas.microsoft.com/2006/11/IdentityManagement/DirectoryAccess" name="detail" element="q17:UnwillingToPerform" />
+  </wsdl:message>
+  <wsdl:message name="ResourceFactory_Create_InputMessage">
+    <wsdl:part xmlns:q18="http://schemas.microsoft.com/Message" name="request" type="q18:MessageBody" />
+  </wsdl:message>
+  <wsdl:message name="ResourceFactory_Create_OutputMessage">
+    <wsdl:part xmlns:q19="http://schemas.microsoft.com/Message" name="CreateResult" type="q19:MessageBody" />
+  </wsdl:message>
+  <wsdl:message name="ResourceFactory_Create_AuthorizationRequiredFault_FaultMessage">
+    <wsdl:part xmlns:q20="http://schemas.microsoft.com/2006/11/ResourceManagement" name="detail" element="q20:AuthorizationRequiredFault" />
+  </wsdl:message>
+  <wsdl:message name="ResourceFactory_Create_UnwillingToPerform_FaultMessage">
+    <wsdl:part xmlns:q21="http://schemas.microsoft.com/2006/11/IdentityManagement/DirectoryAccess" name="detail" element="q21:UnwillingToPerform" />
+  </wsdl:message>
+  <wsdl:message name="ResourceFactory_Create_AuthenticationRequiredFault_FaultMessage">
+    <wsdl:part xmlns:q22="http://schemas.microsoft.com/2006/11/ResourceManagement" name="detail" element="q22:AuthenticationRequiredFault" />
+  </wsdl:message>
+  <wsdl:message name="ResourceFactory_Create_DataRequiredFault_FaultMessage">
+    <wsdl:part xmlns:q23="http://schemas.microsoft.com/2006/11/ResourceManagement" name="detail" element="q23:DataRequiredFault" />
+  </wsdl:message>
+  <wsdl:message name="ResourceFactory_Create_EndpointUnavailable_FaultMessage">
+    <wsdl:part name="detail" element="wsa:EndpointUnavailable" />
+  </wsdl:message>
+  <wsdl:message name="ResourceFactory_Create_PermissionDenied_FaultMessage">
+    <wsdl:part xmlns:q24="http://schemas.microsoft.com/2006/11/ResourceManagement" name="detail" element="q24:PermissionDenied" />
+  </wsdl:message>
+  <wsdl:message name="ResourceFactory_Create_InvalidRepresentation_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidRepresentation" />
+  </wsdl:message>
+  <wsdl:portType name="Resource">
+    <wsdl:operation name="Get">
+      <wsdl:input wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/transfer/Get" message="tns:Resource_Get_InputMessage" />
+      <wsdl:output wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/transfer/GetResponse" message="tns:Resource_Get_OutputMessage" />
+      <wsdl:fault wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/transfer/fault" name="InvalidRepresentation" message="tns:Resource_Get_InvalidRepresentation_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/IdentityManagement/DirectoryAccess/fault" name="UnwillingToPerform" message="tns:Resource_Get_UnwillingToPerform_FaultMessage" />
+      <wsdl:fault wsam:Action="http://www.w3.org/2005/08/addressing/fault" name="EndpointUnavailable" message="tns:Resource_Get_EndpointUnavailable_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/ResourceManagement/fault" name="PermissionDenied" message="tns:Resource_Get_PermissionDenied_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Put">
+      <wsdl:input wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/transfer/Put" message="tns:Resource_Put_InputMessage" />
+      <wsdl:output wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/transfer/PutResponse" message="tns:Resource_Put_OutputMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/ResourceManagement/fault" name="AnonymousInteractionRequiredFault" message="tns:Resource_Put_AnonymousInteractionRequiredFault_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/transfer/fault" name="InvalidRepresentation" message="tns:Resource_Put_InvalidRepresentation_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/ResourceManagement/fault" name="AuthorizationRequiredFault" message="tns:Resource_Put_AuthorizationRequiredFault_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/ResourceManagement/fault" name="PermissionDenied" message="tns:Resource_Put_PermissionDenied_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/ResourceManagement/fault" name="AuthenticationRequiredFault" message="tns:Resource_Put_AuthenticationRequiredFault_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/IdentityManagement/DirectoryAccess/fault" name="UnwillingToPerform" message="tns:Resource_Put_UnwillingToPerform_FaultMessage" />
+      <wsdl:fault wsam:Action="http://www.w3.org/2005/08/addressing/fault" name="EndpointUnavailable" message="tns:Resource_Put_EndpointUnavailable_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Delete">
+      <wsdl:input wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/transfer/Delete" message="tns:Resource_Delete_InputMessage" />
+      <wsdl:output wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/transfer/DeleteResponse" message="tns:Resource_Delete_OutputMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/ResourceManagement/fault" name="PermissionDenied" message="tns:Resource_Delete_PermissionDenied_FaultMessage" />
+      <wsdl:fault wsam:Action="http://www.w3.org/2005/08/addressing/fault" name="EndpointUnavailable" message="tns:Resource_Delete_EndpointUnavailable_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/transfer/fault" name="InvalidRepresentation" message="tns:Resource_Delete_InvalidRepresentation_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/ResourceManagement/fault" name="AuthenticationRequiredFault" message="tns:Resource_Delete_AuthenticationRequiredFault_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/ResourceManagement/fault" name="AuthorizationRequiredFault" message="tns:Resource_Delete_AuthorizationRequiredFault_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/IdentityManagement/DirectoryAccess/fault" name="UnwillingToPerform" message="tns:Resource_Delete_UnwillingToPerform_FaultMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="ResourceFactory">
+    <wsdl:operation name="Create">
+      <wsdl:input wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/transfer/Create" message="tns:ResourceFactory_Create_InputMessage" />
+      <wsdl:output wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/transfer/CreateResponse" message="tns:ResourceFactory_Create_OutputMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/ResourceManagement/fault" name="AuthorizationRequiredFault" message="tns:ResourceFactory_Create_AuthorizationRequiredFault_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/IdentityManagement/DirectoryAccess/fault" name="UnwillingToPerform" message="tns:ResourceFactory_Create_UnwillingToPerform_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/ResourceManagement/fault" name="AuthenticationRequiredFault" message="tns:ResourceFactory_Create_AuthenticationRequiredFault_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/ResourceManagement/fault" name="DataRequiredFault" message="tns:ResourceFactory_Create_DataRequiredFault_FaultMessage" />
+      <wsdl:fault wsam:Action="http://www.w3.org/2005/08/addressing/fault" name="EndpointUnavailable" message="tns:ResourceFactory_Create_EndpointUnavailable_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/ResourceManagement/fault" name="PermissionDenied" message="tns:ResourceFactory_Create_PermissionDenied_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/transfer/fault" name="InvalidRepresentation" message="tns:ResourceFactory_Create_InvalidRepresentation_FaultMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

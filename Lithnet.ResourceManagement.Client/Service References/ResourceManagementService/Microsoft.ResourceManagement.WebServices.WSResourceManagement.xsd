@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSResourceManagement" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSResourceManagement" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSAddressing" />
+  <xs:complexType name="LocaleReferencePropertyType">
+    <xs:sequence>
+      <xs:element name="textField" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="LocaleReferencePropertyType" nillable="true" type="tns:LocaleReferencePropertyType" />
+  <xs:complexType name="ResourceReferencePropertyType">
+    <xs:sequence>
+      <xs:element name="textField" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ResourceReferencePropertyType" nillable="true" type="tns:ResourceReferencePropertyType" />
+  <xs:complexType name="AnonymousInteractionRequiredFault">
+    <xs:sequence>
+      <xs:element name="endpointAddresses" nillable="true" type="tns:ArrayOfInteractiveWorkflowAddress" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="AnonymousInteractionRequiredFault" nillable="true" type="tns:AnonymousInteractionRequiredFault" />
+  <xs:complexType name="ArrayOfInteractiveWorkflowAddress">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="InteractiveWorkflowAddress" nillable="true" type="tns:InteractiveWorkflowAddress" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfInteractiveWorkflowAddress" nillable="true" type="tns:ArrayOfInteractiveWorkflowAddress" />
+  <xs:complexType name="InteractiveWorkflowAddress">
+    <xs:sequence>
+      <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" name="endpointAddresses" nillable="true" type="q1:ArrayOfstring" />
+      <xs:element name="instanceId" type="ser:guid" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="InteractiveWorkflowAddress" nillable="true" type="tns:InteractiveWorkflowAddress" />
+  <xs:complexType name="AuthorizationRequiredFault">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:RequestFault">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="AuthorizationRequiredFault" nillable="true" type="tns:AuthorizationRequiredFault" />
+  <xs:complexType name="RequestFault">
+    <xs:sequence>
+      <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSAddressing" name="endpointReference" nillable="true" type="q2:EndpointReferenceType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="RequestFault" nillable="true" type="tns:RequestFault" />
+  <xs:complexType name="AuthenticationRequiredFault">
+    <xs:sequence>
+      <xs:element name="securityTokenServiceAddressField" nillable="true" type="xs:string" />
+      <xs:element name="userLockedOut" nillable="true" type="xs:boolean" />
+      <xs:element name="userRegistered" nillable="true" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="AuthenticationRequiredFault" nillable="true" type="tns:AuthenticationRequiredFault" />
+  <xs:complexType name="InvalidExpirationTimeFault">
+    <xs:sequence />
+  </xs:complexType>
+  <xs:element name="InvalidExpirationTimeFault" nillable="true" type="tns:InvalidExpirationTimeFault" />
+  <xs:complexType name="UnsupportedExpirationTypeFault">
+    <xs:sequence />
+  </xs:complexType>
+  <xs:element name="UnsupportedExpirationTypeFault" nillable="true" type="tns:UnsupportedExpirationTypeFault" />
+  <xs:complexType name="CannotProcessFilterFault">
+    <xs:sequence />
+  </xs:complexType>
+  <xs:element name="CannotProcessFilterFault" nillable="true" type="tns:CannotProcessFilterFault" />
+  <xs:complexType name="InvalidEnumerationContextFault">
+    <xs:sequence />
+  </xs:complexType>
+  <xs:element name="InvalidEnumerationContextFault" nillable="true" type="tns:InvalidEnumerationContextFault" />
+</xs:schema>

@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://schemas.xmlsoap.org/ws/2004/09/enumeration" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://schemas.xmlsoap.org/ws/2004/09/enumeration" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://schemas.xmlsoap.org/ws/2004/09/enumeration/Imports">
+      <xsd:import namespace="http://schemas.microsoft.com/Message" />
+      <xsd:import namespace="http://schemas.xmlsoap.org/ws/2004/09/transfer" />
+      <xsd:import namespace="http://schemas.xmlsoap.org/ws/2004/09/enumeration" />
+      <xsd:import namespace="http://schemas.microsoft.com/2006/11/ResourceManagement" />
+      <xsd:import namespace="http://schemas.microsoft.com/2006/11/IdentityManagement/DirectoryAccess" />
+      <xsd:import namespace="http://schemas.xmlsoap.org/ws/2004/08/addressing" />
+      <xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.Faults" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.Exceptions" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSAddressing" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSResourceManagement" />
+      <xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSTransfer" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSEnumeration" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="Search_Enumerate_InputMessage">
+    <wsdl:part xmlns:q1="http://schemas.microsoft.com/Message" name="request" type="q1:MessageBody" />
+  </wsdl:message>
+  <wsdl:message name="Search_Enumerate_OutputMessage">
+    <wsdl:part xmlns:q2="http://schemas.microsoft.com/Message" name="EnumerateResult" type="q2:MessageBody" />
+  </wsdl:message>
+  <wsdl:message name="Search_Enumerate_InvalidRepresentation_FaultMessage">
+    <wsdl:part xmlns:q3="http://schemas.xmlsoap.org/ws/2004/09/transfer" name="detail" element="q3:InvalidRepresentation" />
+  </wsdl:message>
+  <wsdl:message name="Search_Enumerate_FilterDialectRequestedUnavailable_FaultMessage">
+    <wsdl:part name="detail" element="tns:FilterDialectRequestedUnavailable" />
+  </wsdl:message>
+  <wsdl:message name="Search_Enumerate_PermissionDenied_FaultMessage">
+    <wsdl:part xmlns:q4="http://schemas.microsoft.com/2006/11/ResourceManagement" name="detail" element="q4:PermissionDenied" />
+  </wsdl:message>
+  <wsdl:message name="Search_Enumerate_InvalidExpirationTime_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidExpirationTime" />
+  </wsdl:message>
+  <wsdl:message name="Search_Enumerate_UnsupportedExpirationType_FaultMessage">
+    <wsdl:part name="detail" element="tns:UnsupportedExpirationType" />
+  </wsdl:message>
+  <wsdl:message name="Search_Enumerate_CannotProcessFilter_FaultMessage">
+    <wsdl:part name="detail" element="tns:CannotProcessFilter" />
+  </wsdl:message>
+  <wsdl:message name="Search_Enumerate_UnwillingToPerform_FaultMessage">
+    <wsdl:part xmlns:q5="http://schemas.microsoft.com/2006/11/IdentityManagement/DirectoryAccess" name="detail" element="q5:UnwillingToPerform" />
+  </wsdl:message>
+  <wsdl:message name="Search_Enumerate_EndpointUnavailable_FaultMessage">
+    <wsdl:part name="detail" element="wsa:EndpointUnavailable" />
+  </wsdl:message>
+  <wsdl:message name="Search_Pull_InputMessage">
+    <wsdl:part xmlns:q6="http://schemas.microsoft.com/Message" name="request" type="q6:MessageBody" />
+  </wsdl:message>
+  <wsdl:message name="Search_Pull_OutputMessage">
+    <wsdl:part xmlns:q7="http://schemas.microsoft.com/Message" name="PullResult" type="q7:MessageBody" />
+  </wsdl:message>
+  <wsdl:message name="Search_Pull_UnwillingToPerform_FaultMessage">
+    <wsdl:part xmlns:q8="http://schemas.microsoft.com/2006/11/IdentityManagement/DirectoryAccess" name="detail" element="q8:UnwillingToPerform" />
+  </wsdl:message>
+  <wsdl:message name="Search_Pull_InvalidEnumerationContext_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidEnumerationContext" />
+  </wsdl:message>
+  <wsdl:message name="Search_Pull_PermissionDenied_FaultMessage">
+    <wsdl:part xmlns:q9="http://schemas.microsoft.com/2006/11/ResourceManagement" name="detail" element="q9:PermissionDenied" />
+  </wsdl:message>
+  <wsdl:message name="Search_Pull_EndpointUnavailable_FaultMessage">
+    <wsdl:part name="detail" element="wsa:EndpointUnavailable" />
+  </wsdl:message>
+  <wsdl:message name="Search_Pull_InvalidRepresentation_FaultMessage">
+    <wsdl:part xmlns:q10="http://schemas.xmlsoap.org/ws/2004/09/transfer" name="detail" element="q10:InvalidRepresentation" />
+  </wsdl:message>
+  <wsdl:message name="Search_Renew_InputMessage">
+    <wsdl:part xmlns:q11="http://schemas.microsoft.com/Message" name="request" type="q11:MessageBody" />
+  </wsdl:message>
+  <wsdl:message name="Search_Renew_OutputMessage">
+    <wsdl:part xmlns:q12="http://schemas.microsoft.com/Message" name="RenewResult" type="q12:MessageBody" />
+  </wsdl:message>
+  <wsdl:message name="Search_Renew_InvalidExpirationTime_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidExpirationTime" />
+  </wsdl:message>
+  <wsdl:message name="Search_Renew_InvalidRepresentation_FaultMessage">
+    <wsdl:part xmlns:q13="http://schemas.xmlsoap.org/ws/2004/09/transfer" name="detail" element="q13:InvalidRepresentation" />
+  </wsdl:message>
+  <wsdl:message name="Search_Renew_EndpointUnavailable_FaultMessage">
+    <wsdl:part name="detail" element="wsa:EndpointUnavailable" />
+  </wsdl:message>
+  <wsdl:message name="Search_Renew_UnsupportedExpirationType_FaultMessage">
+    <wsdl:part name="detail" element="tns:UnsupportedExpirationType" />
+  </wsdl:message>
+  <wsdl:message name="Search_Renew_UnwillingToPerform_FaultMessage">
+    <wsdl:part xmlns:q14="http://schemas.microsoft.com/2006/11/IdentityManagement/DirectoryAccess" name="detail" element="q14:UnwillingToPerform" />
+  </wsdl:message>
+  <wsdl:message name="Search_Renew_InvalidEnumerationContext_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidEnumerationContext" />
+  </wsdl:message>
+  <wsdl:message name="Search_Renew_PermissionDenied_FaultMessage">
+    <wsdl:part xmlns:q15="http://schemas.microsoft.com/2006/11/ResourceManagement" name="detail" element="q15:PermissionDenied" />
+  </wsdl:message>
+  <wsdl:message name="Search_GetStatus_InputMessage">
+    <wsdl:part xmlns:q16="http://schemas.microsoft.com/Message" name="request" type="q16:MessageBody" />
+  </wsdl:message>
+  <wsdl:message name="Search_GetStatus_OutputMessage">
+    <wsdl:part xmlns:q17="http://schemas.microsoft.com/Message" name="GetStatusResult" type="q17:MessageBody" />
+  </wsdl:message>
+  <wsdl:message name="Search_GetStatus_InvalidRepresentation_FaultMessage">
+    <wsdl:part xmlns:q18="http://schemas.xmlsoap.org/ws/2004/09/transfer" name="detail" element="q18:InvalidRepresentation" />
+  </wsdl:message>
+  <wsdl:message name="Search_GetStatus_UnwillingToPerform_FaultMessage">
+    <wsdl:part xmlns:q19="http://schemas.microsoft.com/2006/11/IdentityManagement/DirectoryAccess" name="detail" element="q19:UnwillingToPerform" />
+  </wsdl:message>
+  <wsdl:message name="Search_GetStatus_InvalidEnumerationContext_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidEnumerationContext" />
+  </wsdl:message>
+  <wsdl:message name="Search_GetStatus_PermissionDenied_FaultMessage">
+    <wsdl:part xmlns:q20="http://schemas.microsoft.com/2006/11/ResourceManagement" name="detail" element="q20:PermissionDenied" />
+  </wsdl:message>
+  <wsdl:message name="Search_GetStatus_EndpointUnavailable_FaultMessage">
+    <wsdl:part name="detail" element="wsa:EndpointUnavailable" />
+  </wsdl:message>
+  <wsdl:message name="Search_Release_InputMessage">
+    <wsdl:part xmlns:q21="http://schemas.microsoft.com/Message" name="request" type="q21:MessageBody" />
+  </wsdl:message>
+  <wsdl:message name="Search_Release_OutputMessage">
+    <wsdl:part xmlns:q22="http://schemas.microsoft.com/Message" name="ReleaseResult" type="q22:MessageBody" />
+  </wsdl:message>
+  <wsdl:message name="Search_Release_UnwillingToPerform_FaultMessage">
+    <wsdl:part xmlns:q23="http://schemas.microsoft.com/2006/11/IdentityManagement/DirectoryAccess" name="detail" element="q23:UnwillingToPerform" />
+  </wsdl:message>
+  <wsdl:message name="Search_Release_InvalidEnumerationContext_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidEnumerationContext" />
+  </wsdl:message>
+  <wsdl:message name="Search_Release_EndpointUnavailable_FaultMessage">
+    <wsdl:part name="detail" element="wsa:EndpointUnavailable" />
+  </wsdl:message>
+  <wsdl:message name="Search_Release_InvalidRepresentation_FaultMessage">
+    <wsdl:part xmlns:q24="http://schemas.xmlsoap.org/ws/2004/09/transfer" name="detail" element="q24:InvalidRepresentation" />
+  </wsdl:message>
+  <wsdl:message name="Search_Release_PermissionDenied_FaultMessage">
+    <wsdl:part xmlns:q25="http://schemas.microsoft.com/2006/11/ResourceManagement" name="detail" element="q25:PermissionDenied" />
+  </wsdl:message>
+  <wsdl:portType msc:usingSession="false" name="Search">
+    <wsdl:operation name="Enumerate">
+      <wsdl:input wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/enumeration/Enumerate" message="tns:Search_Enumerate_InputMessage" />
+      <wsdl:output wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/enumeration/EnumerateResponse" message="tns:Search_Enumerate_OutputMessage" />
+      <wsdl:fault wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/transfer/fault" name="InvalidRepresentation" message="tns:Search_Enumerate_InvalidRepresentation_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/enumeration/fault" name="FilterDialectRequestedUnavailable" message="tns:Search_Enumerate_FilterDialectRequestedUnavailable_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/ResourceManagement/fault" name="PermissionDenied" message="tns:Search_Enumerate_PermissionDenied_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/enumeration/fault" name="InvalidExpirationTime" message="tns:Search_Enumerate_InvalidExpirationTime_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/enumeration/fault" name="UnsupportedExpirationType" message="tns:Search_Enumerate_UnsupportedExpirationType_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/enumeration/fault" name="CannotProcessFilter" message="tns:Search_Enumerate_CannotProcessFilter_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/IdentityManagement/DirectoryAccess/fault" name="UnwillingToPerform" message="tns:Search_Enumerate_UnwillingToPerform_FaultMessage" />
+      <wsdl:fault wsam:Action="http://www.w3.org/2005/08/addressing/fault" name="EndpointUnavailable" message="tns:Search_Enumerate_EndpointUnavailable_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Pull">
+      <wsdl:input wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/enumeration/Pull" message="tns:Search_Pull_InputMessage" />
+      <wsdl:output wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/enumeration/PullResponse" message="tns:Search_Pull_OutputMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/IdentityManagement/DirectoryAccess/fault" name="UnwillingToPerform" message="tns:Search_Pull_UnwillingToPerform_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/enumeration/fault" name="InvalidEnumerationContext" message="tns:Search_Pull_InvalidEnumerationContext_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/ResourceManagement/fault" name="PermissionDenied" message="tns:Search_Pull_PermissionDenied_FaultMessage" />
+      <wsdl:fault wsam:Action="http://www.w3.org/2005/08/addressing/fault" name="EndpointUnavailable" message="tns:Search_Pull_EndpointUnavailable_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/transfer/fault" name="InvalidRepresentation" message="tns:Search_Pull_InvalidRepresentation_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Renew">
+      <wsdl:input wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/enumeration/Renew" message="tns:Search_Renew_InputMessage" />
+      <wsdl:output wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/enumeration/RenewResponse" message="tns:Search_Renew_OutputMessage" />
+      <wsdl:fault wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/enumeration/fault" name="InvalidExpirationTime" message="tns:Search_Renew_InvalidExpirationTime_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/transfer/fault" name="InvalidRepresentation" message="tns:Search_Renew_InvalidRepresentation_FaultMessage" />
+      <wsdl:fault wsam:Action="http://www.w3.org/2005/08/addressing/fault" name="EndpointUnavailable" message="tns:Search_Renew_EndpointUnavailable_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/enumeration/fault" name="UnsupportedExpirationType" message="tns:Search_Renew_UnsupportedExpirationType_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/IdentityManagement/DirectoryAccess/fault" name="UnwillingToPerform" message="tns:Search_Renew_UnwillingToPerform_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/enumeration/fault" name="InvalidEnumerationContext" message="tns:Search_Renew_InvalidEnumerationContext_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/ResourceManagement/fault" name="PermissionDenied" message="tns:Search_Renew_PermissionDenied_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStatus">
+      <wsdl:input wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/enumeration/GetStatus" message="tns:Search_GetStatus_InputMessage" />
+      <wsdl:output wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/enumeration/GetStatusResponse" message="tns:Search_GetStatus_OutputMessage" />
+      <wsdl:fault wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/transfer/fault" name="InvalidRepresentation" message="tns:Search_GetStatus_InvalidRepresentation_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/IdentityManagement/DirectoryAccess/fault" name="UnwillingToPerform" message="tns:Search_GetStatus_UnwillingToPerform_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/enumeration/fault" name="InvalidEnumerationContext" message="tns:Search_GetStatus_InvalidEnumerationContext_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/ResourceManagement/fault" name="PermissionDenied" message="tns:Search_GetStatus_PermissionDenied_FaultMessage" />
+      <wsdl:fault wsam:Action="http://www.w3.org/2005/08/addressing/fault" name="EndpointUnavailable" message="tns:Search_GetStatus_EndpointUnavailable_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Release">
+      <wsdl:input wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/enumeration/Release" message="tns:Search_Release_InputMessage" />
+      <wsdl:output wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/enumeration/ReleaseResponse" message="tns:Search_Release_OutputMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/IdentityManagement/DirectoryAccess/fault" name="UnwillingToPerform" message="tns:Search_Release_UnwillingToPerform_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/enumeration/fault" name="InvalidEnumerationContext" message="tns:Search_Release_InvalidEnumerationContext_FaultMessage" />
+      <wsdl:fault wsam:Action="http://www.w3.org/2005/08/addressing/fault" name="EndpointUnavailable" message="tns:Search_Release_EndpointUnavailable_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/transfer/fault" name="InvalidRepresentation" message="tns:Search_Release_InvalidRepresentation_FaultMessage" />
+      <wsdl:fault wsam:Action="http://schemas.microsoft.com/2006/11/ResourceManagement/fault" name="PermissionDenied" message="tns:Search_Release_PermissionDenied_FaultMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

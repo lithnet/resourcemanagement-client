@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.Exceptions" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.Exceptions" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:simpleType name="AttributeFailureCode">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ChangeOperationIsNotSupported" />
+      <xs:enumeration value="ValueViolatesRegularExpression" />
+      <xs:enumeration value="ValueViolatesDataTypeFormat" />
+      <xs:enumeration value="RequiredValueIsMissing" />
+      <xs:enumeration value="ReferencedResourceIsMissing" />
+      <xs:enumeration value="AttributeNameViolatesSchema" />
+      <xs:enumeration value="ResourceTypeViolatesSchema" />
+      <xs:enumeration value="ResourceTypeIsMissing" />
+      <xs:enumeration value="SystemAttributeIsReadOnly" />
+      <xs:enumeration value="ValueViolatesUniqueness" />
+      <xs:enumeration value="Other" />
+      <xs:enumeration value="None" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="AttributeFailureCode" nillable="true" type="tns:AttributeFailureCode" />
+  <xs:simpleType name="MessageFailureCode">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="DialectIsNotSupported" />
+      <xs:enumeration value="RequestMessageViolatesProtocol" />
+      <xs:enumeration value="CultureIsNotEnabled" />
+      <xs:enumeration value="CultureIsNotSupportedOnOperation" />
+      <xs:enumeration value="Other" />
+      <xs:enumeration value="None" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="MessageFailureCode" nillable="true" type="tns:MessageFailureCode" />
+  <xs:simpleType name="DispatchRequestFailureSource">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ServiceIsStopping" />
+      <xs:enumeration value="IdentityIsNotFound" />
+      <xs:enumeration value="AlternateEndpointNotSupported" />
+      <xs:enumeration value="Other" />
+      <xs:enumeration value="InvalidResourceIdentifier" />
+      <xs:enumeration value="Synchronization" />
+      <xs:enumeration value="ActionProcessor" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="DispatchRequestFailureSource" nillable="true" type="tns:DispatchRequestFailureSource" />
+  <xs:simpleType name="HealthFailureSource">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Other" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="HealthFailureSource" nillable="true" type="tns:HealthFailureSource" />
+  <xs:simpleType name="RequestFailureSource">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ManagementPolicyRule" />
+      <xs:enumeration value="SystemConstraint" />
+      <xs:enumeration value="Workflow" />
+      <xs:enumeration value="ResourceIsMissing" />
+      <xs:enumeration value="Other" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="RequestFailureSource" nillable="true" type="tns:RequestFailureSource" />
+</xs:schema>

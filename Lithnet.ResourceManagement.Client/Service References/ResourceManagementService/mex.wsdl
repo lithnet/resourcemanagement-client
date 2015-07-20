@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://schemas.microsoft.com/2006/04/mex" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://schemas.microsoft.com/2006/04/mex" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://schemas.microsoft.com/2006/04/mex/Imports">
+      <xsd:import namespace="http://schemas.microsoft.com/Message" />
+      <xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.Faults" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.Exceptions" />
+      <xsd:import namespace="http://schemas.xmlsoap.org/ws/2004/09/transfer" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSAddressing" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSResourceManagement" />
+      <xsd:import namespace="http://schemas.microsoft.com/2006/11/IdentityManagement/DirectoryAccess" />
+      <xsd:import namespace="http://schemas.xmlsoap.org/ws/2004/08/addressing" />
+      <xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+      <xsd:import namespace="http://schemas.microsoft.com/2006/11/ResourceManagement" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSTransfer" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSEnumeration" />
+      <xsd:import namespace="http://schemas.xmlsoap.org/ws/2004/09/enumeration" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IMetadataExchange_Get_InputMessage">
+    <wsdl:part xmlns:q1="http://schemas.microsoft.com/Message" name="request" type="q1:MessageBody" />
+  </wsdl:message>
+  <wsdl:message name="IMetadataExchange_Get_OutputMessage">
+    <wsdl:part xmlns:q2="http://schemas.microsoft.com/Message" name="GetResult" type="q2:MessageBody" />
+  </wsdl:message>
+  <wsdl:portType msc:usingSession="false" name="IMetadataExchange">
+    <wsdl:operation name="Get">
+      <wsdl:input wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/transfer/Get" message="tns:IMetadataExchange_Get_InputMessage" />
+      <wsdl:output wsam:Action="http://schemas.xmlsoap.org/ws/2004/09/transfer/GetResponse" message="tns:IMetadataExchange_Get_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

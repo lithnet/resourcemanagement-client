@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.xmlsoap.org/ws/2004/09/enumeration" elementFormDefault="qualified" targetNamespace="http://schemas.xmlsoap.org/ws/2004/09/enumeration" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSEnumeration" />
+  <xs:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSResourceManagement" />
+  <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSEnumeration" name="FilterDialectRequestedUnavailable" nillable="true" type="q1:SupportedDialect" />
+  <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSResourceManagement" name="InvalidExpirationTime" nillable="true" type="q2:InvalidExpirationTimeFault" />
+  <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSResourceManagement" name="UnsupportedExpirationType" nillable="true" type="q3:UnsupportedExpirationTypeFault" />
+  <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSResourceManagement" name="CannotProcessFilter" nillable="true" type="q4:CannotProcessFilterFault" />
+  <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSResourceManagement" name="InvalidEnumerationContext" nillable="true" type="q5:InvalidEnumerationContextFault" />
+</xs:schema>

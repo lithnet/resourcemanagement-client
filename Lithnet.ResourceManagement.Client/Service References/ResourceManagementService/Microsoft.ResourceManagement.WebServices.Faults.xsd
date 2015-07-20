@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.Faults" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.Faults" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.Exceptions" />
+  <xs:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSAddressing" />
+  <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:complexType name="RepresentationFailures">
+    <xs:sequence>
+      <xs:element name="attributeRepresentationFailures" nillable="true" type="tns:ArrayOfAttributeRepresentationFailure" />
+      <xs:element name="correlationIdentifier" nillable="true" type="xs:string" />
+      <xs:element name="messageRepresentationFailures" nillable="true" type="tns:ArrayOfMessageRepresentationFailure" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="RepresentationFailures" nillable="true" type="tns:RepresentationFailures" />
+  <xs:complexType name="ArrayOfAttributeRepresentationFailure">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="AttributeRepresentationFailure" nillable="true" type="tns:AttributeRepresentationFailure" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfAttributeRepresentationFailure" nillable="true" type="tns:ArrayOfAttributeRepresentationFailure" />
+  <xs:complexType name="AttributeRepresentationFailure">
+    <xs:sequence>
+      <xs:element name="additionalTextDetails" nillable="true" type="xs:string" />
+      <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.Exceptions" name="attributeFailureCode" type="q1:AttributeFailureCode" />
+      <xs:element name="attributeType" nillable="true" type="xs:string" />
+      <xs:element name="attributeValue" nillable="true" type="xs:string" />
+      <xs:element name="failureMessage" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="AttributeRepresentationFailure" nillable="true" type="tns:AttributeRepresentationFailure" />
+  <xs:complexType name="ArrayOfMessageRepresentationFailure">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="MessageRepresentationFailure" nillable="true" type="tns:MessageRepresentationFailure" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfMessageRepresentationFailure" nillable="true" type="tns:ArrayOfMessageRepresentationFailure" />
+  <xs:complexType name="MessageRepresentationFailure">
+    <xs:sequence>
+      <xs:element name="additionalTextDetails" nillable="true" type="xs:string" />
+      <xs:element name="failureMessage" nillable="true" type="xs:string" />
+      <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.Exceptions" name="messageFailureCode" type="q2:MessageFailureCode" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="MessageRepresentationFailure" nillable="true" type="tns:MessageRepresentationFailure" />
+  <xs:complexType name="DispatchRequestFailures">
+    <xs:sequence>
+      <xs:element name="correlationIdentifier" nillable="true" type="xs:string" />
+      <xs:element name="dispatchRequestAdministratorDetails" nillable="true" type="tns:DispatchRequestAdministratorDetails" />
+      <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSAddressing" name="endpointReference" nillable="true" type="q3:EndpointReferenceType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="DispatchRequestFailures" nillable="true" type="tns:DispatchRequestFailures" />
+  <xs:complexType name="DispatchRequestAdministratorDetails">
+    <xs:sequence>
+      <xs:element name="additionalTextDetails" nillable="true" type="xs:string" />
+      <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.Exceptions" name="dispatchRequestFailureSource" type="q4:DispatchRequestFailureSource" />
+      <xs:element name="failureMessage" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="DispatchRequestAdministratorDetails" nillable="true" type="tns:DispatchRequestAdministratorDetails" />
+  <xs:complexType name="EndpointFailures">
+    <xs:sequence>
+      <xs:element name="correlationIdentifier" nillable="true" type="xs:string" />
+      <xs:element name="endpointAdministratorDetails" nillable="true" type="tns:EndpointAdministratorDetails" />
+      <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSAddressing" name="endpointReference" nillable="true" type="q5:EndpointReferenceType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="EndpointFailures" nillable="true" type="tns:EndpointFailures" />
+  <xs:complexType name="EndpointAdministratorDetails">
+    <xs:sequence>
+      <xs:element name="additionalTextDetails" nillable="true" type="xs:string" />
+      <xs:element name="failureMessage" nillable="true" type="xs:string" />
+      <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.Exceptions" name="healthFailureSource" type="q6:HealthFailureSource" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="EndpointAdministratorDetails" nillable="true" type="tns:EndpointAdministratorDetails" />
+  <xs:complexType name="RequestFailures">
+    <xs:sequence>
+      <xs:element name="correlationIdentifier" nillable="true" type="xs:string" />
+      <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSAddressing" name="endpointReference" nillable="true" type="q7:EndpointReferenceType" />
+      <xs:element name="requestAdministratorDetails" nillable="true" type="tns:RequestAdministratorDetails" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="RequestFailures" nillable="true" type="tns:RequestFailures" />
+  <xs:complexType name="RequestAdministratorDetails">
+    <xs:sequence>
+      <xs:element name="additionalTextDetails" nillable="true" type="xs:string" />
+      <xs:element name="failedAttributes" nillable="true" type="tns:FailedAttributes" />
+      <xs:element name="failureMessage" nillable="true" type="xs:string" />
+      <xs:element xmlns:q8="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.Exceptions" name="requestFailureSource" type="q8:RequestFailureSource" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="RequestAdministratorDetails" nillable="true" type="tns:RequestAdministratorDetails" />
+  <xs:complexType name="FailedAttributes">
+    <xs:sequence>
+      <xs:element xmlns:q9="http://schemas.microsoft.com/2003/10/Serialization/Arrays" name="attributeType" nillable="true" type="q9:ArrayOfstring" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="FailedAttributes" nillable="true" type="tns:FailedAttributes" />
+</xs:schema>

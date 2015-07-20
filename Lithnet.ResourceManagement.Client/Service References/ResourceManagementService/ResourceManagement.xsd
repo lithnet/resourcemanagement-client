@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.microsoft.com/2006/11/ResourceManagement" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2006/11/ResourceManagement" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.Faults" />
+  <xs:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSResourceManagement" />
+  <xs:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSTransfer" />
+  <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.Faults" name="PermissionDenied" nillable="true" type="q1:RequestFailures" />
+  <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSResourceManagement" name="AnonymousInteractionRequiredFault" nillable="true" type="q2:AnonymousInteractionRequiredFault" />
+  <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSResourceManagement" name="AuthorizationRequiredFault" nillable="true" type="q3:AuthorizationRequiredFault" />
+  <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSResourceManagement" name="AuthenticationRequiredFault" nillable="true" type="q4:AuthenticationRequiredFault" />
+  <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Microsoft.ResourceManagement.WebServices.WSTransfer" name="DataRequiredFault" nillable="true" type="q5:DataRequiredFault" />
+</xs:schema>
