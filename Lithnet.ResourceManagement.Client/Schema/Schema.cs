@@ -63,12 +63,14 @@ namespace Lithnet.ResourceManagement.Client
         {
             MetadataSet set;
             GetMetadata body = new GetMetadata();
-            body.Dialect = "http://www.w3.org/2001/XMLSchema";
-            body.Identifier = string.Format("xs:schema/{0}", "http://schemas.microsoft.com/2006/11/ResourceManagement");
+            body.Dialect = Namespaces.XmlSchema;
+            body.Identifier = string.Format("xs:schema/{0}", Namespaces.ResourceManagement);
 
-            Message requestMessage = Message.CreateMessage(MessageVersion.Default, "http://schemas.xmlsoap.org/ws/2004/09/transfer/Get", new SerializerBodyWriter(body));
+            Message requestMessage = Message.CreateMessage(MessageVersion.Default, Namespaces.Get, new SerializerBodyWriter(body));
 
-            Lithnet.ResourceManagement.Client.ResourceManagementService.MetadataExchangeClient mex = new ResourceManagementService.MetadataExchangeClient();
+            Binding httpBinding = BindingManager.GetWsHttpBinding();
+
+            ResourceManagementService.MetadataExchangeClient mex = new ResourceManagementService.MetadataExchangeClient(httpBinding, ResourceManagementClient.EndpointManager.MetadataEndpoint);
             Message responseMessage = mex.Get(requestMessage);
 
             if (responseMessage.IsFault)

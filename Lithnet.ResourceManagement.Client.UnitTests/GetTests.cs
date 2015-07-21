@@ -15,11 +15,11 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void GetObjectAllAttributesSpecified()
         {
-            ResourceClient c = new ResourceClient();
+            ResourceManagementClient c = new ResourceManagementClient();
+
             //64f62191-b255-443b-bbe4-491a66300725
             UniqueIdentifier builtInAdmin = new UniqueIdentifier("7fb2b853-24f0-4498-9534-4e10589723c4");
             //UniqueIdentifier builtInAdmin = new UniqueIdentifier("64f62191-b255-443b-bbe4-491a66300725");
-            c.Open();
 
             List<string> attributeList = new List<string>();
             //attributeList.Add("ObjectID");
@@ -32,7 +32,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 attributeList.Add(attribute.SystemName);
             }
 
-            ResourceObject r = c.Get(builtInAdmin, attributeList);
+            ResourceObject r = c.GetResource(builtInAdmin, attributeList);
 
             Assert.AreEqual(r.ObjectTypeName, "Person");
 

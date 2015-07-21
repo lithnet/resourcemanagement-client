@@ -38,10 +38,23 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release %28nuget%29|AnyCPU'">
+    <OutputPath>bin\Release %28nuget%29\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.ResourceManagement, Version=4.1.3634.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>\\idm-d1ps1-v02\c$\Program Files\Microsoft Forefront Identity Manager\2010\Service\Microsoft.ResourceManagement.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ResourceManagement.Automation, Version=4.1.3634.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>\\idm-d1ps1-v02\c$\Program Files\Microsoft Forefront Identity Manager\2010\Service\Microsoft.ResourceManagement.Automation.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">

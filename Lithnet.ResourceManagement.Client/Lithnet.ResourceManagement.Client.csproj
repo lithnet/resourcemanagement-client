@@ -34,6 +34,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release %28nuget%29|AnyCPU'">
+    <OutputPath>bin\Release %28nuget%29\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.ResourceManagement">
       <SpecificVersion>False</SpecificVersion>
@@ -60,6 +69,9 @@
     <Compile Include="Exceptions\TooManyResultsException.cs" />
     <Compile Include="ResourceObject.cs" />
     <Compile Include="Schema\AttributeValueCollection.cs" />
+    <Compile Include="ServiceImplementation\BindingManager.cs" />
+    <Compile Include="ServiceImplementation\ClientConfigurationSection.cs" />
+    <Compile Include="ServiceImplementation\EndpointManager.cs" />
     <Compile Include="ServiceImplementation\HeaderConstants.cs" />
     <Compile Include="ServiceImplementation\ResourceObjectSerializer.cs" />
     <Compile Include="ServiceImplementation\ISearchResults.cs" />
@@ -95,6 +107,13 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Package\web.config.transform">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Package\app.config.transform">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Package\Lithnet.ResourceManagement.Client.nuspec" />
     <None Include="Properties\DataSources\System.ServiceModel.Channels.Message.datasource" />
     <None Include="Service References\ResourceManagementService\addressing.xsd">
       <SubType>Designer</SubType>
@@ -165,6 +184,9 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>d:\NuGet\NuGet.exe pack $(ProjectPath)</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

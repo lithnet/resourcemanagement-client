@@ -7,10 +7,11 @@ using Microsoft.ResourceManagement.WebServices;
 using System.Threading;
 using System.Net;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
 
 namespace Lithnet.ResourceManagement.Client
 {
-    public class ResourceManagementClient //: IDisposable
+    public class ResourceManagementClient
     {
         private ResourceClient resourceClient;
 
@@ -18,24 +19,56 @@ namespace Lithnet.ResourceManagement.Client
 
         private SearchClient searchClient;
 
-        //internal bool IsPooled { get; set; }
-
         public static bool UseNewChannelPerCall { get; set; }
 
         public static NetworkCredential NetworkCredentials { get; set; }
 
-        public static int ConcurrentConnectionLimit { get; set; }
+        internal static EndpointManager EndpointManager { get; private set; }
+
+        internal static ClientConfigurationSection Configuration { get; private set; }
+
+        private static Binding HttpContextBinding;
+
+        static ResourceManagementClient()
+        {
+            ResourceManagementClient.Configuration = ClientConfigurationSection.GetConfiguration();
+
+            if (ResourceManagementClient.Configuration.ConcurrentConnectionLimit > 0)
+            {
+                System.Net.ServicePointManager.DefaultConnectionLimit = ResourceManagementClient.Configuration.ConcurrentConnectionLimit;
+            }
+
+            Uri baseAddress;
+
+            if (Configuration.ResourceManagementServiceBaseAddress == null)
+            {
+                baseAddress = new Uri("http://localhost:5725");
+            }
+            else
+            {
+                baseAddress = Configuration.ResourceManagementServiceBaseAddress;
+            }
+
+            EndpointIdentity spn = null;
+
+            if (!string.IsNullOrWhiteSpace(Configuration.ServicePrincipalName))
+            {
+                spn = EndpointIdentity.CreateSpnIdentity(Configuration.ServicePrincipalName);
+            }
+
+            ResourceManagementClient.EndpointManager = new EndpointManager(baseAddress, spn);
+            ResourceManagementClient.HttpContextBinding = BindingManager.GetWsHttpContextBinding();
+
+            if (Configuration.Username != null)
+            {
+                ResourceManagementClient.NetworkCredentials = new NetworkCredential(Configuration.Username, Configuration.Password);
+            }
+        }
 
         public ResourceManagementClient()
         {
             this.InitializeClients();
         }
-
-        //internal ResourceManagementClient(bool pooled)
-        //{
-        //    this.IsPooled = pooled;
-        //    this.InitializeClients();
-        //}
 
         public void DeleteResources(IEnumerable<UniqueIdentifier> resourceIDs)
         {
@@ -77,7 +110,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             this.resourceClient.Put(resourceObjects);
 
-            foreach(ResourceObject resource in resourceObjects)
+            foreach (ResourceObject resource in resourceObjects)
             {
                 resource.CommitChanges();
             }
@@ -224,16 +257,9 @@ namespace Lithnet.ResourceManagement.Client
 
         private void InitializeClients()
         {
-            if (ResourceManagementClient.ConcurrentConnectionLimit > 0)
-            {
-                System.Net.ServicePointManager.DefaultConnectionLimit = ResourceManagementClient.ConcurrentConnectionLimit;
-            }
-
-            System.Net.ServicePointManager.DefaultConnectionLimit = 10000;
-
-            this.resourceClient = new ResourceClient();
-            this.resourceFactoryClient = new ResourceFactoryClient();
-            this.searchClient = new SearchClient();
+            this.resourceClient = new ResourceClient(ResourceManagementClient.HttpContextBinding, ResourceManagementClient.EndpointManager.ResourceEndpoint);
+            this.resourceFactoryClient = new ResourceFactoryClient(ResourceManagementClient.HttpContextBinding, ResourceManagementClient.EndpointManager.ResourceFactoryEndpoint);
+            this.searchClient = new SearchClient(ResourceManagementClient.HttpContextBinding, ResourceManagementClient.EndpointManager.SearchEndpoint);
 
             if (ResourceManagementClient.NetworkCredentials != null)
             {
@@ -241,6 +267,12 @@ namespace Lithnet.ResourceManagement.Client
                 this.resourceFactoryClient.ClientCredentials.Windows.ClientCredential = ResourceManagementClient.NetworkCredentials;
                 this.searchClient.ClientCredentials.Windows.ClientCredential = ResourceManagementClient.NetworkCredentials;
             }
+
+#pragma warning disable 0618
+            this.resourceClient.ClientCredentials.Windows.AllowNtlm = !Configuration.ForceKerberos;
+            this.resourceClient.ClientCredentials.Windows.AllowNtlm = !Configuration.ForceKerberos;
+            this.resourceClient.ClientCredentials.Windows.AllowNtlm = !Configuration.ForceKerberos;
+#pragma warning restore 0618
 
             this.resourceClient.Initialize();
             this.resourceFactoryClient.Initialize();
@@ -251,33 +283,6 @@ namespace Lithnet.ResourceManagement.Client
             this.searchClient.Open();
 
             Schema.LoadSchema();
-            
         }
-
-        //protected virtual void Dispose(bool disposing)
-        //{
-        //    if (disposing)
-        //    {
-        //        // release other disposable objects
-        //    }
-        //}
-
-        //~ResourceManagementClient()
-        //{
-        //    this.Dispose(false);
-        //}
-
-        //public void Dispose()
-        //{
-        //    //if (!this.IsPooled)
-        //    //{
-        //        this.Dispose(true);
-        //        GC.SuppressFinalize(this);
-        //    //}
-        //    //else
-        //    //{
-        //        ResourceManagementClientPool.Return(this);
-        //    //}
-        //}
     }
 }
