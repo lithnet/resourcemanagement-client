@@ -273,7 +273,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -555,7 +555,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -800,7 +800,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -1046,7 +1046,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -1282,7 +1282,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -1492,7 +1492,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -1695,7 +1695,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -1907,7 +1907,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -2137,7 +2137,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -2321,7 +2321,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -2562,7 +2562,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -2830,7 +2830,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -3032,7 +3032,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -3292,7 +3292,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -3530,7 +3530,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -3883,7 +3883,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -4301,7 +4301,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -4484,7 +4484,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -5162,7 +5162,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -5356,7 +5356,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -5716,7 +5716,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -5917,7 +5917,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -6145,7 +6145,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>
@@ -6948,7 +6948,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="1" name="ObjectType">
+      <xs:element minOccurs="1" name=AttributeNames.ObjectType>
         <xs:annotation>
           <xs:appinfo>
             <rm:DisplayName xmlns:rm="http://schemas.microsoft.com/2006/11/ResourceManagement">Resource Type</rm:DisplayName>

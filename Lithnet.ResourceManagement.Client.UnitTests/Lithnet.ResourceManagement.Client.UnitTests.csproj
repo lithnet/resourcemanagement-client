@@ -81,6 +81,7 @@
     <Compile Include="AttributeValueMVTests.cs" />
     <Compile Include="AttributeValueSVTests.cs" />
     <Compile Include="CreateTests.cs" />
+    <Compile Include="PutCompositeTests.cs" />
     <Compile Include="PutDateTimeTests.cs" />
     <Compile Include="PutBinaryTests.cs" />
     <Compile Include="PutIntegerTests.cs" />

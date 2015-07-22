@@ -19,7 +19,9 @@ namespace Lithnet.ResourceManagement.Client
 
         private EnumerationDetailType details;
 
-        private SearchClient client;
+        private SearchClient searchClient;
+
+        private ResourceManagementClient client;
 
         private BlockingCollection<ResourceObject> resultSet;
 
@@ -46,7 +48,7 @@ namespace Lithnet.ResourceManagement.Client
 
         private bool EndOfSequence = false;
 
-        internal SearchResultsAsync(EnumerateResponse response, int pageSize, SearchClient client, CancellationToken token)
+        internal SearchResultsAsync(EnumerateResponse response, int pageSize, SearchClient searchClient, CancellationToken token, ResourceManagementClient client)
         {
             if (token == null)
             {
@@ -63,18 +65,19 @@ namespace Lithnet.ResourceManagement.Client
                 throw new ArgumentException("The page size must be zero or greater", "pageSize");
             }
 
-            if (client == null)
+            if (searchClient == null)
             {
                 throw new ArgumentNullException("client");
             }
 
             this.resultSet = new BlockingCollection<ResourceObject>();
+            this.client = client;
             this.consumingEnumerable = this.resultSet.GetConsumingEnumerable();
             this.token = token;
             this.context = response.EnumerationContext;
             this.pageSize = pageSize;
             this.details = response.EnumerationDetail;
-            this.client = client;
+            this.searchClient = searchClient;
             this.EndOfSequence = response.EndOfSequence != null;
             this.PopulateResultSet(response.Items);
             Debug.WriteLine("Enumeration started. End of request: {0}. Expected results: {1}", this.EndOfSequence, this.Count);
@@ -94,7 +97,7 @@ namespace Lithnet.ResourceManagement.Client
                             break; 
                         }
 
-                        PullResponse r = this.client.Pull(this.context, this.pageSize);
+                        PullResponse r = this.searchClient.Pull(this.context, this.pageSize);
 
                         if (r.EndOfSequence != null)
                         {
@@ -121,7 +124,7 @@ namespace Lithnet.ResourceManagement.Client
 
                 foreach (XmlElement item in items.Any.OfType<XmlElement>())
                 {
-                    this.resultSet.Add(new ResourceObject(item));
+                    this.resultSet.Add(new ResourceObject(item, this.client));
                 }
             }
         }
@@ -130,7 +133,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             try
             {
-                this.client.Release(this.context);
+                this.searchClient.Release(this.context);
             }
             catch
             { }

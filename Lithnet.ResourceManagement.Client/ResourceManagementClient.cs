@@ -8,6 +8,7 @@ using System.Threading;
 using System.Net;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.Xml;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -106,18 +107,34 @@ namespace Lithnet.ResourceManagement.Client
             this.DeleteResource(new UniqueIdentifier(id));
         }
 
+        public void SaveResources(params ResourceObject[] resources)
+        {
+            this.SaveResources(resources);
+        }
+
         public void SaveResources(IEnumerable<ResourceObject> resourceObjects)
         {
-            if (resourceObjects.Any(t => t.ModificationType != OperationType.Update)) 
+            foreach (ResourceObject resource in resourceObjects.Where(t => t.ModificationType == OperationType.Create))
             {
-                throw new InvalidOperationException("Batch operations can only be performed when all objects have a modification type of Update");
+                this.CreateResource(resource);
             }
 
-            this.resourceClient.Put(resourceObjects);
+            List<ResourceObject> objectsToDelete = resourceObjects.Where(t => t.ModificationType == OperationType.Delete).ToList();
+            List<ResourceObject> objectsToUpdate = resourceObjects.Where(t => t.ModificationType == OperationType.Update).ToList();
 
-            foreach (ResourceObject resource in resourceObjects)
+            if (objectsToDelete.Count > 0)
             {
-                resource.CommitChanges();
+                this.DeleteResources(objectsToDelete);
+            }
+
+            if (objectsToUpdate.Count > 0)
+            {
+                this.resourceClient.Put(objectsToUpdate);
+
+                foreach (ResourceObject resource in resourceObjects)
+                {
+                    resource.CommitChanges();
+                }
             }
         }
 
@@ -149,12 +166,12 @@ namespace Lithnet.ResourceManagement.Client
 
         public ResourceObject CreateResource(string objectType)
         {
-            return new ResourceObject(objectType);
+            return new ResourceObject(objectType, this);
         }
 
         public ResourceObject CreateResourceTemplateForUpdate(string objectType, UniqueIdentifier id)
         {
-            return new ResourceObject(objectType, id);
+            return new ResourceObject(objectType, id, this);
         }
 
         public ResourceObject GetResource(Guid id)
@@ -270,6 +287,11 @@ namespace Lithnet.ResourceManagement.Client
             return this.searchClient.Enumerate(filter, pageSize, attributesToRetrieve, cancellationToken);
         }
 
+        internal XmlDictionaryReader RefreshResource(ResourceObject resource)
+        {
+            return this.resourceClient.GetFullObjectForUpdate(resource);
+        }
+
         internal void CreateResource(ResourceObject resource)
         {
             this.resourceFactoryClient.Create(resource);
@@ -299,9 +321,9 @@ namespace Lithnet.ResourceManagement.Client
             this.resourceClient.ClientCredentials.Windows.AllowNtlm = !Configuration.ForceKerberos;
 #pragma warning restore 0618
 
-            this.resourceClient.Initialize();
-            this.resourceFactoryClient.Initialize();
-            this.searchClient.Initialize();
+            this.resourceClient.Initialize(this);
+            this.resourceFactoryClient.Initialize(this);
+            this.searchClient.Initialize(this);
 
             this.resourceClient.Open();
             this.resourceFactoryClient.Open();

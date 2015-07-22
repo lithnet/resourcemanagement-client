@@ -31,7 +31,7 @@ namespace Lithnet.ResourceManagement.Client
         static AttributeTypeDefinition()
         {
             AttributeTypeDefinition.ReadOnlyAttributeNames = new List<string>();
-            AttributeTypeDefinition.ReadOnlyAttributeNames.Add("ObjectID");
+            AttributeTypeDefinition.ReadOnlyAttributeNames.Add(AttributeNames.ObjectID);
             AttributeTypeDefinition.ReadOnlyAttributeNames.Add("Creator");
             AttributeTypeDefinition.ReadOnlyAttributeNames.Add("CreatedTime");
             AttributeTypeDefinition.ReadOnlyAttributeNames.Add("ExpectedRulesList");

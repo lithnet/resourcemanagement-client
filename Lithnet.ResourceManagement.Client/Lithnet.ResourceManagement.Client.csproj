@@ -76,7 +76,6 @@
     <Compile Include="ServiceImplementation\ClientConfigurationSection.cs" />
     <Compile Include="ServiceImplementation\EndpointManager.cs" />
     <Compile Include="ServiceImplementation\HeaderConstants.cs" />
-    <Compile Include="ServiceImplementation\ResourceObjectSerializer.cs" />
     <Compile Include="ServiceImplementation\ISearchResults.cs" />
     <Compile Include="ServiceImplementation\Namespaces.cs" />
     <Compile Include="ServiceImplementation\SearchClient.cs" />

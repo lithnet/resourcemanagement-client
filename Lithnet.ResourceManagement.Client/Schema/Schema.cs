@@ -106,10 +106,6 @@ namespace Lithnet.ResourceManagement.Client
 
             foreach (XmlSchemaComplexType complexType in metadata.Items.OfType<XmlSchemaComplexType>())
             {
-                if (complexType == null)
-                {
-                    continue;
-                }
                 if (!Schema.ElementsToIgnore.Contains(complexType.Name))
                 {
                     ObjectTypeDefinition definition = new ObjectTypeDefinition(complexType);

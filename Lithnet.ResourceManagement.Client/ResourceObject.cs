@@ -17,11 +17,24 @@ namespace Lithnet.ResourceManagement.Client
     [KnownType(typeof(List<string>))]
     public class ResourceObject : ISerializable
     {
-        internal bool IsDeleted { get; set; }
-
         private ResourceManagementClient client;
 
         private List<string> AttributesToIgnore;
+
+        private AttributeValueCollection attributes;
+
+        private ResourceManagementClient Client
+        {
+            get
+            {
+                if (this.client == null)
+                {
+                    this.client = new ResourceManagementClient();
+                }
+
+                return this.client;
+            }
+        }
 
         public string ObjectTypeName
         {
@@ -33,11 +46,11 @@ namespace Lithnet.ResourceManagement.Client
 
         internal bool IsPlaceHolder { get; private set; }
 
+        internal bool IsDeleted { get; set; }
+
         public OperationType ModificationType { get; private set; }
 
         public ObjectTypeDefinition ObjectType { get; private set; }
-
-        private AttributeValueCollection attributes;
 
         public AttributeValueCollection Attributes
         {
@@ -77,20 +90,7 @@ namespace Lithnet.ResourceManagement.Client
             }
         }
 
-        private ResourceManagementClient Client
-        {
-            get
-            {
-                if (this.client == null)
-                {
-                    this.client = new ResourceManagementClient();
-                }
-
-                return this.client;
-            }
-        }
-
-        private ResourceObject(OperationType opType)
+        private ResourceObject(OperationType opType, ResourceManagementClient client)
         {
             this.ModificationType = opType;
             this.attributes = new AttributeValueCollection();
@@ -103,6 +103,7 @@ namespace Lithnet.ResourceManagement.Client
             AttributesToIgnore.Add("ResourceTime");
             AttributesToIgnore.Add("ComputedMember");
             AttributesToIgnore.Add("ComputedActor");
+            this.client = client;
         }
 
         protected ResourceObject(SerializationInfo info, StreamingContext context)
@@ -110,8 +111,8 @@ namespace Lithnet.ResourceManagement.Client
             throw new NotSupportedException();
         }
 
-        internal ResourceObject(string type)
-            : this(OperationType.Create)
+        internal ResourceObject(string type, ResourceManagementClient client)
+            : this(OperationType.Create, client)
         {
             if (!Schema.ObjectTypes.ContainsKey(type))
             {
@@ -121,13 +122,13 @@ namespace Lithnet.ResourceManagement.Client
             this.IsPlaceHolder = true;
 
             this.ObjectType = Schema.ObjectTypes[type];
-            this.PopulateAttributeDefinitions();
+            this.AddRemainingAttributesFromSchema();
 
-            this.attributes["ObjectType"].SetValue(type);
+            this.attributes[AttributeNames.ObjectType].SetValue(type);
         }
 
-        internal ResourceObject(string type, UniqueIdentifier id)
-            : this(OperationType.Update)
+        internal ResourceObject(string type, UniqueIdentifier id, ResourceManagementClient client)
+            : this(OperationType.Update, client)
         {
             if (!Schema.ObjectTypes.ContainsKey(type))
             {
@@ -135,131 +136,28 @@ namespace Lithnet.ResourceManagement.Client
             }
 
             this.ObjectType = Schema.ObjectTypes[type];
-            this.PopulateAttributeDefinitions();
+            this.AddRemainingAttributesFromSchema();
             this.IsPlaceHolder = true;
 
-            this.attributes["ObjectType"].SetValue(type);
+            this.attributes[AttributeNames.ObjectType].SetValue(type);
         }
 
-        internal ResourceObject(IEnumerable<XmlElement> objectElements)
-            : this(OperationType.Update)
+        internal ResourceObject(IEnumerable<XmlElement> objectElements, ResourceManagementClient client)
+            : this(OperationType.Update, client)
         {
-            Dictionary<string, List<string>> values = new Dictionary<string, List<string>>();
-
-            foreach (XmlElement partialAttributeElement in objectElements.Where(t => t.LocalName == "PartialAttribute"))
-            {
-                foreach (XmlElement attributeElement in partialAttributeElement.ChildNodes.OfType<XmlElement>())
-                {
-                    if (!values.ContainsKey(attributeElement.LocalName))
-                    {
-                        values.Add(attributeElement.LocalName, new List<string>());
-                    }
-
-                    values[attributeElement.LocalName].Add(attributeElement.InnerText);
-                }
-            }
-
-            if (values.ContainsKey("ObjectType"))
-            {
-                string objectTypeName = values["ObjectType"].First();
-                ObjectTypeDefinition objectType = Schema.ObjectTypes[objectTypeName];
-                this.ObjectType = objectType;
-            }
-            else
-            {
-                throw new ArgumentException("No object type was specified in the response");
-            }
-
-            this.ProcessIncomingAttributeValues(values);
+            this.PopulateResourceFromPartialResponse(objectElements);
         }
 
-        private void ProcessIncomingAttributeValues(Dictionary<string, List<string>> values)
+        internal ResourceObject(XmlDictionaryReader reader, ResourceManagementClient client)
+            : this(OperationType.Update, client)
         {
-            foreach (KeyValuePair<string, List<string>> kvp in values)
-            {
-                if (kvp.Value.Count == 0)
-                {
-                    continue;
-                }
-
-                string attributeName = kvp.Key;
-                AttributeTypeDefinition d = this.ObjectType[attributeName];
-
-                if (!d.IsMultivalued && kvp.Value.Count > 1)
-                {
-                    throw new InvalidOperationException("The attribute {0} is listed in the schema as a multivalued attribute, but more than one value was returned");
-                }
-
-                if (d.IsMultivalued)
-                {
-                    this.attributes.Add(d.SystemName, new AttributeValue(d, kvp.Value));
-                }
-                else
-                {
-                    this.attributes.Add(d.SystemName, new AttributeValue(d, kvp.Value.First()));
-                }
-            }
-
-            this.PopulateAttributeDefinitions();
+            this.PopulateResourceFromFullObject(reader);
         }
 
-        internal ResourceObject(XmlDictionaryReader reader)
-            : this(OperationType.Update)
+        internal ResourceObject(XmlElement element, ResourceManagementClient client)
+            : this(OperationType.Update, client)
         {
-            Dictionary<string, List<string>> values = new Dictionary<string, List<string>>();
-
-            reader.MoveToStartElement();
-
-            string objectTypeName = reader.LocalName;
-            this.ObjectType = Schema.ObjectTypes[objectTypeName];
-
-            while (reader.Read())
-            {
-                if (reader.NodeType != XmlNodeType.Element)
-                {
-                    continue;
-                }
-
-                if (!values.ContainsKey(reader.LocalName))
-                {
-                    values.Add(reader.LocalName, new List<string>());
-                }
-
-                string value = reader.ReadString();
-                if (!string.IsNullOrEmpty(value))
-                {
-                    values[reader.LocalName].Add(value);
-                }
-            }
-
-            this.ProcessIncomingAttributeValues(values);
-        }
-
-        internal ResourceObject(XmlElement element)
-            : this(OperationType.Update)
-        {
-            Dictionary<string, List<string>> values = new Dictionary<string, List<string>>();
-
-            string objectTypeName = element.LocalName;
-            this.ObjectType = Schema.ObjectTypes[objectTypeName];
-
-
-            foreach (XmlElement child in element.ChildNodes.OfType<XmlElement>())
-            {
-                if (!values.ContainsKey(child.LocalName))
-                {
-                    values.Add(child.LocalName, new List<string>());
-                }
-
-                string value = child.InnerText;
-
-                if (!string.IsNullOrEmpty(value))
-                {
-                    values[child.LocalName].Add(value);
-                }
-            }
-
-            this.ProcessIncomingAttributeValues(values);
+            this.PopulateResourceFromFragment(element);
         }
 
         public Dictionary<string, List<AttributeValueChange>> PendingChanges
@@ -295,6 +193,16 @@ namespace Lithnet.ResourceManagement.Client
             }
         }
 
+        public void Save(bool refresh)
+        {
+            this.Save();
+
+            if (refresh)
+            {
+                this.Refresh();
+            }
+        }
+
         public void Save()
         {
             switch (this.ModificationType)
@@ -313,7 +221,7 @@ namespace Lithnet.ResourceManagement.Client
                         throw new InvalidOperationException("The object has already been deleted");
                     }
 
-                    this.client.DeleteResource(this);
+                    this.Client.DeleteResource(this);
                     break;
 
                 case OperationType.None:
@@ -341,6 +249,52 @@ namespace Lithnet.ResourceManagement.Client
             return !attributes[name].IsNull;
         }
 
+        public void Refresh()
+        {
+            if (this.IsPlaceHolder)
+            {
+                throw new InvalidOperationException("Cannot refresh a placeholder object. Call Save() to submit the changes to the resource management service");
+            }
+
+            if (this.IsDeleted)
+            {
+                throw new InvalidOperationException("Cannot refresh the object as it has been deleted");
+            }
+
+            XmlDictionaryReader reader = this.Client.RefreshResource(this);
+
+            this.PopulateResourceFromFullObject(reader);
+            this.IsPlaceHolder = false;
+            this.ModificationType = OperationType.Update;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            foreach (AttributeValue value in this.attributes)
+            {
+                sb.AppendLine(string.Format("{0}: {1}", value.AttributeName, value.ToString()));
+            }
+
+            return sb.ToString();
+        }
+
+        public Dictionary<string, IList<string>> GetSerializationValues()
+        {
+            Dictionary<string, IList<string>> values = new Dictionary<string, IList<string>>();
+
+            foreach (AttributeValue kvp in this.attributes)
+            {
+                if (!kvp.IsNull)
+                {
+                    values.Add(kvp.AttributeName, kvp.GetSerializationValues());
+                }
+            }
+
+            return values;
+        }
+
         internal void CompleteCreateOperation(UniqueIdentifier id)
         {
             if (this.ModificationType != OperationType.Create)
@@ -348,14 +302,14 @@ namespace Lithnet.ResourceManagement.Client
                 throw new InvalidOperationException();
             }
 
-            AttributeTypeDefinition objectID = this.ObjectType["ObjectID"];
-            if (!this.attributes.ContainsAttribute("ObjectID"))
+            AttributeTypeDefinition objectID = this.ObjectType[AttributeNames.ObjectID];
+            if (!this.attributes.ContainsAttribute(AttributeNames.ObjectID))
             {
                 this.attributes.Add(new AttributeValue(objectID, id));
             }
             else
             {
-                this.attributes["ObjectID"] = new AttributeValue(objectID, id);
+                this.attributes[AttributeNames.ObjectID] = new AttributeValue(objectID, id);
             }
 
             this.CommitChanges();
@@ -425,25 +379,39 @@ namespace Lithnet.ResourceManagement.Client
             return fragments;
         }
 
-        public void Refresh()
+        private void SetAttributeValues(Dictionary<string, List<string>> values)
         {
-            // Re-gets the object from the FIM service
-        }
+            this.attributes = new AttributeValueCollection();
 
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("Object Type: " + this.ObjectTypeName);
-
-            foreach (AttributeValue value in this.attributes)
+            foreach (KeyValuePair<string, List<string>> kvp in values)
             {
-                sb.AppendLine(string.Format("{0}: {1}", value.AttributeName, value.ToString()));
+                if (kvp.Value.Count == 0)
+                {
+                    continue;
+                }
+
+                string attributeName = kvp.Key;
+                AttributeTypeDefinition d = this.ObjectType[attributeName];
+
+                if (!d.IsMultivalued && kvp.Value.Count > 1)
+                {
+                    throw new InvalidOperationException("The attribute {0} is listed in the schema as a multivalued attribute, but more than one value was returned");
+                }
+
+                if (d.IsMultivalued)
+                {
+                    this.attributes.Add(d.SystemName, new AttributeValue(d, kvp.Value));
+                }
+                else
+                {
+                    this.attributes.Add(d.SystemName, new AttributeValue(d, kvp.Value.First()));
+                }
             }
 
-            return sb.ToString();
+            this.AddRemainingAttributesFromSchema();
         }
 
-        private void PopulateAttributeDefinitions()
+        private void AddRemainingAttributesFromSchema()
         {
             foreach (AttributeTypeDefinition attributeDefinition in this.ObjectType)
             {
@@ -454,19 +422,92 @@ namespace Lithnet.ResourceManagement.Client
             }
         }
 
-        public Dictionary<string, IList<string>> GetSerializationValues()
+        private void PopulateResourceFromFullObject(XmlDictionaryReader reader)
         {
-            Dictionary<string, IList<string>> values = new Dictionary<string, IList<string>>();
+            Dictionary<string, List<string>> values = new Dictionary<string, List<string>>();
 
-            foreach (AttributeValue kvp in this.attributes)
+            reader.MoveToStartElement();
+
+            string objectTypeName = reader.LocalName;
+            this.ObjectType = Schema.ObjectTypes[objectTypeName];
+
+            while (reader.Read())
             {
-                if (!kvp.IsNull)
+                if (reader.NodeType != XmlNodeType.Element)
                 {
-                    values.Add(kvp.AttributeName, kvp.GetSerializationValues());
+                    continue;
+                }
+
+                if (!values.ContainsKey(reader.LocalName))
+                {
+                    values.Add(reader.LocalName, new List<string>());
+                }
+
+                string value = reader.ReadString();
+                if (!string.IsNullOrEmpty(value))
+                {
+                    values[reader.LocalName].Add(value);
                 }
             }
 
-            return values;
+            this.SetAttributeValues(values);
+        }
+
+        private void PopulateResourceFromFragment(XmlElement element)
+        {
+            Dictionary<string, List<string>> values = new Dictionary<string, List<string>>();
+
+            string objectTypeName = element.LocalName;
+            this.ObjectType = Schema.ObjectTypes[objectTypeName];
+
+
+            foreach (XmlElement child in element.ChildNodes.OfType<XmlElement>())
+            {
+                if (!values.ContainsKey(child.LocalName))
+                {
+                    values.Add(child.LocalName, new List<string>());
+                }
+
+                string value = child.InnerText;
+
+                if (!string.IsNullOrEmpty(value))
+                {
+                    values[child.LocalName].Add(value);
+                }
+            }
+
+            this.SetAttributeValues(values);
+        }
+
+        private void PopulateResourceFromPartialResponse(IEnumerable<XmlElement> objectElements)
+        {
+            Dictionary<string, List<string>> values = new Dictionary<string, List<string>>();
+
+            foreach (XmlElement partialAttributeElement in objectElements.Where(t => t.LocalName == "PartialAttribute"))
+            {
+                foreach (XmlElement attributeElement in partialAttributeElement.ChildNodes.OfType<XmlElement>())
+                {
+                    if (!values.ContainsKey(attributeElement.LocalName))
+                    {
+                        values.Add(attributeElement.LocalName, new List<string>());
+                    }
+
+                    values[attributeElement.LocalName].Add(attributeElement.InnerText);
+                }
+            }
+
+            if (values.ContainsKey(AttributeNames.ObjectType))
+            {
+                string objectTypeName = values[AttributeNames.ObjectType].First();
+                ObjectTypeDefinition objectType = Schema.ObjectTypes[objectTypeName];
+                this.ObjectType = objectType;
+            }
+            else
+            {
+                throw new ArgumentException("No object type was specified in the response");
+            }
+
+            this.SetAttributeValues(values);
         }
 
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)

@@ -17,7 +17,9 @@ namespace Lithnet.ResourceManagement.Client
 
         private ResourceObject current;
 
-        private SearchClient client;
+        private SearchClient searchClient;
+
+        private ResourceManagementClient client;
 
         private int currentIndex = 0;
 
@@ -42,7 +44,7 @@ namespace Lithnet.ResourceManagement.Client
 
         private bool EndOfSequence = false;
 
-        internal SearchResults(EnumerateResponse response, int pageSize, SearchClient client)
+        internal SearchResults(EnumerateResponse response, int pageSize, SearchClient searchClient, ResourceManagementClient client)
         {
             if (response == null)
             {
@@ -54,16 +56,17 @@ namespace Lithnet.ResourceManagement.Client
                 throw new ArgumentException("The page size must be zero or greater", "pageSize");
             }
 
-            if (client == null)
+            if (searchClient == null)
             {
                 throw new ArgumentNullException("client");
             }
 
             this.resultSet = new List<ResourceObject>();
+            this.client = client;
             this.context = response.EnumerationContext;
             this.pageSize = pageSize;
             this.details = response.EnumerationDetail;
-            this.client = client;
+            this.searchClient = searchClient;
             this.EndOfSequence = response.EndOfSequence != null;
             this.PopulateResultSet(response.Items);
         }
@@ -76,7 +79,7 @@ namespace Lithnet.ResourceManagement.Client
 
                 foreach (XmlElement item in items.Any.OfType<XmlElement>())
                 {
-                    this.resultSet.Add(new ResourceObject(item));
+                    this.resultSet.Add(new ResourceObject(item, this.client));
                 }
             }
         }
@@ -143,7 +146,7 @@ namespace Lithnet.ResourceManagement.Client
 
         private void GetNextPage()
         {
-            PullResponse r = this.client.Pull(this.context, this.pageSize);
+            PullResponse r = this.searchClient.Pull(this.context, this.pageSize);
             if (r.EndOfSequence != null)
             {
                 this.EndOfSequence = true;

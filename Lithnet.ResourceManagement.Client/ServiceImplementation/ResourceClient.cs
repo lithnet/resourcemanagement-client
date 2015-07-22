@@ -11,9 +11,12 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 {
     internal partial class ResourceClient : ClientBase<Resource>, Resource
     {
-        public void Initialize()
+        private ResourceManagementClient client;
+
+        public void Initialize(ResourceManagementClient client)
         {
             this.DisableContextManager();
+            this.client = client;
         }
 
         public void Put(ResourceObject resource)
@@ -67,12 +70,12 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                     if (partialResponse)
                     {
                         GetResponse response = responseMessage.DeserializeMessageWithPayload<GetResponse>();
-                        return new ResourceObject(response.Results.OfType<XmlElement>());
+                        return new ResourceObject(response.Results.OfType<XmlElement>(), this.client);
                     }
                     else
                     {
                         XmlDictionaryReader fullObject = responseMessage.GetReaderAtBodyContents();
-                        return new ResourceObject(fullObject);
+                        return new ResourceObject(fullObject, this.client);
                     }
                 }
             }
@@ -94,7 +97,6 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             }
         }
 
-
         public void Delete(ResourceObject resource)
         {
             this.Delete(resource.ObjectID);
@@ -115,7 +117,27 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
         {
             return this.Get(id, null);
         }
-        
+
+        internal XmlDictionaryReader GetFullObjectForUpdate(ResourceObject resource)
+        {
+            if (resource == null)
+            {
+                throw new ArgumentNullException("resource");
+            }
+
+            GetResponse r = new GetResponse();
+
+            using (Message message = MessageComposer.CreateGetMessage(resource.ObjectID))
+            {
+                using (Message responseMessage = this.Invoke((c) => c.Get(message)))
+                {
+                    responseMessage.ThrowOnFault();
+
+                    return responseMessage.GetReaderAtBodyContents();
+                }
+            }
+        }
+
         public T Invoke<T>(Func<Resource, T> action)
         {
             Resource c = this.ChannelFactory.CreateChannel();

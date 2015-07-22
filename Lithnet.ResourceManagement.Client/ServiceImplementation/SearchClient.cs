@@ -12,9 +12,12 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
     {
         private const int DefaultPageSize = 200;
 
-        public void Initialize()
+        private ResourceManagementClient client;
+
+        public void Initialize(ResourceManagementClient client)
         {
             this.DisableContextManager();
+            this.client = client;
         }
 
         public ISearchResults Enumerate(string filter)
@@ -69,11 +72,11 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
                     if (cancellationToken != null)
                     {
-                        return new SearchResultsAsync(response, pageSize, this, cancellationToken.Token);
+                        return new SearchResultsAsync(response, pageSize, this, cancellationToken.Token, this.client);
                     }
                     else
                     {
-                        return new SearchResults(response, pageSize, this);
+                        return new SearchResults(response, pageSize, this, this.client);
                     }
                 }
             }

@@ -10,9 +10,12 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 {
     internal partial class ResourceFactoryClient : System.ServiceModel.ClientBase<Lithnet.ResourceManagement.Client.ResourceManagementService.ResourceFactory>, Lithnet.ResourceManagement.Client.ResourceManagementService.ResourceFactory
     {
-        public void Initialize()
+        private ResourceManagementClient client;
+
+        public void Initialize(ResourceManagementClient client)
         {
             this.DisableContextManager();
+            this.client = client;
         }
 
         public void Create(ResourceObject resource)
