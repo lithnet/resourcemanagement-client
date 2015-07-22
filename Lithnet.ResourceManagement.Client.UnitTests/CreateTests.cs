@@ -1,11 +1,12 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Lithnet.ResourceManagement.Client.ResourceManagementService;
-using Lithnet.ResourceManagement.Client;
-using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
-using Microsoft.ResourceManagement.WebServices;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using Lithnet.ResourceManagement.Client;
+using Lithnet.ResourceManagement.Client.ResourceManagementService;
+using Microsoft.ResourceManagement.WebServices;
+using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
@@ -13,18 +14,135 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
     public class CreateTests
     {
         [TestMethod]
-        public void CreateWithoutObjectID()
+        public void CreateFromClientSaveWithClient()
         {
-            ResourceFactoryClient c = new ResourceFactoryClient();
-            //UniqueIdentifier builtInAdmin = new UniqueIdentifier("705176b7-368f-47f9-a7ee-5daf485d1ff5");
-            c.Open();
+            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceObject resource = null;
 
-            ResourceObject r = new ResourceObject("Person");
-            r.Attributes["AccountName"].SetValue("zzztest1");
-            r.Attributes["Domain"].SetValue(Environment.GetEnvironmentVariable("USERDOMAIN"));
-            r.Attributes["organizationalRelationships"].SetValue(new List<string>() { "OR0001", "OR0002" });
+            try
+            {
+                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                Assert.AreEqual(OperationType.Create, resource.ModificationType);
+                Assert.AreEqual(true, resource.IsPlaceHolder);
+                UnitTestHelper.PopulateTestUserData(resource);
+                client.SaveResource(resource);
 
-            c.Create(r);
+                Assert.AreEqual(false, resource.IsPlaceHolder);
+                Assert.AreEqual(OperationType.Update, resource.ModificationType);
+                Assert.AreEqual(0, resource.PendingChanges.Count);
+                Assert.IsTrue(resource.ObjectID.IsGuid);
+                Assert.AreNotEqual(resource.ObjectID.GetGuid(), Guid.Empty);
+
+                resource = client.GetResource(resource.ObjectID);
+
+                UnitTestHelper.ValidateTestUserData(resource);
+            }
+            finally
+            {
+                if (resource != null && !resource.IsPlaceHolder)
+                {
+                    client.DeleteResource(resource);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void CreateFromClientSaveOnObject()
+        {
+            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceObject resource = null;
+
+            try
+            {
+                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                Assert.AreEqual(OperationType.Create, resource.ModificationType);
+                Assert.AreEqual(true, resource.IsPlaceHolder);
+                UnitTestHelper.PopulateTestUserData(resource);
+                resource.Save();
+                Assert.AreEqual(false, resource.IsPlaceHolder);
+                Assert.AreEqual(OperationType.Update, resource.ModificationType);
+                Assert.AreEqual(0, resource.PendingChanges.Count);
+                Assert.IsTrue(resource.ObjectID.IsGuid);
+                Assert.AreNotEqual(resource.ObjectID.GetGuid(), Guid.Empty);
+                
+                resource = client.GetResource(resource.ObjectID);
+
+                UnitTestHelper.ValidateTestUserData(resource);
+
+            }
+            finally
+            {
+                if (resource != null && !resource.IsPlaceHolder)
+                {
+                    client.DeleteResource(resource);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void CreateByConstructorSaveOnObject()
+        {
+            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceObject resource = null;
+
+            try
+            {
+                resource = new ResourceObject(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                Assert.AreEqual(OperationType.Create, resource.ModificationType);
+                Assert.AreEqual(true, resource.IsPlaceHolder);
+                UnitTestHelper.PopulateTestUserData(resource);
+                resource.Save();
+                Assert.AreEqual(false, resource.IsPlaceHolder);
+                Assert.AreEqual(OperationType.Update, resource.ModificationType);
+                Assert.AreEqual(0, resource.PendingChanges.Count);
+                Assert.IsTrue(resource.ObjectID.IsGuid);
+                Assert.AreNotEqual(resource.ObjectID.GetGuid(), Guid.Empty);
+
+                resource = client.GetResource(resource.ObjectID);
+
+                UnitTestHelper.ValidateTestUserData(resource);
+
+            }
+            finally
+            {
+                if (resource != null && !resource.IsPlaceHolder)
+                {
+                    client.DeleteResource(resource);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void CreateByConstructorSaveWithClient()
+        {
+            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceObject resource = null;
+
+            try
+            {
+                resource = new ResourceObject(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                Assert.AreEqual(OperationType.Create, resource.ModificationType);
+                Assert.AreEqual(true, resource.IsPlaceHolder);
+                UnitTestHelper.PopulateTestUserData(resource);
+                client.SaveResource(resource);
+                Assert.AreEqual(false, resource.IsPlaceHolder);
+                Assert.AreEqual(OperationType.Update, resource.ModificationType);
+                Assert.AreEqual(0, resource.PendingChanges.Count);
+                Assert.IsTrue(resource.ObjectID.IsGuid);
+                Assert.AreNotEqual(resource.ObjectID.GetGuid(), Guid.Empty);
+
+                resource = client.GetResource(resource.ObjectID);
+
+                UnitTestHelper.ValidateTestUserData(resource);
+
+            }
+            finally
+            {
+                if (resource != null && !resource.IsPlaceHolder)
+                {
+                    client.DeleteResource(resource);
+                }
+            }
         }
 
     }

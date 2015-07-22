@@ -125,6 +125,11 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
         internal static Message CreateDeleteMessage(UniqueIdentifier id)
         {
+            if (id == null)
+            {
+                throw new ArgumentNullException("id");
+            }
+
             Message message;
             message = Message.CreateMessage(MessageVersion.Default, Namespaces.Delete);
             message.AddHeader(HeaderConstants.ResourceReferenceProperty, id.ToString());
@@ -196,8 +201,10 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                 set.Add(attribute);
             }
 
-            set.Add("ObjectID");
-            set.Add("ObjectType");
+            foreach(string item in Schema.MandatoryAttributes)
+            {
+                set.Add(item);
+            }
 
             return set;
         }

@@ -31,6 +31,8 @@ namespace Lithnet.ResourceManagement.Client
             }
         }
 
+        internal bool IsPlaceHolder { get; private set; }
+
         public OperationType ModificationType { get; private set; }
 
         public ObjectTypeDefinition ObjectType { get; private set; }
@@ -49,9 +51,9 @@ namespace Lithnet.ResourceManagement.Client
         {
             get
             {
-                if (this.attributes.ContainsAttribute("ObjectID"))
+                if (this.attributes.ContainsAttribute(AttributeNames.ObjectID))
                 {
-                    return this.attributes["ObjectID"].Value as UniqueIdentifier;
+                    return this.attributes[AttributeNames.ObjectID].ReferenceValue;
                 }
                 else
                 {
@@ -64,9 +66,9 @@ namespace Lithnet.ResourceManagement.Client
         {
             get
             {
-                if (this.attributes.ContainsAttribute("DisplayName"))
+                if (this.attributes.ContainsAttribute(AttributeNames.DisplayName))
                 {
-                    return this.attributes["DisplayName"].GetValue<string>();
+                    return this.attributes[AttributeNames.DisplayName].StringValue;
                 }
                 else
                 {
@@ -105,7 +107,7 @@ namespace Lithnet.ResourceManagement.Client
 
         protected ResourceObject(SerializationInfo info, StreamingContext context)
         {
-            //throw new NotSupportedException();
+            throw new NotSupportedException();
         }
 
         internal ResourceObject(string type)
@@ -115,6 +117,8 @@ namespace Lithnet.ResourceManagement.Client
             {
                 throw new ArgumentException(string.Format("Unknown object type {0}", type));
             }
+
+            this.IsPlaceHolder = true;
 
             this.ObjectType = Schema.ObjectTypes[type];
             this.PopulateAttributeDefinitions();
@@ -132,6 +136,7 @@ namespace Lithnet.ResourceManagement.Client
 
             this.ObjectType = Schema.ObjectTypes[type];
             this.PopulateAttributeDefinitions();
+            this.IsPlaceHolder = true;
 
             this.attributes["ObjectType"].SetValue(type);
         }
@@ -322,6 +327,8 @@ namespace Lithnet.ResourceManagement.Client
             {
                 this.ModificationType = OperationType.Update;
             }
+
+            this.IsPlaceHolder = false;
         }
 
         public bool HasValue(string name)
@@ -332,191 +339,6 @@ namespace Lithnet.ResourceManagement.Client
             }
 
             return !attributes[name].IsNull;
-        }
-
-        public T GetValue<T>(string name)
-        {
-            if (!this.attributes.ContainsAttribute(name))
-            {
-                return default(T);
-            }
-
-            return this.attributes[name].GetValue<T>();
-        }
-
-        public IList<T> GetValues<T>(string name)
-        {
-            if (!this.attributes.ContainsAttribute(name))
-            {
-                return new List<T>();
-            }
-
-            return this.attributes[name].GetValues<T>();
-        }
-
-        public void AddValue(string name, byte[] value)
-        {
-            this.attributes[name].AddValue(value);
-        }
-
-        public void AddValue(string name, DateTime value)
-        {
-            this.attributes[name].AddValue(value);
-        }
-
-        public void AddValue(string name, int value)
-        {
-            this.attributes[name].AddValue(value);
-        }
-
-        public void AddValue(string name, long value)
-        {
-            this.attributes[name].AddValue(value);
-        }
-
-        public void AddValue(string name, string value)
-        {
-            this.attributes[name].AddValue(value);
-        }
-
-        public void AddValue(string name, UniqueIdentifier value)
-        {
-            this.attributes[name].AddValue(value);
-        }
-
-        public void AddValue(string name, Guid value)
-        {
-            this.attributes[name].AddValue(value);
-        }
-
-        public void AddValue(string name, object value)
-        {
-            this.attributes[name].AddValue(value);
-        }
-
-        public void RemoveValue(string name, byte[] value)
-        {
-            this.attributes[name].RemoveValue(value);
-        }
-
-        public void RemoveValue(string name, DateTime value)
-        {
-            this.attributes[name].RemoveValue(value);
-        }
-
-        public void RemoveValue(string name, int value)
-        {
-            this.attributes[name].RemoveValue(value);
-        }
-
-        public void RemoveValue(string name, long value)
-        {
-            this.attributes[name].RemoveValue(value);
-        }
-
-        public void RemoveValue(string name, string value)
-        {
-            this.attributes[name].RemoveValue(value);
-        }
-
-        public void RemoveValue(string name, UniqueIdentifier value)
-        {
-            this.attributes[name].RemoveValue(value);
-        }
-
-        public void RemoveValue(string name, Guid value)
-        {
-            this.attributes[name].RemoveValue(value);
-        }
-
-        public void RemoveValue(string name, object value)
-        {
-            this.attributes[name].RemoveValue(value);
-        }
-
-        public void SetValue(string name, byte[] value)
-        {
-            this.attributes[name].SetValue(value);
-        }
-
-        public void SetValue(string name, DateTime value)
-        {
-            this.attributes[name].SetValue(value);
-        }
-
-        public void SetValue(string name, bool value)
-        {
-            this.attributes[name].SetValue(value);
-        }
-
-        public void SetValue(string name, int value)
-        {
-            this.attributes[name].SetValue(value);
-        }
-
-        public void SetValue(string name, long value)
-        {
-            this.attributes[name].SetValue(value);
-        }
-
-        public void SetValue(string name, string value)
-        {
-            this.attributes[name].SetValue(value);
-        }
-
-        public void SetValue(string name, UniqueIdentifier value)
-        {
-            this.attributes[name].SetValue(value);
-        }
-
-        public void SetValue(string name, Guid value)
-        {
-            this.attributes[name].SetValue(value);
-        }
-
-        public void SetValue(string name, object value)
-        {
-            this.attributes[name].SetValue(value);
-        }
-
-        public void SetValue(string name, IEnumerable<byte[]> value)
-        {
-            this.attributes[name].SetValue(value);
-        }
-
-        public void SetValue(string name, IEnumerable<DateTime> value)
-        {
-            this.attributes[name].SetValue(value);
-        }
-
-        public void SetValue(string name, IEnumerable<bool> value)
-        {
-            this.attributes[name].SetValue(value);
-        }
-
-        public void SetValue(string name, IEnumerable<int> value)
-        {
-            this.attributes[name].SetValue(value);
-        }
-
-        public void SetValue(string name, IEnumerable<long> value)
-        {
-            this.attributes[name].SetValue(value);
-        }
-
-        public void SetValue(string name, IEnumerable<string> value)
-        {
-            this.attributes[name].SetValue(value);
-        }
-
-        public void SetValue(string name, IEnumerable<UniqueIdentifier> value)
-        {
-            this.attributes[name].SetValue(value);
-        }
-
-        public void SetValue(string name, IEnumerable<Guid> value)
-        {
-            this.attributes[name].SetValue(value);
         }
 
         internal void CompleteCreateOperation(UniqueIdentifier id)
@@ -539,6 +361,7 @@ namespace Lithnet.ResourceManagement.Client
             this.CommitChanges();
 
             this.ModificationType = OperationType.Update;
+            this.IsPlaceHolder = false;
         }
 
         internal void CommitChanges()
@@ -563,32 +386,35 @@ namespace Lithnet.ResourceManagement.Client
 
                 foreach (AttributeValueChange change in kvp.Value)
                 {
-                    string value;
+                    string value = null;
 
-                    switch (type.Type)
+                    if (change.Value != null)
                     {
-                        case AttributeType.Binary:
-                            value = Convert.ToBase64String((byte[])change.Value);
-                            break;
+                        switch (type.Type)
+                        {
+                            case AttributeType.Binary:
+                                value = Convert.ToBase64String((byte[])change.Value);
+                                break;
 
-                        case AttributeType.DateTime:
-                            value = ((DateTime)change.Value).ToResourceManagementServiceDateFormat();
-                            break;
+                            case AttributeType.DateTime:
+                                value = ((DateTime)change.Value).ToResourceManagementServiceDateFormat();
+                                break;
 
-                        case AttributeType.Integer:
-                        case AttributeType.Boolean:
-                        case AttributeType.String:
-                        case AttributeType.Text:
-                            value = change.Value.ToString();
-                            break;
+                            case AttributeType.Integer:
+                            case AttributeType.Boolean:
+                            case AttributeType.String:
+                            case AttributeType.Text:
+                                value = change.Value.ToString();
+                                break;
 
-                        case AttributeType.Reference:
-                            value = ((UniqueIdentifier)change.Value).ToString();
-                            break;
+                            case AttributeType.Reference:
+                                value = ((UniqueIdentifier)change.Value).ToString();
+                                break;
 
-                        case AttributeType.Unknown:
-                        default:
-                            throw new ArgumentException(string.Format("Unknown value type {0}", change.Value.GetType().Name));
+                            case AttributeType.Unknown:
+                            default:
+                                throw new ArgumentException(string.Format("Unknown value type {0}", change.Value.GetType().Name));
+                        }
                     }
 
                     PutFragmentType fragment = new PutFragmentType(kvp.Key, change.ChangeType, kvp.Key, null, false, value);

@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Lithnet.ResourceManagement.Client
 {
-    internal static class XpathFilterBuilder
+    public static class XpathFilterBuilder
     {
-        public static string GetFilter(string objectType, Dictionary<string, string> keyValuePairs)
+        public static string GetAndFilterText(string objectType, Dictionary<string, string> keyValuePairs)
         {
             StringBuilder sb = new StringBuilder();
 

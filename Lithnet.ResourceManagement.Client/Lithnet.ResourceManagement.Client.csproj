@@ -62,13 +62,16 @@
   <ItemGroup>
     <Compile Include="Enums\OperationType.cs" />
     <Compile Include="Exceptions\NoSuchAttributeException.cs" />
+    <Compile Include="Exceptions\ObjectNotFoundException.cs" />
     <Compile Include="ResourceManagementClientPool.cs" />
+    <Compile Include="Schema\AttributeNames.cs" />
     <Compile Include="Schema\AttributeValue.cs" />
     <Compile Include="Schema\AttributeValueChange.cs" />
     <Compile Include="ResourceManagementClient.cs" />
     <Compile Include="Exceptions\TooManyResultsException.cs" />
     <Compile Include="ResourceObject.cs" />
     <Compile Include="Schema\AttributeValueCollection.cs" />
+    <Compile Include="Schema\ObjectTypeNames.cs" />
     <Compile Include="ServiceImplementation\BindingManager.cs" />
     <Compile Include="ServiceImplementation\ClientConfigurationSection.cs" />
     <Compile Include="ServiceImplementation\EndpointManager.cs" />

@@ -225,7 +225,7 @@ namespace Lithnet.ResourceManagement.Client
 
             if (this.IsMultivalued)
             {
-                this.values.Remove(typedValue);
+                this.values.RemoveAll(t => AttributeValue.ValueComparer.Equals(t, value));
             }
             else
             {
@@ -272,6 +272,11 @@ namespace Lithnet.ResourceManagement.Client
 
                     foreach (object enumerableValue in collectionValues)
                     {
+                        if (enumerableValue == null)
+                        {
+                            throw new InvalidOperationException("A multivalued attribute cannot contain a null value");
+                        }
+
                         object convertedValue = this.ConvertValueToAttributeType(enumerableValue);
 
                         if (convertedValue != null)
@@ -296,21 +301,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 if (!AttributeValue.ValueComparer.Equals(this.value, this.initialValue))
                 {
-                    if (this.value == null)
-                    {
-                        if (this.Attribute.Type == AttributeType.DateTime || this.Attribute.Type == AttributeType.Reference)
-                        {
-                            tempValueChanges.Add(new AttributeValueChange(ModeType.Remove, this.initialValue));
-                        }
-                        else
-                        {
-                            tempValueChanges.Add(new AttributeValueChange(ModeType.Modify, null));
-                        }
-                    }
-                    else
-                    {
-                        tempValueChanges.Add(new AttributeValueChange(ModeType.Modify, this.value));
-                    }
+                    tempValueChanges.Add(new AttributeValueChange(ModeType.Modify, this.value));
                 }
             }
             else
@@ -454,33 +445,161 @@ namespace Lithnet.ResourceManagement.Client
             }
         }
 
-        public T GetValue<T>()
+        public string StringValue
         {
-            if (this.IsMultivalued)
+            get
             {
-                throw new ArgumentException("Cannot get a multivalued attribute value from GetValue<T>");
-            }
+                if (this.IsMultivalued)
+                {
+                    throw new InvalidOperationException("Cannot get a multivalued attribute value from GetValue");
+                }
 
-            return (T)this.value;
+                return TypeConverter.ToString(this.value);
+            }
         }
 
-        public IList<T> GetValues<T>()
+        public long IntegerValue
         {
-            if (!this.IsMultivalued)
+            get
             {
-                throw new ArgumentException("Cannot get a single-valued attribute value from GetValues<T>");
-            }
+                if (this.IsMultivalued)
+                {
+                    throw new InvalidOperationException("Cannot get a multivalued attribute value from GetValue");
+                }
 
-            return this.values.Cast<T>().ToList();
+                return TypeConverter.ToLong(this.value);
+            }
         }
 
-        public IList<string> GetSerializationValues()
+        public bool BooleanValue
+        {
+            get
+            {
+                if (this.IsMultivalued)
+                {
+                    throw new InvalidOperationException("Cannot get a multivalued attribute value from GetValue");
+                }
+
+                return TypeConverter.ToBoolean(this.value);
+            }
+        }
+
+        public byte[] BinaryValue
+        {
+            get
+            {
+                if (this.IsMultivalued)
+                {
+                    throw new InvalidOperationException("Cannot get a multivalued attribute value from GetValue");
+                }
+
+                if (this.IsNull)
+                {
+                    return null;
+                }
+
+                return TypeConverter.ToByte(this.value);
+            }
+        }
+
+        public UniqueIdentifier ReferenceValue
+        {
+            get
+            {
+                if (this.IsMultivalued)
+                {
+                    throw new InvalidOperationException("Cannot get a multivalued attribute value from GetValue");
+                }
+
+                return TypeConverter.ToUniqueIdentifier(this.value);
+            }
+        }
+
+        public DateTime DateTimeValue
+        {
+            get
+            {
+                if (this.IsMultivalued)
+                {
+                    throw new InvalidOperationException("Cannot get a multivalued attribute value from GetValue");
+                }
+
+                return TypeConverter.ToDateTime(this.value);
+            }
+        }
+
+        public ReadOnlyCollection<string> StringValues
+        {
+            get
+            {
+                if (!this.IsMultivalued)
+                {
+                    throw new InvalidOperationException("Cannot get a single-valued attribute value from GetValues");
+                }
+
+                return this.values.Cast<string>().ToList().AsReadOnly();
+            }
+        }
+
+        public ReadOnlyCollection<long> IntegerValues
+        {
+            get
+            {
+                if (!this.IsMultivalued)
+                {
+                    throw new InvalidOperationException("Cannot get a single-valued attribute value from GetValues");
+                }
+
+                return this.values.Cast<long>().ToList().AsReadOnly();
+            }
+        }
+
+        public ReadOnlyCollection<byte[]> BinaryValues
+        {
+            get
+            {
+                if (!this.IsMultivalued)
+                {
+                    throw new InvalidOperationException("Cannot get a single-valued attribute value from GetValues");
+                }
+
+                return this.values.Cast<byte[]>().ToList().AsReadOnly();
+            }
+        }
+
+        public ReadOnlyCollection<UniqueIdentifier> ReferenceValues
+        {
+            get
+            {
+                if (!this.IsMultivalued)
+                {
+                    throw new InvalidOperationException("Cannot get a single-valued attribute value from GetValues");
+                }
+
+                return this.values.Cast<UniqueIdentifier>().ToList().AsReadOnly();
+            }
+        }
+
+        public ReadOnlyCollection<DateTime> DateTimeValues
+        {
+            get
+            {
+                if (!this.IsMultivalued)
+                {
+                    throw new InvalidOperationException("Cannot get a single-valued attribute value from GetValues");
+                }
+
+                return this.values.Cast<DateTime>().ToList().AsReadOnly();
+            }
+        }
+
+        internal IList<string> GetSerializationValues()
         {
             List<string> values = new List<string>();
 
             if (this.IsMultivalued)
             {
-                foreach(object value in this.values)
+                foreach (object value in this.values)
                 {
                     values.Add(TypeConverter.ToString(value));
                 }
@@ -492,6 +611,7 @@ namespace Lithnet.ResourceManagement.Client
 
             return values;
         }
+
         public static bool operator ==(AttributeValue a, object b)
         {
             // If both are null, or both are same instance, return true.

@@ -18,7 +18,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         public UnsupportedDataTypeException(AttributeType expected, Type actual)
-            : base(string.Format("Cannot convert data from {0} to {1}", actual.Name, expected.ToString()))
+            : base(string.Format("Type {0} is not compatible with attribute data type {0}", actual.Name, expected.ToString()))
         {
         }
 

@@ -9,12 +9,15 @@ using System.ServiceModel.Channels;
 using Lithnet.ResourceManagement.Client.ResourceManagementService;
 using System.Xml.Schema;
 using System.ServiceModel;
+using System.Collections.ObjectModel;
 
 namespace Lithnet.ResourceManagement.Client
 {
     public static class Schema
     {
         public static Dictionary<string, ObjectTypeDefinition> ObjectTypes;
+
+        public static ReadOnlyCollection<string> MandatoryAttributes { get; private set; }
 
         private static object lockObject;
 
@@ -34,6 +37,8 @@ namespace Lithnet.ResourceManagement.Client
             Schema.ElementsToIgnore.Add("ReferenceCollectionType");
             Schema.ElementsToIgnore.Add("StringCollectionType");
             Schema.ElementsToIgnore.Add("TextCollectionType");
+
+            Schema.MandatoryAttributes = new ReadOnlyCollection<string>(new List<string>() { AttributeNames.ObjectType, AttributeNames.ObjectID });
         }
 
         public static void LoadSchema()

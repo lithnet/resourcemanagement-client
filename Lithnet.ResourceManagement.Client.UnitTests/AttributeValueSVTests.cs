@@ -255,7 +255,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object initialValue = testValue;
             object expectedValue = null;
 
-            this.ExecuteSVTestRemove(AttributeType.DateTime, initialValue, testValue, expectedValue, ModeType.Remove);
+            this.ExecuteSVTestRemove(AttributeType.DateTime, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
         // Single-valued Reference attributes
@@ -317,7 +317,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             UniqueIdentifier initialValue = new UniqueIdentifier("e945055f-96e7-431b-902f-e1ebd52d9253");
             UniqueIdentifier expectedValue = null;
           
-            this.ExecuteSVTestRemove(AttributeType.Reference, initialValue, testValue, expectedValue, ModeType.Remove);
+            this.ExecuteSVTestRemove(AttributeType.Reference, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
         // Single-valued binary attributes
@@ -465,10 +465,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 if (testValue is byte[])
                 {
                     CollectionAssert.AreEqual((byte[])(expectedValue), (byte[])change.Value);
-                }
-                else if (testValue is DateTime || testValue is UniqueIdentifier)
-                {
-                    Assert.AreEqual(initialValue, change.Value);
                 }
                 else
                 {

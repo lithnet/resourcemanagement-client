@@ -30,9 +30,12 @@ namespace Lithnet.ResourceManagement.Client
         {
             string newString = string.Empty;
 
-            foreach (string text in strings)
+            if (strings != null)
             {
-                newString = newString.AppendWithCommaSeparator(text);
+                foreach (string text in strings)
+                {
+                    newString = newString.AppendWithCommaSeparator(text);
+                }
             }
 
             return newString;

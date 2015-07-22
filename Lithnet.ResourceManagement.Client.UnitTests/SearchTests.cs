@@ -30,10 +30,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void SearchTestBatched()
         {
-            SearchClient c = new SearchClient();
-            c.Open();
+            ResourceManagementClient c = new ResourceManagementClient();
 
-            ISearchResults results = c.Enumerate("/Group", 200);
+            ISearchResults results = c.GetResources("/Group", 200);
             Debug.WriteLine("Getting {0} results", results.Count);
 
             foreach (ResourceObject o in results)
@@ -45,8 +44,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void SearchTestBatchedRestrictedAttributeList()
         {
-            SearchClient c = new SearchClient();
-            c.Open();
+            ResourceManagementClient c = new ResourceManagementClient();
+
 
             List<string> attributesToGet = new List<string>();
 
@@ -54,7 +53,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             attributesToGet.Add("ObjectType");
             attributesToGet.Add("DisplayName");
 
-            ISearchResults results = c.Enumerate("/Group", 200, attributesToGet);
+            ISearchResults results = c.GetResources("/Group", 200, attributesToGet);
             Debug.WriteLine("Getting {0} results", results.Count);
 
             foreach (ResourceObject o in results)

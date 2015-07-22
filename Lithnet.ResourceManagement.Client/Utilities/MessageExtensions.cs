@@ -78,11 +78,7 @@ namespace Lithnet.ResourceManagement.Client
             if (message.IsFault)
             {
                 MessageFault fault = MessageFault.CreateFault(message, Int32.MaxValue);
-
                 throw ServiceFaultTranslator.GetExceptionFromFaultMessage(fault);
-               
-                
-                //throw new FaultException(fault);
             }
         }
     }

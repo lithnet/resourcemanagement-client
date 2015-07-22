@@ -11,6 +11,8 @@ namespace Lithnet.ResourceManagement.Client
     {
         public const string FimServiceDateFormat = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff";
 
+        public const string FimServiceDateFormatZeroedMilliseconds = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'000";
+        
         public static bool ToBoolean(object value)
         {
             return Convert.ToBoolean(value);
@@ -18,7 +20,11 @@ namespace Lithnet.ResourceManagement.Client
 
         public static byte[] ToByte(object value)
         {
-            if (value is byte[])
+            if (value == null)
+            {
+                return null;
+            }
+            else if (value is byte[])
             {
                 return (byte[])value;
             }
@@ -50,7 +56,11 @@ namespace Lithnet.ResourceManagement.Client
 
         public static string ToString(object value)
         {
-            if (value is byte[])
+            if (value == null)
+            {
+                return null;
+            }
+            else if (value is byte[])
             {
                 return Convert.ToBase64String((byte[])value);
             }
@@ -74,7 +84,11 @@ namespace Lithnet.ResourceManagement.Client
 
         public static UniqueIdentifier ToUniqueIdentifier(object value)
         {
-            if (value is UniqueIdentifier)
+            if (value == null)
+            {
+                return null;
+            }
+            else if (value is UniqueIdentifier)
             {
                 return (UniqueIdentifier)value;
             }

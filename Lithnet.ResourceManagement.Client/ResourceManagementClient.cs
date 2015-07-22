@@ -108,6 +108,11 @@ namespace Lithnet.ResourceManagement.Client
 
         public void SaveResources(IEnumerable<ResourceObject> resourceObjects)
         {
+            if (resourceObjects.Any(t => t.ModificationType != OperationType.Update)) 
+            {
+                throw new InvalidOperationException("Batch operations can only be performed when all objects have a modification type of Update");
+            }
+
             this.resourceClient.Put(resourceObjects);
 
             foreach (ResourceObject resource in resourceObjects)
@@ -118,8 +123,28 @@ namespace Lithnet.ResourceManagement.Client
 
         public void SaveResource(ResourceObject resource)
         {
-            this.resourceClient.Put(resource);
-            resource.CommitChanges();
+            switch (resource.ModificationType)
+            {
+                case OperationType.None:
+                    return;
+
+                case OperationType.Create:
+                    this.CreateResource(resource);
+                    break;
+
+                case OperationType.Update:
+                    this.PutResource(resource);
+                    resource.CommitChanges();
+                    break;
+
+                case OperationType.Delete:
+                    this.DeleteResource(resource);
+                    break;
+
+                default:
+                    break;
+            }
+
         }
 
         public ResourceObject CreateResource(string objectType)
@@ -182,7 +207,7 @@ namespace Lithnet.ResourceManagement.Client
 
         public ResourceObject GetResourceByKey(string objectType, Dictionary<string, string> attributeValuePairs, IEnumerable<string> attributesToGet)
         {
-            string filter = XpathFilterBuilder.GetFilter(objectType, attributeValuePairs);
+            string filter = XpathFilterBuilder.GetAndFilterText(objectType, attributeValuePairs);
 
             if (attributesToGet == null)
             {

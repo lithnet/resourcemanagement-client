@@ -1,11 +1,12 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Lithnet.ResourceManagement.Client.ResourceManagementService;
-using Lithnet.ResourceManagement.Client;
-using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
-using Microsoft.ResourceManagement.WebServices;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Lithnet.ResourceManagement.Client;
+using Lithnet.ResourceManagement.Client.ResourceManagementService;
+using Microsoft.ResourceManagement.WebServices;
+using Microsoft.ResourceManagement.WebServices.Exceptions;
+using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
@@ -13,25 +14,194 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
     public class DeleteTests
     {
         [TestMethod]
-        public void DeleteTest1()
+        public void DeleteByID()
         {
-            ResourceClient c = new ResourceClient();
-            UniqueIdentifier user = new UniqueIdentifier("705176b7-368f-47f9-a7ee-5daf485d1ff5");
-            c.Open();
+            ResourceManagementClient client = new ResourceManagementClient();
 
-            c.Delete(user);
+            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            resource.Save();
+
+            client.DeleteResource(resource.ObjectID);
+
+            try
+            {
+                client.GetResource(resource.ObjectID);
+                Assert.Fail("The object was still present after the delete operation");
+            }
+            catch (ObjectNotFoundException)
+            {
+            }
         }
 
         [TestMethod]
-        public void CompositeDeleteTest()
+        public void DeleteByGuid()
         {
-            ResourceClient c = new ResourceClient();
-            UniqueIdentifier user1 = new UniqueIdentifier("46b37282-ad7e-4800-a466-b6a33b4af462");
-            UniqueIdentifier user2 = new UniqueIdentifier("671533cb-db0a-4736-91f8-231fdafdf10a");
-            c.Open();
+            ResourceManagementClient client = new ResourceManagementClient();
 
-            c.Delete(new List<UniqueIdentifier>() { user1, user2 });
+            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            resource.Save();
+
+            client.DeleteResource(resource.ObjectID.GetGuid());
+
+            try
+            {
+                client.GetResource(resource.ObjectID);
+                Assert.Fail("The object was still present after the delete operation");
+            }
+            catch (ObjectNotFoundException)
+            {
+            }
         }
 
+        [TestMethod]
+        public void DeleteByString()
+        {
+            ResourceManagementClient client = new ResourceManagementClient();
+
+            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            resource.Save();
+
+            client.DeleteResource(resource.ObjectID.Value);
+
+            try
+            {
+                client.GetResource(resource.ObjectID);
+                Assert.Fail("The object was still present after the delete operation");
+            }
+            catch (ObjectNotFoundException)
+            {
+            }
+        }
+
+        [TestMethod]
+        public void DeleteByObject()
+        {
+            ResourceManagementClient client = new ResourceManagementClient();
+
+            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            resource.Save();
+
+            client.DeleteResource(resource);
+
+            try
+            {
+                client.GetResource(resource.ObjectID);
+                Assert.Fail("The object was still present after the delete operation");
+            }
+            catch (ObjectNotFoundException)
+            {
+            }
+        }
+
+        [TestMethod]
+        public void DeleteByStringNonExistant()
+        {
+            ResourceManagementClient client = new ResourceManagementClient();
+
+            try
+            {
+                client.DeleteResource("f970bdf5-7b41-4618-82e6-ff16d34d2e41");
+                Assert.Fail("The expected exception was not thrown");
+            }
+            catch (PermissionDeniedException)
+            {
+            }
+        }
+
+        [TestMethod]
+        public void CompositeDeleteByObjectTest()
+        {
+            ResourceManagementClient client = new ResourceManagementClient();
+
+            ResourceObject resource1 = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            resource1.Save();
+            resource1 = client.GetResource(resource1.ObjectID);
+
+            ResourceObject resource2 = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            resource2.Save();
+            resource2 = client.GetResource(resource2.ObjectID);
+
+            ResourceObject resource3 = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            resource3.Save();
+            resource3 = client.GetResource(resource3.ObjectID);
+
+            client.DeleteResources(new List<ResourceObject>() { resource1, resource2, resource3 });
+
+            try
+            {
+                client.GetResource(resource1.ObjectID);
+                Assert.Fail("The object was still present after the delete operation");
+            }
+            catch (ObjectNotFoundException)
+            {
+            }
+
+            try
+            {
+                client.GetResource(resource2.ObjectID);
+                Assert.Fail("The object was still present after the delete operation");
+            }
+            catch (ObjectNotFoundException)
+            {
+            }
+
+            try
+            {
+                client.GetResource(resource3.ObjectID);
+                Assert.Fail("The object was still present after the delete operation");
+            }
+            catch (ObjectNotFoundException)
+            {
+            }
+
+        }
+
+        [TestMethod]
+        public void CompositeDeleteByIDTest()
+        {
+            ResourceManagementClient client = new ResourceManagementClient();
+
+            ResourceObject resource1 = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            resource1.Save();
+            resource1 = client.GetResource(resource1.ObjectID);
+
+            ResourceObject resource2 = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            resource2.Save();
+            resource2 = client.GetResource(resource2.ObjectID);
+
+            ResourceObject resource3 = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            resource3.Save();
+            resource3 = client.GetResource(resource3.ObjectID);
+
+            client.DeleteResources(new List<UniqueIdentifier>() { resource1.ObjectID, resource2.ObjectID, resource3.ObjectID });
+
+            try
+            {
+                client.GetResource(resource1.ObjectID);
+                Assert.Fail("The object was still present after the delete operation");
+            }
+            catch (ObjectNotFoundException)
+            {
+            }
+
+            try
+            {
+                client.GetResource(resource2.ObjectID);
+                Assert.Fail("The object was still present after the delete operation");
+            }
+            catch (ObjectNotFoundException)
+            {
+            }
+
+            try
+            {
+                client.GetResource(resource3.ObjectID);
+                Assert.Fail("The object was still present after the delete operation");
+            }
+            catch (ObjectNotFoundException)
+            {
+            }
+
+        }
     }
 }
