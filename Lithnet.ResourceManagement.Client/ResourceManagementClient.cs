@@ -279,7 +279,6 @@
             return this.GetResource(new UniqueIdentifier(id), attributesToGet);
         }
 
-
         /// <summary>
         /// Gets a resource from the resource management service, retrieving all attributes for the resource
         /// </summary>

@@ -28,6 +28,11 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
             using (Message message = MessageComposer.CreatePutMessage(resource))
             {
+                if (message == null)
+                {
+                    return;
+                }
+
                 using (Message responseMessage = this.Invoke((c) => c.Put(message)))
                 {
                     responseMessage.ThrowOnFault();
@@ -44,6 +49,11 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
             using (Message message = MessageComposer.CreatePutMessage(resources))
             {
+                if (message == null)
+                {
+                    return;
+                }
+
                 using (Message responseMessage = this.Invoke((c) => c.Put(message)))
                 {
                     responseMessage.ThrowOnFault();

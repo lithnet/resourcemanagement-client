@@ -1,0 +1,14 @@
+﻿<?xml version="1.0"?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <configSections>
+    <section name="lithnetResourceManagementClient"
+             type="Lithnet.ResourceManagement.Client.ClientConfigurationSection, Lithnet.ResourceManagement.Client"
+             xdt:Transform="InsertIfMissing"
+             xdt:Locator="Match(name)"/>
+  </configSections>
+
+  <lithnetResourceManagementClient
+    resourceManagementServiceBaseAddress="http://localhost:5725"
+    xdt:Transform="InsertIfMissing"/>
+</configuration>
+

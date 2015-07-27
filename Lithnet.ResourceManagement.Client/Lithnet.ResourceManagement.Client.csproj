@@ -46,9 +46,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.ResourceManagement">
+    <Reference Include="Microsoft.ResourceManagement, Version=4.1.3634.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>\\idm-d1ps1-v02\c$\Program Files\Microsoft Forefront Identity Manager\2010\Service\Microsoft.ResourceManagement.dll</HintPath>
+      <HintPath>..\lib\Microsoft.ResourceManagement.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -111,12 +111,10 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Package\web.config.transform">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Package\app.config.transform">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="Package\web.config.uninstall.xdt" />
+    <None Include="Package\web.config.install.xdt" />
+    <None Include="Package\app.config.uninstall.xdt" />
+    <None Include="Package\app.config.install.xdt" />
     <None Include="Package\Lithnet.ResourceManagement.Client.nuspec" />
     <None Include="Properties\DataSources\System.ServiceModel.Channels.Message.datasource" />
     <None Include="Service References\ResourceManagementService\addressing.xsd">

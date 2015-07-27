@@ -78,6 +78,11 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             op.Dialect = Namespaces.RMIdentityAttributeType;
             op.Fragments = resource.GetPutFragements().ToArray();
 
+            if (op.Fragments == null || op.Fragments.Length == 0)
+            {
+                return null;
+            }
+
             Message message;
 
             message = Message.CreateMessage(MessageVersion.Default, Namespaces.Put, new SerializerBodyWriter(op));
@@ -110,6 +115,11 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                     fragment.TargetIdentifier = resource.ObjectID.Value;
                     fragments.Add(fragment);
                 }
+            }
+
+            if (fragments.Count == 0)
+            {
+                return null;
             }
 
             op.Fragments = fragments.ToArray();

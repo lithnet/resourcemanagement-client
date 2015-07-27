@@ -12,7 +12,7 @@
         <tags>FIM FIM2010 FIMService FIM2010R2</tags>
     </metadata>
     <files>
-      <file src="Package\app.config.transform" target="content\app.config.transform" />
-      <file src="Package\web.config.transform" target="content\web.config.transform" />
+      <file src="Package\app.config.install.xdt" target="Content\app.config.install.xdt" />
+      <file src="Package\app.config.uninstall.xdt" target="Content\app.config.uninstall.xdt" />
     </files>
 </package>
