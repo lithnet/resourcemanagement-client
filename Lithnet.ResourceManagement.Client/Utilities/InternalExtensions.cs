@@ -19,7 +19,7 @@ namespace Lithnet.ResourceManagement.Client
     /// <summary>
     /// Defines extension methods used in the application
     /// </summary>
-    internal static class GenericExtensions
+    internal static class InternalExtensions
     {
         /// <summary>
         /// Converts an enumeration of strings into a comma separated list
@@ -45,14 +45,15 @@ namespace Lithnet.ResourceManagement.Client
         /// Converts an enumeration of strings into a comma separated list
         /// </summary>
         /// <param name="strings">The enumeration of string objects</param>
+        /// <param name="separator">The character or string to use to separate the strings</param>
         /// <returns>The comma separated list of strings</returns>
-        public static string ToSeparatedString(this IEnumerable<string> strings, string seperator)
+        public static string ToSeparatedString(this IEnumerable<string> strings, string separator)
         {
             string newString = string.Empty;
 
             foreach (string text in strings)
             {
-                newString = newString.AppendWithSeparator(seperator, text);
+                newString = newString.AppendWithSeparator(separator, text);
             }
 
             return newString;
@@ -102,15 +103,16 @@ namespace Lithnet.ResourceManagement.Client
         /// Appends two string together with a comma and a space
         /// </summary>
         /// <param name="text">The original string</param>
+        /// <param name="separator">The character or string to use to separate the strings</param>
         /// <param name="textToAppend">The string to append</param>
         /// <returns>The concatenated string</returns>
-        public static string AppendWithSeparator(this string text, string seperator, string textToAppend)
+        public static string AppendWithSeparator(this string text, string separator, string textToAppend)
         {
             string newString = string.Empty;
 
             if (!string.IsNullOrWhiteSpace(text))
             {
-                text += seperator;
+                text += separator;
             }
             else
             {
@@ -197,6 +199,12 @@ namespace Lithnet.ResourceManagement.Client
             }
         }
 
+        /// <summary>
+        /// Truncates a string to the specified length
+        /// </summary>
+        /// <param name="obj">The string to truncate</param>
+        /// <param name="totalLength">The length to truncate to</param>
+        /// <returns></returns>
         public static string TruncateString(this string obj, int totalLength)
         {
             if (string.IsNullOrWhiteSpace(obj))
@@ -206,7 +214,7 @@ namespace Lithnet.ResourceManagement.Client
 
             if (totalLength <= 3)
             {
-                throw new ArgumentException("totalLength", "The maxlength value must be greater than 3");
+                throw new ArgumentException("The maxlength value must be greater than 3", "totalLength");
             }
 
             if (obj.Length > totalLength)
@@ -251,6 +259,11 @@ namespace Lithnet.ResourceManagement.Client
             return new DateTime(date.Ticks - (date.Ticks % resolution), date.Kind);
         }
 
+        /// <summary>
+        /// Disables the context manager for the specified client
+        /// </summary>
+        /// <typeparam name="T">The type of client proxy</typeparam>
+        /// <param name="client">The client proxy to disable the context manager for</param>
         public static void DisableContextManager<T>(this ClientBase<T> client)  where T : class
         {
                IContextManager property = client.ChannelFactory.GetProperty<IContextManager>();

@@ -18,7 +18,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             ResourceManagementClient c = new ResourceManagementClient();
             System.Threading.CancellationTokenSource source = new System.Threading.CancellationTokenSource();
 
-            ISearchResults results = c.GetResources("/Group", 200, source);
+            ISearchResultCollection results = c.GetResources("/Group", 200, source);
             Debug.WriteLine("Getting {0} results", results.Count);
 
             foreach (ResourceObject o in results)
@@ -32,7 +32,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             ResourceManagementClient c = new ResourceManagementClient();
 
-            ISearchResults results = c.GetResources("/Group", 200);
+            ISearchResultCollection results = c.GetResources("/Group", 200);
             Debug.WriteLine("Getting {0} results", results.Count);
 
             foreach (ResourceObject o in results)
@@ -53,7 +53,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             attributesToGet.Add("ObjectType");
             attributesToGet.Add("DisplayName");
 
-            ISearchResults results = c.GetResources("/Group", 200, attributesToGet);
+            ISearchResultCollection results = c.GetResources("/Group", 200, attributesToGet);
             Debug.WriteLine("Getting {0} results", results.Count);
 
             foreach (ResourceObject o in results)

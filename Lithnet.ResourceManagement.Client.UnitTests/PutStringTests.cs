@@ -92,6 +92,37 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         }
 
         [TestMethod]
+        public void ModifyStringSVNoUpdate()
+        {
+            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceObject resource = null;
+
+            try
+            {
+                // Create the empty object
+                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                resource.Attributes[UnitTestHelper.AttributeStringSV].SetValue(UnitTestHelper.TestDataString1);
+                client.SaveResource(resource);
+
+                // Re-get the object 
+                resource = client.GetResource(resource.ObjectID);
+
+                // Make the changes
+                resource.Attributes[UnitTestHelper.AttributeStringSV].SetValue(UnitTestHelper.TestDataString1);
+                Assert.AreEqual(0, resource.PendingChanges.Count);
+                Assert.AreEqual(UnitTestHelper.TestDataString1, resource.Attributes[UnitTestHelper.AttributeStringSV].StringValue);
+            }
+            finally
+            {
+                if (resource != null && !resource.IsPlaceHolder)
+                {
+                    client.DeleteResource(resource);
+                }
+            }
+        }
+
+
+        [TestMethod]
         public void DeleteStringSV()
         {
             ResourceManagementClient client = new ResourceManagementClient();

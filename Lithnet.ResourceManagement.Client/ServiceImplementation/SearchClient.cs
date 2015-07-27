@@ -20,42 +20,42 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             this.client = client;
         }
 
-        public ISearchResults Enumerate(string filter)
+        public ISearchResultCollection Enumerate(string filter)
         {
             return this.Enumerate(filter, -1, null, null);
         }
 
-        public ISearchResults Enumerate(string filter, int pageSize)
+        public ISearchResultCollection Enumerate(string filter, int pageSize)
         {
             return this.Enumerate(filter, pageSize, null, null);
         }
 
-        public ISearchResults Enumerate(string filter, IEnumerable<string> attributesToReturn)
+        public ISearchResultCollection Enumerate(string filter, IEnumerable<string> attributesToReturn)
         {
             return this.Enumerate(filter, -1, attributesToReturn, null);
         }
 
-        public ISearchResults Enumerate(string filter, CancellationTokenSource cancellationToken)
+        public ISearchResultCollection Enumerate(string filter, CancellationTokenSource cancellationToken)
         {
             return this.Enumerate(filter, -1, null, cancellationToken);
         }
 
-        public ISearchResults Enumerate(string filter, int pageSize, CancellationTokenSource cancellationToken)
+        public ISearchResultCollection Enumerate(string filter, int pageSize, CancellationTokenSource cancellationToken)
         {
             return this.Enumerate(filter, pageSize, null, cancellationToken);
         }
 
-        public ISearchResults Enumerate(string filter, int pageSize, IEnumerable<string> attributesToReturn)
+        public ISearchResultCollection Enumerate(string filter, int pageSize, IEnumerable<string> attributesToReturn)
         {
             return this.Enumerate(filter, pageSize, attributesToReturn, null);
         }
 
-        public ISearchResults Enumerate(string filter, IEnumerable<string> attributesToReturn, CancellationTokenSource cancellationToken)
+        public ISearchResultCollection Enumerate(string filter, IEnumerable<string> attributesToReturn, CancellationTokenSource cancellationToken)
         {
             return this.Enumerate(filter, -1, attributesToReturn, cancellationToken);
         }
 
-        public ISearchResults Enumerate(string filter, int pageSize, IEnumerable<string> attributesToReturn, CancellationTokenSource cancellationToken)
+        public ISearchResultCollection Enumerate(string filter, int pageSize, IEnumerable<string> attributesToReturn, CancellationTokenSource cancellationToken)
         {
             if (pageSize < 0)
             {
@@ -72,11 +72,11 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
                     if (cancellationToken != null)
                     {
-                        return new SearchResultsAsync(response, pageSize, this, cancellationToken.Token, this.client);
+                        return new SearchResultCollectionAsync(response, pageSize, this, cancellationToken.Token, this.client);
                     }
                     else
                     {
-                        return new SearchResults(response, pageSize, this, this.client);
+                        return new SearchResultCollection(response, pageSize, this, this.client);
                     }
                 }
             }

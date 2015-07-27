@@ -25,6 +25,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\Lithnet.ResourceManagement.Client.XML</DocumentationFile>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -62,7 +64,7 @@
   <ItemGroup>
     <Compile Include="Enums\OperationType.cs" />
     <Compile Include="Exceptions\NoSuchAttributeException.cs" />
-    <Compile Include="Exceptions\ObjectNotFoundException.cs" />
+    <Compile Include="Exceptions\ResourceNotFoundException.cs" />
     <Compile Include="ResourceManagementClientPool.cs" />
     <Compile Include="Schema\AttributeNames.cs" />
     <Compile Include="Schema\AttributeValue.cs" />
@@ -76,12 +78,12 @@
     <Compile Include="ServiceImplementation\ClientConfigurationSection.cs" />
     <Compile Include="ServiceImplementation\EndpointManager.cs" />
     <Compile Include="ServiceImplementation\HeaderConstants.cs" />
-    <Compile Include="ServiceImplementation\ISearchResults.cs" />
+    <Compile Include="ServiceImplementation\ISearchResultCollection.cs" />
     <Compile Include="ServiceImplementation\Namespaces.cs" />
     <Compile Include="ServiceImplementation\SearchClient.cs" />
     <Compile Include="ServiceImplementation\ResourceFactoryClient.cs" />
-    <Compile Include="ServiceImplementation\SearchResultsAsync.cs" />
-    <Compile Include="ServiceImplementation\SearchResults.cs" />
+    <Compile Include="ServiceImplementation\SearchResultCollectionAsync.cs" />
+    <Compile Include="ServiceImplementation\SearchResultCollection.cs" />
     <Compile Include="ServiceImplementation\ServiceFaultTranslator.cs" />
     <Compile Include="Utilities\AttributeValueEqualityComparer.cs" />
     <Compile Include="Enums\AttributeType.cs" />
@@ -89,7 +91,7 @@
     <Compile Include="Exceptions\ReadOnlyValueModificationException.cs" />
     <Compile Include="Schema\AttributeTypeDefinition.cs" />
     <Compile Include="Schema\ObjectTypeDefinition.cs" />
-    <Compile Include="Schema\Schema.cs" />
+    <Compile Include="Schema\ResourceManagementSchema.cs" />
     <Compile Include="Service References\ResourceManagementService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -99,7 +101,7 @@
     <Compile Include="ServiceImplementation\ResourceClient.cs" />
     <Compile Include="ServiceImplementation\SerializerBodyWriter.cs" />
     <Compile Include="Utilities\Extensions.cs" />
-    <Compile Include="Utilities\GenericExtensions.cs" />
+    <Compile Include="Utilities\InternalExtensions.cs" />
     <Compile Include="Utilities\TypeConverter.cs" />
     <Compile Include="Exceptions\UnsupportedDataTypeException.cs" />
     <Compile Include="Utilities\MessageExtensions.cs" />

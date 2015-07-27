@@ -28,7 +28,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 client.GetResource(resource.ObjectID);
                 Assert.Fail("The object was still present after the delete operation");
             }
-            catch (ObjectNotFoundException)
+            catch (ResourceNotFound)
             {
             }
         }
@@ -48,7 +48,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 client.GetResource(resource.ObjectID);
                 Assert.Fail("The object was still present after the delete operation");
             }
-            catch (ObjectNotFoundException)
+            catch (ResourceNotFound)
             {
             }
         }
@@ -68,7 +68,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 client.GetResource(resource.ObjectID);
                 Assert.Fail("The object was still present after the delete operation");
             }
-            catch (ObjectNotFoundException)
+            catch (ResourceNotFound)
             {
             }
         }
@@ -88,7 +88,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 client.GetResource(resource.ObjectID);
                 Assert.Fail("The object was still present after the delete operation");
             }
-            catch (ObjectNotFoundException)
+            catch (ResourceNotFound)
             {
             }
         }
@@ -132,7 +132,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 client.GetResource(resource1.ObjectID);
                 Assert.Fail("The object was still present after the delete operation");
             }
-            catch (ObjectNotFoundException)
+            catch (ResourceNotFound)
             {
             }
 
@@ -141,7 +141,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 client.GetResource(resource2.ObjectID);
                 Assert.Fail("The object was still present after the delete operation");
             }
-            catch (ObjectNotFoundException)
+            catch (ResourceNotFound)
             {
             }
 
@@ -150,7 +150,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 client.GetResource(resource3.ObjectID);
                 Assert.Fail("The object was still present after the delete operation");
             }
-            catch (ObjectNotFoundException)
+            catch (ResourceNotFound)
             {
             }
 
@@ -180,7 +180,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 client.GetResource(resource1.ObjectID);
                 Assert.Fail("The object was still present after the delete operation");
             }
-            catch (ObjectNotFoundException)
+            catch (ResourceNotFound)
             {
             }
 
@@ -189,7 +189,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 client.GetResource(resource2.ObjectID);
                 Assert.Fail("The object was still present after the delete operation");
             }
-            catch (ObjectNotFoundException)
+            catch (ResourceNotFound)
             {
             }
 
@@ -198,7 +198,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 client.GetResource(resource3.ObjectID);
                 Assert.Fail("The object was still present after the delete operation");
             }
-            catch (ObjectNotFoundException)
+            catch (ResourceNotFound)
             {
             }
 

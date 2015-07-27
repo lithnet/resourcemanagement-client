@@ -8,26 +8,59 @@ using System.Xml;
 
 namespace Lithnet.ResourceManagement.Client
 {
+    /// <summary>
+    /// Defines an attribute type in the Resource Management Service schema
+    /// </summary>
     public class AttributeTypeDefinition
     {
+        /// <summary>
+        /// Gets a value that indicates whether the attribute is required
+        /// </summary>
         public bool IsRequired { get; private set; }
 
+        /// <summary>
+        /// Gets the data type of the attribute
+        /// </summary>
         public AttributeType Type { get; private set; }
 
+        /// <summary>
+        /// Gets the system name of the attribute
+        /// </summary>
         public string SystemName { get; private set; }
 
+        /// <summary>
+        /// Gets the display name of the attribute
+        /// </summary>
         public string DisplayName { get; private set; }
 
+        /// <summary>
+        /// Gets the description of the attribute
+        /// </summary>
         public string Description { get; private set; }
 
+        /// <summary>
+        /// Gets a value indicating whether this attribute is multivalued or single-valued
+        /// </summary>
         public bool IsMultivalued { get; private set; }
 
+        /// <summary>
+        /// Gets a value indicating whether this attribute is read only
+        /// </summary>
         public bool IsReadOnly { get; private set; }
 
+        /// <summary>
+        /// Gets the regular expression valued to validate the correctness of this attribute
+        /// </summary>
         public string Regex { get; private set; }
 
+        /// <summary>
+        /// Gets or sets the list of attribute names that are always read-only in the schema
+        /// </summary>
         private static List<string> ReadOnlyAttributeNames { get; set; }
 
+        /// <summary>
+        /// Initializes the static instance of the AttributeTypeDefinition class
+        /// </summary>
         static AttributeTypeDefinition()
         {
             AttributeTypeDefinition.ReadOnlyAttributeNames = new List<string>();
@@ -42,6 +75,14 @@ namespace Lithnet.ResourceManagement.Client
             AttributeTypeDefinition.ReadOnlyAttributeNames.Add("ComputedActor");
         }
 
+        /// <summary>
+        /// Initializes an instance of the AttributeTypeDefinititon class
+        /// </summary>
+        /// <param name="systemName">The system name of the attribute</param>
+        /// <param name="type">The data type of the attribute</param>
+        /// <param name="isMultivalued">A value indicating if the attribute is multivalued or single-valued</param>
+        /// <param name="isReadOnly">A value indicating if the attribute is read only</param>
+        /// <param name="isRequired">A value indicating if the attribute is required</param>
         internal AttributeTypeDefinition(string systemName, AttributeType type, bool isMultivalued, bool isReadOnly, bool isRequired)
         {
             this.SystemName = systemName;
@@ -52,6 +93,10 @@ namespace Lithnet.ResourceManagement.Client
             this.Type = type;
         }
 
+        /// <summary>
+        /// Initializes an instance of the AttributeTypeDefinition class from its XML schema definition
+        /// </summary>
+        /// <param name="schemaObject">The XML definition of the attribute</param>
         internal AttributeTypeDefinition(XmlSchemaElement schemaObject)
         {
             XmlSchemaElement element = schemaObject as XmlSchemaElement;
@@ -98,6 +143,10 @@ namespace Lithnet.ResourceManagement.Client
             }
         }
 
+        /// <summary>
+        /// Gets the basic details of the attribute from the XML schema annotation object
+        /// </summary>
+        /// <param name="annotation">The XML schema annotation containing the basic details of the attribute</param>
         private void GetAttributeDetails(XmlSchemaAnnotation annotation)
         {
             XmlSchemaObjectCollection items = annotation.Items;
@@ -118,6 +167,10 @@ namespace Lithnet.ResourceManagement.Client
             }
         }
 
+        /// <summary>
+        /// Gets the definition of the attribute from an XML schema simple type
+        /// </summary>
+        /// <param name="type">The XML schema simple type representing this attribute</param>
         private void LoadSimpleType(XmlSchemaSimpleType type)
         {
             XmlSchemaSimpleTypeRestriction restriction = type.Content as XmlSchemaSimpleTypeRestriction;
@@ -163,6 +216,10 @@ namespace Lithnet.ResourceManagement.Client
             }
         }
 
+        /// <summary>
+        /// Gets the definition of the attribute from an XML complex type
+        /// </summary>
+        /// <param name="type">The XML schema complex type representing this attribute</param>
         private void LoadComplexType(XmlQualifiedName type)
         {
             string typeName = type.Name;
@@ -237,6 +294,11 @@ namespace Lithnet.ResourceManagement.Client
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether the XML schema annotation contains an annotation describing this attribute as a string type
+        /// </summary>
+        /// <param name="annotation">The XML schema annotation to inspect</param>
+        /// <returns></returns>
         private static bool HasStringAnnotation(XmlSchemaAnnotation annotation)
         {
             XmlSchemaObjectCollection items = annotation.Items;
@@ -267,6 +329,10 @@ namespace Lithnet.ResourceManagement.Client
             return false;
         }
 
+        /// <summary>
+        /// Gets the system name of this attribute
+        /// </summary>
+        /// <returns>A string representing the system name of the attribute</returns>
         public override string ToString()
         {
             return this.SystemName;

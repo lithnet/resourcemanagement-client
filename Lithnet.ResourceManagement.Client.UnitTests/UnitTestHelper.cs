@@ -156,7 +156,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             UnitTestHelper.CreateBindingIfDoesntExist(objectClass, svBooleanAttribute);
             UnitTestHelper.CreateBindingIfDoesntExist(objectClass, accountNameAttribute);
 
-            Schema.RefreshSchema();
+            ResourceManagementSchema.RefreshSchema();
 
         }
 
@@ -381,7 +381,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 }
                 else
                 {
-                    if (Schema.MandatoryAttributes.Contains(value.AttributeName))
+                    if (ResourceManagementSchema.MandatoryAttributes.Contains(value.AttributeName))
                     {
                         continue;
                     }

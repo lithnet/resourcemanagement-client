@@ -10,16 +10,35 @@ using System.Xml;
 
 namespace Lithnet.ResourceManagement.Client
 {
-    public class ObjectTypeDefinition : IEnumerable<AttributeTypeDefinition>
+    /// <summary>
+    /// Defines an object type from the Resource Management Service schema and its associated attributes
+    /// </summary>
+    public class ObjectTypeDefinition 
     {
+        /// <summary>
+        /// Gets the system name of the object type
+        /// </summary>
         public string SystemName { get; private set; }
 
+        /// <summary>
+        /// Gets the display name of the object type
+        /// </summary>
         public string DisplayName { get; private set; }
 
+        /// <summary>
+        /// Gets the description of the object type
+        /// </summary>
         public string Description { get; private set; }
 
-        private ReadOnlyCollection<AttributeTypeDefinition> Attributes { get; set; }
+        /// <summary>
+        /// The read-only collection of attributes types associated with this object class
+        /// </summary>
+        public ReadOnlyCollection<AttributeTypeDefinition> Attributes { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the ObjectTypeDefinition class
+        /// </summary>
+        /// <param name="complexType">The XML definition of the object type</param>
         internal ObjectTypeDefinition(XmlSchemaComplexType complexType)
         {
             XmlSchemaSequence sequence = complexType.Particle as XmlSchemaSequence;
@@ -45,6 +64,11 @@ namespace Lithnet.ResourceManagement.Client
             this.Attributes = new ReadOnlyCollection<AttributeTypeDefinition>(attributes);
         }
 
+        /// <summary>
+        /// Gets the definition of an attribute by its name
+        /// </summary>
+        /// <param name="attributeName">The name of the attribute</param>
+        /// <returns>An AttributeTypeDefinition for the specified attribute, or null if the attribute doesn't exist on the object type</returns>
         public AttributeTypeDefinition this[string attributeName]
         {
             get
@@ -59,6 +83,10 @@ namespace Lithnet.ResourceManagement.Client
             }
         }
 
+        /// <summary>
+        /// Parses the basic details of the object type from its XML definition
+        /// </summary>
+        /// <param name="annotation">The XmlSchemaAnnotation containing the basic details of the object type</param>
         private void GetObjectTypeDetails(XmlSchemaAnnotation annotation)
         {
             XmlSchemaObjectCollection items = annotation.Items;
@@ -79,16 +107,10 @@ namespace Lithnet.ResourceManagement.Client
             }
         }
 
-        public IEnumerator<AttributeTypeDefinition> GetEnumerator()
-        {
-            return this.Attributes.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.Attributes.GetEnumerator();
-        }
-
+        /// <summary>
+        /// Gets the system name of the object type
+        /// </summary>
+        /// <returns>A string containing the system name of the object type</returns>
         public override string ToString()
         {
             return this.SystemName;

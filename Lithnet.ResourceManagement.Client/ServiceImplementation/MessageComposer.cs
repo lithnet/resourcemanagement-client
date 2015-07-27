@@ -201,7 +201,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                 set.Add(attribute);
             }
 
-            foreach(string item in Schema.MandatoryAttributes)
+            foreach(string item in ResourceManagementSchema.MandatoryAttributes)
             {
                 set.Add(item);
             }

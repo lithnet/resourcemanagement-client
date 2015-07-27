@@ -7,7 +7,7 @@ using System.Collections.Concurrent;
 
 namespace Lithnet.ResourceManagement.Client
 {
-    public static class ResourceManagementClientPool
+    internal static class ResourceManagementClientPool
     {
         private static ConcurrentBag<ResourceManagementClient> pool = new ConcurrentBag<ResourceManagementClient>();
 

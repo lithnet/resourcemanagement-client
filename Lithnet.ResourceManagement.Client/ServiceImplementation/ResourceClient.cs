@@ -88,6 +88,11 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
         public void Delete(IEnumerable<UniqueIdentifier> resourceIDs)
         {
+            if (!resourceIDs.Any())
+            {
+                return;
+            }
+
             using (Message message = MessageComposer.CreateDeleteMessage(resourceIDs))
             {
                 using (Message responseMessage = this.Invoke((c) => c.Delete(message)))
