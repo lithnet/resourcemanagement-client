@@ -106,26 +106,5 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                 }
             }
         }
-
-
-        public T Invoke<T>(Func<Search, T> action)
-        {
-
-            Search c = this.ChannelFactory.CreateChannel();
-            T returnValue;
-
-            try
-            {
-                ((IClientChannel)c).Open();
-                returnValue = action(c);
-                ((IClientChannel)c).Close();
-                return returnValue;
-            }
-            catch
-            {
-                ((IClientChannel)c).Abort();
-                throw;
-            }
-        }
     }
 }

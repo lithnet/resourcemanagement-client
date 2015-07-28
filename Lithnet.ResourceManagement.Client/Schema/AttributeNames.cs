@@ -118,6 +118,11 @@ namespace Lithnet.ResourceManagement.Client
         /// The Required attribute
         /// </summary>
         public const string Required = "Required";
+
+        /// <summary>
+        /// The Member attribute
+        /// </summary>
+        public const string Member = "Member";
     }
 }
 

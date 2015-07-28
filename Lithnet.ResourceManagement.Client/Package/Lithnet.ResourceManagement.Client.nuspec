@@ -14,5 +14,7 @@
     <files>
       <file src="Package\app.config.install.xdt" target="Content\app.config.install.xdt" />
       <file src="Package\app.config.uninstall.xdt" target="Content\app.config.uninstall.xdt" />
+      <file src="Package\web.config.install.xdt" target="Content\web.config.install.xdt" />
+      <file src="Package\web.config.uninstall.xdt" target="Content\web.config.uninstall.xdt" />
     </files>
 </package>

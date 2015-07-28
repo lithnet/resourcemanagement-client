@@ -246,7 +246,7 @@ namespace Lithnet.ResourceManagement.Client
 
             return list1.Intersect(list2).Count() == list1.Count;
         }
-      
+
         /// <summary>
         /// <para>Truncates a DateTime to a specified resolution.</para>
         /// <para>A convenient source for resolution is TimeSpan.TicksPerXXXX constants.</para>
@@ -264,13 +264,33 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <typeparam name="T">The type of client proxy</typeparam>
         /// <param name="client">The client proxy to disable the context manager for</param>
-        public static void DisableContextManager<T>(this ClientBase<T> client)  where T : class
+        public static void DisableContextManager<T>(this ClientBase<T> client) where T : class
         {
-               IContextManager property = client.ChannelFactory.GetProperty<IContextManager>();
-               if (property != null)
-               {
-                   property.Enabled = false;
-               }
+            IContextManager property = client.ChannelFactory.GetProperty<IContextManager>();
+            if (property != null)
+            {
+                property.Enabled = false;
+            }
+        }
+
+        public static T Invoke<T, T1>(this ClientBase<T1> client, Func<T1, T> action) where T1 : class
+        {
+
+            T1 c = client.ChannelFactory.CreateChannel();
+            T returnValue;
+
+            try
+            {
+                ((IClientChannel)c).Open();
+                returnValue = action(c);
+                ((IClientChannel)c).Close();
+                return returnValue;
+            }
+            catch
+            {
+                ((IClientChannel)c).Abort();
+                throw;
+            }
         }
     }
 }

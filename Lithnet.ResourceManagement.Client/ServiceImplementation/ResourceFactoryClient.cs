@@ -44,24 +44,5 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                 throw new InvalidRepresentationException(e.Detail.AttributeRepresentationFailures[0].AttributeFailureCode, e.Detail.AttributeRepresentationFailures[0].AttributeType, e.Detail.AttributeRepresentationFailures[0].AttributeValue);
             }
         }
-
-        public T Invoke<T>(Func<ResourceFactory, T> action)
-        {
-            ResourceFactory c = this.ChannelFactory.CreateChannel();
-            T returnValue;
-
-            try
-            {
-                ((IClientChannel)c).Open();
-                returnValue = action(c);
-                ((IClientChannel)c).Close();
-                return returnValue;
-            }
-            catch
-            {
-                ((IClientChannel)c).Abort();
-                throw;
-            }
-        }
     }
 }
