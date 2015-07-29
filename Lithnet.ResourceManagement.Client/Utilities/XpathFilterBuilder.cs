@@ -8,7 +8,7 @@ namespace Lithnet.ResourceManagement.Client
     /// <summary>
     /// A utility class that provides the ability to build XPath queries
     /// </summary>
-    public static class XpathFilterBuilder
+    public static class XPathFilterBuilder
     {
         /// <summary>
         /// Creates an XPath filter for the specified object type and attribute value pair
@@ -21,7 +21,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             Dictionary<string, string> dictionary = new Dictionary<string,string>();
             dictionary.Add(attributeName, attributeValue);
-            return XpathFilterBuilder.CreateAndFilter(objectType, dictionary);
+            return XPathFilterBuilder.CreateAndFilter(objectType, dictionary);
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>An XPath query string</returns>
         public static string CreateAndFilter(string objectType, Dictionary<string, string> keyValuePairs)
         {
-            return XpathFilterBuilder.CreateFilter(objectType, "and", keyValuePairs);
+            return XPathFilterBuilder.CreateFilter(objectType, QueryOperator.And, XPathFilterBuilder.DictionaryToPredicates(keyValuePairs, XPathOperator.Equals));
         }
 
         /// <summary>
@@ -43,35 +43,61 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>An XPath query string</returns>
         public static string CreateOrFilter(string objectType, Dictionary<string, string> keyValuePairs)
         {
-            return XpathFilterBuilder.CreateFilter(objectType, "or", keyValuePairs);
+            return XPathFilterBuilder.CreateFilter(objectType, QueryOperator.Or, XPathFilterBuilder.DictionaryToPredicates(keyValuePairs, XPathOperator.Equals));
+        }
+        
+        internal static IEnumerable<XPathFilterPredicate> DictionaryToPredicates(Dictionary<string,string> keyValuePairs, XPathOperator op)
+        {
+            List<XPathFilterPredicate> predicates = new List<XPathFilterPredicate>();
+
+            foreach (KeyValuePair<string,string> kvp in keyValuePairs)
+            {
+                predicates.Add(new XPathFilterPredicate(kvp.Key, op, kvp.Value));
+            }
+
+            return predicates;
         }
 
-        /// <summary>
-        /// Creates an XPath filter for the specified object type and attribute/value pairs. Multiple pairs are joined with with specified operator
-        /// </summary>
-        /// <param name="objectType">The object type to query</param>
-        /// <param name="op">The operator to apply to the elements in the filter</param>
-        /// <param name="keyValuePairs">The list to attribute and value pairs to query for</param>
-        /// <returns>An XPath query string</returns>
-        internal static string CreateFilter(string objectType, string op, Dictionary<string, string> keyValuePairs)
+        internal static string CreateFilter(string objectType, QueryOperator queryOperator, IEnumerable<XPathFilterPredicateGroup> queryGroups)
         {
             StringBuilder sb = new StringBuilder();
 
             sb.AppendFormat("/{0}[", objectType);
 
-            foreach (KeyValuePair<string, string> anchor in keyValuePairs)
+            foreach (XPathFilterPredicateGroup group in queryGroups)
             {
-                sb.AppendFormat("({0} = '{1}')", anchor.Key, anchor.Value);
+                sb.AppendFormat("({0})", group.ToString());
 
-                if (anchor.Key != keyValuePairs.Last().Key)
+                if (group != queryGroups.Last())
                 {
-                    sb.AppendFormat(" {0} ", op);
+                    sb.AppendFormat(" {0} ", queryOperator);
                 }
             }
 
             sb.AppendFormat("]");
 
             return sb.ToString();
+
+        }
+
+        internal static string CreateFilter(string objectType, QueryOperator queryOperator, IEnumerable<XPathFilterPredicate> predicates)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendFormat("/{0}[", objectType);
+
+            XPathFilterPredicateGroup group = new XPathFilterPredicateGroup(predicates, queryOperator);
+            sb.AppendFormat(group.ToString());
+
+            sb.AppendFormat("]");
+
+            return sb.ToString();
+
+        }
+
+        internal static string CreateFilter(string objectType, QueryOperator queryOperator, params XPathFilterPredicate[] predicates)
+        {
+            return XPathFilterBuilder.CreateFilter(objectType, queryOperator, (IEnumerable<XPathFilterPredicate>)predicates);
         }
     }
 }

@@ -52,6 +52,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Microsoft.ResourceManagement.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.ResourceManagement.Service">
+      <HintPath>\\idm-d1ps1-v02\c$\Program Files\Microsoft Forefront Identity Manager\2010\Service\Microsoft.ResourceManagement.Service.exe</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -90,6 +93,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GetTests.cs" />
     <Compile Include="UnitTestHelper.cs" />
+    <Compile Include="XpathQueryBuilderBooleanTests.cs" />
+    <Compile Include="XpathQueryBuilderDateTimeTests.cs" />
+    <Compile Include="XpathQueryBuilderIntegerTest.cs" />
+    <Compile Include="XpathQueryBuilderStringTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lithnet.ResourceManagement.Client\Lithnet.ResourceManagement.Client.csproj">

@@ -63,6 +63,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\OperationType.cs" />
+    <Compile Include="Enums\QueryOperator.cs" />
+    <Compile Include="Enums\XPathOperator.cs" />
     <Compile Include="Exceptions\NoSuchAttributeException.cs" />
     <Compile Include="Exceptions\ResourceNotFoundException.cs" />
     <Compile Include="ResourceManagementClientPool.cs" />
@@ -82,6 +84,7 @@
     <Compile Include="ServiceImplementation\Namespaces.cs" />
     <Compile Include="ServiceImplementation\SearchClient.cs" />
     <Compile Include="ServiceImplementation\ResourceFactoryClient.cs" />
+    <Compile Include="ServiceImplementation\SearchResultEnumerator.cs" />
     <Compile Include="ServiceImplementation\SearchResultCollectionAsync.cs" />
     <Compile Include="ServiceImplementation\SearchResultCollection.cs" />
     <Compile Include="ServiceImplementation\ServiceFaultTranslator.cs" />
@@ -105,7 +108,9 @@
     <Compile Include="Utilities\TypeConverter.cs" />
     <Compile Include="Exceptions\UnsupportedDataTypeException.cs" />
     <Compile Include="Utilities\MessageExtensions.cs" />
-    <Compile Include="Utilities\XpathFilterBuilder.cs" />
+    <Compile Include="Utilities\XPathFilterBuilder.cs" />
+    <Compile Include="Utilities\XPathFilterPredicate.cs" />
+    <Compile Include="Utilities\XPathFilterPredicateGroup.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

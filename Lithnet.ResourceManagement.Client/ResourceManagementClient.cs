@@ -17,6 +17,10 @@
     /// <summary>
     /// The main class used to create, update, delete, and search for objects in the resource management service
     /// </summary>
+    /// <threadsafety static="true" instance="true"/>
+    /// <example>
+    /// <code language="cs" title="Using the Resource Management Client" source="..\Lithnet.ResourceManagement.Client.Help.Examples\T_ResourceManagementClient.cs" />
+    /// </example>
     public class ResourceManagementClient
     {
         /// <summary>
@@ -40,9 +44,10 @@
         private static Binding WsHttpContextBinding;
 
         /// <summary>
-        /// Gets or sets the credentials used to connect to the resource management service
+        /// Gets the credentials used to connect to the resource management service as specified in the configuration file
         /// </summary>
-        public static NetworkCredential NetworkCredentials { get; set; }
+        /// <remarks>All instances of the <c>ResourceManagementClient</c> that are not loaded with a specific set of credentials will use the credentials specified in the configuration file. If not credentials are specified in the file, then the credentials of the current user are used</remarks>
+        private static NetworkCredential NetworkCredentials { get; set; }
 
         /// <summary>
         /// Gets the instance of the endpoint manager used to build the endpoint configuration for the resource management service
@@ -96,15 +101,70 @@
         /// <summary>
         /// Initializes a new instance of the ResourceManagementClient class
         /// </summary>
+        /// <example>
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClientCtorExamples.cs" region="ResourceManagementClient()"/>
+        /// </example>
         public ResourceManagementClient()
         {
-            this.InitializeClients();
+            this.InitializeClients(ResourceManagementClient.NetworkCredentials);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the ResourceManagementClient class
+        /// </summary>
+        /// <param name="credentials">The credentials to use to connect to the service</param>
+        /// <example>
+        /// The following example shows how to load an instance of the <c>ResourceManagementClient</c> using a specific set of credentials
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClientCtorExamples.cs" region="ResourceManagementClient(System.Net.NetworkCredentials)"/>
+        /// </example>
+        public ResourceManagementClient(NetworkCredential credentials)
+        {
+            this.InitializeClients(credentials);
+        }
+
+        /// <summary>
+        /// Deletes the specified resources from the resource management service as a single composite operation
+        /// </summary>
+        /// <param name="resourceIDs">A collection of object IDs in GUID format to delete to delete</param>
+        /// <remarks>
+        /// Note that when using this method, the objects are passed to the Resource Management Service in a single request. In the Request History in the portal, this will appear as a single request, and the individual object IDs that were deleted will not be visible.
+        /// </remarks>
+        /// <example>
+        /// The following example deletes a set of objects using a list of known GUIDs
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_DeleteResourceExamples.cs" region="DeleteResources(IEnumerable{Guid})"/>
+        /// </example>
+        public void DeleteResources(IEnumerable<Guid> resourceIDs)
+        {
+            this.resourceClient.Delete(resourceIDs.Select(t => new UniqueIdentifier(t)));
+        }
+
+        /// <summary>
+        /// Deletes the specified resources from the resource management service as a single composite operation
+        /// </summary>
+        /// <param name="resourceIDs">A collection of object IDs in string format to delete to delete</param>
+        /// <remarks>
+        /// Note that when using this method, the objects are passed to the Resource Management Service in a single request. In the Request History in the portal, this will appear as a single request, and the individual object IDs that were deleted will not be visible.
+        /// </remarks>
+        /// <example>
+        /// The following example deletes a set of objects using a list of known GUIDs represented in string format
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_DeleteResourceExamples.cs" region="DeleteResources(IEnumerable{String})"/>
+        /// </example>
+        public void DeleteResources(IEnumerable<string> resourceIDs)
+        {
+            this.resourceClient.Delete(resourceIDs.Select(t => new UniqueIdentifier(t)));
         }
 
         /// <summary>
         /// Deletes the specified resources from the resource management service as a single composite operation
         /// </summary>
         /// <param name="resourceIDs">A collection of references to delete</param>
+        /// <remarks>
+        /// Note that when using this method, the objects are passed to the Resource Management Service in a single request. In the Request History in the portal, this will appear as a single request, and the individual object IDs that were deleted will not be visible.
+        /// </remarks>
+        /// <example>
+        /// The following example gets all the members of a set, and passes the reference attribute containing the objects to the delete function
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_DeleteResourceExamples.cs" region="DeleteResources(IEnumerable{UniqueIdentifier})"/>
+        /// </example>
         public void DeleteResources(IEnumerable<UniqueIdentifier> resourceIDs)
         {
             this.resourceClient.Delete(resourceIDs);
@@ -114,6 +174,13 @@
         /// Deletes the specified resources from the resource management service as a single composite operation
         /// </summary>
         /// <param name="resources">A collection of resources to delete</param>
+        /// <remarks>
+        /// Note that when using this method, the objects are passed to the Resource Management Service in a single request. In the Request History in the portal, this will appear as a single request, and the individual object IDs that were deleted will not be visible.
+        /// </remarks>
+        /// <example>
+        /// The following example performs a search for all Group objects, and passes the resulting enumerable to the delete function
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_DeleteResourceExamples.cs" region="DeleteResources(IEnumerable{ResourceObject})"/>
+        /// </example>
         public void DeleteResources(IEnumerable<ResourceObject> resources)
         {
             this.resourceClient.Delete(resources);
@@ -128,6 +195,10 @@
         /// Deletes the specified resource from the resource management service
         /// </summary>
         /// <param name="resource">The resource to delete</param>
+        /// <example>
+        /// The following example deletes the specified resource object
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_DeleteResourceExamples.cs" region="DeleteResource(ResourceObject)"/>
+        /// </example>
         public void DeleteResource(ResourceObject resource)
         {
             this.DeleteResource(resource.ObjectID);
@@ -138,6 +209,10 @@
         /// Deletes the specified resource from the resource management service
         /// </summary>
         /// <param name="id">The reference to the object to delete</param>
+        /// <example>
+        /// The following example shows how to delete an object using a reference attribute
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_DeleteResourceExamples.cs" region="DeleteResource(UniqueIdentifier)"/>
+        /// </example>
         public void DeleteResource(UniqueIdentifier id)
         {
             this.resourceClient.Delete(id);
@@ -147,6 +222,10 @@
         /// Deletes the specified resource from the resource management service
         /// </summary>
         /// <param name="id">The ID of the object to delete</param>
+        /// <example>
+        /// The following example shows how to delete an object using a known GUID
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_DeleteResourceExamples.cs" region="DeleteResource(Guid)"/>
+        /// </example>
         public void DeleteResource(Guid id)
         {
             this.DeleteResource(new UniqueIdentifier(id));
@@ -157,11 +236,8 @@
         /// </summary>
         /// <param name="id">The ID of the object to delete, in GUID format, with or without the urn: prefix</param>
         /// <example>
-        /// <remarks>This example shows how to delete a resource using its ID</remarks>
-        /// <code>
-        /// ResourceManagementClient client = new ResourceManagementClient();
-        /// client.DeleteResource("8d86fb71-e4d0-4af8-af5b-8a124a836fc6");
-        /// </code>
+        /// The following example shows how to delete an object using a string representation of a GUID
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_DeleteResourceExamples.cs" region="DeleteResource(String)"/>
         /// </example>
         public void DeleteResource(string id)
         {
@@ -291,6 +367,10 @@
         /// </summary>
         /// <param name="objectType">The object type to create</param>
         /// <returns>An empty template of a new object that will be created in the resource management service when saved</returns>
+        /// <example>
+        /// The following example shows how to create a new resource in the Resource Management Service
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_CreateResourceExamples.cs" region="CreateResource(String)"/>
+        /// </example>
         public ResourceObject CreateResource(string objectType)
         {
             return new ResourceObject(objectType, this);
@@ -304,6 +384,10 @@
         /// <param name="objectType">The type of object to create the template for</param>
         /// <param name="id">The ID of the object to update</param>
         /// <returns>An empty template of an existing object that can be updated in the resource management service when saved</returns>
+        /// <example>
+        /// The following example shows how to create a blank template of an object used to update the Resource Management Service
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_CreateResourceExamples.cs" region="CreateResourceTemplateForUpdate(String, UniqueIdentifier)"/>
+        /// </example>
         public ResourceObject CreateResourceTemplateForUpdate(string objectType, UniqueIdentifier id)
         {
             return new ResourceObject(objectType, id, this);
@@ -314,6 +398,10 @@
         /// </summary>
         /// <param name="id">The ID of the resource to get</param>
         /// <returns>The resource represented by the specified ID</returns>
+        /// <example>
+        /// The following example shows how to get an object from a known GUID value
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(Guid)"/>
+        /// </example>
         public ResourceObject GetResource(Guid id)
         {
             return this.GetResource(new UniqueIdentifier(id), null);
@@ -325,6 +413,10 @@
         /// <param name="id">The ID of the resource to get</param>
         /// <param name="attributesToGet">The list of attributes to retrieve</param>
         /// <returns>The resource represented by the specified ID</returns>
+        /// <example>
+        /// The following example shows how to get an object from a known GUID value
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(Guid)"/>
+        /// </example>
         public ResourceObject GetResource(Guid id, IEnumerable<string> attributesToGet)
         {
             return this.GetResource(new UniqueIdentifier(id), attributesToGet);
@@ -335,6 +427,10 @@
         /// </summary>
         /// <param name="id">The ID of the resource to get as a GUID in string format</param>
         /// <returns>The resource represented by the specified ID</returns>
+        /// <example>
+        /// The following example shows how to get an object from a known GUID value
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(String)"/>
+        /// </example>
         public ResourceObject GetResource(string id)
         {
             return this.GetResource(new UniqueIdentifier(id), null);
@@ -345,6 +441,11 @@
         /// </summary>
         /// <param name="id">The ID of the resource to get as a GUID in string format</param>
         /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <returns>The resource represented by the specified ID</returns>
+        /// <example>
+        /// The following example shows how to get an object from a known GUID value
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(String)"/>
+        /// </example>
         public ResourceObject GetResource(string id, IEnumerable<string> attributesToGet)
         {
             return this.GetResource(new UniqueIdentifier(id), attributesToGet);
@@ -355,6 +456,10 @@
         /// </summary>
         /// <param name="id">The ID of the resource to get</param>
         /// <returns>The resource represented by the specified ID</returns>
+        /// <example>
+        /// The following example shows how to get an object from a reference value
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(UniqueIdentifier)"/>
+        /// </example>
         public ResourceObject GetResource(UniqueIdentifier id)
         {
             return this.resourceClient.Get(id, null);
@@ -366,11 +471,15 @@
         /// <param name="id">The ID of the resource to get</param>
         /// <param name="attributesToGet">The list of attributes to retrieve</param>
         /// <returns>The resource represented by the specified ID</returns>
+        /// <example>
+        /// The following example shows how to get an object from a reference value
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(UniqueIdentifier)"/>
+        /// </example>
         public ResourceObject GetResource(UniqueIdentifier id, IEnumerable<string> attributesToGet)
         {
             return this.resourceClient.Get(id, attributesToGet);
         }
-
+        
         /// <summary>
         /// Gets a resource from the resource management service using a unique attribute and value combination, retrieving all attributes for the resource
         /// </summary>
@@ -379,6 +488,10 @@
         /// <param name="value">The value of the attribute</param>
         /// <returns>A resource that matches the specified criteria, or null of no object was found</returns>
         /// <exception cref="TooManyResultsException">The method will throw this exception when more that one match was found for the specified criteria</exception>
+        /// <example>
+        /// The following example shows how get a user by its AccountName attribute
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, String, String)"/>
+        /// </example>
         public ResourceObject GetResourceByKey(string objectType, string attribute, string value)
         {
             return this.GetResourceByKey(objectType, attribute, value, null);
@@ -393,6 +506,10 @@
         /// <param name="attributesToGet">The list of attributes to retrieve</param>
         /// <returns>A resource that matches the specified criteria, or null of no object was found</returns>
         /// <exception cref="TooManyResultsException">The method will throw this exception when more that one match was found for the specified criteria</exception>
+        /// <example>
+        /// The following example shows how get a user by its AccountName attribute
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, String, String)"/>
+        /// </example>
         public ResourceObject GetResourceByKey(string objectType, string attribute, string value, IEnumerable<string> attributesToGet)
         {
             Dictionary<string, string> values = new Dictionary<string, string>();
@@ -408,6 +525,10 @@
         /// <param name="attributeValuePairs">A list of attribute value pairs that make this object unique</param>
         /// <returns>A resource that matches the specified criteria, or null of no object was found</returns>
         /// <exception cref="TooManyResultsException">The method will throw this exception when more that one match was found for the specified criteria</exception>
+        /// <example>
+        /// The following example shows how get a user by using the AccountName and Domain pair of anchor attributes
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, Dictionary{String, String})"/>
+        /// </example>
         public ResourceObject GetResourceByKey(string objectType, Dictionary<string, string> attributeValuePairs)
         {
             return this.GetResourceByKey(objectType, attributeValuePairs, null);
@@ -421,9 +542,13 @@
         /// <param name="attributesToGet">The list of attributes to retrieve</param>
         /// <returns>A resource that matches the specified criteria, or null of no object was found</returns>
         /// <exception cref="TooManyResultsException">The method will throw this exception when more that one match was found for the specified criteria</exception>
+        /// <example>
+        /// The following example shows how get a user by using the AccountName and Domain pair of anchor attributes
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, Dictionary{String, String})"/>
+        /// </example>
         public ResourceObject GetResourceByKey(string objectType, Dictionary<string, string> attributeValuePairs, IEnumerable<string> attributesToGet)
         {
-            string filter = XpathFilterBuilder.CreateAndFilter(objectType, attributeValuePairs);
+            string filter = XPathFilterBuilder.CreateAndFilter(objectType, attributeValuePairs);
 
             if (attributesToGet == null)
             {
@@ -573,17 +698,17 @@
         /// <summary>
         /// Initializes the WCF bindings, endpoints, and proxy objects
         /// </summary>
-        private void InitializeClients()
+        private void InitializeClients(NetworkCredential credentials)
         {
             this.resourceClient = new ResourceClient(ResourceManagementClient.WsHttpContextBinding, ResourceManagementClient.EndpointManager.ResourceEndpoint);
             this.resourceFactoryClient = new ResourceFactoryClient(ResourceManagementClient.WsHttpContextBinding, ResourceManagementClient.EndpointManager.ResourceFactoryEndpoint);
             this.searchClient = new SearchClient(ResourceManagementClient.WsHttpContextBinding, ResourceManagementClient.EndpointManager.SearchEndpoint);
 
-            if (ResourceManagementClient.NetworkCredentials != null)
+            if (credentials != null)
             {
-                this.resourceClient.ClientCredentials.Windows.ClientCredential = ResourceManagementClient.NetworkCredentials;
-                this.resourceFactoryClient.ClientCredentials.Windows.ClientCredential = ResourceManagementClient.NetworkCredentials;
-                this.searchClient.ClientCredentials.Windows.ClientCredential = ResourceManagementClient.NetworkCredentials;
+                this.resourceClient.ClientCredentials.Windows.ClientCredential = credentials;
+                this.resourceFactoryClient.ClientCredentials.Windows.ClientCredential = credentials;
+                this.searchClient.ClientCredentials.Windows.ClientCredential = credentials;
             }
 
 #pragma warning disable 0618

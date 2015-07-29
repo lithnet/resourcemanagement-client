@@ -77,7 +77,7 @@ namespace Lithnet.ResourceManagement.Client
 
             if (failures.RequestAdministratorDetails.RequestFailureSource == RequestFailureSource.ResourceIsMissing)
             {
-                return new ResourceNotFound();
+                return new ResourceNotFoundException();
             }
 
             StringBuilder builder = new StringBuilder();

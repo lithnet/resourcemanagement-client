@@ -95,6 +95,36 @@ namespace Lithnet.ResourceManagement.Client
             }
         }
 
+        public static AttributeType GetAttributeType(string attributeName)
+        {
+            foreach (ObjectTypeDefinition objectType in ResourceManagementSchema.ObjectTypes.Values)
+            {
+                AttributeTypeDefinition attributeType = objectType.Attributes.FirstOrDefault(t => t.SystemName == attributeName);
+
+                if (attributeType != null)
+                {
+                    return attributeType.Type;
+                }
+            }
+
+            throw new NoSuchAttributeException(attributeName);
+        }
+
+        public static bool IsAttributeMultivalued(string attributeName)
+        {
+            foreach (ObjectTypeDefinition objectType in ResourceManagementSchema.ObjectTypes.Values)
+            {
+                AttributeTypeDefinition attributeType = objectType.Attributes.FirstOrDefault(t => t.SystemName == attributeName);
+
+                if (attributeType != null)
+                {
+                    return attributeType.IsMultivalued;
+                }
+            }
+
+            throw new NoSuchAttributeException(attributeName);
+        }
+
         /// <summary>
         /// Gets the metadata set from the Resource Management Service
         /// </summary>

@@ -31,7 +31,7 @@
     <RootNamespaceContainer>False</RootNamespaceContainer>
     <PresentationStyle>VS2013</PresentationStyle>
     <Preliminary>True</Preliminary>
-    <NamingMethod>MemberName</NamingMethod>
+    <NamingMethod>HashedMemberName</NamingMethod>
     <HelpTitle>Lithnet Resource Management Client</HelpTitle>
     <FeedbackEMailLinkText>Documentation Feedback</FeedbackEMailLinkText>
     <FeedbackEMailAddress>docs%40lithiumblue.com</FeedbackEMailAddress>
@@ -46,7 +46,8 @@
     <ComponentPath />
     <NamespaceSummaries>
       <NamespaceSummaryItem name="(global)" isDocumented="False" xmlns="" />
-<NamespaceSummaryItem name="Lithnet.ResourceManagement.Client" isDocumented="True" xmlns="">The Lithnet.ResourceManagement.Client namespace contains elements used to create, update, delete, and search for objects in the Microsoft Resource Management Service</NamespaceSummaryItem></NamespaceSummaries>
+      <NamespaceSummaryItem name="Lithnet.ResourceManagement.Client" isDocumented="True" xmlns="">The Lithnet.ResourceManagement.Client namespace contains elements used to create, update, delete, and search for objects in the Microsoft Resource Management Service</NamespaceSummaryItem>
+    </NamespaceSummaries>
     <TransformComponentArguments>
       <Argument Key="maxVersionParts" Value="" />
     </TransformComponentArguments>
@@ -69,6 +70,18 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|Win32' ">
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lithnet.ResourceManagement.Client.Help.Examples\Lithnet.ResourceManagement.Client.Help.Examples.csproj">
+      <Name>Lithnet.ResourceManagement.Client.Help.Examples</Name>
+      <Project>{78822806-7fe0-4648-b460-a7db5452d597}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Lithnet.ResourceManagement.Client\Lithnet.ResourceManagement.Client.csproj">
+      <Name>Lithnet.ResourceManagement.Client</Name>
+      <Project>{9edcc4ed-2317-42a8-86f4-a6d228bbf9db}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
   <!-- Import the SHFB build targets -->
   <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />
 </Project>

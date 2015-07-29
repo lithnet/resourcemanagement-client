@@ -12,7 +12,7 @@ namespace Lithnet.ResourceManagement.Client
     /// <summary>
     /// Provides an enumerator that can iterate through search results from the Resource Management Service. This class provides a synchronous search, where the next page of results is only requested once the enumerator has run out of results.
     /// </summary>
-    public class SearchResultCollection : ISearchResultCollection, IEnumerator<ResourceObject>
+    public class SearchResultCollection : ISearchResultCollection
     {
         /// <summary>
         /// The enumeration context object provided by the Resource Management Service
@@ -25,11 +25,6 @@ namespace Lithnet.ResourceManagement.Client
         private EnumerationDetailType details;
 
         /// <summary>
-        /// The iterator's current object
-        /// </summary>
-        private ResourceObject current;
-
-        /// <summary>
         /// The search client used for this search operation
         /// </summary>
         private SearchClient searchClient;
@@ -38,17 +33,12 @@ namespace Lithnet.ResourceManagement.Client
         /// The resource management client used for this search operation
         /// </summary>
         private ResourceManagementClient client;
-
-        /// <summary>
-        /// The iterator's current index
-        /// </summary>
-        private int currentIndex = 0;
-
+              
         /// <summary>
         /// The result set obtained from the Resource Management Service
         /// </summary>
         private List<ResourceObject> resultSet;
-        
+
         /// <summary>
         /// The page size used for the search operation
         /// </summary>
@@ -132,7 +122,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>An enumerator for the search results</returns>
         public IEnumerator<ResourceObject> GetEnumerator()
         {
-            return this;
+            return new SearchResultEnumerator(this);
         }
 
         /// <summary>
@@ -141,63 +131,24 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>An enumerator for the search results</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return this;
+            return new SearchResultEnumerator(this);
         }
 
-        /// <summary>
-        /// Gets the iterator's current object
-        /// </summary>
-        public ResourceObject Current
+        internal ResourceObject GetObjectAtIndex(int index)
         {
-            get
+            if (index == this.resultSet.Count)
             {
-                return this.current;
-            }
-        }
-
-        /// <summary>
-        /// Gets the iterator's current object
-        /// </summary>
-        object IEnumerator.Current
-        {
-            get
-            {
-                return this.current;
-            }
-        }
-
-        /// <summary>
-        /// Moves the iterator to the next position in the result sett
-        /// </summary>
-        /// <returns>True if there are more results, false if the end of the collection has been reached</returns>
-        public bool MoveNext()
-        {
-            if (currentIndex < resultSet.Count)
-            {
-                this.current = resultSet[currentIndex++];
-                return true;
-            }
-            else
-            {
-                if (this.EndOfSequence == true)
+                if (this.EndOfSequence == false)
                 {
-                    this.current = null;
-                    return false;
-                }
-
-                this.GetNextPage();
-
-                if (currentIndex < resultSet.Count)
-                {
-                    this.current = resultSet[currentIndex++];
-                    return true;
+                    this.GetNextPage();
                 }
                 else
                 {
-                    this.current = null;
-                    return false;
+                    throw new InvalidOperationException("The index supplied was not valid");
                 }
             }
+
+            return this.resultSet[index];
         }
 
         /// <summary>
@@ -212,19 +163,10 @@ namespace Lithnet.ResourceManagement.Client
             }
 
             this.context = r.EnumerationContext;
-            
+
             this.PopulateResultSet(r.Items);
         }
-
-        /// <summary>
-        /// Resets the iterator back to the start of the collection
-        /// </summary>
-        public void Reset()
-        {
-            this.current = null;
-            this.currentIndex = 0;
-        }
-
+        
         /// <summary>
         /// Disposes the current object
         /// </summary>
