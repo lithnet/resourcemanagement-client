@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.ResourceManagement.WebServices;
 
 namespace Lithnet.ResourceManagement.Client
 {
-    public class XPathFilterPredicate
+    public class XPathPredicate : IXPathPredicateComponent
     {
         internal static long MaxLong = 999999999999999L;
 
@@ -15,17 +16,17 @@ namespace Lithnet.ResourceManagement.Client
               FROM https://msdn.microsoft.com/en-us/library/windows/desktop/ee652287(v=vs.100).aspx
             
                 Given the following string: "The quick brown fox," and the contains() query on the string "u", the expected result is 
-                that nothing is returned, since the letter "u" only appears in the middle of a string, and not immediately after a wordbreaker. 
+                that nothing is returned, since the letter "u" only appears in the middle of a string, and not immediately after a word-breaker. 
                 If we ran the contains() query on the string "qu", however, we would get a match, since the substring "qu" appears immediately 
-                after a wordbreaking character.
-         * 
+                after a word-breaking character.
+          
         */
 
         public bool Negate { get; private set; }
 
         public XPathOperator Operator { get; private set; }
 
-        public string Attribute { get; private set; }
+        public string AttributeName { get; private set; }
 
         public object Value { get; private set; }
 
@@ -33,21 +34,35 @@ namespace Lithnet.ResourceManagement.Client
 
         private bool isMultivalued;
 
-        public XPathFilterPredicate(string attribute, XPathOperator xpathOperator)
-            : this(attribute, xpathOperator, null, false)
+        public XPathPredicate(string attributeName, XPathOperator xpathOperator)
+            : this(attributeName, xpathOperator, null, false)
         {
         }
 
-        public XPathFilterPredicate(string attribute, XPathOperator xpathOperator, object value)
-            : this(attribute, xpathOperator, value, false)
+        public XPathPredicate(string attributeName, XPathOperator xpathOperator, object value)
+            : this(attributeName, xpathOperator, value, false)
         {
         }
 
-        public XPathFilterPredicate(string attribute, XPathOperator xpathOperator, object value, bool negate)
+        public XPathPredicate(string attributeName, XPathOperator xpathOperator, object value, bool negate)
         {
-            if (string.IsNullOrWhiteSpace(attribute))
+            AttributeType attributeType = ResourceManagementSchema.GetAttributeType(attributeName);
+            bool isMultivalued = ResourceManagementSchema.IsAttributeMultivalued(attributeName);
+
+            this.SetupBuilder(attributeName, xpathOperator, value, negate, attributeType, isMultivalued);
+
+        }
+
+        public XPathPredicate(string attributeName, XPathOperator xpathOperator, object value, bool negate, AttributeType attributeType, bool isMultivalued)
+        {
+            this.SetupBuilder(attributeName, xpathOperator, value, negate, attributeType, isMultivalued);
+        }
+
+        private void SetupBuilder(string attributeName, XPathOperator xpathOperator, object value, bool negate, AttributeType attributeType, bool isMultivalued)
+        {
+            if (string.IsNullOrWhiteSpace(attributeName))
             {
-                throw new ArgumentNullException(attribute);
+                throw new ArgumentNullException(attributeName);
             }
 
             if (value == null)
@@ -58,13 +73,13 @@ namespace Lithnet.ResourceManagement.Client
                 }
             }
 
-            this.Attribute = attribute;
+            this.AttributeName = attributeName;
             this.Operator = xpathOperator;
             this.Value = value;
             this.Negate = negate;
 
-            this.attributeType = ResourceManagementSchema.GetAttributeType(this.Attribute);
-            this.isMultivalued = ResourceManagementSchema.IsAttributeMultivalued(this.Attribute);
+            this.attributeType = attributeType;
+            this.isMultivalued = isMultivalued;
 
             this.ThrowOnInvalidTypeOperatorCombination();
             this.ThrowOnInvalidNegateCombination();
@@ -123,11 +138,28 @@ namespace Lithnet.ResourceManagement.Client
 
             if (this.attributeType == AttributeType.Integer || this.attributeType == AttributeType.Boolean)
             {
-                expression = string.Format("{0} = {1}", this.Attribute, TypeConverter.ToString(this.Value));
+                expression = string.Format("({0} = {1})", this.AttributeName, TypeConverter.ToString(this.Value));
+            }
+            else if (this.attributeType == AttributeType.Reference)
+            {
+                string valuetoUse;
+
+                XPathExpression childExpression = this.Value as XPathExpression;
+
+                if (childExpression != null)
+                {
+                    valuetoUse = childExpression.ToString();
+                }
+                else
+                {
+                    valuetoUse = string.Format("'{0}'", ((UniqueIdentifier)TypeConverter.ToString(this.Value)).Value);
+                }
+
+                expression = string.Format("({0} = {1})", this.AttributeName, valuetoUse);
             }
             else
             {
-                expression = string.Format("{0} = '{1}'", this.Attribute, TypeConverter.ToString(this.Value));
+                expression = string.Format("({0} = '{1}')", this.AttributeName, TypeConverter.ToString(this.Value));
             }
 
             return ProcessNegation(expression);
@@ -135,13 +167,35 @@ namespace Lithnet.ResourceManagement.Client
 
         private string GetExpressionNotEquals()
         {
-            if (this.attributeType == AttributeType.Integer || this.attributeType == AttributeType.Boolean)
+            if (this.isMultivalued)
             {
-                return string.Format("not({0} = {1})", this.Attribute, TypeConverter.ToString(this.Value));
+                if (this.attributeType == AttributeType.Integer || this.attributeType == AttributeType.Boolean)
+                {
+                    return string.Format("(not({0} = {1}))", this.AttributeName, TypeConverter.ToString(this.Value));
+                }
+                else if (this.attributeType == AttributeType.Reference)
+                {
+                    return string.Format("(not({0} = '{1}'))", this.AttributeName, ((UniqueIdentifier)TypeConverter.ToString(this.Value)).Value);
+                }
+                else
+                {
+                    return string.Format("(not({0} = '{1}'))", this.AttributeName, TypeConverter.ToString(this.Value));
+                }
             }
             else
             {
-                return string.Format("not({0} = '{1}')", this.Attribute, TypeConverter.ToString(this.Value));
+                if (this.attributeType == AttributeType.Integer || this.attributeType == AttributeType.Boolean)
+                {
+                    return string.Format("({0} != {1})", this.AttributeName, TypeConverter.ToString(this.Value));
+                }
+                else if (this.attributeType == AttributeType.Reference)
+                {
+                    return string.Format("(not({0} = '{1}'))", this.AttributeName, ((UniqueIdentifier)TypeConverter.ToString(this.Value)).Value);
+                }
+                else
+                {
+                    return string.Format("({0} != '{1}')", this.AttributeName, TypeConverter.ToString(this.Value));
+                }
             }
         }
 
@@ -151,11 +205,11 @@ namespace Lithnet.ResourceManagement.Client
 
             if (this.attributeType == AttributeType.Integer)
             {
-                expression = string.Format("{0} > {1}", this.Attribute, TypeConverter.ToString(this.Value));
+                expression = string.Format("({0} > {1})", this.AttributeName, TypeConverter.ToString(this.Value));
             }
             else
             {
-                expression = string.Format("{0} > '{1}'", this.Attribute, TypeConverter.ToString(this.Value));
+                expression = string.Format("({0} > '{1}')", this.AttributeName, TypeConverter.ToString(this.Value));
             }
 
             return ProcessNegation(expression);
@@ -167,11 +221,11 @@ namespace Lithnet.ResourceManagement.Client
 
             if (this.attributeType == AttributeType.Integer)
             {
-                expression = string.Format("{0} >= {1}", this.Attribute, TypeConverter.ToString(this.Value));
+                expression = string.Format("({0} >= {1})", this.AttributeName, TypeConverter.ToString(this.Value));
             }
             else
             {
-                expression = string.Format("{0} >= '{1}'", this.Attribute, TypeConverter.ToString(this.Value));
+                expression = string.Format("({0} >= '{1}')", this.AttributeName, TypeConverter.ToString(this.Value));
             }
 
             return ProcessNegation(expression);
@@ -183,11 +237,11 @@ namespace Lithnet.ResourceManagement.Client
 
             if (this.attributeType == AttributeType.Integer)
             {
-                expression = string.Format("{0} < {1}", this.Attribute, TypeConverter.ToString(this.Value));
+                expression = string.Format("({0} < {1})", this.AttributeName, TypeConverter.ToString(this.Value));
             }
             else
             {
-                expression = string.Format("{0} < '{1}'", this.Attribute, TypeConverter.ToString(this.Value));
+                expression = string.Format("({0} < '{1}')", this.AttributeName, TypeConverter.ToString(this.Value));
             }
 
             return ProcessNegation(expression);
@@ -199,11 +253,11 @@ namespace Lithnet.ResourceManagement.Client
 
             if (this.attributeType == AttributeType.Integer)
             {
-                expression = string.Format("{0} <= {1}", this.Attribute, TypeConverter.ToString(this.Value));
+                expression = string.Format("({0} <= {1})", this.AttributeName, TypeConverter.ToString(this.Value));
             }
             else
             {
-                expression = string.Format("{0} <= '{1}'", this.Attribute, TypeConverter.ToString(this.Value));
+                expression = string.Format("({0} <= '{1}')", this.AttributeName, TypeConverter.ToString(this.Value));
             }
 
             return ProcessNegation(expression);
@@ -213,32 +267,23 @@ namespace Lithnet.ResourceManagement.Client
         {
             if (attributeType == AttributeType.Reference)
             {
-                return string.Format("{0} = /Resource", this.Attribute);
+                return string.Format("({0} = /*)", this.AttributeName);
             }
             else if (attributeType == AttributeType.Integer)
             {
-                return string.Format("{0} <= {1}", this.Attribute, XPathFilterPredicate.MaxLong);
+                return string.Format("({0} <= {1})", this.AttributeName, XPathPredicate.MaxLong);
             }
             else if (attributeType == AttributeType.DateTime)
             {
-                return string.Format("{0} <= '{1}'", this.Attribute, XPathFilterPredicate.MaxDate);
+                return string.Format("({0} <= '{1}')", this.AttributeName, XPathPredicate.MaxDate);
             }
             else if (attributeType == AttributeType.Boolean)
             {
-                return string.Format("({0} = true) or ({0} = false)", this.Attribute);
+                return string.Format("(({0} = true) or ({0} = false))", this.AttributeName);
             }
             else
             {
-                return string.Format("starts-with({0}, '%')", this.Attribute);
-
-                //if (this.isMultivalued)
-                //{
-                //    return string.Format("starts-with({0},'%')", this.Attribute);
-                //}
-                //else
-                //{
-                //    return string.Format("{0} != '!Invalid!'", this.Attribute);
-                //}
+                return string.Format("(starts-with({0}, '%'))", this.AttributeName);
             }
         }
 
@@ -246,64 +291,46 @@ namespace Lithnet.ResourceManagement.Client
         {
             if (attributeType == AttributeType.Reference)
             {
-                return string.Format("{0} != /Resource", this.Attribute);
+                return string.Format("(not({0} = /*))", this.AttributeName);
             }
             else if (attributeType == AttributeType.Integer)
             {
-                return string.Format("not({0} <= {1})", this.Attribute, XPathFilterPredicate.MaxLong);
+                return string.Format("(not({0} <= {1}))", this.AttributeName, XPathPredicate.MaxLong);
             }
             else if (attributeType == AttributeType.DateTime)
             {
-                return string.Format("not({0} <= '{1}')", this.Attribute, XPathFilterPredicate.MaxDate);
+                return string.Format("(not({0} <= '{1}'))", this.AttributeName, XPathPredicate.MaxDate);
             }
             else if (attributeType == AttributeType.Boolean)
             {
-                return string.Format("not(({0} = true) or ({0} = false))", this.Attribute);
+                return string.Format("(not(({0} = true) or ({0} = false)))", this.AttributeName);
             }
             else
             {
-                return string.Format("not(starts-with({0}, '%'))", this.Attribute);
-
-                //if (this.isMultivalued)
-                //{
-                //    return string.Format("not(starts-with({0},'%'))", this.Attribute);
-                //}
-                //else
-                //{
-                //    return string.Format("{0} != '!Invalid!'", this.Attribute);
-                //}
+                return string.Format("(not(starts-with({0}, '%')))", this.AttributeName);
             }
-
-            //if (this.attributeType == AttributeType.Reference)
-            //{
-            //    return string.Format("{0} != /Resource", this.Attribute);
-            //}
-            //else
-            //{
-            //    return string.Format("{1} != /*[{0} != '!Invalid!']", this.Attribute, AttributeNames.ObjectID);
-            //}
         }
 
         private string GetExpressionContains()
         {
-            return ProcessNegation(string.Format("contains({0}, '{1}')", this.Attribute, TypeConverter.ToString(this.Value)));
+            return ProcessNegation(string.Format("(contains({0}, '{1}'))", this.AttributeName, TypeConverter.ToString(this.Value)));
         }
 
         private string GetExpressionStartsWith()
         {
-            return ProcessNegation(string.Format("starts-with({0}, '{1}')", this.Attribute, TypeConverter.ToString(this.Value)));
+            return ProcessNegation(string.Format("(starts-with({0}, '{1}'))", this.AttributeName, TypeConverter.ToString(this.Value)));
         }
 
         private string GetExpressionEndsWith()
         {
-            return ProcessNegation(string.Format("ends-with({0}, '{1}')", this.Attribute, TypeConverter.ToString(this.Value)));
+            return ProcessNegation(string.Format("(ends-with({0}, '{1}'))", this.AttributeName, TypeConverter.ToString(this.Value)));
         }
 
         private string ProcessNegation(string expression)
         {
             if (this.Negate)
             {
-                expression = string.Format("not({0})", expression);
+                expression = string.Format("(not{0})", expression);
             }
 
             return expression;
@@ -407,12 +434,12 @@ namespace Lithnet.ResourceManagement.Client
 
         private void ThrowOnInvalidBinaryOperator()
         {
-            throw new NotSupportedException("Cannot filter on a binary attribute");
+            throw new NotSupportedException("Cannot filter on a binary attributeName");
         }
 
         private void ThrowOnInvalidTextOperator()
         {
-            throw new NotSupportedException("Cannot filter on a text attribute");
+            throw new NotSupportedException("Cannot filter on a text attributeName");
         }
 
         private void ThrowOnInvalidBooleanOperator()

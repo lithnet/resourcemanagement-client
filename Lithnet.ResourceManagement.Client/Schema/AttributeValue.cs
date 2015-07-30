@@ -9,7 +9,7 @@ using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
 namespace Lithnet.ResourceManagement.Client
 {
     /// <summary>
-    /// Contains the value or values of a specified attribute, and tracks changes made to the values
+    /// Contains the value or values of a specified attributeName, and tracks changes made to the values
     /// </summary>
     public class AttributeValue
     {
@@ -19,12 +19,12 @@ namespace Lithnet.ResourceManagement.Client
         internal static AttributeValueEqualityComparer ValueComparer = new AttributeValueEqualityComparer();
 
         /// <summary>
-        /// Gets the attribute that represents the values in this collection
+        /// Gets the attributeName that represents the values in this collection
         /// </summary>
         public AttributeTypeDefinition Attribute { get; private set; }
 
         /// <summary>
-        /// Gets a list of pending value changes for this attribute
+        /// Gets a list of pending value changes for this attributeName
         /// </summary>
         public ReadOnlyCollection<AttributeValueChange> ValueChanges
         {
@@ -35,32 +35,32 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// The value of the attribute when the attribute is single-valued
+        /// The value of the attributeName when the attributeName is single-valued
         /// </summary>
         private object value;
 
         /// <summary>
-        /// The initial value of the attribute when the attribute is single-valued
+        /// The initial value of the attributeName when the attributeName is single-valued
         /// </summary>
         private object initialValue;
 
         /// <summary>
-        /// The values of the attribute when the attribute is multivalued
+        /// The values of the attributeName when the attributeName is multivalued
         /// </summary>
         private List<object> values;
 
         /// <summary>
-        /// The initial values of the attribute when the attribute is multivalued
+        /// The initial values of the attributeName when the attributeName is multivalued
         /// </summary>
         private List<object> initialValues;
 
         /// <summary>
-        /// An internal field used to track if the attribute value has been changed
+        /// An internal field used to track if the attributeName value has been changed
         /// </summary>
         private bool hasChanged;
 
         /// <summary>
-        /// Gets the name of the attribute
+        /// Gets the name of the attributeName
         /// </summary>
         public string AttributeName
         {
@@ -91,7 +91,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// Initializes a new instance of the AttributeValue class
         /// </summary>
-        /// <param name="type">The definition of the attribute to hold the values for</param>
+        /// <param name="type">The definition of the attributeName to hold the values for</param>
         internal AttributeValue(AttributeTypeDefinition type)
             : this(type, null)
         {
@@ -100,8 +100,8 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// Initializes a new instance of the AttributeValue class
         /// </summary>
-        /// <param name="type">The definition of the attribute to hold the values for</param>
-        /// <param name="value">The initial value of the attribute</param>
+        /// <param name="type">The definition of the attributeName to hold the values for</param>
+        /// <param name="value">The initial value of the attributeName</param>
         internal AttributeValue(AttributeTypeDefinition type, object value)
         {
             this.Attribute = type;
@@ -119,7 +119,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets or sets the raw value of the attribute
+        /// Gets or sets the raw value of the attributeName
         /// </summary>
         public object Value
         {
@@ -159,7 +159,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Reverts any changes made to the attribute values, restoring them to their initial state
+        /// Reverts any changes made to the attributeName values, restoring them to their initial state
         /// </summary>
         public void UndoChanges()
         {
@@ -177,7 +177,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Sets the value of the attribute, overwritting any existing values present on the object
+        /// Sets the value of the attributeName, overwritting any existing values present on the object
         /// </summary>
         /// <param name="value">The new value or values to set</param>
         public void SetValue(object value)
@@ -193,10 +193,10 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Sets the value of the attribute when it is single-valued
+        /// Sets the value of the attributeName when it is single-valued
         /// </summary>
         /// <param name="value">The value to set</param>
-        /// <param name="initialLoad">A value indicating if the attribute value should be considered an initial value, rather than a change</param>
+        /// <param name="initialLoad">A value indicating if the attributeName value should be considered an initial value, rather than a change</param>
         private void SetSingleValue(object value, bool initialLoad)
         {
             if (!initialLoad && this.Attribute.IsReadOnly)
@@ -223,7 +223,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Add the specified value to the collection of values of a multivalued attribute, or sets the value of a single-valued attribute
+        /// Add the specified value to the collection of values of a multivalued attributeName, or sets the value of a single-valued attributeName
         /// </summary>
         /// <param name="value">The value to remove</param>
         public void AddValue(object value)
@@ -248,7 +248,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Removes all values from the attribute
+        /// Removes all values from the attributeName
         /// </summary>
         public void RemoveValues()
         {
@@ -263,7 +263,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Removes a specific value from an attribute
+        /// Removes a specific value from an attributeName
         /// </summary>
         /// <param name="value">The value to remove</param>
         public void RemoveValue(object value)
@@ -284,10 +284,10 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Sets the value of an attribute when it is multivalued
+        /// Sets the value of an attributeName when it is multivalued
         /// </summary>
         /// <param name="value">The value to set</param>
-        /// <param name="initialLoad">A value indicating if the attribute value should be considered an initial value, rather than a change</param>
+        /// <param name="initialLoad">A value indicating if the attributeName value should be considered an initial value, rather than a change</param>
         private void SetMultiValue(object value, bool initialLoad)
         {
             if (!initialLoad && this.Attribute.IsReadOnly)
@@ -326,7 +326,7 @@ namespace Lithnet.ResourceManagement.Client
                     {
                         if (enumerableValue == null)
                         {
-                            throw new InvalidOperationException("A multivalued attribute cannot contain a null value");
+                            throw new InvalidOperationException("A multivalued attributeName cannot contain a null value");
                         }
 
                         object convertedValue = this.ConvertValueToAttributeType(enumerableValue);
@@ -346,7 +346,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Generates a list of value changes based on the initial and current values of the attribute
+        /// Generates a list of value changes based on the initial and current values of the attributeName
         /// </summary>
         /// <returns>A list of changes</returns>
         private List<AttributeValueChange> GenerateValueChanges()
@@ -422,7 +422,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Performs conversion of supported CLR types into the native data type format that matches the attribute definition
+        /// Performs conversion of supported CLR types into the native data type format that matches the attributeName definition
         /// </summary>
         /// <param name="value">The value to convert</param>
         /// <returns>A value converted into the correct data type for the atttribute</returns>
@@ -463,7 +463,7 @@ namespace Lithnet.ResourceManagement.Client
 
                 default:
                 case AttributeType.Unknown:
-                    throw new InvalidOperationException("The attribute type was unknown");
+                    throw new InvalidOperationException("The attributeName type was unknown");
             }
         }
 
@@ -477,7 +477,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Tests the current attribute value collection for equality with another object
+        /// Tests the current attributeName value collection for equality with another object
         /// </summary>
         /// <param name="obj">The object to compare</param>
         /// <returns>True if the object has the same values as this object, or false if they are different</returns>
@@ -516,7 +516,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets the value of a single-valued attribute as a string
+        /// Gets the value of a single-valued attributeName as a string
         /// </summary>
         public string StringValue
         {
@@ -524,7 +524,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 if (this.Attribute.IsMultivalued)
                 {
-                    throw new InvalidOperationException("Cannot get a multivalued attribute value from GetValue");
+                    throw new InvalidOperationException("Cannot get a multivalued attributeName value from GetValue");
                 }
 
                 return TypeConverter.ToString(this.value);
@@ -532,7 +532,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets the value of a single-valued attribute as a 64-bit integer
+        /// Gets the value of a single-valued attributeName as a 64-bit integer
         /// </summary>
         public long IntegerValue
         {
@@ -540,7 +540,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 if (this.Attribute.IsMultivalued)
                 {
-                    throw new InvalidOperationException("Cannot get a multivalued attribute value from GetValue");
+                    throw new InvalidOperationException("Cannot get a multivalued attributeName value from GetValue");
                 }
 
                 return TypeConverter.ToLong(this.value);
@@ -548,7 +548,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets the value of a single-valued attribute as a boolean value
+        /// Gets the value of a single-valued attributeName as a boolean value
         /// </summary>
         public bool BooleanValue
         {
@@ -556,7 +556,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 if (this.Attribute.IsMultivalued)
                 {
-                    throw new InvalidOperationException("Cannot get a multivalued attribute value from GetValue");
+                    throw new InvalidOperationException("Cannot get a multivalued attributeName value from GetValue");
                 }
 
                 return TypeConverter.ToBoolean(this.value);
@@ -564,7 +564,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets the value of a single-valued attribute as a byte array
+        /// Gets the value of a single-valued attributeName as a byte array
         /// </summary>
         public byte[] BinaryValue
         {
@@ -572,7 +572,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 if (this.Attribute.IsMultivalued)
                 {
-                    throw new InvalidOperationException("Cannot get a multivalued attribute value from GetValue");
+                    throw new InvalidOperationException("Cannot get a multivalued attributeName value from GetValue");
                 }
 
                 if (this.IsNull)
@@ -585,7 +585,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets the value of a single-valued attribute as a reference value
+        /// Gets the value of a single-valued attributeName as a reference value
         /// </summary>
         public UniqueIdentifier ReferenceValue
         {
@@ -593,7 +593,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 if (this.Attribute.IsMultivalued)
                 {
-                    throw new InvalidOperationException("Cannot get a multivalued attribute value from GetValue");
+                    throw new InvalidOperationException("Cannot get a multivalued attributeName value from GetValue");
                 }
 
                 return TypeConverter.ToUniqueIdentifier(this.value);
@@ -601,7 +601,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets the value of a single-valued attribute as a DateTime value
+        /// Gets the value of a single-valued attributeName as a DateTime value
         /// </summary>
         public DateTime DateTimeValue
         {
@@ -609,7 +609,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 if (this.Attribute.IsMultivalued)
                 {
-                    throw new InvalidOperationException("Cannot get a multivalued attribute value from GetValue");
+                    throw new InvalidOperationException("Cannot get a multivalued attributeName value from GetValue");
                 }
 
                 return TypeConverter.ToDateTime(this.value);
@@ -617,7 +617,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets the values of a multivalued attribute as a collection of string values
+        /// Gets the values of a multivalued attributeName as a collection of string values
         /// </summary>
         public ReadOnlyCollection<string> StringValues
         {
@@ -625,7 +625,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 if (!this.Attribute.IsMultivalued)
                 {
-                    throw new InvalidOperationException("Cannot get a single-valued attribute value from GetValues");
+                    throw new InvalidOperationException("Cannot get a single-valued attributeName value from GetValues");
                 }
 
                 return this.values.Cast<string>().ToList().AsReadOnly();
@@ -633,7 +633,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets the values of a multivalued attribute as a collection of 64-bit integer values
+        /// Gets the values of a multivalued attributeName as a collection of 64-bit integer values
         /// </summary>
         public ReadOnlyCollection<long> IntegerValues
         {
@@ -641,7 +641,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 if (!this.Attribute.IsMultivalued)
                 {
-                    throw new InvalidOperationException("Cannot get a single-valued attribute value from GetValues");
+                    throw new InvalidOperationException("Cannot get a single-valued attributeName value from GetValues");
                 }
 
                 return this.values.Cast<long>().ToList().AsReadOnly();
@@ -649,7 +649,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets the values of a multivalued attribute as a collection of byte array values
+        /// Gets the values of a multivalued attributeName as a collection of byte array values
         /// </summary>
         public ReadOnlyCollection<byte[]> BinaryValues
         {
@@ -657,7 +657,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 if (!this.Attribute.IsMultivalued)
                 {
-                    throw new InvalidOperationException("Cannot get a single-valued attribute value from GetValues");
+                    throw new InvalidOperationException("Cannot get a single-valued attributeName value from GetValues");
                 }
 
                 return this.values.Cast<byte[]>().ToList().AsReadOnly();
@@ -665,7 +665,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets the values of a multivalued attribute as a collection of reference values
+        /// Gets the values of a multivalued attributeName as a collection of reference values
         /// </summary>
         public ReadOnlyCollection<UniqueIdentifier> ReferenceValues
         {
@@ -673,7 +673,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 if (!this.Attribute.IsMultivalued)
                 {
-                    throw new InvalidOperationException("Cannot get a single-valued attribute value from GetValues");
+                    throw new InvalidOperationException("Cannot get a single-valued attributeName value from GetValues");
                 }
 
                 return this.values.Cast<UniqueIdentifier>().ToList().AsReadOnly();
@@ -681,7 +681,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets the values of a multivalued attribute as a collection of DateTime values
+        /// Gets the values of a multivalued attributeName as a collection of DateTime values
         /// </summary>
         public ReadOnlyCollection<DateTime> DateTimeValues
         {
@@ -689,7 +689,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 if (!this.Attribute.IsMultivalued)
                 {
-                    throw new InvalidOperationException("Cannot get a single-valued attribute value from GetValues");
+                    throw new InvalidOperationException("Cannot get a single-valued attributeName value from GetValues");
                 }
 
                 return this.values.Cast<DateTime>().ToList().AsReadOnly();
@@ -697,7 +697,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets the values of the attribute converted to strings for serialization
+        /// Gets the values of the attributeName converted to strings for serialization
         /// </summary>
         /// <returns></returns>
         internal IList<string> GetSerializationValues()

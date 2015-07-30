@@ -219,7 +219,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             string newID = Guid.NewGuid().ToString();
             List<string> attributesToGet = new List<string>() { AttributeNames.AccountName, UnitTestHelper.AttributeBooleanSV, UnitTestHelper.AttributeStringSV, UnitTestHelper.AttributeReferenceMV };
 
-            Dictionary<string, string> keys = new Dictionary<string, string>();
+            Dictionary<string, object> keys = new Dictionary<string, object>();
             keys.Add(AttributeNames.AccountName, newID);
             keys.Add(UnitTestHelper.AttributeStringSV, UnitTestHelper.TestDataString1);
 
@@ -248,7 +248,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             ResourceManagementClient client = new ResourceManagementClient();
             ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
             string newID = Guid.NewGuid().ToString();
-            Dictionary<string, string> keys = new Dictionary<string, string>();
+            Dictionary<string, object> keys = new Dictionary<string, object>();
             keys.Add(AttributeNames.AccountName, newID);
             keys.Add(UnitTestHelper.AttributeStringSV, UnitTestHelper.TestDataString1);
 
@@ -288,7 +288,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 try
                 {
                     resource1 = client.GetResourceByKey(UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringSV, UnitTestHelper.TestDataString1);
-                    Assert.Fail("The expected exception was not thrown");
+                    Assert.Fail("The expectedXpath exception was not thrown");
                 }
                 catch (TooManyResultsException)
                 {

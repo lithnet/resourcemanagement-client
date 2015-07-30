@@ -65,10 +65,10 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets the definition of an attribute by its name
+        /// Gets the definition of an attributeName by its name
         /// </summary>
-        /// <param name="attributeName">The name of the attribute</param>
-        /// <returns>An AttributeTypeDefinition for the specified attribute, or null if the attribute doesn't exist on the object type</returns>
+        /// <param name="attributeName">The name of the attributeName</param>
+        /// <returns>An AttributeTypeDefinition for the specified attributeName, or null if the attributeName doesn't exist on the object type</returns>
         public AttributeTypeDefinition this[string attributeName]
         {
             get

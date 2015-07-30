@@ -101,7 +101,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 client.DeleteResource("f970bdf5-7b41-4618-82e6-ff16d34d2e41");
-                Assert.Fail("The expected exception was not thrown");
+                Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch (PermissionDeniedException)
             {

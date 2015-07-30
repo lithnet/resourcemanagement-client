@@ -7,7 +7,7 @@ using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
 namespace Lithnet.ResourceManagement.Client
 {
     /// <summary>
-    /// Defines a pending change to an attribute value
+    /// Defines a pending change to an attributeName value
     /// </summary>
     public class AttributeValueChange
     {

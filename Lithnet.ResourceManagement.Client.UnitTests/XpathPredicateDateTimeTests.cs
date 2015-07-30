@@ -7,11 +7,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
     [TestClass]
-    public class XpathQueryBuilderDateTimeTests
+    public class XpathPredicateDateTimeTests
     {
         private ResourceManagementClient client = new ResourceManagementClient();
 
-        public XpathQueryBuilderDateTimeTests()
+        public XpathPredicateDateTimeTests()
         {
             client.DeleteResources(client.GetResources("/" + UnitTestHelper.ObjectTypeUnitTestObjectName));
         }
@@ -51,7 +51,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             try
             {
-                string expected = string.Format("/{0}[(not({1} = '{2}'))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, queryValue, matchResource);
+                string expected = string.Format("/{0}[({1} != '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, queryValue, matchResource);
                 this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, XPathOperator.NotEquals, QueryOperator.And, matchResource);
             }
             finally
@@ -72,7 +72,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             try
             {
-                string expected = string.Format("/{0}[({1} <= '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, XPathFilterPredicate.MaxDate);
+                string expected = string.Format("/{0}[({1} <= '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, XPathPredicate.MaxDate);
                 this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, XPathOperator.IsPresent, QueryOperator.And, matchResource);
             }
             finally
@@ -93,7 +93,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             try
             {
-                string expected = string.Format("/{0}[(not({1} <= '{2}'))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, XPathFilterPredicate.MaxDate);
+                string expected = string.Format("/{0}[(not({1} <= '{2}'))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, XPathPredicate.MaxDate);
                 this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, XPathOperator.IsNotPresent, QueryOperator.And, matchResource);
             }
             finally
@@ -242,7 +242,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             try
             {
-                string expected = string.Format("/{0}[({1} <= '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeMV, XPathFilterPredicate.MaxDate);
+                string expected = string.Format("/{0}[({1} <= '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeMV, XPathPredicate.MaxDate);
                 this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, XPathOperator.IsPresent, QueryOperator.And, matchResource);
             }
             finally
@@ -263,7 +263,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             try
             {
-                string expected = string.Format("/{0}[(not({1} <= '{2}'))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeMV, XPathFilterPredicate.MaxDate);
+                string expected = string.Format("/{0}[(not({1} <= '{2}'))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeMV, XPathPredicate.MaxDate);
                 this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, XPathOperator.IsNotPresent, QueryOperator.And, matchResource);
             }
             finally
@@ -363,8 +363,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathFilterPredicate predicate = new XPathFilterPredicate(UnitTestHelper.AttributeDateTimeMV, XPathOperator.Contains);
-                Assert.Fail("The expected exception was not thrown");
+                XPathPredicate predicate = new XPathPredicate(UnitTestHelper.AttributeDateTimeMV, XPathOperator.Contains);
+                Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
@@ -374,8 +374,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathFilterPredicate predicate = new XPathFilterPredicate(UnitTestHelper.AttributeDateTimeMV, XPathOperator.EndsWith);
-                Assert.Fail("The expected exception was not thrown");
+                XPathPredicate predicate = new XPathPredicate(UnitTestHelper.AttributeDateTimeMV, XPathOperator.EndsWith);
+                Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
@@ -385,8 +385,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathFilterPredicate predicate = new XPathFilterPredicate(UnitTestHelper.AttributeDateTimeMV, XPathOperator.StartsWith);
-                Assert.Fail("The expected exception was not thrown");
+                XPathPredicate predicate = new XPathPredicate(UnitTestHelper.AttributeDateTimeMV, XPathOperator.StartsWith);
+                Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
@@ -396,8 +396,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathFilterPredicate predicate = new XPathFilterPredicate(UnitTestHelper.AttributeDateTimeSV, XPathOperator.Contains);
-                Assert.Fail("The expected exception was not thrown");
+                XPathPredicate predicate = new XPathPredicate(UnitTestHelper.AttributeDateTimeSV, XPathOperator.Contains);
+                Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
@@ -407,8 +407,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathFilterPredicate predicate = new XPathFilterPredicate(UnitTestHelper.AttributeDateTimeSV, XPathOperator.EndsWith);
-                Assert.Fail("The expected exception was not thrown");
+                XPathPredicate predicate = new XPathPredicate(UnitTestHelper.AttributeDateTimeSV, XPathOperator.EndsWith);
+                Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
@@ -418,8 +418,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathFilterPredicate predicate = new XPathFilterPredicate(UnitTestHelper.AttributeDateTimeSV, XPathOperator.StartsWith);
-                Assert.Fail("The expected exception was not thrown");
+                XPathPredicate predicate = new XPathPredicate(UnitTestHelper.AttributeDateTimeSV, XPathOperator.StartsWith);
+                Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
@@ -427,7 +427,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         private void SubmitXpath(object value, string expected, string attributeName, XPathOperator xpathOp, QueryOperator queryOp, params ResourceObject[] matchResources)
         {
-            XPathFilterPredicate predicate = new XPathFilterPredicate(attributeName, xpathOp, value);
+            XPathPredicate predicate = new XPathPredicate(attributeName, xpathOp, value);
             string xpath = XPathFilterBuilder.CreateFilter(UnitTestHelper.ObjectTypeUnitTestObjectName, queryOp, predicate);
             Assert.AreEqual(expected, xpath);
 
@@ -443,7 +443,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             if (matchResources == null || matchResources.Length == 0)
             {
-                Assert.Fail("The query returned results where none were expected");
+                Assert.Fail("The query returned results where none were expectedXpath");
             }
 
             if (results.Count != matchResources.Length)

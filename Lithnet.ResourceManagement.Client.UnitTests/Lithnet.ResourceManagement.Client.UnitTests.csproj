@@ -92,11 +92,14 @@
     <Compile Include="PutStringTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GetTests.cs" />
+    <Compile Include="XPathAscendantExpressionTests.cs" />
+    <Compile Include="XpathPredicateGroupTests.cs" />
     <Compile Include="UnitTestHelper.cs" />
-    <Compile Include="XpathQueryBuilderBooleanTests.cs" />
-    <Compile Include="XpathQueryBuilderDateTimeTests.cs" />
-    <Compile Include="XpathQueryBuilderIntegerTest.cs" />
-    <Compile Include="XpathQueryBuilderStringTests.cs" />
+    <Compile Include="XpathPredicateReferenceTests.cs" />
+    <Compile Include="XpathPredicateBooleanTests.cs" />
+    <Compile Include="XpathPredicateDateTimeTests.cs" />
+    <Compile Include="XpathPredicateIntegerTest.cs" />
+    <Compile Include="XpathPredicateStringTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lithnet.ResourceManagement.Client\Lithnet.ResourceManagement.Client.csproj">

@@ -40,7 +40,7 @@ namespace Lithnet.ResourceManagement.Client.Help.Examples
         {
             ResourceManagementClient client = new ResourceManagementClient();
 
-            Dictionary<string, string> anchorPairs = new Dictionary<string, string>();
+            Dictionary<string, object> anchorPairs = new Dictionary<string, object>();
             anchorPairs.Add("AccountName", username);
             anchorPairs.Add("Domain", domain);
 

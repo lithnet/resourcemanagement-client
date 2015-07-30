@@ -407,7 +407,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             {
                 if (!value.ValueChanges.Any(t => t.ChangeType == expectedChange.ChangeType && comparer.Equals(t.Value, expectedChange.Value)))
                 {
-                    Assert.Fail("The expected change was not found: {0}:{1}", expectedChange.ChangeType, expectedChange.Value);
+                    Assert.Fail("The expectedXpath change was not found: {0}:{1}", expectedChange.ChangeType, expectedChange.Value);
                 }
             }
         }
@@ -438,7 +438,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             {
                 if (!value.ValueChanges.Any(t => t.ChangeType == expectedChange.ChangeType && comparer.Equals(t.Value, expectedChange.Value)))
                 {
-                    Assert.Fail("The expected change was not found: {0}:{1}", expectedChange.ChangeType, expectedChange.Value);
+                    Assert.Fail("The expectedXpath change was not found: {0}:{1}", expectedChange.ChangeType, expectedChange.Value);
                 }
             }
         }
@@ -471,7 +471,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             {
                 if (!value.ValueChanges.Any(t => t.ChangeType == expectedChange.ChangeType && comparer.Equals(t.Value, expectedChange.Value)))
                 {
-                    Assert.Fail("The expected change was not found: {0}:{1}", expectedChange.ChangeType, expectedChange.Value);
+                    Assert.Fail("The expectedXpath change was not found: {0}:{1}", expectedChange.ChangeType, expectedChange.Value);
                 }
             }
         }

@@ -211,7 +211,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         private static void CreateBindingIfDoesntExist(ResourceObject objectType, ResourceObject attributeType)
         {
             ResourceManagementClient client = new ResourceManagementClient();
-            Dictionary<string, string> keys = new Dictionary<string, string>();
+            Dictionary<string, object> keys = new Dictionary<string, object>();
             keys.Add(AttributeNames.BoundObjectType, objectType.ObjectID.Value);
             keys.Add(AttributeNames.BoundAttributeType, attributeType.ObjectID.Value);
 
@@ -267,7 +267,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual(UnitTestHelper.TestDataReference1, resource.Attributes[UnitTestHelper.AttributeReferenceSV].ReferenceValue);
             Assert.AreEqual(UnitTestHelper.TestDataText1, resource.Attributes[UnitTestHelper.AttributeTextSV].StringValue);
 
-            // Validate single-valued binary attribute
+            // Validate single-valued binary attributeName
 
             CollectionAssert.AreEqual(UnitTestHelper.TestDataBinary1, resource.Attributes[UnitTestHelper.AttributeBinarySV].BinaryValue);
 
@@ -279,7 +279,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             CollectionAssert.AreEqual(UnitTestHelper.TestDataReference1MV, resource.Attributes[UnitTestHelper.AttributeReferenceMV].ReferenceValues);
             CollectionAssert.AreEqual(UnitTestHelper.TestDataText1MV, resource.Attributes[UnitTestHelper.AttributeTextMV].StringValues);
 
-            // Validate multivalued binary attribute
+            // Validate multivalued binary attributeName
 
             Assert.AreEqual(UnitTestHelper.TestDataBinary1MV.Count, resource.Attributes[UnitTestHelper.AttributeBinaryMV].BinaryValues.Count);
 
@@ -323,7 +323,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 Assert.AreEqual(UnitTestHelper.TestDataText1, resource.Attributes[UnitTestHelper.AttributeTextSV].StringValue);
             }
 
-            // Validate single-valued binary attribute
+            // Validate single-valued binary attributeName
 
             if (attributesToCheck.Contains(UnitTestHelper.AttributeBinarySV))
             {
@@ -358,7 +358,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 CollectionAssert.AreEqual(UnitTestHelper.TestDataText1MV, resource.Attributes[UnitTestHelper.AttributeTextMV].StringValues);
             }
 
-            // Validate multivalued binary attribute
+            // Validate multivalued binary attributeName
 
             if (attributesToCheck.Contains(UnitTestHelper.AttributeBinaryMV))
             {

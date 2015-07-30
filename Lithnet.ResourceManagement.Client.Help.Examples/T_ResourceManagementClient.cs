@@ -16,10 +16,10 @@ namespace ConsoleApplication2
             // Write the object to the console
             Console.WriteLine(resource.ToString());
 
-            // Get a single attribute
+            // Get a single attributeName
             Console.WriteLine(resource.Attributes["AccountName"].StringValue);
 
-            // Change an attribute
+            // Change an attributeName
             resource.Attributes["AccountName"].SetValue("NewUsername");
 
             // Save the resource to the fim service

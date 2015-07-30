@@ -6,7 +6,7 @@ using System.Text;
 namespace Lithnet.ResourceManagement.Client
 {
     /// <summary>
-    /// Defines a list of built-in attribute names in the Resource Management Service
+    /// Defines a list of built-in attributeName names in the Resource Management Service
     /// </summary>
     /// <remarks>
     /// The constants defined is this class can be used in place of manually specifying the names of the attributes as strings in code
@@ -14,113 +14,113 @@ namespace Lithnet.ResourceManagement.Client
     public static class AttributeNames
     {
         /// <summary>
-        /// The Name attribute
+        /// The Name attributeName
         /// </summary>
         public const string Name = "Name";
 
         /// <summary>
-        /// The DisplayName attribute
+        /// The DisplayName attributeName
         /// </summary>
         public const string DisplayName = "DisplayName";
 
         /// <summary>
-        /// The AccountName attribute
+        /// The AccountName attributeName
         /// </summary>
         public const string AccountName = "AccountName";
 
         /// <summary>
-        /// The Creator attribute
+        /// The Creator attributeName
         /// </summary>
         public const string Creator = "Creator";
 
         /// <summary>
-        /// The DeletedTime attribute
+        /// The DeletedTime attributeName
         /// </summary>
         public const string DeletedTime = "Deleted Time";
 
         /// <summary>
-        /// The Description attribute
+        /// The Description attributeName
         /// </summary>
         public const string Description = "Description";
 
         /// <summary>
-        /// The DetectedRulesList attribute
+        /// The DetectedRulesList attributeName
         /// </summary>
         public const string DetectedRulesList = "DetectedRulesList";
 
         /// <summary>
-        /// The ExpectedRulesList attribute
+        /// The ExpectedRulesList attributeName
         /// </summary>
         public const string ExpectedRulesList = "ExpectedRulesList";
 
         /// <summary>
-        /// The ExpirationTime attribute
+        /// The ExpirationTime attributeName
         /// </summary>
         public const string ExpirationTime = "ExpirationTime";
 
         /// <summary>
-        /// The MVObjectID attribute
+        /// The MVObjectID attributeName
         /// </summary>
         public const string MVObjectID = "MVObjectID";
 
         /// <summary>
-        /// The ObjectID attribute
+        /// The ObjectID attributeName
         /// </summary>
         public const string ObjectID = "ObjectID";
 
         /// <summary>
-        /// The ResourceTime attribute
+        /// The ResourceTime attributeName
         /// </summary>
         public const string ResourceTime = "ResourceTime";
 
         /// <summary>
-        /// The ObjectType attribute
+        /// The ObjectType attributeName
         /// </summary>
         public const string ObjectType = "ObjectType";
 
         /// <summary>
-        /// The UsageKeyword attribute
+        /// The UsageKeyword attributeName
         /// </summary>
         public const string UsageKeyword = "UsageKeyword";
 
 
         /// <summary>
-        /// The StringRegex attribute
+        /// The StringRegex attributeName
         /// </summary>
         public const string StringRegex = "StringRegex";
 
         /// <summary>
-        /// The Multivalued attribute
+        /// The Multivalued attributeName
         /// </summary>
         public const string Multivalued = "Multivalued";
 
         /// <summary>
-        /// The Localizable attribute
+        /// The Localizable attributeName
         /// </summary>
         public const string Localizable = "Localizable";
 
         /// <summary>
-        /// The DataType attribute
+        /// The DataType attributeName
         /// </summary>
         public const string DataType = "DataType";
 
         /// <summary>
-        /// The BoundObjectType attribute
+        /// The BoundObjectType attributeName
         /// </summary>
         public const string BoundObjectType = "BoundObjectType";
 
         /// <summary>
-        /// The BoundAttributeType attribute
+        /// The BoundAttributeType attributeName
         /// </summary>
         public const string BoundAttributeType = "BoundAttributeType";
 
         /// <summary>
-        /// The Required attribute
+        /// The Required attributeName
         /// </summary>
         public const string Required = "Required";
 
         /// <summary>
-        /// The Member attribute
+        /// The Member attributeName
         /// </summary>
         public const string Member = "Member";
     }

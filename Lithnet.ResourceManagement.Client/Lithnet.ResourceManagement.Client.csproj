@@ -62,6 +62,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AttributeValuePair.cs" />
+    <Compile Include="AttributeValuePairCollection.cs" />
     <Compile Include="Enums\OperationType.cs" />
     <Compile Include="Enums\QueryOperator.cs" />
     <Compile Include="Enums\XPathOperator.cs" />
@@ -108,9 +110,14 @@
     <Compile Include="Utilities\TypeConverter.cs" />
     <Compile Include="Exceptions\UnsupportedDataTypeException.cs" />
     <Compile Include="Utilities\MessageExtensions.cs" />
-    <Compile Include="Utilities\XPathFilterBuilder.cs" />
-    <Compile Include="Utilities\XPathFilterPredicate.cs" />
-    <Compile Include="Utilities\XPathFilterPredicateGroup.cs" />
+    <Compile Include="XPath\IXPathPredicateComponent.cs" />
+    <Compile Include="XPath\XPathAscendantExpression.cs" />
+    <Compile Include="XPath\XPathDescendantExpression.cs" />
+    <Compile Include="XPath\XPathDereferencedExpression.cs" />
+    <Compile Include="XPath\XPathExpression.cs" />
+    <Compile Include="XPath\XPathFilterBuilder.cs" />
+    <Compile Include="XPath\XPathPredicate.cs" />
+    <Compile Include="XPath\XPathPredicateGroup.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

@@ -7,11 +7,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
     [TestClass]
-    public class XpathQueryBuilderStringTests
+    public class XpathPredicateStringTests
     {
         private ResourceManagementClient client = new ResourceManagementClient();
 
-        public XpathQueryBuilderStringTests()
+        public XpathPredicateStringTests()
         {
             client.DeleteResources(client.GetResources("/" + UnitTestHelper.ObjectTypeUnitTestObjectName));
         }
@@ -66,7 +66,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             /*
               FROM https://msdn.microsoft.com/en-us/library/windows/desktop/ee652287(v=vs.100).aspx
             
-                Given the following string: "The quick brown fox," and the contains() query on the string "u", the expected result is 
+                Given the following string: "The quick brown fox," and the contains() query on the string "u", the expectedXpath result is 
                 that nothing is returned, since the letter "u" only appears in the middle of a string, and not immediately after a wordbreaker. 
                 If we ran the contains() query on the string "qu", however, we would get a match, since the substring "qu" appears immediately 
                 after a wordbreaking character.
@@ -224,7 +224,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             /*
               FROM https://msdn.microsoft.com/en-us/library/windows/desktop/ee652287(v=vs.100).aspx
             
-                Given the following string: "The quick brown fox," and the contains() query on the string "u", the expected result is 
+                Given the following string: "The quick brown fox," and the contains() query on the string "u", the expectedXpath result is 
                 that nothing is returned, since the letter "u" only appears in the middle of a string, and not immediately after a wordbreaker. 
                 If we ran the contains() query on the string "qu", however, we would get a match, since the substring "qu" appears immediately 
                 after a wordbreaking character.
@@ -340,8 +340,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathFilterPredicate predicate = new XPathFilterPredicate(UnitTestHelper.AttributeStringSV, XPathOperator.GreaterThan);
-                Assert.Fail("The expected exception was not thrown");
+                XPathPredicate predicate = new XPathPredicate(UnitTestHelper.AttributeStringSV, XPathOperator.GreaterThan);
+                Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
@@ -351,8 +351,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathFilterPredicate predicate = new XPathFilterPredicate(UnitTestHelper.AttributeStringSV, XPathOperator.GreaterThanOrEquals);
-                Assert.Fail("The expected exception was not thrown");
+                XPathPredicate predicate = new XPathPredicate(UnitTestHelper.AttributeStringSV, XPathOperator.GreaterThanOrEquals);
+                Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
@@ -362,8 +362,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathFilterPredicate predicate = new XPathFilterPredicate(UnitTestHelper.AttributeStringSV, XPathOperator.LessThan);
-                Assert.Fail("The expected exception was not thrown");
+                XPathPredicate predicate = new XPathPredicate(UnitTestHelper.AttributeStringSV, XPathOperator.LessThan);
+                Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
@@ -373,15 +373,15 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathFilterPredicate predicate = new XPathFilterPredicate(UnitTestHelper.AttributeStringSV, XPathOperator.LessThanOrEquals);
-                Assert.Fail("The expected exception was not thrown");
+                XPathPredicate predicate = new XPathPredicate(UnitTestHelper.AttributeStringSV, XPathOperator.LessThanOrEquals);
+                Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
 
         private void SubmitXpath(string value, string expected, string attributeName, XPathOperator xpathOp, QueryOperator queryOp, params ResourceObject[] matchResources)
         {
-            XPathFilterPredicate predicate = new XPathFilterPredicate(attributeName, xpathOp, value);
+            XPathPredicate predicate = new XPathPredicate(attributeName, xpathOp, value);
             string xpath = XPathFilterBuilder.CreateFilter(UnitTestHelper.ObjectTypeUnitTestObjectName, queryOp, predicate);
             Assert.AreEqual(expected, xpath);
 
@@ -397,7 +397,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             if (matchResources == null || matchResources.Length == 0)
             {
-                Assert.Fail("The query returned results where none were expected");
+                Assert.Fail("The query returned results where none were expectedXpath");
             }
 
             if (results.Count != matchResources.Length)

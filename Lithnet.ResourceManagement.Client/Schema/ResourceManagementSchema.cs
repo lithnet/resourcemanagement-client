@@ -97,6 +97,8 @@ namespace Lithnet.ResourceManagement.Client
 
         public static AttributeType GetAttributeType(string attributeName)
         {
+            ResourceManagementSchema.LoadSchema();
+
             foreach (ObjectTypeDefinition objectType in ResourceManagementSchema.ObjectTypes.Values)
             {
                 AttributeTypeDefinition attributeType = objectType.Attributes.FirstOrDefault(t => t.SystemName == attributeName);
@@ -112,6 +114,8 @@ namespace Lithnet.ResourceManagement.Client
 
         public static bool IsAttributeMultivalued(string attributeName)
         {
+            ResourceManagementSchema.LoadSchema();
+
             foreach (ObjectTypeDefinition objectType in ResourceManagementSchema.ObjectTypes.Values)
             {
                 AttributeTypeDefinition attributeType = objectType.Attributes.FirstOrDefault(t => t.SystemName == attributeName);

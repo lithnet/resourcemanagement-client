@@ -162,7 +162,7 @@
         /// Note that when using this method, the objects are passed to the Resource Management Service in a single request. In the Request History in the portal, this will appear as a single request, and the individual object IDs that were deleted will not be visible.
         /// </remarks>
         /// <example>
-        /// The following example gets all the members of a set, and passes the reference attribute containing the objects to the delete function
+        /// The following example gets all the members of a set, and passes the reference attributeName containing the objects to the delete function
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_DeleteResourceExamples.cs" region="DeleteResources(IEnumerable{UniqueIdentifier})"/>
         /// </example>
         public void DeleteResources(IEnumerable<UniqueIdentifier> resourceIDs)
@@ -210,7 +210,7 @@
         /// </summary>
         /// <param name="id">The reference to the object to delete</param>
         /// <example>
-        /// The following example shows how to delete an object using a reference attribute
+        /// The following example shows how to delete an object using a reference attributeName
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_DeleteResourceExamples.cs" region="DeleteResource(UniqueIdentifier)"/>
         /// </example>
         public void DeleteResource(UniqueIdentifier id)
@@ -481,15 +481,15 @@
         }
         
         /// <summary>
-        /// Gets a resource from the resource management service using a unique attribute and value combination, retrieving all attributes for the resource
+        /// Gets a resource from the resource management service using a unique attributeName and value combination, retrieving all attributes for the resource
         /// </summary>
         /// <param name="objectType">The type of object to retrieve</param>
-        /// <param name="attribute">The name of the attribute used as the key</param>
-        /// <param name="value">The value of the attribute</param>
+        /// <param name="attributeName">The name of the attributeName used as the key</param>
+        /// <param name="value">The value of the attributeName</param>
         /// <returns>A resource that matches the specified criteria, or null of no object was found</returns>
         /// <exception cref="TooManyResultsException">The method will throw this exception when more that one match was found for the specified criteria</exception>
         /// <example>
-        /// The following example shows how get a user by its AccountName attribute
+        /// The following example shows how get a user by its AccountName attributeName
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, String, String)"/>
         /// </example>
         public ResourceObject GetResourceByKey(string objectType, string attribute, string value)
@@ -498,47 +498,47 @@
         }
 
         /// <summary>
-        /// Gets a resource from the resource management service using a unique attribute and value combination, retrieving the specified attributes for the resource
+        /// Gets a resource from the resource management service using a unique attributeName and value combination, retrieving the specified attributes for the resource
         /// </summary>
         /// <param name="objectType">The type of object to retrieve</param>
-        /// <param name="attribute">The name of the attribute used as the key</param>
-        /// <param name="value">The value of the attribute</param>
+        /// <param name="attributeName">The name of the attributeName used as the key</param>
+        /// <param name="value">The value of the attributeName</param>
         /// <param name="attributesToGet">The list of attributes to retrieve</param>
         /// <returns>A resource that matches the specified criteria, or null of no object was found</returns>
         /// <exception cref="TooManyResultsException">The method will throw this exception when more that one match was found for the specified criteria</exception>
         /// <example>
-        /// The following example shows how get a user by its AccountName attribute
+        /// The following example shows how get a user by its AccountName attributeName
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, String, String)"/>
         /// </example>
         public ResourceObject GetResourceByKey(string objectType, string attribute, string value, IEnumerable<string> attributesToGet)
         {
-            Dictionary<string, string> values = new Dictionary<string, string>();
+            Dictionary<string, object> values = new Dictionary<string, object>();
             values.Add(attribute, value);
 
             return this.GetResourceByKey(objectType, values, attributesToGet);
         }
 
         /// <summary>
-        /// Gets a resource from the resource management service using a set of unique attribute and value combinations, retrieving all attributes for the resource
+        /// Gets a resource from the resource management service using a set of unique attributeName and value combinations, retrieving all attributes for the resource
         /// </summary>
         /// <param name="objectType">The type of object to retrieve</param>
-        /// <param name="attributeValuePairs">A list of attribute value pairs that make this object unique</param>
+        /// <param name="attributeValuePairs">A list of attributeName value pairs that make this object unique</param>
         /// <returns>A resource that matches the specified criteria, or null of no object was found</returns>
         /// <exception cref="TooManyResultsException">The method will throw this exception when more that one match was found for the specified criteria</exception>
         /// <example>
         /// The following example shows how get a user by using the AccountName and Domain pair of anchor attributes
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, Dictionary{String, String})"/>
         /// </example>
-        public ResourceObject GetResourceByKey(string objectType, Dictionary<string, string> attributeValuePairs)
+        public ResourceObject GetResourceByKey(string objectType, Dictionary<string, object> attributeValuePairs)
         {
             return this.GetResourceByKey(objectType, attributeValuePairs, null);
         }
 
         /// <summary>
-        /// Gets a resource from the resource management service using a set of unique attribute and value combinations, retrieving the specified attributes for the resource
+        /// Gets a resource from the resource management service using a set of unique attributeName and value combinations, retrieving the specified attributes for the resource
         /// </summary>
         /// <param name="objectType">The type of object to retrieve</param>
-        /// <param name="attributeValuePairs">A list of attribute value pairs that make this object unique</param>
+        /// <param name="attributeValuePairs">A list of attributeName value pairs that make this object unique</param>
         /// <param name="attributesToGet">The list of attributes to retrieve</param>
         /// <returns>A resource that matches the specified criteria, or null of no object was found</returns>
         /// <exception cref="TooManyResultsException">The method will throw this exception when more that one match was found for the specified criteria</exception>
@@ -546,9 +546,9 @@
         /// The following example shows how get a user by using the AccountName and Domain pair of anchor attributes
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, Dictionary{String, String})"/>
         /// </example>
-        public ResourceObject GetResourceByKey(string objectType, Dictionary<string, string> attributeValuePairs, IEnumerable<string> attributesToGet)
+        public ResourceObject GetResourceByKey(string objectType, Dictionary<string, object> attributeValuePairs, IEnumerable<string> attributesToGet)
         {
-            string filter = XPathFilterBuilder.CreateAndFilter(objectType, attributeValuePairs);
+            string filter = XPathFilterBuilder.CreateFilter(objectType, attributeValuePairs, XPathOperator.Equals, QueryOperator.And);
 
             if (attributesToGet == null)
             {
@@ -665,6 +665,12 @@
         public ISearchResultCollection GetResources(string filter, int pageSize, IEnumerable<string> attributesToRetrieve, CancellationTokenSource cancellationToken)
         {
             return this.searchClient.Enumerate(filter, pageSize, attributesToRetrieve, cancellationToken);
+        }
+
+        public int GetResourceCount(string filter)
+        {
+            ISearchResultCollection result = this.searchClient.Enumerate(filter, 1, new List<string>());
+            return result.Count;
         }
 
         /// <summary>

@@ -100,6 +100,10 @@ namespace Lithnet.ResourceManagement.Client
             {
                 return new UniqueIdentifier((string)value);
             }
+            else if (value is ResourceObject)
+            {
+                return ((ResourceObject)value).ObjectID;
+            }
             else
             {
                 throw new UnsupportedDataTypeException(typeof(UniqueIdentifier), value.GetType());
