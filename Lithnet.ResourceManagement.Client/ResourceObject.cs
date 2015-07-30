@@ -265,7 +265,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Reverts the object back to its original state, undoing any pending attributeName changes
+        /// Reverts the object back to its original state, undoing any pending attribute changes
         /// </summary>
         public void UndoChanges()
         {
@@ -329,10 +329,10 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets a value indicating whether the specified attributeName is present on the object and has value
+        /// Gets a value indicating whether the specified attribute is present on the object and has value
         /// </summary>
-        /// <param name="name">The name of the attributeName</param>
-        /// <returns>Returns true if the attributeName has a value and false if the attributeName is not present on the object or is null</returns>
+        /// <param name="name">The name of the attribute</param>
+        /// <returns>Returns true if the attribute has a value and false if the attribute is not present on the object or is null</returns>
         public bool HasValue(string name)
         {
             if (!this.attributes.ContainsAttribute(name))
@@ -371,7 +371,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// Gets a string representation of this object
         /// </summary>
-        /// <returns>A string based list of attributeName and value pairs</returns>
+        /// <returns>A string based list of attribute and value pairs</returns>
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
@@ -442,7 +442,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets a list of attributeName changes as Put fragments for submission to the Resource Management Service
+        /// Gets a list of attribute changes as Put fragments for submission to the Resource Management Service
         /// </summary>
         /// <returns>A list of PutFragmentType objects containing all the value changes pending on the object</returns>
         internal List<PutFragmentType> GetPutFragements()
@@ -499,7 +499,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Sets the internal attributeName value collection with the initial values contained in the dictionary
+        /// Sets the internal attribute value collection with the initial values contained in the dictionary
         /// </summary>
         /// <param name="values">The initial attributes and values to set</param>
         private void SetInitialAttributeValues(Dictionary<string, List<string>> values)
@@ -520,7 +520,7 @@ namespace Lithnet.ResourceManagement.Client
                 {
                     if (!d.IsMultivalued && kvp.Value.Count > 1)
                     {
-                        throw new InvalidOperationException("The attributeName {0} is listed in the schema as a multivalued attributeName, but more than one value was returned");
+                        throw new InvalidOperationException("The attribute {0} is listed in the schema as a multivalued attribute, but more than one value was returned");
                     }
 
                     if (d.IsMultivalued)
@@ -712,7 +712,7 @@ namespace Lithnet.ResourceManagement.Client
 
             if (!values.ContainsKey(AttributeNames.ObjectType))
             {
-                throw new InvalidOperationException("The object type of the attributeName was not present in the serialization data");
+                throw new InvalidOperationException("The object type of the attribute was not present in the serialization data");
             }
 
             if (this.ModificationType == OperationType.None)

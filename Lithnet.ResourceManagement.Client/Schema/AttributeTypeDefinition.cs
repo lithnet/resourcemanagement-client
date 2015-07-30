@@ -9,52 +9,52 @@ using System.Xml;
 namespace Lithnet.ResourceManagement.Client
 {
     /// <summary>
-    /// Defines an attributeName type in the Resource Management Service schema
+    /// Defines an attribute type in the Resource Management Service schema
     /// </summary>
     public class AttributeTypeDefinition
     {
         /// <summary>
-        /// Gets a value that indicates whether the attributeName is required
+        /// Gets a value that indicates whether the attribute is required
         /// </summary>
         public bool IsRequired { get; private set; }
 
         /// <summary>
-        /// Gets the data type of the attributeName
+        /// Gets the data type of the attribute
         /// </summary>
         public AttributeType Type { get; private set; }
 
         /// <summary>
-        /// Gets the system name of the attributeName
+        /// Gets the system name of the attribute
         /// </summary>
         public string SystemName { get; private set; }
 
         /// <summary>
-        /// Gets the display name of the attributeName
+        /// Gets the display name of the attribute
         /// </summary>
         public string DisplayName { get; private set; }
 
         /// <summary>
-        /// Gets the description of the attributeName
+        /// Gets the description of the attribute
         /// </summary>
         public string Description { get; private set; }
 
         /// <summary>
-        /// Gets a value indicating whether this attributeName is multivalued or single-valued
+        /// Gets a value indicating whether this attribute is multivalued or single-valued
         /// </summary>
         public bool IsMultivalued { get; private set; }
 
         /// <summary>
-        /// Gets a value indicating whether this attributeName is read only
+        /// Gets a value indicating whether this attribute is read only
         /// </summary>
         public bool IsReadOnly { get; private set; }
 
         /// <summary>
-        /// Gets the regular expression valued to validate the correctness of this attributeName
+        /// Gets the regular expression valued to validate the correctness of this attribute
         /// </summary>
         public string Regex { get; private set; }
 
         /// <summary>
-        /// Gets or sets the list of attributeName names that are always read-only in the schema
+        /// Gets or sets the list of attribute names that are always read-only in the schema
         /// </summary>
         private static List<string> ReadOnlyAttributeNames { get; set; }
 
@@ -78,11 +78,11 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// Initializes an instance of the AttributeTypeDefinititon class
         /// </summary>
-        /// <param name="systemName">The system name of the attributeName</param>
-        /// <param name="type">The data type of the attributeName</param>
-        /// <param name="isMultivalued">A value indicating if the attributeName is multivalued or single-valued</param>
-        /// <param name="isReadOnly">A value indicating if the attributeName is read only</param>
-        /// <param name="isRequired">A value indicating if the attributeName is required</param>
+        /// <param name="systemName">The system name of the attribute</param>
+        /// <param name="type">The data type of the attribute</param>
+        /// <param name="isMultivalued">A value indicating if the attribute is multivalued or single-valued</param>
+        /// <param name="isReadOnly">A value indicating if the attribute is read only</param>
+        /// <param name="isRequired">A value indicating if the attribute is required</param>
         internal AttributeTypeDefinition(string systemName, AttributeType type, bool isMultivalued, bool isReadOnly, bool isRequired)
         {
             this.SystemName = systemName;
@@ -96,7 +96,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// Initializes an instance of the AttributeTypeDefinition class from its XML schema definition
         /// </summary>
-        /// <param name="schemaObject">The XML definition of the attributeName</param>
+        /// <param name="schemaObject">The XML definition of the attribute</param>
         internal AttributeTypeDefinition(XmlSchemaElement schemaObject)
         {
             XmlSchemaElement element = schemaObject as XmlSchemaElement;
@@ -144,9 +144,9 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets the basic details of the attributeName from the XML schema annotation object
+        /// Gets the basic details of the attribute from the XML schema annotation object
         /// </summary>
-        /// <param name="annotation">The XML schema annotation containing the basic details of the attributeName</param>
+        /// <param name="annotation">The XML schema annotation containing the basic details of the attribute</param>
         private void GetAttributeDetails(XmlSchemaAnnotation annotation)
         {
             XmlSchemaObjectCollection items = annotation.Items;
@@ -168,16 +168,16 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets the definition of the attributeName from an XML schema simple type
+        /// Gets the definition of the attribute from an XML schema simple type
         /// </summary>
-        /// <param name="type">The XML schema simple type representing this attributeName</param>
+        /// <param name="type">The XML schema simple type representing this attribute</param>
         private void LoadSimpleType(XmlSchemaSimpleType type)
         {
             XmlSchemaSimpleTypeRestriction restriction = type.Content as XmlSchemaSimpleTypeRestriction;
 
             if (((restriction == null) || (null == restriction.BaseTypeName)) || (restriction.BaseTypeName.Name == null))
             {
-                throw new InvalidOperationException("The schema attributeName had an invalid or missing restriction");
+                throw new InvalidOperationException("The schema attribute had an invalid or missing restriction");
             }
 
             XmlSchemaObjectCollection facets = restriction.Facets;
@@ -188,7 +188,7 @@ namespace Lithnet.ResourceManagement.Client
 
                 if (facets.Count != 1)
                 {
-                    throw new InvalidOperationException("The number of restrictions on the attributeName type was invalid");
+                    throw new InvalidOperationException("The number of restrictions on the attribute type was invalid");
                 }
 
                 XmlSchemaPatternFacet facet = facets[0] as XmlSchemaPatternFacet;
@@ -212,14 +212,14 @@ namespace Lithnet.ResourceManagement.Client
             }
             else
             {
-                throw new InvalidOperationException("The attributeName type was unknown");
+                throw new InvalidOperationException("The attribute type was unknown");
             }
         }
 
         /// <summary>
-        /// Gets the definition of the attributeName from an XML complex type
+        /// Gets the definition of the attribute from an XML complex type
         /// </summary>
-        /// <param name="type">The XML schema complex type representing this attributeName</param>
+        /// <param name="type">The XML schema complex type representing this attribute</param>
         private void LoadComplexType(XmlQualifiedName type)
         {
             string typeName = type.Name;
@@ -289,13 +289,13 @@ namespace Lithnet.ResourceManagement.Client
                     break;
 
                 default:
-                    throw new ArgumentException("Unknown attributeName type in schema " + typeName);
+                    throw new ArgumentException("Unknown attribute type in schema " + typeName);
 
             }
         }
 
         /// <summary>
-        /// Gets a value indicating whether the XML schema annotation contains an annotation describing this attributeName as a string type
+        /// Gets a value indicating whether the XML schema annotation contains an annotation describing this attribute as a string type
         /// </summary>
         /// <param name="annotation">The XML schema annotation to inspect</param>
         /// <returns></returns>
@@ -330,9 +330,9 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets the system name of this attributeName
+        /// Gets the system name of this attribute
         /// </summary>
-        /// <returns>A string representing the system name of the attributeName</returns>
+        /// <returns>A string representing the system name of the attribute</returns>
         public override string ToString()
         {
             return this.SystemName;

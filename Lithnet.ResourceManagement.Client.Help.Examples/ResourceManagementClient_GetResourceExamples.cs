@@ -55,7 +55,7 @@ using Microsoft.ResourceManagement.WebServices;
                     throw new ResourceNotFoundException();
                 }
 
-                // Return the resource referenced by user0001's Manager attributeName
+                // Return the resource referenced by user0001's Manager attribute
 
                 return client.GetResource(resource.Attributes["Manager"].ReferenceValue);
             }

@@ -6,7 +6,7 @@ using System.Text;
 namespace Lithnet.ResourceManagement.Client
 {
     /// <summary>
-    /// The exception that is thrown when an attempt to modify a read-only attributeName is made
+    /// The exception that is thrown when an attempt to modify a read-only attribute is made
     /// </summary>
     [Serializable]
     public class ReadOnlyValueModificationException : Exception
@@ -22,9 +22,9 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// Initializes a new instance of the ReadOnlyValueModificationException class
         /// </summary>
-        /// <param name="attributeName">The attributeName that was illegally modified</param>
+        /// <param name="attribute">The attribute that was illegally modified</param>
         public ReadOnlyValueModificationException(AttributeTypeDefinition attribute)
-            : base(string.Format("An attempt was made to modify the read only attributeName {0}", attribute.SystemName))
+            : base(string.Format("An attempt was made to modify the read only attribute {0}", attribute.SystemName))
         {
         }
 

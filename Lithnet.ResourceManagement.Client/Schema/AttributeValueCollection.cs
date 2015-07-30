@@ -13,7 +13,7 @@ namespace Lithnet.ResourceManagement.Client
     public class AttributeValueCollection : IEnumerable<AttributeValue>
     {
         /// <summary>
-        /// The internal dictionary of attributeName and value paiirs
+        /// The internal dictionary of attribute and value paiirs
         /// </summary>
         private Dictionary<string, AttributeValue> internalValues;
 
@@ -26,9 +26,9 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets an attributeName value collection
+        /// Gets an attributattributeeName value collection
         /// </summary>
-        /// <param name="attributeName">The name of the attributeName to get</param>
+        /// <param name="attributeName">The name of the attribute to get</param>
         /// <returns>An <c ref="AttributeValue">AttributeValue</c> object</returns>
         public AttributeValue this[string attributeName]
         {
@@ -57,10 +57,10 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Adds a new attributeName value object to the internal dictionary
+        /// Adds a new attribute value object to the internal dictionary
         /// </summary>
-        /// <param name="attributeName">The name of the attributeName</param>
-        /// <param name="value">The attributeName value to add</param>
+        /// <param name="attributeName">The name of the attribute</param>
+        /// <param name="value">The attribute value to add</param>
         internal void Add(string attributeName, AttributeValue value)
         {
             if (attributeName == null)
@@ -77,9 +77,9 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Adds a new attributeName value object to the internal dictionary
+        /// Adds a new attribute value object to the internal dictionary
         /// </summary>
-        /// <param name="value">The attributeName value to add</param>
+        /// <param name="value">The attribute value to add</param>
         internal void Add(AttributeValue value)
         {
             if (value == null)
@@ -89,17 +89,17 @@ namespace Lithnet.ResourceManagement.Client
 
             if (value.AttributeName == null)
             {
-                throw new InvalidOperationException("The AttributeValue object did not have an attributeName associated with it");
+                throw new InvalidOperationException("The AttributeValue object did not have an attribute associated with it");
             }
 
             this.internalValues.Add(value.AttributeName, value);
         }
 
         /// <summary>
-        /// Gets a value indicating whether the collection contains a specific attributeName
+        /// Gets a value indicating whether the collection contains a specific attribute
         /// </summary>
-        /// <param name="attributeName">The name of the attributeName</param>
-        /// <returns>True if the collection contains the specified attributeName</returns>
+        /// <param name="attributeName">The name of the attribute</param>
+        /// <returns>True if the collection contains the specified attribute</returns>
         public bool ContainsAttribute(string attributeName)
         {
             return this.internalValues.ContainsKey(attributeName);

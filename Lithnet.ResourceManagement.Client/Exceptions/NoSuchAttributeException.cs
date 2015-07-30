@@ -6,7 +6,7 @@ using System.Text;
 namespace Lithnet.ResourceManagement.Client
 {
     /// <summary>
-    /// The exception that is thrown when an attributeName is requested that does not exist on a particular object class
+    /// The exception that is thrown when an attribute is requested that does not exist on a particular object class
     /// </summary>
     [Serializable]
     public class NoSuchAttributeException : Exception
@@ -22,19 +22,19 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// Initializes a new instance of the NoSuchAttributeException class
         /// </summary>
-        /// <param name="attributeName">The name of the attributeName that was not found</param>
+        /// <param name="attributeName">The name of the attribute that was not found</param>
         public NoSuchAttributeException(string attributeName)
-            : base(string.Format("The attributeName '{0}' does not exist on this object", attributeName))
+            : base(string.Format("The attribute '{0}' does not exist on this object", attributeName))
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the NoSuchAttributeException class
         /// </summary>
-        /// <param name="attributeName">The name of the attributeName that was not found</param>
-        /// <param name="objectType">The name of the object type that did not contain the attributeName</param>
+        /// <param name="attributeName">The name of the attribute that was not found</param>
+        /// <param name="objectType">The name of the object type that did not contain the attribute</param>
         public NoSuchAttributeException(string attributeName, string objectType)
-            : base(string.Format("The attributeName '{0}' does not exist on the object type {1}", attributeName, objectType))
+            : base(string.Format("The attribute '{0}' does not exist on the object type {1}", attributeName, objectType))
         {
         }
 

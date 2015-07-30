@@ -267,7 +267,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual(UnitTestHelper.TestDataReference1, resource.Attributes[UnitTestHelper.AttributeReferenceSV].ReferenceValue);
             Assert.AreEqual(UnitTestHelper.TestDataText1, resource.Attributes[UnitTestHelper.AttributeTextSV].StringValue);
 
-            // Validate single-valued binary attributeName
+            // Validate single-valued binary attribute
 
             CollectionAssert.AreEqual(UnitTestHelper.TestDataBinary1, resource.Attributes[UnitTestHelper.AttributeBinarySV].BinaryValue);
 
@@ -279,7 +279,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             CollectionAssert.AreEqual(UnitTestHelper.TestDataReference1MV, resource.Attributes[UnitTestHelper.AttributeReferenceMV].ReferenceValues);
             CollectionAssert.AreEqual(UnitTestHelper.TestDataText1MV, resource.Attributes[UnitTestHelper.AttributeTextMV].StringValues);
 
-            // Validate multivalued binary attributeName
+            // Validate multivalued binary attribute
 
             Assert.AreEqual(UnitTestHelper.TestDataBinary1MV.Count, resource.Attributes[UnitTestHelper.AttributeBinaryMV].BinaryValues.Count);
 
@@ -323,7 +323,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 Assert.AreEqual(UnitTestHelper.TestDataText1, resource.Attributes[UnitTestHelper.AttributeTextSV].StringValue);
             }
 
-            // Validate single-valued binary attributeName
+            // Validate single-valued binary attribute
 
             if (attributesToCheck.Contains(UnitTestHelper.AttributeBinarySV))
             {
@@ -358,7 +358,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 CollectionAssert.AreEqual(UnitTestHelper.TestDataText1MV, resource.Attributes[UnitTestHelper.AttributeTextMV].StringValues);
             }
 
-            // Validate multivalued binary attributeName
+            // Validate multivalued binary attribute
 
             if (attributesToCheck.Contains(UnitTestHelper.AttributeBinaryMV))
             {

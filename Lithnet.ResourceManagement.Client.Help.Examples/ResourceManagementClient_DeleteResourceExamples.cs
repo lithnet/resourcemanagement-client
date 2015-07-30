@@ -79,7 +79,7 @@ namespace Lithnet.ResourceManagement.Client.Help.Examples
 
             try
             {
-                // Delete the object referenced by the 'Manager' attributeName on person 'user00001';
+                // Delete the object referenced by the 'Manager' attribute on person 'user00001';
                 client.DeleteResource(resource.Attributes["Manager"].ReferenceValue);
             }
             catch (Exception)

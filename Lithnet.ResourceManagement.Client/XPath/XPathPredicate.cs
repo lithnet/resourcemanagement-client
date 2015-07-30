@@ -434,12 +434,12 @@ namespace Lithnet.ResourceManagement.Client
 
         private void ThrowOnInvalidBinaryOperator()
         {
-            throw new NotSupportedException("Cannot filter on a binary attributeName");
+            throw new NotSupportedException("Cannot filter on a binary attribute");
         }
 
         private void ThrowOnInvalidTextOperator()
         {
-            throw new NotSupportedException("Cannot filter on a text attributeName");
+            throw new NotSupportedException("Cannot filter on a text attribute");
         }
 
         private void ThrowOnInvalidBooleanOperator()

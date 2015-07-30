@@ -6,7 +6,7 @@ using System.Text;
 namespace Lithnet.ResourceManagement.Client
 {
     /// <summary>
-    /// The exception that is thrown when an attributeName is made to set an attributeName value that cannot be converted into the native data type for that attributeName
+    /// The exception that is thrown when an attribute is made to set an attribute value that cannot be converted into the native data type for that attribute
     /// </summary>
     [Serializable]
     public class UnsupportedDataTypeException : Exception
@@ -35,7 +35,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="expected">The data type that was expected</param>
         /// <param name="actual">The data type that was provided</param>
         public UnsupportedDataTypeException(AttributeType expected, Type actual)
-            : base(string.Format("Type {0} is not compatible with attributeName data type {0}", actual.Name, expected.ToString()))
+            : base(string.Format("Type {0} is not compatible with attribute data type {0}", actual.Name, expected.ToString()))
         {
         }
 

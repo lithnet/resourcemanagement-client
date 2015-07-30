@@ -6,7 +6,7 @@ using System.Text;
 namespace Lithnet.ResourceManagement.Client
 {
     /// <summary>
-    /// Defines an attributeName data type
+    /// Defines an attribute data type
     /// </summary>
     public enum AttributeType
     {
