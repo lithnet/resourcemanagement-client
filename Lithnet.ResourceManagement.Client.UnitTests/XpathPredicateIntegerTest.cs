@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Lithnet.ResourceManagement.Client;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
@@ -25,17 +26,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = 2;
             object matchValue = 1;
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerSV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerSV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[({1} = {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerSV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerSV, XPathOperator.Equals, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerSV, ComparisonOperator.Equals, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -46,17 +47,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = 1;
             object matchValue = 2;
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerSV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerSV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[({1} != {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerSV, queryValue, matchResource);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerSV, XPathOperator.NotEquals, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerSV, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -95,17 +96,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = null;
             object matchValue = 1;
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerSV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerSV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[({1} <= {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerSV, XPathPredicate.MaxLong);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerSV, XPathOperator.IsPresent, QueryOperator.And, matchResource);
+                string expected = string.Format("/{0}[({1} <= {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerSV, XPathQuery.MaxLong);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerSV, ComparisonOperator.IsPresent, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -116,17 +117,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = 1;
             object matchValue = null;
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerSV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerSV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[(not({1} <= {2}))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerSV, XPathPredicate.MaxLong);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerSV, XPathOperator.IsNotPresent, QueryOperator.And, matchResource);
+                string expected = string.Format("/{0}[(not({1} <= {2}))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerSV, XPathQuery.MaxLong);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerSV, ComparisonOperator.IsNotPresent, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -137,17 +138,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = 5;
             object matchValue = 11;
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerSV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerSV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[({1} > {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerSV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerSV, XPathOperator.GreaterThan, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerSV, ComparisonOperator.GreaterThan, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -158,17 +159,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = 5;
             object matchValue = 10;
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerSV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerSV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[({1} >= {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerSV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerSV, XPathOperator.GreaterThanOrEquals, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerSV, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -179,17 +180,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = 15;
             object matchValue = 9;
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerSV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerSV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[({1} < {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerSV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerSV, XPathOperator.LessThan, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerSV, ComparisonOperator.LessThan, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -200,17 +201,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = 15;
             object matchValue = 10;
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerSV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerSV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[({1} <= {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerSV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerSV, XPathOperator.LessThanOrEquals, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerSV, ComparisonOperator.LessThanOrEquals, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -223,17 +224,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<long> nonMatchValue = new List<long>() { 2, 3 };
             List<long> matchValue = new List<long>() { 1, 4 };
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerMV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerMV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[({1} = {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerMV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerMV, XPathOperator.Equals, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerMV, ComparisonOperator.Equals, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -244,17 +245,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<long> nonMatchValue = new List<long>() { 1, 3 };
             List<long> matchValue = new List<long>() { 3, 4 };
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerMV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerMV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[(not({1} = {2}))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerMV, queryValue, matchResource);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerMV, XPathOperator.NotEquals, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerMV, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -265,17 +266,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = null;
             List<long> matchValue = new List<long>() { 1, 2 };
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerMV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerMV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[({1} <= {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerMV, XPathPredicate.MaxLong);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerMV, XPathOperator.IsPresent, QueryOperator.And, matchResource);
+                string expected = string.Format("/{0}[({1} <= {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerMV, XPathQuery.MaxLong);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerMV, ComparisonOperator.IsPresent, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -286,17 +287,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<long> nonMatchValue = new List<long>() { 1, 2 };
             object matchValue = null;
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerMV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerMV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[(not({1} <= {2}))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerMV, XPathPredicate.MaxLong);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerMV, XPathOperator.IsNotPresent, QueryOperator.And, matchResource);
+                string expected = string.Format("/{0}[(not({1} <= {2}))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerMV, XPathQuery.MaxLong);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerMV, ComparisonOperator.IsNotPresent, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -307,17 +308,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<object> nonMatchValue = new List<object>() { 9, 8 };
             List<object> matchValue = new List<object>() { 9, 11 };
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerMV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerMV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[({1} > {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerMV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerMV, XPathOperator.GreaterThan, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerMV, ComparisonOperator.GreaterThan, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -328,17 +329,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<object> nonMatchValue = new List<object>() { 9, 8 };
             List<object> matchValue = new List<object>() { 9, 10 };
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerMV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerMV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[({1} >= {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerMV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerMV, XPathOperator.GreaterThanOrEquals, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerMV, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -349,17 +350,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<object> nonMatchValue = new List<object>() { 15, 20 };
             List<object> matchValue = new List<object>() { 9, 20 };
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerMV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerMV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[({1} < {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerMV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerMV, XPathOperator.LessThan, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerMV, ComparisonOperator.LessThan, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -370,17 +371,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<object> nonMatchValue = new List<object>() { 15, 20 };
             List<object> matchValue = new List<object>() { 10, 20 };
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerMV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeIntegerMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeIntegerMV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[({1} <= {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerMV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerMV, XPathOperator.LessThanOrEquals, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerMV, ComparisonOperator.LessThanOrEquals, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -393,7 +394,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathPredicate predicate = new XPathPredicate(UnitTestHelper.AttributeIntegerMV, XPathOperator.Contains);
+                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeIntegerMV, ComparisonOperator.Contains);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
@@ -404,7 +405,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathPredicate predicate = new XPathPredicate(UnitTestHelper.AttributeIntegerMV, XPathOperator.EndsWith);
+                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeIntegerMV, ComparisonOperator.EndsWith);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
@@ -415,7 +416,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathPredicate predicate = new XPathPredicate(UnitTestHelper.AttributeIntegerMV, XPathOperator.StartsWith);
+                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeIntegerMV, ComparisonOperator.StartsWith);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
@@ -426,7 +427,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathPredicate predicate = new XPathPredicate(UnitTestHelper.AttributeIntegerSV, XPathOperator.Contains);
+                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeIntegerSV, ComparisonOperator.Contains);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
@@ -437,7 +438,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathPredicate predicate = new XPathPredicate(UnitTestHelper.AttributeIntegerSV, XPathOperator.EndsWith);
+                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeIntegerSV, ComparisonOperator.EndsWith);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
@@ -448,16 +449,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathPredicate predicate = new XPathPredicate(UnitTestHelper.AttributeIntegerSV, XPathOperator.StartsWith);
+                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeIntegerSV, ComparisonOperator.StartsWith);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
 
 
-        private void SubmitXpath(object value, string expected, string attributeName, XPathOperator xpathOp, QueryOperator queryOp, params ResourceObject[] matchResources)
+        private void SubmitXpath(object value, string expected, string attributeName, ComparisonOperator xpathOp, GroupOperator queryOp, params ResourceObject[] matchResources)
         {
-            XPathPredicate predicate = new XPathPredicate(attributeName, xpathOp, value);
+            XPathQuery predicate = new XPathQuery(attributeName, xpathOp, value);
             string xpath = XPathFilterBuilder.CreateFilter(UnitTestHelper.ObjectTypeUnitTestObjectName, queryOp, predicate);
             Assert.AreEqual(expected, xpath);
 
@@ -486,30 +487,5 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 Assert.Fail("The query did not return the correct results");
             }
         }
-
-        private ResourceObject CreateTestResource(string attributeName, object value)
-        {
-            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
-            resource.Attributes[attributeName].SetValue(value);
-            resource.Save();
-            return resource;
-        }
-
-        private void CleanupTestResources(params ResourceObject[] resources)
-        {
-            if (resources == null)
-            {
-                return;
-            }
-
-            foreach (ResourceObject resource in resources)
-            {
-                if (resource.ModificationType == OperationType.Update)
-                {
-                    client.DeleteResource(resource);
-                }
-            }
-        }
-
     }
 }

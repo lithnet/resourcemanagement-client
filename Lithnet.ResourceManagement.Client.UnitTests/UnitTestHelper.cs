@@ -10,6 +10,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 {
     public static class UnitTestHelper
     {
+        internal static ResourceManagementClient client = new ResourceManagementClient();
+
         public static string TestDataString1 = "testString1";
         public static string TestDataString2 = "testString2";
         public static string TestDataString3 = "testString3";
@@ -103,8 +105,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         private static ResourceObject CreateReferenceTestObjectIfDoesntExist(string accountName)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
-
             ResourceObject testObject = client.GetResourceByKey(UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName, accountName);
 
             if (testObject != null)
@@ -122,8 +122,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         public static void PrepareRMSForUnitTests()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
-
             ResourceObject objectClass = CreateUnitTestObjectTypeIfDoesntExist();
 
             ResourceObject svStringAttribute = UnitTestHelper.CreateAttributeTypeIfDoesntExist(AttributeStringSV, null, false, AttributeType.String);
@@ -162,8 +160,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         private static ResourceObject CreateUnitTestObjectTypeIfDoesntExist()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
-
             ResourceObject testObject = client.GetResourceByKey(ObjectTypeNames.ObjectTypeDescription, AttributeNames.Name, ObjectTypeUnitTestObjectName);
 
             if (testObject != null)
@@ -182,8 +178,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         private static ResourceObject CreateAttributeTypeIfDoesntExist(string typeName, string regex, bool multivalued, AttributeType type)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
-
             ResourceObject testAttribute = client.GetResourceByKey(ObjectTypeNames.AttributeTypeDescription, AttributeNames.Name, typeName);
 
             if (testAttribute != null)
@@ -210,7 +204,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         private static void CreateBindingIfDoesntExist(ResourceObject objectType, ResourceObject attributeType)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
             Dictionary<string, object> keys = new Dictionary<string, object>();
             keys.Add(AttributeNames.BoundObjectType, objectType.ObjectID.Value);
             keys.Add(AttributeNames.BoundAttributeType, attributeType.ObjectID.Value);
@@ -229,6 +222,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             client.SaveResource(resource);
         }
+
         internal static void PopulateTestUserData(ResourceObject resource)
         {
             PopulateTestUserData(resource, null);
@@ -367,6 +361,46 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 for (int i = 0; i < UnitTestHelper.TestDataBinary1MV.Count; i++)
                 {
                     CollectionAssert.AreEqual(UnitTestHelper.TestDataBinary1MV[i], resource.Attributes[UnitTestHelper.AttributeBinaryMV].BinaryValues[i]);
+                }
+            }
+        }
+
+        internal static ResourceObject CreateTestResource()
+        {
+            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            resource.Save();
+            return resource;
+        }
+
+        internal static ResourceObject CreateTestResource(string attributeName1, object value1, string attributeName2, object value2)
+        {
+            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            resource.Attributes[attributeName1].SetValue(value1);
+            resource.Attributes[attributeName2].SetValue(value2);
+            resource.Save();
+            return resource;
+        }
+
+        internal static ResourceObject CreateTestResource(string attributeName1, object value1)
+        {
+            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            resource.Attributes[attributeName1].SetValue(value1);
+            resource.Save();
+            return resource;
+        }
+
+        internal static void CleanupTestResources(params ResourceObject[] resources)
+        {
+            if (resources == null)
+            {
+                return;
+            }
+
+            foreach (ResourceObject resource in resources)
+            {
+                if (resource.ModificationType == OperationType.Update)
+                {
+                    client.DeleteResource(resource);
                 }
             }
         }

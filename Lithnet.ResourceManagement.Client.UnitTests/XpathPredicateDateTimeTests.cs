@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Lithnet.ResourceManagement.Client;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
@@ -25,17 +26,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = "3000-01-01T00:00:00.000";
             object matchValue = "2000-01-01T00:00:00.000";
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[({1} = '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, XPathOperator.Equals, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, ComparisonOperator.Equals, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -46,17 +47,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = "2000-01-01T00:00:00.000";
             object matchValue = "3000-01-01T00:00:00.000";
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[({1} != '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, queryValue, matchResource);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, XPathOperator.NotEquals, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -67,17 +68,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = null;
             object matchValue = "2000-01-01T00:00:00.000";
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[({1} <= '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, XPathPredicate.MaxDate);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, XPathOperator.IsPresent, QueryOperator.And, matchResource);
+                string expected = string.Format("/{0}[({1} <= '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, XPathQuery.MaxDate);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, ComparisonOperator.IsPresent, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -88,17 +89,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = "2000-01-01T00:00:00.000";
             object matchValue = null;
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[(not({1} <= '{2}'))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, XPathPredicate.MaxDate);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, XPathOperator.IsNotPresent, QueryOperator.And, matchResource);
+                string expected = string.Format("/{0}[(not({1} <= '{2}'))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, XPathQuery.MaxDate);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, ComparisonOperator.IsNotPresent, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -109,17 +110,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = "2000-01-01T00:00:00.000";
             object matchValue = "3100-01-01T00:00:00.000";
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[({1} > '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, XPathOperator.GreaterThan, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, ComparisonOperator.GreaterThan, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -130,17 +131,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = "2000-01-01T00:00:00.000";
             object matchValue = "3000-01-01T00:00:00.000";
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[({1} >= '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, XPathOperator.GreaterThanOrEquals, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -151,17 +152,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = "2100-01-01T00:00:00.000";
             object matchValue = "1900-01-01T00:00:00.000";
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[({1} < '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, XPathOperator.LessThan, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, ComparisonOperator.LessThan, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -172,17 +173,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = "2100-01-01T00:00:00.000";
             object matchValue = "2000-01-01T00:00:00.000";
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[({1} <= '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, XPathOperator.LessThanOrEquals, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, ComparisonOperator.LessThanOrEquals, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -195,17 +196,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<string> nonMatchValue = new List<string>() { "2100-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
             List<string> matchValue = new List<string>() { "2300-01-01T00:00:00.000", "2000-01-01T00:00:00.000" };
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[({1} = '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeMV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, XPathOperator.Equals, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, ComparisonOperator.Equals, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -216,17 +217,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<string> nonMatchValue = new List<string>() { "2000-01-01T00:00:00.000", "2100-01-01T00:00:00.000" };
             List<string> matchValue = new List<string>() { "2200-01-01T00:00:00.000", "2300-01-01T00:00:00.000" };
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[(not({1} = '{2}'))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeMV, queryValue, matchResource);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, XPathOperator.NotEquals, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -237,17 +238,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = null;
             List<string> matchValue = new List<string>() { "2000-01-01T00:00:00.000", "2100-01-01T00:00:00.000" };
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[({1} <= '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeMV, XPathPredicate.MaxDate);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, XPathOperator.IsPresent, QueryOperator.And, matchResource);
+                string expected = string.Format("/{0}[({1} <= '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeMV, XPathQuery.MaxDate);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, ComparisonOperator.IsPresent, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -258,17 +259,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<string> nonMatchValue = new List<string>() { "2000-01-01T00:00:00.000", "2100-01-01T00:00:00.000" };
             object matchValue = null;
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[(not({1} <= '{2}'))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeMV, XPathPredicate.MaxDate);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, XPathOperator.IsNotPresent, QueryOperator.And, matchResource);
+                string expected = string.Format("/{0}[(not({1} <= '{2}'))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeMV, XPathQuery.MaxDate);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, ComparisonOperator.IsNotPresent, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -279,17 +280,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<object> nonMatchValue = new List<object>() { "1900-01-01T00:00:00.000", "1800-01-01T00:00:00.000" };
             List<object> matchValue = new List<object>() { "2100-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[({1} > '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeMV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, XPathOperator.GreaterThan, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, ComparisonOperator.GreaterThan, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -300,17 +301,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<object> nonMatchValue = new List<object>() { "1900-01-01T00:00:00.000", "1800-01-01T00:00:00.000" };
             List<object> matchValue = new List<object>() { "2000-01-01T00:00:00.000", "2100-01-01T00:00:00.000" };
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[({1} >= '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeMV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, XPathOperator.GreaterThanOrEquals, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -321,17 +322,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<object> nonMatchValue = new List<object>() { "2100-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
             List<object> matchValue = new List<object>() { "1900-01-01T00:00:00.000", "1800-01-01T00:00:00.000" };
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[({1} < '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeMV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, XPathOperator.LessThan, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, ComparisonOperator.LessThan, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -342,17 +343,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<object> nonMatchValue = new List<object>() { "2100-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
             List<object> matchValue = new List<object>() { "2000-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
 
-            ResourceObject matchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, matchValue);
-            ResourceObject nonMatchResource = this.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, nonMatchValue);
 
             try
             {
                 string expected = string.Format("/{0}[({1} <= '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeMV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, XPathOperator.LessThanOrEquals, QueryOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, ComparisonOperator.LessThanOrEquals, GroupOperator.And, matchResource);
             }
             finally
             {
-                this.CleanupTestResources(matchResource, nonMatchResource);
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
 
@@ -363,7 +364,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathPredicate predicate = new XPathPredicate(UnitTestHelper.AttributeDateTimeMV, XPathOperator.Contains);
+                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeDateTimeMV, ComparisonOperator.Contains);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
@@ -374,7 +375,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathPredicate predicate = new XPathPredicate(UnitTestHelper.AttributeDateTimeMV, XPathOperator.EndsWith);
+                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeDateTimeMV, ComparisonOperator.EndsWith);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
@@ -385,7 +386,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathPredicate predicate = new XPathPredicate(UnitTestHelper.AttributeDateTimeMV, XPathOperator.StartsWith);
+                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeDateTimeMV, ComparisonOperator.StartsWith);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
@@ -396,7 +397,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathPredicate predicate = new XPathPredicate(UnitTestHelper.AttributeDateTimeSV, XPathOperator.Contains);
+                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeDateTimeSV, ComparisonOperator.Contains);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
@@ -407,7 +408,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathPredicate predicate = new XPathPredicate(UnitTestHelper.AttributeDateTimeSV, XPathOperator.EndsWith);
+                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeDateTimeSV, ComparisonOperator.EndsWith);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
@@ -418,16 +419,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathPredicate predicate = new XPathPredicate(UnitTestHelper.AttributeDateTimeSV, XPathOperator.StartsWith);
+                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeDateTimeSV, ComparisonOperator.StartsWith);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
 
 
-        private void SubmitXpath(object value, string expected, string attributeName, XPathOperator xpathOp, QueryOperator queryOp, params ResourceObject[] matchResources)
+        private void SubmitXpath(object value, string expected, string attributeName, ComparisonOperator xpathOp, GroupOperator queryOp, params ResourceObject[] matchResources)
         {
-            XPathPredicate predicate = new XPathPredicate(attributeName, xpathOp, value);
+            XPathQuery predicate = new XPathQuery(attributeName, xpathOp, value);
             string xpath = XPathFilterBuilder.CreateFilter(UnitTestHelper.ObjectTypeUnitTestObjectName, queryOp, predicate);
             Assert.AreEqual(expected, xpath);
 
@@ -456,30 +457,5 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 Assert.Fail("The query did not return the correct results");
             }
         }
-
-        private ResourceObject CreateTestResource(string attributeName, object value)
-        {
-            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
-            resource.Attributes[attributeName].SetValue(value);
-            resource.Save();
-            return resource;
-        }
-
-        private void CleanupTestResources(params ResourceObject[] resources)
-        {
-            if (resources == null)
-            {
-                return;
-            }
-
-            foreach (ResourceObject resource in resources)
-            {
-                if (resource.ModificationType == OperationType.Update)
-                {
-                    client.DeleteResource(resource);
-                }
-            }
-        }
-
     }
 }

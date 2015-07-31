@@ -10,6 +10,7 @@ using System.Xml;
 using Lithnet.ResourceManagement.Client.ResourceManagementService;
 using System.Runtime.Serialization;
 using System.Collections.ObjectModel;
+using Lithnet.ResourceManagement.Client;
 
 namespace Lithnet.ResourceManagement.Client
 {

@@ -428,7 +428,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>A value converted into the correct data type for the atttribute</returns>
         private object ConvertValueToAttributeType(object value)
         {
-            if (!((value is string) || (value is byte[]) || (value is int) || (value is long) || (value is bool) || (value is UniqueIdentifier) || (value is DateTime)))
+            if (!((value is string) || (value is byte[]) || (value is int) || (value is long) || (value is bool) || (value is UniqueIdentifier) || (value is DateTime) || (value is ResourceObject)))
             {
                 throw new UnsupportedDataTypeException(this.Attribute.Type, value.GetType());
             }

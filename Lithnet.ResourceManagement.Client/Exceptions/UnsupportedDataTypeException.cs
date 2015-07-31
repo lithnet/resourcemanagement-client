@@ -35,7 +35,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="expected">The data type that was expected</param>
         /// <param name="actual">The data type that was provided</param>
         public UnsupportedDataTypeException(AttributeType expected, Type actual)
-            : base(string.Format("Type {0} is not compatible with attribute data type {0}", actual.Name, expected.ToString()))
+            : base(string.Format("Type {0} is not compatible with attribute data type {1}", actual.Name, expected.ToString()))
         {
         }
 

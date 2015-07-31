@@ -13,6 +13,7 @@
     using System.Xml;
     using System.Threading.Tasks;
     using System.Collections.Concurrent;
+    using Lithnet.ResourceManagement.Client;
 
     /// <summary>
     /// The main class used to create, update, delete, and search for objects in the resource management service
@@ -548,14 +549,14 @@
         /// </example>
         public ResourceObject GetResourceByKey(string objectType, Dictionary<string, object> attributeValuePairs, IEnumerable<string> attributesToGet)
         {
-            string filter = XPathFilterBuilder.CreateFilter(objectType, attributeValuePairs, XPathOperator.Equals, QueryOperator.And);
+            string filter = XPathFilterBuilder.CreateFilter(objectType, attributeValuePairs, ComparisonOperator.Equals, GroupOperator.And);
 
             if (attributesToGet == null)
             {
                 attributesToGet = ResourceManagementSchema.ObjectTypes[objectType].Attributes.Select(t => t.SystemName);
             }
 
-            ISearchResultCollection results = this.searchClient.Enumerate(filter, 1, attributesToGet);
+            ISearchResultCollection results = this.searchClient.EnumerateSync(filter, 1, attributesToGet);
 
             if (results.Count == 0)
             {
@@ -579,18 +580,18 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResources(string filter)
         {
-            return this.searchClient.Enumerate(filter, -1, null, null);
+            return this.searchClient.EnumerateSync(filter, -1, null);
         }
 
         /// <summary>
         /// Uses the specified XPath filter to find matching objects in the resource management service, synchronously, using the default page size, and retrieving the specified attributes
         /// </summary>
         /// <param name="filter">The XPath filter defining the search criteria</param>
-        /// <param name="attributesToRetrieve">The list of attributes to retrieve</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
         /// <returns>A collection of matching resource objects</returns>
-        public ISearchResultCollection GetResources(string filter, IEnumerable<string> attributesToRetrieve)
+        public ISearchResultCollection GetResources(string filter, IEnumerable<string> attributesToGet)
         {
-            return this.searchClient.Enumerate(filter, -1, attributesToRetrieve, null);
+            return this.searchClient.EnumerateSync(filter, -1, attributesToGet);
         }
 
         /// <summary>
@@ -602,7 +603,7 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResources(string filter, int pageSize)
         {
-            return this.searchClient.Enumerate(filter, pageSize, null, null);
+            return this.searchClient.EnumerateSync(filter, pageSize, null);
         }
 
         /// <summary>
@@ -610,11 +611,57 @@
         /// </summary>
         /// <param name="filter">The XPath filter defining the search criteria</param>
         /// <param name="pageSize">The number of results to request from the server at a time</param>
-        /// <param name="attributesToRetrieve">The list of attributes to retrieve</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
         /// <returns>A collection of matching resource objects</returns>
-        public ISearchResultCollection GetResources(string filter, int pageSize, IEnumerable<string> attributesToRetrieve)
+        public ISearchResultCollection GetResources(string filter, int pageSize, IEnumerable<string> attributesToGet)
         {
-            return this.searchClient.Enumerate(filter, pageSize, attributesToRetrieve, null);
+            return this.searchClient.EnumerateSync(filter, pageSize, attributesToGet);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the default page size
+        /// WARNING: Due to the way that the resource management client processes unconstrained XPath queries, this function can cause excessive load on the underlying database. If the object type or attributes are known, use the overload of this function that supports specifying the attributes to get
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter)
+        {
+            return this.searchClient.EnumerateAsync(filter, -1, null, null);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the default page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, IEnumerable<string> attributesToGet)
+        {
+            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, null);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size
+        /// WARNING: Due to the way that the resource management client processes unconstrained XPath queries, this function can cause excessive load on the underlying database. If the object type or attributes are known, use the overload of this function that supports specifying the attributes to get
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, int pageSize)
+        {
+            return this.searchClient.EnumerateAsync(filter, pageSize, null, null);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, int pageSize, IEnumerable<string> attributesToGet)
+        {
+            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, null);
         }
 
         /// <summary>
@@ -624,21 +671,21 @@
         /// <param name="filter">The XPath filter defining the search criteria</param>
         /// <param name="cancellationToken">A cancellation object that can be used to terminate the search</param>
         /// <returns>A collection of matching resource objects</returns>
-        public ISearchResultCollection GetResources(string filter, CancellationTokenSource cancellationToken)
+        public ISearchResultCollection GetResourcesAsync(string filter, CancellationTokenSource cancellationToken)
         {
-            return this.searchClient.Enumerate(filter, -1, null, cancellationToken);
+            return this.searchClient.EnumerateAsync(filter, -1, null, cancellationToken);
         }
 
         /// <summary>
         /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the default page size, and retrieving the specified attributes
         /// </summary>
         /// <param name="filter">The XPath filter defining the search criteria</param>
-        /// <param name="attributesToRetrieve">The list of attributes to retrieve</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
         /// <param name="cancellationToken">A cancellation object that can be used to terminate the search</param>
         /// <returns>A collection of matching resource objects</returns>
-        public ISearchResultCollection GetResources(string filter, IEnumerable<string> attributesToRetrieve, CancellationTokenSource cancellationToken)
+        public ISearchResultCollection GetResourcesAsync(string filter, IEnumerable<string> attributesToGet, CancellationTokenSource cancellationToken)
         {
-            return this.searchClient.Enumerate(filter, -1, attributesToRetrieve, cancellationToken);
+            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, cancellationToken);
         }
 
         /// <summary>
@@ -649,9 +696,9 @@
         /// <param name="pageSize">The number of results to request from the server at a time</param>
         /// <param name="cancellationToken">A cancellation object that can be used to terminate the search</param>
         /// <returns>A collection of matching resource objects</returns>
-        public ISearchResultCollection GetResources(string filter, int pageSize, CancellationTokenSource cancellationToken)
+        public ISearchResultCollection GetResourcesAsync(string filter, int pageSize, CancellationTokenSource cancellationToken)
         {
-            return this.searchClient.Enumerate(filter, pageSize, null, cancellationToken);
+            return this.searchClient.EnumerateAsync(filter, pageSize, null, cancellationToken);
         }
 
         /// <summary>
@@ -659,17 +706,22 @@
         /// </summary>
         /// <param name="filter">The XPath filter defining the search criteria</param>
         /// <param name="pageSize">The number of results to request from the server at a time</param>
-        /// <param name="attributesToRetrieve">The list of attributes to retrieve</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
         /// <param name="cancellationToken">A cancellation object that can be used to terminate the search</param>
         /// <returns>A collection of matching resource objects</returns>
-        public ISearchResultCollection GetResources(string filter, int pageSize, IEnumerable<string> attributesToRetrieve, CancellationTokenSource cancellationToken)
+        public ISearchResultCollection GetResourcesAsync(string filter, int pageSize, IEnumerable<string> attributesToGet, CancellationTokenSource cancellationToken)
         {
-            return this.searchClient.Enumerate(filter, pageSize, attributesToRetrieve, cancellationToken);
+            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, cancellationToken);
         }
 
+        /// <summary>
+        /// Gets the number of resources that match a specified criteria
+        /// </summary>
+        /// <param name="filter">The XPath filter to use in the search</param>
+        /// <returns>The number of resources that match the specified criteria</returns>
         public int GetResourceCount(string filter)
         {
-            ISearchResultCollection result = this.searchClient.Enumerate(filter, 1, new List<string>());
+            ISearchResultCollection result = this.searchClient.EnumerateSync(filter, 1, new List<string>());
             return result.Count;
         }
 

@@ -92,7 +92,7 @@
     <Compile Include="PutStringTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GetTests.cs" />
-    <Compile Include="XPathAscendantExpressionTests.cs" />
+    <Compile Include="XPathExpressionTests.cs" />
     <Compile Include="XpathPredicateGroupTests.cs" />
     <Compile Include="UnitTestHelper.cs" />
     <Compile Include="XpathPredicateReferenceTests.cs" />

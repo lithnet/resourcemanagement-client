@@ -16,9 +16,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void SearchTestBatchedAsync()
         {
             ResourceManagementClient c = new ResourceManagementClient();
-            System.Threading.CancellationTokenSource source = new System.Threading.CancellationTokenSource();
 
-            ISearchResultCollection results = c.GetResources("/Group", 200, source);
+            ISearchResultCollection results = c.GetResourcesAsync("/Group", 200);
             Debug.WriteLine("Getting {0} results", results.Count);
 
             foreach (ResourceObject o in results)

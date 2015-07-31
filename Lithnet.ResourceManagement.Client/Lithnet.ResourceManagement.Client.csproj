@@ -65,8 +65,8 @@
     <Compile Include="AttributeValuePair.cs" />
     <Compile Include="AttributeValuePairCollection.cs" />
     <Compile Include="Enums\OperationType.cs" />
-    <Compile Include="Enums\QueryOperator.cs" />
-    <Compile Include="Enums\XPathOperator.cs" />
+    <Compile Include="Enums\GroupOperator.cs" />
+    <Compile Include="Enums\ComparisonOperator.cs" />
     <Compile Include="Exceptions\NoSuchAttributeException.cs" />
     <Compile Include="Exceptions\ResourceNotFoundException.cs" />
     <Compile Include="ResourceManagementClientPool.cs" />
@@ -110,14 +110,12 @@
     <Compile Include="Utilities\TypeConverter.cs" />
     <Compile Include="Exceptions\UnsupportedDataTypeException.cs" />
     <Compile Include="Utilities\MessageExtensions.cs" />
-    <Compile Include="XPath\IXPathPredicateComponent.cs" />
-    <Compile Include="XPath\XPathAscendantExpression.cs" />
-    <Compile Include="XPath\XPathDescendantExpression.cs" />
+    <Compile Include="XPath\IXPathQueryObject.cs" />
     <Compile Include="XPath\XPathDereferencedExpression.cs" />
     <Compile Include="XPath\XPathExpression.cs" />
     <Compile Include="XPath\XPathFilterBuilder.cs" />
-    <Compile Include="XPath\XPathPredicate.cs" />
-    <Compile Include="XPath\XPathPredicateGroup.cs" />
+    <Compile Include="XPath\XPathQuery.cs" />
+    <Compile Include="XPath\XPathQueryGroup.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

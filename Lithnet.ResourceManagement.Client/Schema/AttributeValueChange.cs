@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
+﻿using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
 
 namespace Lithnet.ResourceManagement.Client
 {

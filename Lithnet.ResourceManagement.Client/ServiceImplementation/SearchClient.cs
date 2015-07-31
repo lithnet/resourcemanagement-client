@@ -20,42 +20,52 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             this.client = client;
         }
 
-        public ISearchResultCollection Enumerate(string filter)
+        //public ISearchResultCollection EnumerateSync(string filter)
+        //{
+        //    return this.EnumerateSync(filter, -1, null);
+        //}
+
+        //public ISearchResultCollection EnumerateSync(string filter, int pageSize)
+        //{
+        //    return this.EnumerateSync(filter, pageSize, null);
+        //}
+
+        //public ISearchResultCollection EnumerateSync(string filter, IEnumerable<string> attributesToReturn)
+        //{
+        //    return this.EnumerateSync(filter, -1, attributesToReturn);
+        //}
+
+        //public ISearchResultCollection EnumerateAsync(string filter)
+        //{
+        //    return this.EnumerateAsync(filter, -1, null, null);
+        //}
+
+        //public ISearchResultCollection EnumerateAsync(string filter, int pageSize)
+        //{
+        //    return this.EnumerateAsync(filter, pageSize, null, cancellationToken);
+        //}
+
+        //public ISearchResultCollection EnumerateAsync(string filter, CancellationTokenSource cancellationToken)
+        //{
+        //    return this.EnumerateAsync(filter, -1, null, cancellationToken);
+        //}
+
+        //public ISearchResultCollection EnumerateAsync(string filter, int pageSize, CancellationTokenSource cancellationToken)
+        //{
+        //    return this.EnumerateAsync(filter, pageSize, null, cancellationToken);
+        //}
+
+        public ISearchResultCollection EnumerateAsync(string filter, int pageSize, IEnumerable<string> attributesToReturn, CancellationTokenSource cancellationToken)
         {
-            return this.Enumerate(filter, -1, null, null);
+            return this.Enumerate(filter, pageSize, attributesToReturn, cancellationToken, true);
         }
 
-        public ISearchResultCollection Enumerate(string filter, int pageSize)
+        public ISearchResultCollection EnumerateSync(string filter, int pageSize, IEnumerable<string> attributesToReturn)
         {
-            return this.Enumerate(filter, pageSize, null, null);
+            return this.Enumerate(filter, pageSize, attributesToReturn, null, false);
         }
 
-        public ISearchResultCollection Enumerate(string filter, IEnumerable<string> attributesToReturn)
-        {
-            return this.Enumerate(filter, -1, attributesToReturn, null);
-        }
-
-        public ISearchResultCollection Enumerate(string filter, CancellationTokenSource cancellationToken)
-        {
-            return this.Enumerate(filter, -1, null, cancellationToken);
-        }
-
-        public ISearchResultCollection Enumerate(string filter, int pageSize, CancellationTokenSource cancellationToken)
-        {
-            return this.Enumerate(filter, pageSize, null, cancellationToken);
-        }
-
-        public ISearchResultCollection Enumerate(string filter, int pageSize, IEnumerable<string> attributesToReturn)
-        {
-            return this.Enumerate(filter, pageSize, attributesToReturn, null);
-        }
-
-        public ISearchResultCollection Enumerate(string filter, IEnumerable<string> attributesToReturn, CancellationTokenSource cancellationToken)
-        {
-            return this.Enumerate(filter, -1, attributesToReturn, cancellationToken);
-        }
-
-        public ISearchResultCollection Enumerate(string filter, int pageSize, IEnumerable<string> attributesToReturn, CancellationTokenSource cancellationToken)
+        private ISearchResultCollection Enumerate(string filter, int pageSize, IEnumerable<string> attributesToReturn, CancellationTokenSource cancellationToken, bool searchAsync)
         {
             if (pageSize < 0)
             {
@@ -70,9 +80,9 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
                     EnumerateResponse response = responseMessage.DeserializeMessageWithPayload<EnumerateResponse>();
 
-                    if (cancellationToken != null)
+                    if (searchAsync)
                     {
-                        return new SearchResultCollectionAsync(response, pageSize, this, cancellationToken.Token, this.client);
+                        return new SearchResultCollectionAsync(response, pageSize, this, cancellationToken, this.client);
                     }
                     else
                     {

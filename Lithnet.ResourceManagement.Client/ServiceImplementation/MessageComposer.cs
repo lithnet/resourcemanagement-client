@@ -1,18 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.ServiceModel;
 using System.ServiceModel.Channels;
+using Microsoft.ResourceManagement.WebServices;
 using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
 using Microsoft.ResourceManagement.WebServices.WSEnumeration;
-using Microsoft.ResourceManagement;
-using Microsoft.ResourceManagement.WebServices;
-using System.Xml.Serialization;
-using System.Runtime.Serialization;
-using Lithnet.ResourceManagement.Client;
-using System.Configuration;
-using System.Globalization;
 
 namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 {

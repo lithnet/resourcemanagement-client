@@ -87,15 +87,10 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="response">The initial enumeration response from the Resource Management Service</param>
         /// <param name="pageSize">The page size used in the search operation</param>
         /// <param name="searchClient">The client proxy used for performing the search</param>
-        /// <param name="token">The cancellation token that can be used to abort the async operation</param>
+        /// <param name="tokenSource">The cancellation token source that can be used to abort the async operation</param>
         /// <param name="client">The client used to convert response data into ResourceObjects</param>
-        internal SearchResultCollectionAsync(EnumerateResponse response, int pageSize, SearchClient searchClient, CancellationToken token, ResourceManagementClient client)
+        internal SearchResultCollectionAsync(EnumerateResponse response, int pageSize, SearchClient searchClient, CancellationTokenSource tokenSource, ResourceManagementClient client)
         {
-            if (token == null)
-            {
-                throw new ArgumentNullException("token");
-            }
-
             if (response == null)
             {
                 throw new ArgumentNullException("response");
@@ -114,7 +109,12 @@ namespace Lithnet.ResourceManagement.Client
             this.resultSet = new BlockingCollection<ResourceObject>();
             this.client = client;
             this.consumingEnumerable = this.resultSet.GetConsumingEnumerable();
-            this.token = token;
+
+            if (tokenSource != null)
+            {
+                this.token = tokenSource.Token;
+            }
+
             this.context = response.EnumerationContext;
             this.pageSize = pageSize;
             this.details = response.EnumerationDetail;
@@ -126,13 +126,16 @@ namespace Lithnet.ResourceManagement.Client
 
         }
 
+        /// <summary>
+        /// Starts the producer thread which enumerates the results from the resource management service
+        /// </summary>
         private void ExecuteProducer()
         {
             Task task = new Task(() =>
                 {
                     while (this.EndOfSequence == false)
                     {
-                        if (this.token.IsCancellationRequested)
+                        if (this.token != null && this.token.IsCancellationRequested)
                         {
                             this.ReleaseEnumerationContext();
                             break; 
@@ -157,6 +160,10 @@ namespace Lithnet.ResourceManagement.Client
             task.Start();
         }
 
+        /// <summary>
+        /// Populates the result set from the items returned from the enumeration call
+        /// </summary>
+        /// <param name="items">The items contained in the response from the server</param>
         private void PopulateResultSet(ItemListType items)
         {
             if (items != null)
@@ -168,6 +175,9 @@ namespace Lithnet.ResourceManagement.Client
             }
         }
 
+        /// <summary>
+        /// Signals to the resource management service that we are done with the enumeration context
+        /// </summary>
         private void ReleaseEnumerationContext()
         {
             try

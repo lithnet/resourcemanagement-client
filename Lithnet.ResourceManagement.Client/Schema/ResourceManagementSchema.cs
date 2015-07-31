@@ -10,6 +10,7 @@ using Lithnet.ResourceManagement.Client.ResourceManagementService;
 using System.Xml.Schema;
 using System.ServiceModel;
 using System.Collections.ObjectModel;
+using Lithnet.ResourceManagement.Client;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -95,6 +96,11 @@ namespace Lithnet.ResourceManagement.Client
             }
         }
 
+        /// <summary>
+        /// Gets the data type of the specific attribute
+        /// </summary>
+        /// <param name="attributeName">The attribute name</param>
+        /// <returns>An <c>AttributeType</c> value</returns>
         public static AttributeType GetAttributeType(string attributeName)
         {
             ResourceManagementSchema.LoadSchema();
@@ -112,6 +118,11 @@ namespace Lithnet.ResourceManagement.Client
             throw new NoSuchAttributeException(attributeName);
         }
 
+        /// <summary>
+        /// Gets a value indicating whether the specific attribute is multivalued
+        /// </summary>
+        /// <param name="attributeName">The attribute ame</param>
+        /// <returns></returns>
         public static bool IsAttributeMultivalued(string attributeName)
         {
             ResourceManagementSchema.LoadSchema();
