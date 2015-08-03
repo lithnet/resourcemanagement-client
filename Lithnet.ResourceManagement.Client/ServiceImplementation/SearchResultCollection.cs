@@ -33,7 +33,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The resource management client used for this search operation
         /// </summary>
         private ResourceManagementClient client;
-              
+
         /// <summary>
         /// The result set obtained from the Resource Management Service
         /// </summary>
@@ -144,7 +144,7 @@ namespace Lithnet.ResourceManagement.Client
                 }
                 else
                 {
-                    throw new InvalidOperationException("The index supplied was not valid");
+                    throw new InvalidOperationException(string.Format("The index supplied was not valid: {0}", index));
                 }
             }
 
@@ -166,7 +166,26 @@ namespace Lithnet.ResourceManagement.Client
 
             this.PopulateResultSet(r.Items);
         }
-        
+
+        internal bool HasMoreItems(int index)
+        {
+            if (index < this.resultSet.Count)
+            {
+                return true;
+            }
+            else
+            {
+                if (this.EndOfSequence)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
+
         /// <summary>
         /// Disposes the current object
         /// </summary>

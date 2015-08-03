@@ -67,6 +67,7 @@
     <Compile Include="Enums\OperationType.cs" />
     <Compile Include="Enums\GroupOperator.cs" />
     <Compile Include="Enums\ComparisonOperator.cs" />
+    <Compile Include="Exceptions\NoSuchObjectTypeException.cs" />
     <Compile Include="Exceptions\NoSuchAttributeException.cs" />
     <Compile Include="Exceptions\ResourceNotFoundException.cs" />
     <Compile Include="ResourceManagementClientPool.cs" />

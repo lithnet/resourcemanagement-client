@@ -40,7 +40,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             this.index++;
 
-            return this.index != this.collection.Count;
+            return this.collection.HasMoreItems(index);
         }
 
         public void Reset()

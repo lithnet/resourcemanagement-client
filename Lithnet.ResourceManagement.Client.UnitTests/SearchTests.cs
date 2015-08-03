@@ -17,13 +17,18 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             ResourceManagementClient c = new ResourceManagementClient();
 
-            ISearchResultCollection results = c.GetResourcesAsync("/Group", 200);
+            ISearchResultCollection results = c.GetResourcesAsync("/Set", 200);
             Debug.WriteLine("Getting {0} results", results.Count);
+
+            int count = 0;
 
             foreach (ResourceObject o in results)
             {
                 Debug.WriteLine("UT got object " + o.ObjectID);
+                count++;
             }
+
+            Assert.AreEqual(results.Count, count);
         }
 
         [TestMethod]
@@ -31,13 +36,19 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             ResourceManagementClient c = new ResourceManagementClient();
 
-            ISearchResultCollection results = c.GetResources("/Group", 200);
+            ISearchResultCollection results = c.GetResources("/Set", 200);
             Debug.WriteLine("Getting {0} results", results.Count);
+
+            int count = 0;
 
             foreach (ResourceObject o in results)
             {
                 Debug.WriteLine("UT got object " + o.ObjectID);
+                count++;
             }
+
+            Assert.AreEqual(results.Count, count);
+
         }
 
         [TestMethod]
@@ -54,11 +65,15 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             ISearchResultCollection results = c.GetResources("/Group", 200, attributesToGet);
             Debug.WriteLine("Getting {0} results", results.Count);
+            int count = 0;
 
             foreach (ResourceObject o in results)
             {
                 Debug.WriteLine("UT got object " + o.ObjectID);
+                count++;
             }
+
+            Assert.AreEqual(results.Count, count);
         }
 
     }

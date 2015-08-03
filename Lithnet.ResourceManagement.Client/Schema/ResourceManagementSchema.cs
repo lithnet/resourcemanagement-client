@@ -64,16 +64,13 @@ namespace Lithnet.ResourceManagement.Client
             ResourceManagementSchema.MandatoryAttributes = new ReadOnlyCollection<string>(new List<string>() { AttributeNames.ObjectType, AttributeNames.ObjectID });
         }
 
-        /// <summary>
-        /// Loads the schema from the Resource Management Service if it has not already been loaded. If the schema has been loaded, no actions are performed
-        /// </summary>
-        public static void LoadSchema()
+        internal static void LoadSchema(EndpointManager e)
         {
             lock (lockObject)
             {
                 if (!isLoaded)
                 {
-                    ResourceManagementSchema.RefreshSchema();
+                    ResourceManagementSchema.RefreshSchema(e);
                 }
             }
         }
@@ -84,13 +81,13 @@ namespace Lithnet.ResourceManagement.Client
         /// <remarks>
         /// This method should be called after making changes to ResourceObjects that form the schema
         /// </remarks>
-        public static void RefreshSchema()
+        internal static void RefreshSchema(EndpointManager e)
         {
             lock (lockObject)
             {
                 ResourceManagementSchema.ObjectTypes = new Dictionary<string, ObjectTypeDefinition>();
 
-                MetadataSet set = ResourceManagementSchema.GetMetadataSet();
+                MetadataSet set = ResourceManagementSchema.GetMetadataSet(e);
                 ResourceManagementSchema.PopulateSchemaFromMetadata(set);
                 isLoaded = true;
             }
@@ -103,7 +100,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>An <c>AttributeType</c> value</returns>
         public static AttributeType GetAttributeType(string attributeName)
         {
-            ResourceManagementSchema.LoadSchema();
+            ResourceManagementSchema.LoadSchema(ResourceManagementClient.EndpointManager);
 
             foreach (ObjectTypeDefinition objectType in ResourceManagementSchema.ObjectTypes.Values)
             {
@@ -118,6 +115,20 @@ namespace Lithnet.ResourceManagement.Client
             throw new NoSuchAttributeException(attributeName);
         }
 
+        public static ObjectTypeDefinition GetObjectType(string name)
+        {
+            ResourceManagementSchema.LoadSchema(ResourceManagementClient.EndpointManager);
+
+            if (ResourceManagementSchema.ObjectTypes.ContainsKey(name))
+            {
+                return ResourceManagementSchema.ObjectTypes[name];
+            }
+            else
+            {
+                throw new NoSuchObjectTypeException(name);
+            }
+        }
+
         /// <summary>
         /// Gets a value indicating whether the specific attribute is multivalued
         /// </summary>
@@ -125,7 +136,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns></returns>
         public static bool IsAttributeMultivalued(string attributeName)
         {
-            ResourceManagementSchema.LoadSchema();
+            ResourceManagementSchema.LoadSchema(ResourceManagementClient.EndpointManager);
 
             foreach (ObjectTypeDefinition objectType in ResourceManagementSchema.ObjectTypes.Values)
             {
@@ -144,7 +155,7 @@ namespace Lithnet.ResourceManagement.Client
         /// Gets the metadata set from the Resource Management Service
         /// </summary>
         /// <returns></returns>
-        private static MetadataSet GetMetadataSet()
+        private static MetadataSet GetMetadataSet(EndpointManager e)
         {
             MetadataSet set;
             GetMetadata body = new GetMetadata();
@@ -155,7 +166,7 @@ namespace Lithnet.ResourceManagement.Client
 
             Binding httpBinding = BindingManager.GetWsHttpBinding();
 
-            ResourceManagementService.MetadataExchangeClient mex = new ResourceManagementService.MetadataExchangeClient(httpBinding, ResourceManagementClient.EndpointManager.MetadataEndpoint);
+            ResourceManagementService.MetadataExchangeClient mex = new ResourceManagementService.MetadataExchangeClient(httpBinding, e.MetadataEndpoint);
             Message responseMessage = mex.Get(requestMessage);
 
             if (responseMessage.IsFault)

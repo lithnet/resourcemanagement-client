@@ -154,7 +154,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             UnitTestHelper.CreateBindingIfDoesntExist(objectClass, svBooleanAttribute);
             UnitTestHelper.CreateBindingIfDoesntExist(objectClass, accountNameAttribute);
 
-            ResourceManagementSchema.RefreshSchema();
+            client.RefreshSchema();
 
         }
 

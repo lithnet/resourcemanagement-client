@@ -11,7 +11,6 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 {
     internal static class MessageComposer
     {
-        private const string DefaultMaxCharacters = "3668672";
         private const string DefaultPageSize = "200";
 
         internal static Message CreateGetMessage(UniqueIdentifier id)
@@ -164,7 +163,6 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
         {
             Enumerate request = new Enumerate();
             request.Filter = new FilterType(filter);
-            request.MaxCharacters = MessageComposer.DefaultMaxCharacters;
             request.MaxElements = pageSize < 0 ? MessageComposer.DefaultPageSize : pageSize.ToString();
 
             if (attributes != null)

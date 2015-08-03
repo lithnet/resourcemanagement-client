@@ -377,9 +377,12 @@ namespace Lithnet.ResourceManagement.Client
         {
             StringBuilder sb = new StringBuilder();
 
-            foreach (AttributeValue value in this.attributes)
+            foreach (KeyValuePair<string, IList<string>> kvp in this.GetSerializationValues())
             {
-                sb.AppendLine(string.Format("{0}: {1}", value.AttributeName, TypeConverter.ToString(value)));
+                foreach (string value in kvp.Value)
+                {
+                    sb.AppendLine(string.Format("{0}: {1}", kvp.Key, value));
+                }
             }
 
             return sb.ToString();

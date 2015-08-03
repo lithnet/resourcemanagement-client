@@ -60,6 +60,8 @@
         /// </summary>
         internal static ClientConfigurationSection Configuration { get; private set; }
 
+        private EndpointManager endpointManager { get; set; }
+
         /// <summary>
         /// Initializes the static members of the ResourceManagementClient class
         /// </summary>
@@ -72,8 +74,12 @@
                 System.Net.ServicePointManager.DefaultConnectionLimit = ResourceManagementClient.Configuration.ConcurrentConnectionLimit;
             }
 
-            Uri baseAddress;
+            InitialResourceManagementClientDefaults();
+        }
 
+        private static void InitialResourceManagementClientDefaults()
+        {
+            Uri baseAddress;
             if (Configuration.ResourceManagementServiceBaseAddress == null)
             {
                 baseAddress = new Uri("http://localhost:5725");
@@ -107,7 +113,7 @@
         /// </example>
         public ResourceManagementClient()
         {
-            this.InitializeClients(ResourceManagementClient.NetworkCredentials);
+            this.InitializeClients(ResourceManagementClient.EndpointManager, ResourceManagementClient.NetworkCredentials, !Configuration.ForceKerberos);
         }
 
         /// <summary>
@@ -120,7 +126,37 @@
         /// </example>
         public ResourceManagementClient(NetworkCredential credentials)
         {
-            this.InitializeClients(credentials);
+            this.InitializeClients(ResourceManagementClient.EndpointManager, credentials, !Configuration.ForceKerberos);
+        }
+
+        public ResourceManagementClient(string baseAddress)
+        {
+            EndpointManager e = new EndpointManager(baseAddress);
+            this.InitializeClients(e, null, true);
+        }
+
+        public ResourceManagementClient(string baseAddress, NetworkCredential credentials)
+        {
+            EndpointManager e = new EndpointManager(baseAddress);
+            this.InitializeClients(e, credentials, true);
+        }
+
+        public ResourceManagementClient(Uri baseAddress, NetworkCredential credentials, string servicePrincipalName, bool allowNtlm)
+        {
+            EndpointIdentity id;
+
+            if (servicePrincipalName != null)
+            {
+                id = EndpointIdentity.CreateSpnIdentity(servicePrincipalName);
+            }
+            else
+            {
+                id = EndpointIdentity.CreateSpnIdentity(string.Format("FIMService/{0}", baseAddress.Host));
+
+            }
+
+            EndpointManager e = new EndpointManager(baseAddress, id);
+            this.InitializeClients(e, credentials, allowNtlm);
         }
 
         /// <summary>
@@ -480,7 +516,7 @@
         {
             return this.resourceClient.Get(id, attributesToGet);
         }
-        
+
         /// <summary>
         /// Gets a resource from the resource management service using a unique attribute and value combination, retrieving all attributes for the resource
         /// </summary>
@@ -493,7 +529,7 @@
         /// The following example shows how get a user by its AccountName attribute
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, String, String)"/>
         /// </example>
-        public ResourceObject GetResourceByKey(string objectType, string attributeName, string value)
+        public ResourceObject GetResourceByKey(string objectType, string attributeName, object value)
         {
             return this.GetResourceByKey(objectType, attributeName, value, null);
         }
@@ -511,7 +547,7 @@
         /// The following example shows how get a user by its AccountName attribute
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, String, String)"/>
         /// </example>
-        public ResourceObject GetResourceByKey(string objectType, string attributeName, string value, IEnumerable<string> attributesToGet)
+        public ResourceObject GetResourceByKey(string objectType, string attributeName, object value, IEnumerable<string> attributesToGet)
         {
             Dictionary<string, object> values = new Dictionary<string, object>();
             values.Add(attributeName, value);
@@ -753,14 +789,21 @@
             this.resourceClient.Put(resource);
         }
 
+        public void RefreshSchema()
+        {
+            ResourceManagementSchema.LoadSchema(this.endpointManager);
+        }
+
         /// <summary>
         /// Initializes the WCF bindings, endpoints, and proxy objects
         /// </summary>
-        private void InitializeClients(NetworkCredential credentials)
+        private void InitializeClients(EndpointManager endpointManager, NetworkCredential credentials, bool allowNtlm)
         {
-            this.resourceClient = new ResourceClient(ResourceManagementClient.WsHttpContextBinding, ResourceManagementClient.EndpointManager.ResourceEndpoint);
-            this.resourceFactoryClient = new ResourceFactoryClient(ResourceManagementClient.WsHttpContextBinding, ResourceManagementClient.EndpointManager.ResourceFactoryEndpoint);
-            this.searchClient = new SearchClient(ResourceManagementClient.WsHttpContextBinding, ResourceManagementClient.EndpointManager.SearchEndpoint);
+            this.endpointManager = endpointManager;
+
+            this.resourceClient = new ResourceClient(ResourceManagementClient.WsHttpContextBinding, this.endpointManager.ResourceEndpoint);
+            this.resourceFactoryClient = new ResourceFactoryClient(ResourceManagementClient.WsHttpContextBinding, this.endpointManager.ResourceFactoryEndpoint);
+            this.searchClient = new SearchClient(ResourceManagementClient.WsHttpContextBinding, this.endpointManager.SearchEndpoint);
 
             if (credentials != null)
             {
@@ -770,9 +813,9 @@
             }
 
 #pragma warning disable 0618
-            this.resourceClient.ClientCredentials.Windows.AllowNtlm = !Configuration.ForceKerberos;
-            this.resourceClient.ClientCredentials.Windows.AllowNtlm = !Configuration.ForceKerberos;
-            this.resourceClient.ClientCredentials.Windows.AllowNtlm = !Configuration.ForceKerberos;
+            this.resourceClient.ClientCredentials.Windows.AllowNtlm = allowNtlm;
+            this.resourceClient.ClientCredentials.Windows.AllowNtlm = allowNtlm;
+            this.resourceClient.ClientCredentials.Windows.AllowNtlm = allowNtlm;
 #pragma warning restore 0618
 
             this.resourceClient.Initialize(this);
@@ -783,7 +826,7 @@
             this.resourceFactoryClient.Open();
             this.searchClient.Open();
 
-            ResourceManagementSchema.LoadSchema();
+            ResourceManagementSchema.LoadSchema(endpointManager);
         }
     }
 }
