@@ -72,7 +72,11 @@ namespace Lithnet.ResourceManagement.Client
             {
                 return (string)value;
             }
-            else if (value is bool || value is long || value is int || value is UniqueIdentifier)
+            else if (value is UniqueIdentifier)
+            {
+                return ((UniqueIdentifier)value).Value;
+            }
+            else if (value is bool || value is long || value is int)
             {
                 return value.ToString();
             }
