@@ -48,12 +48,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.ResourceManagement, Version=4.1.3634.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.ResourceManagement">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Microsoft.ResourceManagement.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ResourceManagement.Service">
-      <HintPath>\\idm-d1ps1-v02\c$\Program Files\Microsoft Forefront Identity Manager\2010\Service\Microsoft.ResourceManagement.Service.exe</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">

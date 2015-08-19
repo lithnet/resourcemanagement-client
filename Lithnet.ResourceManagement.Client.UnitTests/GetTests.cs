@@ -22,7 +22,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             {
                 UnitTestHelper.PopulateTestUserData(resource);
                 resource.Save();
-
                 resource = client.GetResource(resource.ObjectID);
 
                 UnitTestHelper.ValidateTestUserData(resource);
