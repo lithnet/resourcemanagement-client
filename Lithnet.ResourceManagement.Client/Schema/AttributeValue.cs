@@ -182,13 +182,22 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="value">The new value or values to set</param>
         public void SetValue(object value)
         {
+            this.SetValue(value, false);
+        }
+
+        /// <summary>
+        /// Sets the value of the attribute, overwritting any existing values present on the object
+        /// </summary>
+        /// <param name="value">The new value or values to set</param>
+        internal void SetValue(object value, bool initialLoad)
+        {
             if (this.Attribute.IsMultivalued)
             {
-                this.SetMultiValue(value, false);
+                this.SetMultiValue(value, initialLoad);
             }
             else
             {
-                this.SetSingleValue(value, false);
+                this.SetSingleValue(value, initialLoad);
             }
         }
 
@@ -236,14 +245,33 @@ namespace Lithnet.ResourceManagement.Client
                 {
                     this.values.Add(typedValue);
                 }
-                else
-                {
-                    throw new ArgumentException("The value provided already exists in the collection");
-                }
+                //else
+                //{
+                //    throw new ArgumentException("The value provided already exists in the collection");
+                //}
             }
             else
             {
                 this.value = typedValue;
+            }
+        }
+
+        /// <summary>
+        /// Returns a value indicating whether the specified value is present on this attribute
+        /// </summary>
+        /// <param name="value">The value to test</param>
+        /// <returns>True if the specified value is present, or false if it is not</returns>
+        public bool HasValue(object value)
+        {
+            object typedValue = this.ConvertValueToAttributeType(value);
+
+            if (this.Attribute.IsMultivalued)
+            {
+                return this.values.Any(t => AttributeValue.ValueComparer.Equals(t, typedValue));
+            }
+            else
+            {
+                return AttributeValue.ValueComparer.Equals(this.value, typedValue);
             }
         }
 

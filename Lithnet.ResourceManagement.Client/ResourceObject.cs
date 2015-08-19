@@ -200,8 +200,8 @@ namespace Lithnet.ResourceManagement.Client
             this.AddRemainingAttributesFromSchema();
             this.IsPlaceHolder = true;
 
-            this.attributes[AttributeNames.ObjectType].SetValue(type);
-            this.attributes[AttributeNames.ObjectID].SetValue(id);
+            this.attributes[AttributeNames.ObjectType].SetValue(type, true);
+            this.attributes[AttributeNames.ObjectID].SetValue(id, true);
         }
 
         /// <summary>
@@ -687,7 +687,6 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="info">The serialization data</param>
         private void DeserializeObject(SerializationInfo info)
         {
-            this.AddRemainingAttributesFromSchema();
             Dictionary<string, List<string>> values = new Dictionary<string, List<string>>();
 
             foreach (SerializationEntry entry in info)
@@ -727,6 +726,7 @@ namespace Lithnet.ResourceManagement.Client
             string objectTypeName = values[AttributeNames.ObjectType].First();
             this.ObjectType = ResourceManagementSchema.ObjectTypes[objectTypeName];
             this.SetInitialAttributeValues(values);
+            this.AddRemainingAttributesFromSchema();
         }
     }
 }
