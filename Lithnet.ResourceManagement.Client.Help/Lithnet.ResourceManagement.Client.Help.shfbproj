@@ -30,7 +30,7 @@
     <SdkLinkTarget>Blank</SdkLinkTarget>
     <RootNamespaceContainer>False</RootNamespaceContainer>
     <PresentationStyle>VS2013</PresentationStyle>
-    <Preliminary>True</Preliminary>
+    <Preliminary>False</Preliminary>
     <NamingMethod>HashedMemberName</NamingMethod>
     <HelpTitle>Lithnet Resource Management Client</HelpTitle>
     <FeedbackEMailLinkText>Documentation Feedback</FeedbackEMailLinkText>

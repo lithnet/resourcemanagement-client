@@ -29,13 +29,15 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>An ISO 8601 date format string</returns>
         public static string ToResourceManagementServiceDateFormat(this DateTime dateTime, bool zeroMilliseconds)
         {
+            DateTime convertedDateTime = dateTime.ToUniversalTime();
+
             if (zeroMilliseconds)
             {
-                return dateTime.ToString(TypeConverter.FimServiceDateFormatZeroedMilliseconds);
+                return convertedDateTime.ToString(TypeConverter.FimServiceDateFormatZeroedMilliseconds);
             }
             else
             {
-                return dateTime.ToString(TypeConverter.FimServiceDateFormat);
+                return convertedDateTime.ToString(TypeConverter.FimServiceDateFormat);
 
             }
         }

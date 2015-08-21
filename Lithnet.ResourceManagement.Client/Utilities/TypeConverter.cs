@@ -122,7 +122,7 @@ namespace Lithnet.ResourceManagement.Client
             }
             else if (value is string)
             {
-                return DateTime.ParseExact((string)value, FimServiceDateFormat, CultureInfo.CurrentCulture);
+                return DateTime.ParseExact((string)value, FimServiceDateFormat, CultureInfo.CurrentCulture, DateTimeStyles.AssumeUniversal);
             }
             else
             {

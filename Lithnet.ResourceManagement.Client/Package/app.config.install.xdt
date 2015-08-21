@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0"?>
 <configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
-  <configSections xdt:Transform="InsertBefore(/configuration/*[1])" />
+  <configSections xdt:Transform="InsertIfMissing"/>
   <configSections xdt:Locator="XPath(/configuration/configSections[last()])">
     <section name="lithnetResourceManagementClient"
                type="Lithnet.ResourceManagement.Client.ClientConfigurationSection, Lithnet.ResourceManagement.Client"

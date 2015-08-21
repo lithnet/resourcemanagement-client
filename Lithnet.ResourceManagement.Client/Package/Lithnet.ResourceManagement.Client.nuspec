@@ -1,20 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
-    <metadata>
-        <id>Lithnet.ResourceManagement.Client</id>
-        <version>$version$</version>
-        <title>Lithnet FIM Service Client</title>
-        <authors>ryan@lithiumblue.com</authors>
-        <licenseUrl>https://lithnetrmc.codeplex.com/license</licenseUrl>
-        <projectUrl>https://lithnetrmc.codeplex.com</projectUrl>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>The Lithnet FIM Service Client is a wrapper for the FIM service. It supports create, update, delete, and search operations against the FIM service.</description>
-        <tags>FIM FIM2010 FIMService FIM2010R2</tags>
-    </metadata>
-    <files>
-      <file src="Package\app.config.install.xdt" target="Content\app.config.install.xdt" />
-      <file src="Package\app.config.uninstall.xdt" target="Content\app.config.uninstall.xdt" />
-      <file src="Package\web.config.install.xdt" target="Content\web.config.install.xdt" />
-      <file src="Package\web.config.uninstall.xdt" target="Content\web.config.uninstall.xdt" />
-    </files>
+  <metadata>
+    <id>Lithnet.ResourceManagement.Client</id>
+    <version>$version$</version>
+    <title>Lithnet Resource Management Client for FIM 2010 R2</title>
+    <authors>ryan@lithiumblue.com</authors>
+    <licenseUrl>https://lithnetrmc.codeplex.com/license</licenseUrl>
+    <projectUrl>https://lithnetrmc.codeplex.com</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>The Lithnet Resource Management Client is a .NET client library for interacting with the FIM service. It supports create, update, delete, and search operations against the FIM service.</description>
+    <tags>FIM FIM2010 FIMService FIM2010R2</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="Microsoft.ResourceManagement"  />
+    </frameworkAssemblies>
+  </metadata>
+  <files>
+    <file src="Package\app.config.install.xdt" target="Content\app.config.install.xdt" />
+    <file src="Package\app.config.uninstall.xdt" target="Content\app.config.uninstall.xdt" />
+    <file src="Package\web.config.install.xdt" target="Content\web.config.install.xdt" />
+    <file src="Package\web.config.uninstall.xdt" target="Content\web.config.uninstall.xdt" />
+    <file src="Package\app.config.transform" target="Content\app.config.transform" />
+    <file src="Package\web.config.transform" target="Content\web.config.transform" />
+  </files>
 </package>

@@ -123,6 +123,10 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Package\App.config.transform" />
+    <None Include="Package\Web.config.transform">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Package\web.config.uninstall.xdt" />
     <None Include="Package\web.config.install.xdt" />
     <None Include="Package\app.config.uninstall.xdt" />
