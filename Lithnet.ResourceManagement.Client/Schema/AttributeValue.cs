@@ -177,7 +177,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Sets the value of the attribute, overwritting any existing values present on the object
+        /// Sets the value of the attribute, overwriting any existing values present on the object
         /// </summary>
         /// <param name="value">The new value or values to set</param>
         public void SetValue(object value)
@@ -186,7 +186,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Sets the value of the attribute, overwritting any existing values present on the object
+        /// Sets the value of the attribute, overwriting any existing values present on the object
         /// </summary>
         /// <param name="value">The new value or values to set</param>
         internal void SetValue(object value, bool initialLoad)
@@ -328,14 +328,42 @@ namespace Lithnet.ResourceManagement.Client
             if (value == null)
             {
                 this.values.Clear();
+                return;
+            }
+
+            IEnumerable collectionValues = value as IEnumerable;
+
+            if (collectionValues == null || value is string || value is byte[])
+            {
+                this.values.Clear();
+
+                // Only one value to set
+
+                object convertedValue = this.ConvertValueToAttributeType(value);
+
+                if (convertedValue != null)
+                {
+                    this.values.Add(convertedValue);
+
+                    if (initialLoad)
+                    {
+                        this.initialValues.Add(convertedValue);
+                    }
+                }
             }
             else
             {
-                IEnumerable collectionValues = value as IEnumerable;
+                this.values.Clear();
 
-                if (collectionValues == null || value is string || value is byte[])
+                foreach (object enumerableValue in collectionValues)
                 {
-                    object convertedValue = this.ConvertValueToAttributeType(value);
+                    if (enumerableValue == null)
+                    {
+                        throw new InvalidOperationException("A multivalued attribute cannot contain a null value");
+                    }
+
+                    object convertedValue = this.ConvertValueToAttributeType(enumerableValue);
+
                     if (convertedValue != null)
                     {
                         this.values.Add(convertedValue);
@@ -343,30 +371,6 @@ namespace Lithnet.ResourceManagement.Client
                         if (initialLoad)
                         {
                             this.initialValues.Add(convertedValue);
-                        }
-                    }
-                }
-                else
-                {
-                    this.values.Clear();
-
-                    foreach (object enumerableValue in collectionValues)
-                    {
-                        if (enumerableValue == null)
-                        {
-                            throw new InvalidOperationException("A multivalued attribute cannot contain a null value");
-                        }
-
-                        object convertedValue = this.ConvertValueToAttributeType(enumerableValue);
-
-                        if (convertedValue != null)
-                        {
-                            this.values.Add(convertedValue);
-
-                            if (initialLoad)
-                            {
-                                this.initialValues.Add(convertedValue);
-                            }
                         }
                     }
                 }
@@ -453,7 +457,7 @@ namespace Lithnet.ResourceManagement.Client
         /// Performs conversion of supported CLR types into the native data type format that matches the attribute definition
         /// </summary>
         /// <param name="value">The value to convert</param>
-        /// <returns>A value converted into the correct data type for the atttribute</returns>
+        /// <returns>A value converted into the correct data type for the attribute</returns>
         private object ConvertValueToAttributeType(object value)
         {
             if (!((value is string) || (value is byte[]) || (value is int) || (value is long) || (value is bool) || (value is UniqueIdentifier) || (value is DateTime) || (value is ResourceObject)))
