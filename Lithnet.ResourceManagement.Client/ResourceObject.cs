@@ -677,8 +677,6 @@ namespace Lithnet.ResourceManagement.Client
                     continue;
                 }
             }
-
-            info.AddValue("_ModificationType", this.ModificationType.ToString());
         }
 
         /// <summary>
@@ -691,15 +689,6 @@ namespace Lithnet.ResourceManagement.Client
 
             foreach (SerializationEntry entry in info)
             {
-                if (entry.Name.StartsWith("_"))
-                {
-                    if (entry.Name == "_ModificationType")
-                    {
-                        this.ModificationType = (OperationType)Enum.Parse(typeof(OperationType), entry.Value.ToString());
-                    }
-
-                    continue;
-                }
 
                 IEnumerable<string> entryValues = entry.Value as IEnumerable<string>;
 

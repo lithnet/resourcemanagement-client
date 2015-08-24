@@ -589,7 +589,7 @@
 
             if (attributesToGet == null)
             {
-                attributesToGet = ResourceManagementSchema.ObjectTypes[objectType].Attributes.Select(t => t.SystemName);
+                attributesToGet = ResourceManagementSchema.GetObjectType(objectType).Attributes.Select(t => t.SystemName);
             }
 
             ISearchResultCollection results = this.searchClient.EnumerateSync(filter, 1, attributesToGet);
