@@ -52,6 +52,46 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         }
 
         [TestMethod]
+        public void SearchTestAsyncNoResults()
+        {
+            ResourceManagementClient c = new ResourceManagementClient();
+
+            ISearchResultCollection results = c.GetResourcesAsync("Set[DisplayName='...!!!...']", 200);
+            Debug.WriteLine("Getting {0} results", results.Count);
+
+            int count = 0;
+
+            foreach (ResourceObject o in results)
+            {
+                Debug.WriteLine("UT got object " + o.ObjectID);
+                count++;
+            }
+
+            Assert.AreEqual(results.Count, count);
+            Assert.AreEqual(0, count);
+        }
+
+        [TestMethod]
+        public void SearchTestNoResults()
+        {
+            ResourceManagementClient c = new ResourceManagementClient();
+
+            ISearchResultCollection results = c.GetResources("/Set[DisplayName='...!!!...']", 200);
+            Debug.WriteLine("Getting {0} results", results.Count);
+
+            int count = 0;
+
+            foreach (ResourceObject o in results)
+            {
+                Debug.WriteLine("UT got object " + o.ObjectID);
+                count++;
+            }
+
+            Assert.AreEqual(results.Count, count);
+            Assert.AreEqual(0, count);
+        }
+
+        [TestMethod]
         public void SearchTestBatchedRestrictedAttributeList()
         {
             ResourceManagementClient c = new ResourceManagementClient();
