@@ -14,6 +14,7 @@
     using System.Threading.Tasks;
     using System.Collections.Concurrent;
     using Lithnet.ResourceManagement.Client;
+    using System.Globalization;
 
     /// <summary>
     /// The main class used to create, update, delete, and search for objects in the resource management service
@@ -499,7 +500,7 @@
         /// </example>
         public ResourceObject GetResource(UniqueIdentifier id)
         {
-            return this.resourceClient.Get(id, null);
+            return this.resourceClient.Get(id);
         }
 
         /// <summary>
@@ -516,6 +517,23 @@
         {
             return this.resourceClient.Get(id, attributesToGet);
         }
+
+        /// <summary>
+        /// Gets a resource from the resource management service, retrieving only a specified set of attributes for the resource
+        /// </summary>
+        /// <param name="id">The ID of the resource to get</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="locale">The locale to submit with the get request</param>
+        /// <returns>The resource represented by the specified ID</returns>
+        /// <example>
+        /// The following example shows how to get an object from a reference value
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(UniqueIdentifier)"/>
+        /// </example>
+        public ResourceObject GetResource(UniqueIdentifier id, IEnumerable<string> attributesToGet, CultureInfo locale)
+        {
+            return this.resourceClient.Get(id, attributesToGet, locale);
+        }
+
 
         /// <summary>
         /// Gets a resource from the resource management service using a unique attribute and value combination, retrieving all attributes for the resource

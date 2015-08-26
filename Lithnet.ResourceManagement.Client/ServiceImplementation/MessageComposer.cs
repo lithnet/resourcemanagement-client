@@ -15,10 +15,10 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
         internal static Message CreateGetMessage(UniqueIdentifier id)
         {
-            return CreateGetMessage(id, null);
+            return CreateGetMessage(id, null, CultureInfo.InvariantCulture);
         }
 
-        internal static Message CreateGetMessage(UniqueIdentifier id, IEnumerable<string> attributes)
+        internal static Message CreateGetMessage(UniqueIdentifier id, IEnumerable<string> attributes, CultureInfo locale)
         {
             Get op = null;
 
@@ -41,7 +41,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                 message.AddHeader(Namespaces.IdMDirectoryAccess, HeaderConstants.IdentityManagementOperation, null, true);
             }
 
-            message.AddHeader("Locale", CultureInfo.CurrentCulture);
+            message.AddHeader("Locale", locale ?? CultureInfo.InvariantCulture);
             message.AddHeader(HeaderConstants.ResourceReferenceProperty, id.ToString());
 
             return message;
@@ -97,7 +97,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             }
 
             Put op = new Put();
-
+            
             op.Dialect = Namespaces.RMIdentityAttributeType;
             List<PutFragmentType> fragments = new List<PutFragmentType>();
             foreach (ResourceObject resource in resources)

@@ -6,6 +6,7 @@ using System.ServiceModel.Channels;
 using System.Xml;
 using Microsoft.ResourceManagement.WebServices;
 using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
+using System.Globalization;
 
 namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 {
@@ -61,7 +62,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             }
         }
 
-        public ResourceObject Get(UniqueIdentifier id, IEnumerable<string> attributes)
+        public ResourceObject Get(UniqueIdentifier id, IEnumerable<string> attributes, CultureInfo locale)
         {
             if (id == null)
             {
@@ -71,7 +72,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
             GetResponse r = new GetResponse();
 
-            using (Message message = MessageComposer.CreateGetMessage(id, attributes))
+            using (Message message = MessageComposer.CreateGetMessage(id, attributes, locale))
             {
                 using (Message responseMessage = this.Invoke((c) => c.Get(message)))
                 {
@@ -130,7 +131,17 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
         internal ResourceObject Get(UniqueIdentifier id)
         {
-            return this.Get(id, null);
+            return this.Get(id, null, null);
+        }
+
+        internal ResourceObject Get(UniqueIdentifier id, CultureInfo locale)
+        {
+            return this.Get(id, null, locale);
+        }
+
+        internal ResourceObject Get(UniqueIdentifier id, IEnumerable<string> attributesToGet)
+        {
+            return this.Get(id, attributesToGet, null);
         }
 
         internal XmlDictionaryReader GetFullObjectForUpdate(ResourceObject resource)
