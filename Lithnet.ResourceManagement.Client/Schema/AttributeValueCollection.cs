@@ -13,7 +13,7 @@ namespace Lithnet.ResourceManagement.Client
     public class AttributeValueCollection : IEnumerable<AttributeValue>
     {
         /// <summary>
-        /// The internal dictionary of attribute and value paiirs
+        /// The internal dictionary of attribute and value pairs
         /// </summary>
         private Dictionary<string, AttributeValue> internalValues;
 
@@ -26,7 +26,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets an attributattributeeName value collection
+        /// Gets an AttributeValue from the collection
         /// </summary>
         /// <param name="attributeName">The name of the attribute to get</param>
         /// <returns>An <c ref="AttributeValue">AttributeValue</c> object</returns>
