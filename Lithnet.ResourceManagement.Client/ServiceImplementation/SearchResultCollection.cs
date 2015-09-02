@@ -97,8 +97,13 @@ namespace Lithnet.ResourceManagement.Client
             this.pageSize = pageSize;
             this.details = response.EnumerationDetail;
             this.searchClient = searchClient;
-            this.EndOfSequence = response.EndOfSequence != null || response.Items == null;
+            this.EndOfSequence = response.EndOfSequence != null;
             this.PopulateResultSet(response.Items);
+
+            if (!this.EndOfSequence)
+            {
+                this.GetNextPage();
+            }
         }
 
         /// <summary>
