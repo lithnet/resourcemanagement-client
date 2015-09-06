@@ -22,7 +22,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// Initializes a new instance of the NoSuchObjectTypeException class
         /// </summary>
-        /// <param name="attributeName">The name of the object type that was not found</param>
+        /// <param name="objectTypeName">The name of the object type that was not found</param>
         public NoSuchObjectTypeException(string objectTypeName)
             : base(string.Format("The object type '{0}' does not exist in the schema", objectTypeName))
         {

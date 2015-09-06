@@ -49,7 +49,13 @@ namespace Lithnet.ResourceManagement.Client
             this.GroupOperator = groupOperator;
         }
 
-        public XPathQueryGroup(GroupOperator groupOperator, ComparisonOperator valueComparisonOperator, AttributeValuePairCollection attributeValuePairs)
+        /// <summary>
+        /// Initializes a new instance of the XpathQueryGroup class
+        /// </summary>
+        /// <param name="groupOperator">The logical operator to apply to queries within this group</param>
+        /// <param name="attributeValuePairs">The attribute and value pairs to query</param>
+        /// <param name="valueComparisonOperator">The operator to apply to the individual attribute and value pairs</param>
+        public XPathQueryGroup(GroupOperator groupOperator, AttributeValuePairCollection attributeValuePairs, ComparisonOperator valueComparisonOperator)
         {
             this.Queries = new List<IXPathQueryObject>();
 
@@ -61,7 +67,13 @@ namespace Lithnet.ResourceManagement.Client
             this.GroupOperator = groupOperator;
         }
 
-        public XPathQueryGroup(GroupOperator groupOperator, ComparisonOperator valueComparisonOperator, Dictionary<string, object> attributeValuePairs)
+        /// <summary>
+        /// Initializes a new instance of the XpathQueryGroup class
+        /// </summary>
+        /// <param name="groupOperator">The logical operator to apply to queries within this group</param>
+        /// <param name="attributeValuePairs">The attribute and value pairs to query</param>
+        /// <param name="valueComparisonOperator">The operator to apply to the individual attribute and value pairs</param>
+        public XPathQueryGroup(GroupOperator groupOperator, Dictionary<string, object> attributeValuePairs, ComparisonOperator valueComparisonOperator)
         {
             this.Queries = new List<IXPathQueryObject>();
 
@@ -73,11 +85,19 @@ namespace Lithnet.ResourceManagement.Client
             this.GroupOperator = groupOperator;
         }
 
+        /// <summary>
+        /// Get the XPath query string
+        /// </summary>
+        /// <returns>The string representation of the query group</returns>
         public override string ToString()
         {
             return this.BuildQueryString();
         }
 
+        /// <summary>
+        /// Builds the XPath query string, and returns the resulting string
+        /// </summary>
+        /// <returns>The string representation of the query group</returns>
         public string BuildQueryString()
         {
             if (this.Queries == null || this.Queries.Count == 0)

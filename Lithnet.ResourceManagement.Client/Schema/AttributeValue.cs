@@ -189,6 +189,7 @@ namespace Lithnet.ResourceManagement.Client
         /// Sets the value of the attribute, overwriting any existing values present on the object
         /// </summary>
         /// <param name="value">The new value or values to set</param>
+        /// <param name="initialLoad">A value indicating if the attribute is being set as part of an initial load, and represents the current value stored in the Resource Management Service</param>
         internal void SetValue(object value, bool initialLoad)
         {
             if (this.Attribute.IsMultivalued)
@@ -215,7 +216,7 @@ namespace Lithnet.ResourceManagement.Client
 
             this.hasChanged = !initialLoad;
 
-            if (value == null)
+            if (value == null || value == DBNull.Value)
             {
                 this.value = null;
                 return;
@@ -325,7 +326,7 @@ namespace Lithnet.ResourceManagement.Client
 
             this.hasChanged = !initialLoad;
 
-            if (value == null)
+            if (value == null || value == DBNull.Value)
             {
                 this.values.Clear();
                 return;
@@ -460,7 +461,17 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>A value converted into the correct data type for the attribute</returns>
         private object ConvertValueToAttributeType(object value)
         {
-            if (!((value is string) || (value is byte[]) || (value is int) || (value is long) || (value is bool) || (value is UniqueIdentifier) || (value is DateTime) || (value is ResourceObject)))
+            if (!(
+                value is string || 
+                value is byte[] ||
+                value is int || 
+                value is long || 
+                value is bool || 
+                value is UniqueIdentifier ||
+                value is DateTime || 
+                value is ResourceObject || 
+                value is XPathExpression || 
+                value is XPathDereferencedExpression))
             {
                 throw new UnsupportedDataTypeException(this.Attribute.Type, value.GetType());
             }

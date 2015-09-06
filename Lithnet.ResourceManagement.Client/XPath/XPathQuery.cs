@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.ResourceManagement.WebServices;
 using Lithnet.ResourceManagement.Client;
+using System.Globalization;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -244,10 +245,14 @@ namespace Lithnet.ResourceManagement.Client
                 }
                 else
                 {
-                    valuetoUse = string.Format("'{0}'", ((UniqueIdentifier)TypeConverter.ToString(this.Value)).Value);
+                    valuetoUse = string.Format("'{0}'", TypeConverter.ToUniqueIdentifier(this.Value).Value);
                 }
 
                 expression = string.Format("({0} = {1})", this.AttributeName, valuetoUse);
+            }
+            else if (this.attributeType == AttributeType.DateTime)
+            {
+                expression = string.Format("({0} = {1})", this.AttributeName, TypeConverter.ToString(this.QuoteIfNotFunction(this.Value)));
             }
             else
             {
@@ -263,36 +268,70 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>A string containing the query</returns>
         private string GetExpressionNotEquals()
         {
-            if (this.isMultivalued)
-            {
+            //if (this.isMultivalued)
+            //{
                 if (this.attributeType == AttributeType.Integer || this.attributeType == AttributeType.Boolean)
                 {
                     return string.Format("(not({0} = {1}))", this.AttributeName, TypeConverter.ToString(this.Value));
                 }
                 else if (this.attributeType == AttributeType.Reference)
                 {
-                    return string.Format("(not({0} = '{1}'))", this.AttributeName, ((UniqueIdentifier)TypeConverter.ToString(this.Value)).Value);
+                    string valuetoUse;
+
+                    XPathExpression childExpression = this.Value as XPathExpression;
+
+                    if (childExpression != null)
+                    {
+                        valuetoUse = childExpression.ToString();
+                    }
+                    else
+                    {
+                        valuetoUse = string.Format("'{0}'", TypeConverter.ToUniqueIdentifier(this.Value).Value);
+                    }
+
+                    return string.Format("(not({0} = {1}))", this.AttributeName, valuetoUse);
+                }
+                else if (this.attributeType == AttributeType.DateTime)
+                {
+                    return string.Format("(not({0} = {1}))", this.AttributeName, TypeConverter.ToString(this.QuoteIfNotFunction(this.Value)));
                 }
                 else
                 {
                     return string.Format("(not({0} = '{1}'))", this.AttributeName, TypeConverter.ToString(this.Value));
                 }
-            }
-            else
-            {
-                if (this.attributeType == AttributeType.Integer || this.attributeType == AttributeType.Boolean)
-                {
-                    return string.Format("({0} != {1})", this.AttributeName, TypeConverter.ToString(this.Value));
-                }
-                else if (this.attributeType == AttributeType.Reference)
-                {
-                    return string.Format("(not({0} = '{1}'))", this.AttributeName, ((UniqueIdentifier)TypeConverter.ToString(this.Value)).Value);
-                }
-                else
-                {
-                    return string.Format("({0} != '{1}')", this.AttributeName, TypeConverter.ToString(this.Value));
-                }
-            }
+            //}
+            //else
+            //{
+            //    if (this.attributeType == AttributeType.Integer || this.attributeType == AttributeType.Boolean)
+            //    {
+            //        return string.Format("({0} != {1})", this.AttributeName, TypeConverter.ToString(this.Value));
+            //    }
+            //    else if (this.attributeType == AttributeType.DateTime)
+            //    {
+            //        return string.Format("({0} != {1})", this.AttributeName, TypeConverter.ToString(this.QuoteIfNotFunction(this.Value)));
+            //    }
+            //    else if (this.attributeType == AttributeType.Reference)
+            //    {
+            //        string valuetoUse;
+
+            //        XPathExpression childExpression = this.Value as XPathExpression;
+
+            //        if (childExpression != null)
+            //        {
+            //            valuetoUse = childExpression.ToString();
+            //        }
+            //        else
+            //        {
+            //            valuetoUse = string.Format("'{0}'", TypeConverter.ToUniqueIdentifier(this.Value).Value);
+            //        }
+
+            //        return string.Format("(not({0} = {1}))", this.AttributeName, valuetoUse);
+            //    }
+            //    else
+            //    {
+            //        return string.Format("({0} != '{1}')", this.AttributeName, TypeConverter.ToString(this.Value));
+            //    }
+            //}
         }
 
         /// <summary>
@@ -306,6 +345,10 @@ namespace Lithnet.ResourceManagement.Client
             if (this.attributeType == AttributeType.Integer)
             {
                 expression = string.Format("({0} > {1})", this.AttributeName, TypeConverter.ToString(this.Value));
+            }
+            else if (this.attributeType == AttributeType.DateTime)
+            {
+                return string.Format("({0} > {1})", this.AttributeName, TypeConverter.ToString(this.QuoteIfNotFunction(this.Value)));
             }
             else
             {
@@ -327,6 +370,10 @@ namespace Lithnet.ResourceManagement.Client
             {
                 expression = string.Format("({0} >= {1})", this.AttributeName, TypeConverter.ToString(this.Value));
             }
+            else if (this.attributeType == AttributeType.DateTime)
+            {
+                return string.Format("({0} >= {1})", this.AttributeName, TypeConverter.ToString(this.QuoteIfNotFunction(this.Value)));
+            }
             else
             {
                 expression = string.Format("({0} >= '{1}')", this.AttributeName, TypeConverter.ToString(this.Value));
@@ -347,6 +394,10 @@ namespace Lithnet.ResourceManagement.Client
             {
                 expression = string.Format("({0} < {1})", this.AttributeName, TypeConverter.ToString(this.Value));
             }
+            else if (this.attributeType == AttributeType.DateTime)
+            {
+                return string.Format("({0} < {1})", this.AttributeName, TypeConverter.ToString(this.QuoteIfNotFunction(this.Value)));
+            }
             else
             {
                 expression = string.Format("({0} < '{1}')", this.AttributeName, TypeConverter.ToString(this.Value));
@@ -366,6 +417,10 @@ namespace Lithnet.ResourceManagement.Client
             if (this.attributeType == AttributeType.Integer)
             {
                 expression = string.Format("({0} <= {1})", this.AttributeName, TypeConverter.ToString(this.Value));
+            }
+            else if (this.attributeType == AttributeType.DateTime)
+            {
+                return string.Format("({0} <= {1})", this.AttributeName, TypeConverter.ToString(this.QuoteIfNotFunction(this.Value)));
             }
             else
             {
@@ -456,6 +511,30 @@ namespace Lithnet.ResourceManagement.Client
         private string GetExpressionEndsWith()
         {
             return ProcessNegation(string.Format("(ends-with({0}, '{1}'))", this.AttributeName, TypeConverter.ToString(this.Value)));
+        }
+
+        private object QuoteIfNotFunction(object value)
+        {
+            if (!(value is string))
+            {
+                // If the value is not a string, it cant be a function so convert it to a string and return the quoted value
+                return string.Format("'{0}'", TypeConverter.ToString(value));
+            }
+
+            string trimmedValue = ((string)value).TrimStart();
+
+            DateTime result;
+            
+            if (DateTime.TryParseExact((string)value, TypeConverter.FimServiceDateFormat, CultureInfo.CurrentCulture, DateTimeStyles.AssumeUniversal, out result))
+            {
+                // The string was a date time value, so pass it back as a string
+                return string.Format("'{0}'", result.ToResourceManagementServiceDateFormat());
+            }
+            else
+            {
+                // Value is not a date, assume it is a function and don't quote it
+                return value;
+            }
         }
 
         /// <summary>

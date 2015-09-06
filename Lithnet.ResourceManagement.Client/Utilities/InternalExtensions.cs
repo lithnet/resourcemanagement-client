@@ -21,6 +21,13 @@ namespace Lithnet.ResourceManagement.Client
     /// </summary>
     internal static class InternalExtensions
     {
+        private const string filterTextFormat = "<Filter xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" Dialect=\"http://schemas.microsoft.com/2006/11/XPathFilterDialect\" xmlns=\"http://schemas.xmlsoap.org/ws/2004/09/enumeration\">{0}</Filter>";
+
+        public static string ToResourceManagementFilterXml(this string filter)
+        {
+            return string.Format(InternalExtensions.filterTextFormat, System.Security.SecurityElement.Escape(filter));
+        }
+
         /// <summary>
         /// Converts an enumeration of strings into a comma separated list
         /// </summary>

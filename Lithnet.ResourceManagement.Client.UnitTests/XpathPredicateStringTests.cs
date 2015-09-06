@@ -52,7 +52,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             try
             {
-                string expected = string.Format("/{0}[({1} != '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringSV, queryValue, matchResource);
+                string expected = string.Format("/{0}[(not({1} = '{2}'))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringSV, queryValue, matchResource);
                 this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeStringSV, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
             }
             finally

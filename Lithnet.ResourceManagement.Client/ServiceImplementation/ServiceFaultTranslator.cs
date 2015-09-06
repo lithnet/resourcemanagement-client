@@ -25,11 +25,30 @@ namespace Lithnet.ResourceManagement.Client
                 case "PermissionDenied":
                     return GetPermissionDeniedException(fault);
 
+                case "UnwillingToPerform":
+                    return GetUnwillingToPerformException(fault);
+
                 default:
                     break;
             }
 
             return new FaultException(fault, fault.GetReaderAtDetailContents().ReadOuterXml());
+        }
+
+        public static Exception GetUnwillingToPerformException(MessageFault fault)
+        {
+            DispatchRequestFailures failure = fault.DeserializeMessageWithPayload<DispatchRequestFailures>();
+
+            if (failure == null || failure.AdministratorDetails == null)
+            {
+                return new FaultException(fault);
+            }
+
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine(failure.AdministratorDetails.FailureMessage);
+            builder.AppendLine("Details: " + failure.AdministratorDetails.AdditionalTextDetails);
+            builder.AppendLine("Source: " + failure.AdministratorDetails.DispatchRequestFailureSource);
+            throw new UnwillingToPerformException(builder.ToString());
         }
 
         public static Exception GetInvalidRepresentationException(MessageFault fault)
@@ -84,7 +103,7 @@ namespace Lithnet.ResourceManagement.Client
             builder.AppendLine(fault.Reason.ToString());
             builder.AppendLine(fault.Code.Name);
             builder.AppendFormat("Source: {0}\n", failures.RequestAdministratorDetails.RequestFailureSource.ToString());
-            
+
             if (attributes != null)
             {
                 builder.AppendFormat("Attributes: {0}\n", attributes);

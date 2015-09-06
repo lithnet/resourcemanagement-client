@@ -130,18 +130,34 @@
             this.InitializeClients(ResourceManagementClient.EndpointManager, credentials, !Configuration.ForceKerberos);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the ResourceManagementClient class
+        /// </summary>
+        /// <param name="baseAddress">The full address of the Resource Management Service Endpoint</param>
         public ResourceManagementClient(string baseAddress)
         {
             EndpointManager e = new EndpointManager(baseAddress);
             this.InitializeClients(e, null, true);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the ResourceManagementClient class
+        /// </summary>
+        /// <param name="baseAddress">The full address of the Resource Management Service Endpoint</param>
+        /// <param name="credentials">The credentials to use to connect to the service</param>
         public ResourceManagementClient(string baseAddress, NetworkCredential credentials)
         {
             EndpointManager e = new EndpointManager(baseAddress);
             this.InitializeClients(e, credentials, true);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the ResourceManagementClient class
+        /// </summary>
+        /// <param name="baseAddress">The URI of the Resource Management Service Endpoint</param>
+        /// <param name="credentials">The credentials to use to connect to the service</param>
+        /// <param name="servicePrincipalName">The service principal name of the Resource Management Service</param>
+        /// <param name="allowNtlm">Specifies if NTLM authentication should be attempted if kerberos authentication fails</param>
         public ResourceManagementClient(Uri baseAddress, NetworkCredential credentials, string servicePrincipalName, bool allowNtlm)
         {
             EndpointIdentity id;
@@ -807,6 +823,9 @@
             this.resourceClient.Put(resource);
         }
 
+        /// <summary>
+        /// Reloads the schema from the Resource Management Service
+        /// </summary>
         public void RefreshSchema()
         {
             ResourceManagementSchema.LoadSchema(this.endpointManager);

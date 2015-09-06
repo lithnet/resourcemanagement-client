@@ -22,7 +22,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// The internal dictionary containing the object type name to object type definition mapping
         /// </summary>
-        public static Dictionary<string, ObjectTypeDefinition> ObjectTypes;
+        public static Dictionary<string, ObjectTypeDefinition> ObjectTypes { get; private set; }
 
         /// <summary>
         /// Gets the list of attributes that are considered mandatory for all object classes
@@ -115,6 +115,12 @@ namespace Lithnet.ResourceManagement.Client
             throw new NoSuchAttributeException(attributeName);
         }
 
+        /// <summary>
+        /// Gets an object type definition from the schema by name
+        /// </summary>
+        /// <param name="name">The system name of the object type</param>
+        /// <returns>A ObjectTypeDefinition with a system name that matches the 'name' parameter</returns>
+        /// <exception cref="NoSuchObjectTypeException">Throw when an object type could not be found in the schema with a matching name</exception>
         public static ObjectTypeDefinition GetObjectType(string name)
         {
             ResourceManagementSchema.LoadSchema(ResourceManagementClient.EndpointManager);

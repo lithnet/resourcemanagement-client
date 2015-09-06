@@ -76,7 +76,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 return ((UniqueIdentifier)value).Value;
             }
-            else if (value is bool || value is long || value is int)
+            else if (value is bool || value is long || value is int || value is XPathExpression || value is XPathDereferencedExpression)
             {
                 return value.ToString();
             }

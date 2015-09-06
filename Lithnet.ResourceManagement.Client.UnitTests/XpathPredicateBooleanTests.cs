@@ -52,23 +52,13 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             try
             {
-                string expected = string.Format("/{0}[({1} != {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeBooleanSV, queryValue, matchResource);
+                string expected = string.Format("/{0}[(not({1} = {2}))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeBooleanSV, queryValue, matchResource);
                 this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeBooleanSV, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
             }
             finally
             {
                 UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
-        }
-
-        //[TestMethod]
-        public void TesT()
-        {
-            //string filter = "/Person[descendant-in('Manager', /Person[DisplayName = 'Ryan Newington'])]";
-            string filter = "descendants(/Person[DisplayName ='Ryan Newington'], 'Manager')";
-            ResourceManagementClient client = new ResourceManagementClient();
-            var results = client.GetResources(filter);
-
         }
 
         [TestMethod]

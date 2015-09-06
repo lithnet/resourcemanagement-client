@@ -52,7 +52,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             try
             {
-                string expected = string.Format("/{0}[({1} != {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerSV, queryValue, matchResource);
+                string expected = string.Format("/{0}[(not({1} = {2}))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerSV, queryValue, matchResource);
                 this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeIntegerSV, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
             }
             finally
@@ -60,34 +60,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
-
-        //[TestMethod]
-        //public void FindLowestSupportedLong()
-        //{
-        //    ResourceManagementClient client = new ResourceManagementClient();
-
-        //    System.IO.StreamWriter q = new System.IO.StreamWriter(@"D:\temp\test.log", false);
-        //    q.AutoFlush = true;
-        //    //9203939036854775806
-        //    //1939036854775806 last rejected
-        //    // 939036854775806 last accepted
-        //    for (long i = 1000000000000001; i > 0; i = i - 1)
-        //    {
-        //        string expectedXpath = string.Format("/{0}[({1} <= {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeIntegerSV, i);
-
-        //        try
-        //        {
-        //            client.GetResources(expectedXpath);
-        //            q.WriteLine("Accepted {0}", i);
-        //            break;
-        //        }
-        //        catch
-        //        {
-        //        }
-
-        //        q.WriteLine("Rejected {0}", i);
-        //    }
-        //}
 
         [TestMethod]
         public void TestSVIntegerIsPresent()

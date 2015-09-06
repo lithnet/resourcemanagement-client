@@ -52,7 +52,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             try
             {
-                string expected = string.Format("/{0}[({1} != '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, queryValue, matchResource);
+                string expected = string.Format("/{0}[(not({1} = '{2}'))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, queryValue, matchResource);
                 this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
             }
             finally
@@ -125,6 +125,27 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         }
 
         [TestMethod]
+        public void TestSVDateTimeGreaterThanFunction()
+        {
+            object queryValue = "current-dateTime()";
+            object nonMatchValue = "2000-01-01T00:00:00.000";
+            object matchValue = "3000-01-01T00:00:00.000";
+
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, nonMatchValue);
+
+            try
+            {
+                string expected = string.Format("/{0}[({1} > {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, queryValue);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, ComparisonOperator.GreaterThan, GroupOperator.And, matchResource);
+            }
+            finally
+            {
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
+            }
+        }
+
+        [TestMethod]
         public void TestSVDateTimeGreaterThanOrEquals()
         {
             object queryValue = "3000-01-01T00:00:00.000";
@@ -137,6 +158,27 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} >= '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, queryValue);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, matchResource);
+            }
+            finally
+            {
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
+            }
+        }
+
+        [TestMethod]
+        public void TestSVDateTimeGreaterThanOrEqualsFunction()
+        {
+            object queryValue = "current-dateTime()";
+            object nonMatchValue = "2000-01-01T00:00:00.000";
+            object matchValue = "3000-01-01T00:00:00.000";
+
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, nonMatchValue);
+
+            try
+            {
+                string expected = string.Format("/{0}[({1} >= {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, queryValue);
                 this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, matchResource);
             }
             finally
@@ -167,6 +209,27 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         }
 
         [TestMethod]
+        public void TestSVDateTimeLessThanFunction()
+        {
+            object queryValue = "current-dateTime()";
+            object nonMatchValue = "3000-01-01T00:00:00.000";
+            object matchValue = "2000-01-01T00:00:00.000";
+
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, nonMatchValue);
+
+            try
+            {
+                string expected = string.Format("/{0}[({1} < {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, queryValue);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, ComparisonOperator.LessThan, GroupOperator.And, matchResource);
+            }
+            finally
+            {
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
+            }
+        }
+
+        [TestMethod]
         public void TestSVDateTimeLessThanOrEquals()
         {
             object queryValue = "2000-01-01T00:00:00.000";
@@ -179,6 +242,27 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} <= '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, queryValue);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, ComparisonOperator.LessThanOrEquals, GroupOperator.And, matchResource);
+            }
+            finally
+            {
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
+            }
+        }
+
+        [TestMethod]
+        public void TestSVDateTimeLessThanOrEqualsFunction()
+        {
+            object queryValue = "current-dateTime()";
+            object nonMatchValue = "3000-01-01T00:00:00.000";
+            object matchValue = "2000-01-01T00:00:00.000";
+
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeSV, nonMatchValue);
+
+            try
+            {
+                string expected = string.Format("/{0}[({1} <= {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeSV, queryValue);
                 this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeSV, ComparisonOperator.LessThanOrEquals, GroupOperator.And, matchResource);
             }
             finally
@@ -295,6 +379,27 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         }
 
         [TestMethod]
+        public void TestMVDateTimeGreaterThanFunction()
+        {
+            object queryValue = "current-dateTime()";
+            List<object> nonMatchValue = new List<object>() { "1900-01-01T00:00:00.000", "1800-01-01T00:00:00.000" };
+            List<object> matchValue = new List<object>() { "2100-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
+
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, nonMatchValue);
+
+            try
+            {
+                string expected = string.Format("/{0}[({1} > {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeMV, queryValue);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, ComparisonOperator.GreaterThan, GroupOperator.And, matchResource);
+            }
+            finally
+            {
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
+            }
+        }
+
+        [TestMethod]
         public void TestMVDateTimeGreaterThanOrEquals()
         {
             object queryValue = "2000-01-01T00:00:00.000";
@@ -307,6 +412,27 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} >= '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeMV, queryValue);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, matchResource);
+            }
+            finally
+            {
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
+            }
+        }
+
+        [TestMethod]
+        public void TestMVDateTimeGreaterThanOrEqualsFunction()
+        {
+            object queryValue = "current-dateTime()";
+            List<object> nonMatchValue = new List<object>() { "1900-01-01T00:00:00.000", "1800-01-01T00:00:00.000" };
+            List<object> matchValue = new List<object>() { "2000-01-01T00:00:00.000", "2100-01-01T00:00:00.000" };
+
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, nonMatchValue);
+
+            try
+            {
+                string expected = string.Format("/{0}[({1} >= {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeMV, queryValue);
                 this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, matchResource);
             }
             finally
@@ -337,6 +463,27 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         }
 
         [TestMethod]
+        public void TestMVDateTimeLessThanFunction()
+        {
+            object queryValue = "current-dateTime()";
+            List<object> nonMatchValue = new List<object>() { "2100-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
+            List<object> matchValue = new List<object>() { "1900-01-01T00:00:00.000", "1800-01-01T00:00:00.000" };
+
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, nonMatchValue);
+
+            try
+            {
+                string expected = string.Format("/{0}[({1} < {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeMV, queryValue);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, ComparisonOperator.LessThan, GroupOperator.And, matchResource);
+            }
+            finally
+            {
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
+            }
+        }
+
+        [TestMethod]
         public void TestMVDateTimeLessThanOrEquals()
         {
             object queryValue = "2000-01-01T00:00:00.000";
@@ -349,6 +496,27 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} <= '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeMV, queryValue);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, ComparisonOperator.LessThanOrEquals, GroupOperator.And, matchResource);
+            }
+            finally
+            {
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
+            }
+        }
+
+        [TestMethod]
+        public void TestMVDateTimeLessThanOrEqualsFunction()
+        {
+            object queryValue = "current-dateTime()";
+            List<object> nonMatchValue = new List<object>() { "2100-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
+            List<object> matchValue = new List<object>() { "2000-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
+
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeDateTimeMV, nonMatchValue);
+
+            try
+            {
+                string expected = string.Format("/{0}[({1} <= {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeDateTimeMV, queryValue);
                 this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeDateTimeMV, ComparisonOperator.LessThanOrEquals, GroupOperator.And, matchResource);
             }
             finally
