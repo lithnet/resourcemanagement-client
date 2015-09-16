@@ -71,6 +71,11 @@
     <Compile Include="Exceptions\NoSuchObjectTypeException.cs" />
     <Compile Include="Exceptions\NoSuchAttributeException.cs" />
     <Compile Include="Exceptions\ResourceNotFoundException.cs" />
+    <Compile Include="LdapFilter\LdapFilterParserException.cs" />
+    <Compile Include="LdapFilter\LdapFilterConverter.cs" />
+    <Compile Include="LdapFilter\Token.cs" />
+    <Compile Include="LdapFilter\TokenError.cs" />
+    <Compile Include="LdapFilter\Tokenizer.cs" />
     <Compile Include="ResourceManagementClientPool.cs" />
     <Compile Include="Schema\AttributeNames.cs" />
     <Compile Include="Schema\AttributeValue.cs" />

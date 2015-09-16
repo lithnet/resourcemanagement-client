@@ -84,6 +84,7 @@
     <Compile Include="PutReferenceTests.cs" />
     <Compile Include="PutBooleanTests.cs" />
     <Compile Include="PutTextTests.cs" />
+    <Compile Include="LdapFilterConversionTests.cs" />
     <Compile Include="SearchTests.cs" />
     <Compile Include="DeleteTests.cs" />
     <Compile Include="PutStringTests.cs" />

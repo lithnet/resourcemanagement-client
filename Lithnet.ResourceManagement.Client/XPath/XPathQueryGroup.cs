@@ -21,10 +21,23 @@ namespace Lithnet.ResourceManagement.Client
         public GroupOperator GroupOperator { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating if the resulting group should be negated
+        /// </summary>
+        public bool Negate { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the XpathQueryGroup class
         /// </summary>
         public XPathQueryGroup()
-            :this (GroupOperator.And, new List<IXPathQueryObject>())
+            : this(GroupOperator.And, new List<IXPathQueryObject>())
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the XpathQueryGroup class
+        /// </summary>
+        public XPathQueryGroup(GroupOperator groupOperator)
+            : this(groupOperator, new List<IXPathQueryObject>())
         {
         }
 
@@ -59,7 +72,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             this.Queries = new List<IXPathQueryObject>();
 
-            foreach(AttributeValuePair value in attributeValuePairs)
+            foreach (AttributeValuePair value in attributeValuePairs)
             {
                 this.Queries.Add(new XPathQuery(value.AttributeName, valueComparisonOperator, value.Value));
             }
@@ -119,12 +132,37 @@ namespace Lithnet.ResourceManagement.Client
 
             if (this.Queries.Count > 1)
             {
-                return string.Format("({0})", sb.ToString());
+                if (this.Negate)
+                {
+                    return string.Format("(not({0}))", sb.ToString());
+                }
+                else
+                {
+                    return string.Format("({0})", sb.ToString());
+                }
             }
             else
             {
-                return sb.ToString();
+                if (this.Negate)
+                {
+                    return string.Format("(not{0})", sb.ToString());
+                }
+                else
+                {
+                    return sb.ToString();
+                }
+            }
+        }
 
+        private string NegateGroup(string value)
+        {
+            if (this.Negate)
+            {
+                return string.Format("(not({0}))", value);
+            }
+            else
+            {
+                return value;
             }
         }
     }

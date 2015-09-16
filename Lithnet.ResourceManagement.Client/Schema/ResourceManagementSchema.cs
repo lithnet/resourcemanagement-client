@@ -30,6 +30,11 @@ namespace Lithnet.ResourceManagement.Client
         internal static ReadOnlyCollection<string> MandatoryAttributes { get; private set; }
 
         /// <summary>
+        /// Gets a list of attributes that are computed and cannot be changed
+        /// </summary>
+        public static ReadOnlyCollection<string> ComputedAttributes { get; private set; }
+
+        /// <summary>
         /// The object used to synchronize access updates to the schema from multiple threads
         /// </summary>
         private static object lockObject;
@@ -62,6 +67,16 @@ namespace Lithnet.ResourceManagement.Client
             ResourceManagementSchema.ElementsToIgnore.Add("TextCollectionType");
 
             ResourceManagementSchema.MandatoryAttributes = new ReadOnlyCollection<string>(new List<string>() { AttributeNames.ObjectType, AttributeNames.ObjectID });
+            List<string> computedAttributes = new List<string>();
+            computedAttributes.Add("Creator");
+            computedAttributes.Add("CreatedTime");
+            computedAttributes.Add("ExpectedRulesList");
+            computedAttributes.Add("DetectedRulesList");
+            computedAttributes.Add("DeletedTime");
+            computedAttributes.Add("ResourceTime");
+            computedAttributes.Add("ComputedMember");
+            computedAttributes.Add("ComputedActor");
+            ResourceManagementSchema.ComputedAttributes = new ReadOnlyCollection<string>(computedAttributes);
         }
 
         internal static void LoadSchema(EndpointManager e)

@@ -25,12 +25,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The client object used to pass save, update, and create operations to
         /// </summary>
         private ResourceManagementClient client;
-
-        /// <summary>
-        /// A list of attributes that should never be passed back to the Resource Management Service for updates
-        /// </summary>
-        private List<string> AttributesToIgnore;
-
+        
         /// <summary>
         /// The internal representation of attributes of the object
         /// </summary>
@@ -139,15 +134,6 @@ namespace Lithnet.ResourceManagement.Client
         {
             this.ModificationType = opType;
             this.attributes = new AttributeValueCollection();
-            this.AttributesToIgnore = new List<string>();
-            AttributesToIgnore.Add("Creator");
-            AttributesToIgnore.Add("CreatedTime");
-            AttributesToIgnore.Add("ExpectedRulesList");
-            AttributesToIgnore.Add("DetectedRulesList");
-            AttributesToIgnore.Add("DeletedTime");
-            AttributesToIgnore.Add("ResourceTime");
-            AttributesToIgnore.Add("ComputedMember");
-            AttributesToIgnore.Add("ComputedActor");
             this.client = client;
         }
 
@@ -456,7 +442,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 AttributeTypeDefinition type = this.ObjectType[kvp.Key];
 
-                if (this.AttributesToIgnore.Contains(type.SystemName))
+                if (ResourceManagementSchema.ComputedAttributes.Contains(type.SystemName))
                 {
                     continue;
                 }
