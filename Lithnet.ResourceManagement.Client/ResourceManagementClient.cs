@@ -828,7 +828,7 @@
         /// </summary>
         public void RefreshSchema()
         {
-            ResourceManagementSchema.LoadSchema(this.endpointManager);
+            ResourceManagementSchema.RefreshSchema(this.endpointManager);
         }
 
         /// <summary>
