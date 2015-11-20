@@ -299,7 +299,7 @@
         }
 
         /// <summary>
-        /// Saves the specified resources in the resource management service. Updates are committed as a single composite operation, while adds are processed individually
+        /// Saves the specified resources in the resource management service. Updates and Adds are committed as a single composite operation.
         /// </summary>
         /// <param name="resources">The resources to update</param>
         public void SaveResources(params ResourceObject[] resources)
@@ -308,14 +308,24 @@
         }
 
         /// <summary>
-        /// Saves the specified resources in the resource management service. Updates are committed as a single composite operation, while adds are processed individually
+        /// Saves the specified resources in the resource management service. Updates and Adds are committed as a single composite operation.
         /// </summary>
         /// <param name="resources">The collection of resources to update</param>
         public void SaveResources(IEnumerable<ResourceObject> resources)
         {
-            foreach (ResourceObject resource in resources.Where(t => t.ModificationType == OperationType.Create))
+          
+            List<ResourceObject> objectsToCreate = resources.Where(t => t.ModificationType == OperationType.Create).ToList();
+            if (objectsToCreate.Count > 0)
             {
-                this.CreateResource(resource);
+                if (objectsToCreate.Count > 1)
+                {
+                    this.CreateResources(resources.Where(t => t.ModificationType == OperationType.Create));
+                }
+                else
+                {
+                    this.CreateResource(resources.FirstOrDefault());
+                }
+            
             }
 
             List<ResourceObject> objectsToDelete = resources.Where(t => t.ModificationType == OperationType.Delete).ToList();
@@ -813,6 +823,16 @@
         {
             this.resourceFactoryClient.Create(resource);
         }
+
+        /// <summary>
+        /// Submits a list of resources template to the resource management service for creation
+        /// </summary>
+        /// <param name="resources">A collection of resource objects to create</param>
+        internal void CreateResources(IEnumerable<ResourceObject> resources)
+        {
+            this.resourceFactoryClient.Create(resources);
+        }
+
 
         /// <summary>
         /// Submits a resource template to the resource management service for update

@@ -5,6 +5,7 @@ using Microsoft.ResourceManagement.WebServices;
 using Microsoft.ResourceManagement.WebServices.Exceptions;
 using Microsoft.ResourceManagement.WebServices.Faults;
 using Microsoft.ResourceManagement.WebServices.WSTransfer;
+using System.Collections.Generic;
 
 namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 {
@@ -44,5 +45,35 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                 throw new InvalidRepresentationException(e.Detail.AttributeRepresentationFailures[0].AttributeFailureCode, e.Detail.AttributeRepresentationFailures[0].AttributeType, e.Detail.AttributeRepresentationFailures[0].AttributeValue);
             }
         }
+
+
+        public void Create(IEnumerable<ResourceObject> resources)
+        {
+            if (resources == null)
+            {
+                throw new ArgumentNullException("resources");
+            }
+
+            try
+            {
+                using (Message message = MessageComposer.CreateCreateMessage(resources))
+                {
+                    using (Message responseMessage = this.Invoke((c) => c.Create(message)))
+                    {
+                        responseMessage.ThrowOnFault();
+
+                        foreach (ResourceObject resource in resources)
+                        {
+                            resource.CompleteCreateOperation(resource.ObjectID);
+                        }
+                    }
+                }
+            }
+            catch (FaultException<RepresentationFailures> e)
+            {
+                throw new InvalidRepresentationException(e.Detail.AttributeRepresentationFailures[0].AttributeFailureCode, e.Detail.AttributeRepresentationFailures[0].AttributeType, e.Detail.AttributeRepresentationFailures[0].AttributeValue);
+            }
+        }
+
     }
 }

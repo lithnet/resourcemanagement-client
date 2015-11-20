@@ -96,13 +96,26 @@ namespace Lithnet.ResourceManagement.Client
         {
             get
             {
-                if (this.attributes.ContainsAttribute(AttributeNames.ObjectID))
+                if (this.attributes.ContainsAttribute(AttributeNames.ObjectID) && this.attributes[AttributeNames.ObjectID].ReferenceValue != null)
                 {
                     return this.attributes[AttributeNames.ObjectID].ReferenceValue;
                 }
                 else
                 {
-                    return new UniqueIdentifier();
+                    // Generate and store new GUID on object
+                    UniqueIdentifier newId = new UniqueIdentifier(Guid.NewGuid());
+                    AttributeTypeDefinition objectID = this.ObjectType[AttributeNames.ObjectID];
+                    if (!this.attributes.ContainsAttribute(AttributeNames.ObjectID))
+                    {
+                        this.attributes.Add(new AttributeValue(objectID, newId));
+                    }
+                    else
+                    {
+                        this.attributes[AttributeNames.ObjectID] = new AttributeValue(objectID, newId);
+                    }
+
+                    return newId;
+                    
                 }
             }
         }
