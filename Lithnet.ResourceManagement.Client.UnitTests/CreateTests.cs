@@ -16,6 +16,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void CreateFromClientSaveWithClient()
         {
+            UnitTestHelper.PrepareRMSForUnitTests();
             ResourceManagementClient client = new ResourceManagementClient();
             ResourceObject resource = null;
 
@@ -64,7 +65,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 Assert.AreEqual(0, resource.PendingChanges.Count);
                 Assert.IsTrue(resource.ObjectID.IsGuid);
                 Assert.AreNotEqual(resource.ObjectID.GetGuid(), Guid.Empty);
-                
+
                 resource = client.GetResource(resource.ObjectID);
 
                 UnitTestHelper.ValidateTestUserData(resource);
@@ -144,6 +145,48 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 }
             }
         }
+
+        [TestMethod]
+        public void CreateByConstructorSaveWithClientComposite()
+        {
+            ResourceManagementClient client = new ResourceManagementClient();
+
+            List<ResourceObject> resources = new List<ResourceObject>();
+
+
+            for (int i = 0; i < 5; i++)
+            {
+                ResourceObject resource = new ResourceObject(UnitTestHelper.ObjectTypeUnitTestObjectName, client);
+                Assert.AreEqual(OperationType.Create, resource.ModificationType);
+                Assert.AreEqual(true, resource.IsPlaceHolder);
+                UnitTestHelper.PopulateTestUserData(resource);
+                resources.Add(resource);
+            }
+
+            try
+            {
+                client.SaveResources(resources);
+                foreach (ResourceObject resource in resources)
+                {
+                    Assert.AreEqual(false, resource.IsPlaceHolder);
+                    Assert.AreEqual(OperationType.Update, resource.ModificationType);
+                    Assert.AreEqual(0, resource.PendingChanges.Count);
+                    Assert.IsTrue(resource.ObjectID.IsGuid);
+                    Assert.AreNotEqual(resource.ObjectID.GetGuid(), Guid.Empty);
+
+                    ResourceObject resourceFetched = client.GetResource(resource.ObjectID);
+
+                    UnitTestHelper.ValidateTestUserData(resourceFetched);
+
+                }
+
+            }
+            finally
+            {
+                    client.DeleteResources(resources.Where(r => r != null && !r.IsPlaceHolder));
+            }
+        }
+
 
     }
 }
