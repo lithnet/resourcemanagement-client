@@ -668,7 +668,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         private void ThrowOnInvalidBinaryOperator()
         {
-            throw new NotSupportedException("Cannot filter on a binary attribute");
+            throw new NotSupportedException("Cannot search on an attribute of type 'Binary'");
         }
 
         /// <summary>
@@ -676,7 +676,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         private void ThrowOnInvalidTextOperator()
         {
-            throw new NotSupportedException("Cannot filter on a text attribute");
+            throw new NotSupportedException("Cannot search on an attribute of type 'Text'");
         }
 
         /// <summary>
