@@ -319,13 +319,12 @@
             {
                 if (objectsToCreate.Count > 1)
                 {
-                    this.CreateResources(resources.Where(t => t.ModificationType == OperationType.Create));
+                    this.CreateResources(objectsToCreate);
                 }
                 else
                 {
-                    this.CreateResource(resources.FirstOrDefault());
+                    this.CreateResource(objectsToCreate.FirstOrDefault());
                 }
-            
             }
 
             List<ResourceObject> objectsToDelete = resources.Where(t => t.ModificationType == OperationType.Delete).ToList();
