@@ -5,6 +5,8 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Threading;
 using Microsoft.ResourceManagement.WebServices.WSEnumeration;
+using Lithnet.ResourceManagement.Client.ServiceImplementation;
+using System.Xml;
 
 namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 {
@@ -65,7 +67,60 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             return this.Enumerate(filter, pageSize, attributesToReturn, null, false);
         }
 
-        private ISearchResultCollection Enumerate(string filter, int pageSize, IEnumerable<string> attributesToReturn, CancellationTokenSource cancellationToken, bool searchAsync)
+        public DataPage<ResourceObject> EnumeratePagedSync(string filter, int pageNumber, int pageSize, IEnumerable<string> attributesToGet,
+            string sortingAttributeName, bool sortingAscending)
+        {
+
+            // first request - only to get enumeration context and total rows count
+            // do not fetch any items - total count only; however this cannot be set to 0 because then total count is not returned (is always set to 0)
+            // get only ObjectID attribute to minimize overhead caused by this operation which returns elements not used for further processing
+            var enumerateResponse = this.Enumerate(filter, 1, new List<string> { AttributeNames.ObjectID });
+            int totalCount = Convert.ToInt32(enumerateResponse.EnumerationDetail.Count);
+
+            // second request - to actually get desired data
+            var context = enumerateResponse.EnumerationContext;
+            context.Selection = attributesToGet.ToArray();
+
+            if (pageSize <= 0)
+            {
+                pageSize = DefaultPageSize;
+            }
+
+            if (pageNumber > 0)
+            {
+                context.CurrentIndex = (pageNumber - 1) * pageSize;
+            }
+            else
+            {
+                context.CurrentIndex = 0;
+            }
+
+            if (!String.IsNullOrWhiteSpace(sortingAttributeName))
+            {
+                var sortingAttribute = new SortingAttribute(sortingAttributeName, sortingAscending);
+                context.Sorting = new Sorting()
+                {
+                    SortingAttributes = new SortingAttribute[]
+                    {
+                    sortingAttribute
+                    }
+                };
+            }
+
+            var results = this.Pull(context, pageSize);
+            var downloadedRecords = new List<ResourceObject>();
+            if (results.Items != null)
+            {
+                foreach (var item in results.Items.Any.OfType<XmlElement>())
+                {
+                    downloadedRecords.Add(new ResourceObject(item, this.client));
+                }
+            }
+
+            return new DataPage<ResourceObject>(downloadedRecords, totalCount);
+        }
+
+        private EnumerateResponse Enumerate(string filter, int pageSize, IEnumerable<string> attributesToReturn)
         {
             if (pageSize < 0)
             {
@@ -79,16 +134,26 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                     responseMessage.ThrowOnFault();
 
                     EnumerateResponse response = responseMessage.DeserializeMessageWithPayload<EnumerateResponse>();
-
-                    if (searchAsync)
-                    {
-                        return new SearchResultCollectionAsync(response, pageSize, this, cancellationToken, this.client);
-                    }
-                    else
-                    {
-                        return new SearchResultCollection(response, pageSize, this, this.client);
-                    }
+                    return response;
                 }
+            }
+        }
+
+        private ISearchResultCollection Enumerate(string filter, int pageSize, IEnumerable<string> attributesToReturn, CancellationTokenSource cancellationToken, bool searchAsync)
+        {
+            if (pageSize < 0)
+            {
+                pageSize = DefaultPageSize;
+            }
+
+            var response = this.Enumerate(filter, pageSize, attributesToReturn);
+            if (searchAsync)
+            {
+                return new SearchResultCollectionAsync(response, pageSize, this, cancellationToken, this.client);
+            }
+            else
+            {
+                return new SearchResultCollection(response, pageSize, this, this.client);
             }
         }
 

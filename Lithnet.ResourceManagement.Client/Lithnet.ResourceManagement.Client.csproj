@@ -87,6 +87,7 @@
     <Compile Include="Schema\ObjectTypeNames.cs" />
     <Compile Include="ServiceImplementation\BindingManager.cs" />
     <Compile Include="ServiceImplementation\ClientConfigurationSection.cs" />
+    <Compile Include="ServiceImplementation\DataPage.cs" />
     <Compile Include="ServiceImplementation\EndpointManager.cs" />
     <Compile Include="ServiceImplementation\HeaderConstants.cs" />
     <Compile Include="ServiceImplementation\ISearchResultCollection.cs" />
