@@ -79,7 +79,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
             // second request - to actually get desired data
             var context = enumerateResponse.EnumerationContext;
-            context.Selection = attributesToGet.ToArray();
+            context.Selection = attributesToGet != null ? attributesToGet.ToArray() : null;
 
             if (pageSize <= 0)
             {

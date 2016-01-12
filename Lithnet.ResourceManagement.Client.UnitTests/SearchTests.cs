@@ -176,5 +176,24 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual(arrayResults[1].Attributes[AttributeNames.AccountName].StringValue, "reftest1");
         }
 
+
+        [TestMethod]
+        public void SearchTestPagedShouldNotThrowExceptionIfNoAttrsSpecified()
+        {
+            ResourceManagementClient c = new ResourceManagementClient();
+
+            var query = String.Format("/{0}[starts-with('{1}', 'reftest')]", UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName);
+            var attributesToGet = new List<string>();
+            attributesToGet.Add(AttributeNames.AccountName);
+
+            DataPage<ResourceObject> results = c.GetPagedResources(query, 2, 2, null, null, true);
+            Assert.AreEqual(results.TotalItemsCount, 6);
+
+            var arrayResults = results.Items.ToArray();
+            Assert.AreEqual(results.Items.Count(), 2);
+            Assert.AreEqual(arrayResults[0].Attributes[AttributeNames.AccountName].StringValue, "reftest3");
+            Assert.AreEqual(arrayResults[1].Attributes[AttributeNames.AccountName].StringValue, "reftest4");
+        }
+
     }
 }
