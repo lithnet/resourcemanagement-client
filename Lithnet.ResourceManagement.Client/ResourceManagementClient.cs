@@ -100,7 +100,7 @@
             ResourceManagementClient.EndpointManager = new EndpointManager(baseAddress, spn);
             ResourceManagementClient.WsHttpContextBinding = BindingManager.GetWsHttpContextBinding();
 
-            if (Configuration.Username != null)
+            if (!string.IsNullOrWhiteSpace(Configuration.Username))
             {
                 ResourceManagementClient.NetworkCredentials = new NetworkCredential(Configuration.Username, Configuration.Password);
             }
@@ -313,7 +313,7 @@
         /// <param name="resources">The collection of resources to update</param>
         public void SaveResources(IEnumerable<ResourceObject> resources)
         {
-          
+
             List<ResourceObject> objectsToCreate = resources.Where(t => t.ModificationType == OperationType.Create).ToList();
             if (objectsToCreate.Count > 0)
             {
