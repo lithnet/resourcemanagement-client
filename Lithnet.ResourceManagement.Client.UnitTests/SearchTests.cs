@@ -6,6 +6,8 @@ using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
 using Microsoft.ResourceManagement.WebServices;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Lithnet.ResourceManagement.Client.ServiceImplementation;
+using System.Linq;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
@@ -114,6 +116,83 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
 
             Assert.AreEqual(results.Count, count);
+        }
+
+        [TestMethod]
+        public void SearchTestPagedDefaultPageAndSizeSortedDescending()
+        {
+            ResourceManagementClient c = new ResourceManagementClient();
+
+            var query = String.Format("/{0}[starts-with('{1}', 'reftest')]", UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName);
+            var attributesToGet = new List<string>();
+            attributesToGet.Add(AttributeNames.AccountName);
+
+            DataPage<ResourceObject> results = c.GetPagedResources(query, 0, 0, attributesToGet, AttributeNames.AccountName, false);
+            Assert.AreEqual(results.TotalItemsCount, 6);
+
+            var arrayResults = results.Items.ToArray();
+            Assert.AreEqual(results.Items.Count(), 6);
+            Assert.AreEqual(arrayResults[0].Attributes[AttributeNames.AccountName].StringValue, "reftest6");
+            Assert.AreEqual(arrayResults[1].Attributes[AttributeNames.AccountName].StringValue, "reftest5");
+            Assert.AreEqual(arrayResults[2].Attributes[AttributeNames.AccountName].StringValue, "reftest4");
+            Assert.AreEqual(arrayResults[3].Attributes[AttributeNames.AccountName].StringValue, "reftest3");
+            Assert.AreEqual(arrayResults[4].Attributes[AttributeNames.AccountName].StringValue, "reftest2");
+            Assert.AreEqual(arrayResults[5].Attributes[AttributeNames.AccountName].StringValue, "reftest1");
+        }
+
+        [TestMethod]
+        public void SearchTestPagedSortedAscending()
+        {
+            ResourceManagementClient c = new ResourceManagementClient();
+
+            var query = String.Format("/{0}[starts-with('{1}', 'reftest')]", UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName);
+            var attributesToGet = new List<string>();
+            attributesToGet.Add(AttributeNames.AccountName);
+
+            DataPage<ResourceObject> results = c.GetPagedResources(query, 2, 2, attributesToGet, AttributeNames.AccountName, true);
+            Assert.AreEqual(results.TotalItemsCount, 6);
+
+            var arrayResults = results.Items.ToArray();
+            Assert.AreEqual(results.Items.Count(), 2);
+            Assert.AreEqual(arrayResults[0].Attributes[AttributeNames.AccountName].StringValue, "reftest3");
+            Assert.AreEqual(arrayResults[1].Attributes[AttributeNames.AccountName].StringValue, "reftest4");
+        }
+
+        [TestMethod]
+        public void SearchTestPagedSortedDescending()
+        {
+            ResourceManagementClient c = new ResourceManagementClient();
+
+            var query = String.Format("/{0}[starts-with('{1}', 'reftest')]", UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName);
+            var attributesToGet = new List<string>();
+            attributesToGet.Add(AttributeNames.AccountName);
+
+            DataPage<ResourceObject> results = c.GetPagedResources(query, 3, 2, attributesToGet, AttributeNames.AccountName, false);
+            Assert.AreEqual(results.TotalItemsCount, 6);
+
+            var arrayResults = results.Items.ToArray();
+            Assert.AreEqual(results.Items.Count(), 2);
+            Assert.AreEqual(arrayResults[0].Attributes[AttributeNames.AccountName].StringValue, "reftest2");
+            Assert.AreEqual(arrayResults[1].Attributes[AttributeNames.AccountName].StringValue, "reftest1");
+        }
+
+
+        [TestMethod]
+        public void SearchTestPagedShouldNotThrowExceptionIfNoAttrsSpecified()
+        {
+            ResourceManagementClient c = new ResourceManagementClient();
+
+            var query = String.Format("/{0}[starts-with('{1}', 'reftest')]", UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName);
+            var attributesToGet = new List<string>();
+            attributesToGet.Add(AttributeNames.AccountName);
+
+            DataPage<ResourceObject> results = c.GetPagedResources(query, 2, 2, null, null, true);
+            Assert.AreEqual(results.TotalItemsCount, 6);
+
+            var arrayResults = results.Items.ToArray();
+            Assert.AreEqual(results.Items.Count(), 2);
+            Assert.AreEqual(arrayResults[0].Attributes[AttributeNames.AccountName].StringValue, "reftest3");
+            Assert.AreEqual(arrayResults[1].Attributes[AttributeNames.AccountName].StringValue, "reftest4");
         }
 
     }
