@@ -94,6 +94,7 @@
     <Compile Include="ServiceImplementation\Namespaces.cs" />
     <Compile Include="ServiceImplementation\SearchClient.cs" />
     <Compile Include="ServiceImplementation\ResourceFactoryClient.cs" />
+    <Compile Include="ServiceImplementation\SearchResultPager.cs" />
     <Compile Include="ServiceImplementation\SearchResultEnumerator.cs" />
     <Compile Include="ServiceImplementation\SearchResultCollectionAsync.cs" />
     <Compile Include="ServiceImplementation\SearchResultCollection.cs" />

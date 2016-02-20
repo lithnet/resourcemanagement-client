@@ -190,25 +190,5 @@ namespace Lithnet.ResourceManagement.Client
                 }
             }
         }
-
-        /// <summary>
-        /// Disposes the current object
-        /// </summary>
-        public void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Disposes the current object
-        /// </summary>
-        /// <param name="disposing">Indicates if this object is being disposed from a call to the Dispose() method</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-            }
-        }
     }
 }

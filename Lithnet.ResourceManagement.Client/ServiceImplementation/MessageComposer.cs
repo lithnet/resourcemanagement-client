@@ -211,7 +211,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             return message;
         }
 
-        internal static Message CreateEnumerateMessage(string filter, int pageSize, IEnumerable<string> attributes)
+        internal static Message CreateEnumerateMessage(string filter, int pageSize, IEnumerable<string> attributes, IEnumerable<SortingAttribute> sortingAttributes)
         {
             Enumerate request = new Enumerate();
             request.Filter = new FilterType(filter);
@@ -222,6 +222,13 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                 request.Selection = MessageComposer.AddMandatoryAttributes(attributes).ToArray();
             }
 
+            if (sortingAttributes != null && sortingAttributes.Any())
+            {
+                request.Sorting = new Sorting();
+                request.Sorting.Dialect = Namespaces.ResourceManagement;
+                request.Sorting.SortingAttributes = sortingAttributes.ToArray();
+            }
+            
             Message requestMessage = Message.CreateMessage(MessageVersion.Default, Namespaces.Enumerate, new SerializerBodyWriter(request));
             requestMessage.AddHeader(Namespaces.ResourceManagement, "IncludeCount", null);
 
@@ -233,7 +240,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             Pull op = new Pull();
             op.EnumerationContext = context;
             op.MaxElements = pageSize.ToString();
-
+            
             return Message.CreateMessage(MessageVersion.Soap12WSAddressing10, Namespaces.Pull, new SerializerBodyWriter(op));
         }
 

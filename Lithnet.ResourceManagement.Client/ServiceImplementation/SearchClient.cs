@@ -22,49 +22,25 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             this.client = client;
         }
 
-        //public ISearchResultCollection EnumerateSync(string filter)
-        //{
-        //    return this.EnumerateSync(filter, -1, null);
-        //}
-
-        //public ISearchResultCollection EnumerateSync(string filter, int pageSize)
-        //{
-        //    return this.EnumerateSync(filter, pageSize, null);
-        //}
-
-        //public ISearchResultCollection EnumerateSync(string filter, IEnumerable<string> attributesToReturn)
-        //{
-        //    return this.EnumerateSync(filter, -1, attributesToReturn);
-        //}
-
-        //public ISearchResultCollection EnumerateAsync(string filter)
-        //{
-        //    return this.EnumerateAsync(filter, -1, null, null);
-        //}
-
-        //public ISearchResultCollection EnumerateAsync(string filter, int pageSize)
-        //{
-        //    return this.EnumerateAsync(filter, pageSize, null, cancellationToken);
-        //}
-
-        //public ISearchResultCollection EnumerateAsync(string filter, CancellationTokenSource cancellationToken)
-        //{
-        //    return this.EnumerateAsync(filter, -1, null, cancellationToken);
-        //}
-
-        //public ISearchResultCollection EnumerateAsync(string filter, int pageSize, CancellationTokenSource cancellationToken)
-        //{
-        //    return this.EnumerateAsync(filter, pageSize, null, cancellationToken);
-        //}
-
-        public ISearchResultCollection EnumerateAsync(string filter, int pageSize, IEnumerable<string> attributesToReturn, CancellationTokenSource cancellationToken)
+        public ISearchResultCollection EnumerateAsync(string filter, int pageSize, IEnumerable<string> attributesToReturn, IEnumerable<SortingAttribute> sortingAttributes, CancellationTokenSource cancellationToken)
         {
-            return this.Enumerate(filter, pageSize, attributesToReturn, cancellationToken, true);
+            return this.Enumerate(filter, pageSize, attributesToReturn, sortingAttributes, cancellationToken, true);
         }
 
-        public ISearchResultCollection EnumerateSync(string filter, int pageSize, IEnumerable<string> attributesToReturn)
+        public ISearchResultCollection EnumerateSync(string filter, int pageSize, IEnumerable<string> attributesToReturn, IEnumerable<SortingAttribute> sortingAttributes)
         {
-            return this.Enumerate(filter, pageSize, attributesToReturn, null, false);
+            return this.Enumerate(filter, pageSize, attributesToReturn, sortingAttributes, null, false);
+        }
+
+        public SearchResultPager EnumeratePaged(string filter, int pageSize, IEnumerable<string> attributesToReturn, IEnumerable<SortingAttribute> sortingAttributes)
+        {
+            if (pageSize < 0)
+            {
+                pageSize = DefaultPageSize;
+            }
+
+            var response = this.Enumerate(filter, 0, attributesToReturn, sortingAttributes);
+            return new SearchResultPager(response, pageSize, this, this.client);
         }
 
         public DataPage<ResourceObject> EnumeratePagedSync(string filter, int pageNumber, int pageSize, IEnumerable<string> attributesToGet,
@@ -74,7 +50,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             // first request - only to get enumeration context and total rows count
             // do not fetch any items - total count only; however this cannot be set to 0 because then total count is not returned (is always set to 0)
             // get only ObjectID attribute to minimize overhead caused by this operation which returns elements not used for further processing
-            var enumerateResponse = this.Enumerate(filter, 1, new List<string> { AttributeNames.ObjectID });
+            var enumerateResponse = this.Enumerate(filter, 1, new List<string> { AttributeNames.ObjectID }, null);
             int totalCount = Convert.ToInt32(enumerateResponse.EnumerationDetail.Count);
 
             // second request - to actually get desired data
@@ -120,14 +96,14 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             return new DataPage<ResourceObject>(downloadedRecords, totalCount);
         }
 
-        private EnumerateResponse Enumerate(string filter, int pageSize, IEnumerable<string> attributesToReturn)
+        private EnumerateResponse Enumerate(string filter, int pageSize, IEnumerable<string> attributesToReturn, IEnumerable<SortingAttribute> sortingAttributes)
         {
             if (pageSize < 0)
             {
                 pageSize = DefaultPageSize;
             }
 
-            using (Message requestMessage = MessageComposer.CreateEnumerateMessage(filter, pageSize, attributesToReturn))
+            using (Message requestMessage = MessageComposer.CreateEnumerateMessage(filter, pageSize, attributesToReturn, sortingAttributes))
             {
                 using (Message responseMessage = this.Invoke((c) => c.Enumerate(requestMessage)))
                 {
@@ -139,14 +115,14 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             }
         }
 
-        private ISearchResultCollection Enumerate(string filter, int pageSize, IEnumerable<string> attributesToReturn, CancellationTokenSource cancellationToken, bool searchAsync)
+        private ISearchResultCollection Enumerate(string filter, int pageSize, IEnumerable<string> attributesToReturn, IEnumerable<SortingAttribute> sortingAttributes, CancellationTokenSource cancellationToken, bool searchAsync)
         {
             if (pageSize < 0)
             {
                 pageSize = DefaultPageSize;
             }
 
-            var response = this.Enumerate(filter, pageSize, attributesToReturn);
+            var response = this.Enumerate(filter, pageSize, attributesToReturn, sortingAttributes);
             if (searchAsync)
             {
                 return new SearchResultCollectionAsync(response, pageSize, this, cancellationToken, this.client);

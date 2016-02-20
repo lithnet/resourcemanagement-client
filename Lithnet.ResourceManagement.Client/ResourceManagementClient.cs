@@ -6,6 +6,7 @@
     using System.Text;
     using Lithnet.ResourceManagement.Client.ResourceManagementService;
     using Microsoft.ResourceManagement.WebServices;
+    using Microsoft.ResourceManagement.WebServices.WSEnumeration;
     using System.Threading;
     using System.Net;
     using System.ServiceModel;
@@ -636,7 +637,7 @@
                 attributesToGet = ResourceManagementSchema.GetObjectType(objectType).Attributes.Select(t => t.SystemName);
             }
 
-            ISearchResultCollection results = this.searchClient.EnumerateSync(filter, 1, attributesToGet);
+            ISearchResultCollection results = this.searchClient.EnumerateSync(filter, 1, attributesToGet, null);
 
             if (results.Count == 0)
             {
@@ -660,7 +661,7 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResources(string filter)
         {
-            return this.searchClient.EnumerateSync(filter, -1, null);
+            return this.searchClient.EnumerateSync(filter, -1, null, null);
         }
 
         /// <summary>
@@ -671,7 +672,43 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResources(string filter, IEnumerable<string> attributesToGet)
         {
-            return this.searchClient.EnumerateSync(filter, -1, attributesToGet);
+            return this.searchClient.EnumerateSync(filter, -1, attributesToGet, null);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, synchronously, using the specified page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="sortAttribute">The name of the attribute to sort the search results by</param>
+        /// <param name="sortAscending">Indicates if the attribute sort order should be ascending or descending</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResources(string filter, IEnumerable<string> attributesToGet, string sortAttribute, bool sortAscending)
+        {
+            if (string.IsNullOrWhiteSpace(sortAttribute))
+            {
+                throw new ArgumentNullException("sortAttribute");
+            }
+
+            SortingAttribute attribute = new SortingAttribute(sortAttribute, sortAscending);
+            return this.searchClient.EnumerateSync(filter, -1, attributesToGet, new SortingAttribute[] { attribute });
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, synchronously, using the specified page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="sortAttributes">A collection of attribute names and sort directions to order the results with</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResources(string filter, IEnumerable<string> attributesToGet, IEnumerable<SortingAttribute> sortAttributes)
+        {
+            if (sortAttributes == null)
+            {
+                throw new ArgumentNullException("sortAttributes");
+            }
+
+            return this.searchClient.EnumerateSync(filter, -1, attributesToGet, sortAttributes);
         }
 
         /// <summary>
@@ -683,7 +720,7 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResources(string filter, int pageSize)
         {
-            return this.searchClient.EnumerateSync(filter, pageSize, null);
+            return this.searchClient.EnumerateSync(filter, pageSize, null, null);
         }
 
         /// <summary>
@@ -695,7 +732,45 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResources(string filter, int pageSize, IEnumerable<string> attributesToGet)
         {
-            return this.searchClient.EnumerateSync(filter, pageSize, attributesToGet);
+            return this.searchClient.EnumerateSync(filter, pageSize, attributesToGet, null);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, synchronously, using the specified page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="sortAttribute">The name of the attribute to sort the search results by</param>
+        /// <param name="sortAscending">Indicates if the attribute sort order should be ascending or descending</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResources(string filter, int pageSize, IEnumerable<string> attributesToGet, string sortAttribute, bool sortAscending)
+        {
+            if (string.IsNullOrWhiteSpace(sortAttribute))
+            {
+                throw new ArgumentNullException("sortAttribute");
+            }
+
+            SortingAttribute attribute = new SortingAttribute(sortAttribute, sortAscending);
+            return this.searchClient.EnumerateSync(filter, pageSize, attributesToGet, new SortingAttribute[] { attribute });
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, synchronously, using the specified page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="sortAttributes">A collection of attribute names and sort directions to order the results with</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResources(string filter, int pageSize, IEnumerable<string> attributesToGet, IEnumerable<SortingAttribute> sortAttributes)
+        {
+            if (sortAttributes == null)
+            {
+                throw new ArgumentNullException("sortAttributes");
+            }
+
+            return this.searchClient.EnumerateSync(filter, pageSize, attributesToGet, sortAttributes);
         }
 
         /// <summary>
@@ -706,7 +781,7 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResourcesAsync(string filter)
         {
-            return this.searchClient.EnumerateAsync(filter, -1, null, null);
+            return this.searchClient.EnumerateAsync(filter, -1, null, null, null);
         }
 
         /// <summary>
@@ -717,7 +792,45 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResourcesAsync(string filter, IEnumerable<string> attributesToGet)
         {
-            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, null);
+            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, null, null);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="sortAttribute">The name of the attribute to sort the search results by</param>
+        /// <param name="sortAscending">Indicates if the attribute sort order should be ascending or descending</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, IEnumerable<string> attributesToGet, string sortAttribute, bool sortAscending)
+        {
+            if (string.IsNullOrWhiteSpace(sortAttribute))
+            {
+                throw new ArgumentNullException("sortAttribute");
+            }
+
+            SortingAttribute attribute = new SortingAttribute(sortAttribute, sortAscending);
+            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, new SortingAttribute[] { attribute }, null);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="sortAttributes">A collection of attribute names and sort directions to order the results with</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, IEnumerable<string> attributesToGet, IEnumerable<SortingAttribute> sortAttributes)
+        {
+            if (sortAttributes == null)
+            {
+                throw new ArgumentNullException("sortAttributes");
+            }
+
+            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, sortAttributes, null);
         }
 
         /// <summary>
@@ -729,7 +842,7 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResourcesAsync(string filter, int pageSize)
         {
-            return this.searchClient.EnumerateAsync(filter, pageSize, null, null);
+            return this.searchClient.EnumerateAsync(filter, pageSize, null, null, null);
         }
 
         /// <summary>
@@ -741,7 +854,45 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResourcesAsync(string filter, int pageSize, IEnumerable<string> attributesToGet)
         {
-            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, null);
+            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, null, null);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="sortAttribute">The name of the attribute to sort the search results by</param>
+        /// <param name="sortAscending">Indicates if the attribute sort order should be ascending or descending</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, int pageSize, IEnumerable<string> attributesToGet, string sortAttribute, bool sortAscending)
+        {
+            if (string.IsNullOrWhiteSpace(sortAttribute))
+            {
+                throw new ArgumentNullException("sortAttribute");
+            }
+
+            SortingAttribute attribute = new SortingAttribute(sortAttribute, sortAscending);
+            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, new SortingAttribute[] { attribute }, null);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="sortAttributes">A collection of attribute names and sort directions to order the results with</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, int pageSize, IEnumerable<string> attributesToGet, IEnumerable<SortingAttribute> sortAttributes)
+        {
+            if (sortAttributes == null)
+            {
+                throw new ArgumentNullException("sortAttributes");
+            }
+
+            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, sortAttributes, null);
         }
 
         /// <summary>
@@ -753,7 +904,7 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResourcesAsync(string filter, CancellationTokenSource cancellationToken)
         {
-            return this.searchClient.EnumerateAsync(filter, -1, null, cancellationToken);
+            return this.searchClient.EnumerateAsync(filter, -1, null, null, cancellationToken);
         }
 
         /// <summary>
@@ -765,7 +916,47 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResourcesAsync(string filter, IEnumerable<string> attributesToGet, CancellationTokenSource cancellationToken)
         {
-            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, cancellationToken);
+            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, null, cancellationToken);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="sortAttribute">The name of the attribute to sort the search results by</param>
+        /// <param name="sortAscending">Indicates if the attribute sort order should be ascending or descending</param>
+        /// <param name="cancellationToken">A cancellation object that can be used to terminate the search</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, IEnumerable<string> attributesToGet, string sortAttribute, bool sortAscending, CancellationTokenSource cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(sortAttribute))
+            {
+                throw new ArgumentNullException("sortAttribute");
+            }
+
+            SortingAttribute attribute = new SortingAttribute(sortAttribute, sortAscending);
+            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, new SortingAttribute[] { attribute }, cancellationToken);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="sortAttributes">A collection of attribute names and sort directions to order the results with</param>
+        /// <param name="cancellationToken">A cancellation object that can be used to terminate the search</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, IEnumerable<string> attributesToGet, IEnumerable<SortingAttribute> sortAttributes, CancellationTokenSource cancellationToken)
+        {
+            if (sortAttributes == null)
+            {
+                throw new ArgumentNullException("sortAttributes");
+            }
+
+            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, sortAttributes, cancellationToken);
         }
 
         /// <summary>
@@ -778,7 +969,7 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResourcesAsync(string filter, int pageSize, CancellationTokenSource cancellationToken)
         {
-            return this.searchClient.EnumerateAsync(filter, pageSize, null, cancellationToken);
+            return this.searchClient.EnumerateAsync(filter, pageSize, null, null, cancellationToken);
         }
 
         /// <summary>
@@ -791,7 +982,73 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResourcesAsync(string filter, int pageSize, IEnumerable<string> attributesToGet, CancellationTokenSource cancellationToken)
         {
-            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, cancellationToken);
+            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, null, cancellationToken);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="sortAttribute">The name of the attribute to sort the search results by</param>
+        /// <param name="sortAscending">Indicates if the attribute sort order should be ascending or descending</param>
+        /// <param name="cancellationToken">A cancellation object that can be used to terminate the search</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, int pageSize, IEnumerable<string> attributesToGet, string sortAttribute, bool sortAscending, CancellationTokenSource cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(sortAttribute))
+            {
+                throw new ArgumentNullException("sortAttribute");
+            }
+
+            SortingAttribute attribute = new SortingAttribute(sortAttribute, sortAscending);
+            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, new SortingAttribute[] { attribute }, cancellationToken);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="sortAttributes">A collection of attribute names and sort directions to order the results with</param>
+        /// <param name="cancellationToken">A cancellation object that can be used to terminate the search</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, int pageSize, IEnumerable<string> attributesToGet, IEnumerable<SortingAttribute> sortAttributes, CancellationTokenSource cancellationToken)
+        {
+            if (sortAttributes == null)
+            {
+                throw new ArgumentNullException("sortAttributes");
+            }
+
+            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, sortAttributes, cancellationToken);
+        }
+
+        public SearchResultPager GetResourcesPaged(string filter, int pageSize)
+        {
+            return this.searchClient.EnumeratePaged(filter, pageSize, null, null);
+        }
+
+        public SearchResultPager GetResourcesPaged(string filter, int pageSize, IEnumerable<string> attributesToGet)
+        {
+            return this.searchClient.EnumeratePaged(filter, pageSize, attributesToGet, null);
+        }
+        
+        public SearchResultPager GetResourcesPaged(string filter, int pageSize, IEnumerable<string> attributesToGet, IEnumerable<SortingAttribute> sortAttributes)
+        {
+            return this.searchClient.EnumeratePaged(filter, pageSize, attributesToGet, sortAttributes);
+        }
+
+        public SearchResultPager GetResourcesPaged(string filter, int pageSize, IEnumerable<string> attributesToGet, string sortAttribute, bool sortAscending)
+        {
+            if (string.IsNullOrWhiteSpace(sortAttribute))
+            {
+                throw new ArgumentNullException("sortAttribute");
+            }
+
+            SortingAttribute attribute = new SortingAttribute(sortAttribute, sortAscending);
+            return this.searchClient.EnumeratePaged(filter, pageSize, attributesToGet, new SortingAttribute[] { attribute });
         }
 
         /// <summary>
@@ -817,7 +1074,7 @@
         /// <returns>The number of resources that match the specified criteria</returns>
         public int GetResourceCount(string filter)
         {
-            ISearchResultCollection result = this.searchClient.EnumerateSync(filter, 1, new List<string>());
+            ISearchResultCollection result = this.searchClient.EnumerateSync(filter, 0, new List<string>(), null);
             return result.Count;
         }
 
