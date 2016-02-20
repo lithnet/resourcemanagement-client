@@ -378,7 +378,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             int page = 0;
             int count = 0;
-            var query = String.Format("/Set");
+            var query = String.Format("/Person");
             ResourceManagementClient c = new ResourceManagementClient();
             DataPage<ResourceObject> results;
             Stopwatch timer = new Stopwatch();
