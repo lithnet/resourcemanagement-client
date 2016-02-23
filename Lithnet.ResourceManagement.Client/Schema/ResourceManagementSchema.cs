@@ -153,8 +153,8 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// Gets a value indicating whether the specific attribute is multivalued
         /// </summary>
-        /// <param name="attributeName">The attribute ame</param>
-        /// <returns></returns>
+        /// <param name="attributeName">The attribute name</param>
+        /// <returns>A value indicating whether the specific attribute is multivalued</returns>
         public static bool IsAttributeMultivalued(string attributeName)
         {
             ResourceManagementSchema.LoadSchema(ResourceManagementClient.EndpointManager);

@@ -798,7 +798,6 @@
         /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size, and retrieving the specified attributes
         /// </summary>
         /// <param name="filter">The XPath filter defining the search criteria</param>
-        /// <param name="pageSize">The number of results to request from the server at a time</param>
         /// <param name="attributesToGet">The list of attributes to retrieve</param>
         /// <param name="sortAttribute">The name of the attribute to sort the search results by</param>
         /// <param name="sortAscending">Indicates if the attribute sort order should be ascending or descending</param>
@@ -818,7 +817,6 @@
         /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size, and retrieving the specified attributes
         /// </summary>
         /// <param name="filter">The XPath filter defining the search criteria</param>
-        /// <param name="pageSize">The number of results to request from the server at a time</param>
         /// <param name="attributesToGet">The list of attributes to retrieve</param>
         /// <param name="sortAttributes">A collection of attribute names and sort directions to order the results with</param>
         /// <returns>A collection of matching resource objects</returns>
@@ -922,7 +920,6 @@
         /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size, and retrieving the specified attributes
         /// </summary>
         /// <param name="filter">The XPath filter defining the search criteria</param>
-        /// <param name="pageSize">The number of results to request from the server at a time</param>
         /// <param name="attributesToGet">The list of attributes to retrieve</param>
         /// <param name="sortAttribute">The name of the attribute to sort the search results by</param>
         /// <param name="sortAscending">Indicates if the attribute sort order should be ascending or descending</param>
@@ -943,7 +940,6 @@
         /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size, and retrieving the specified attributes
         /// </summary>
         /// <param name="filter">The XPath filter defining the search criteria</param>
-        /// <param name="pageSize">The number of results to request from the server at a time</param>
         /// <param name="attributesToGet">The list of attributes to retrieve</param>
         /// <param name="sortAttributes">A collection of attribute names and sort directions to order the results with</param>
         /// <param name="cancellationToken">A cancellation object that can be used to terminate the search</param>
@@ -1024,21 +1020,51 @@
             return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, sortAttributes, cancellationToken);
         }
 
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, using a SearchResultPager to navigate through the result set
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <returns>An object that can be used to navigate through the search results</returns>
         public SearchResultPager GetResourcesPaged(string filter, int pageSize)
         {
             return this.searchClient.EnumeratePaged(filter, pageSize, null, null);
         }
 
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, using a SearchResultPager to navigate through the result set
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <returns>An object that can be used to navigate through the search results</returns>
         public SearchResultPager GetResourcesPaged(string filter, int pageSize, IEnumerable<string> attributesToGet)
         {
             return this.searchClient.EnumeratePaged(filter, pageSize, attributesToGet, null);
         }
-        
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, using a SearchResultPager to navigate through the result set
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="sortAttributes">A collection of attribute names and sort directions to order the results with</param>
+        /// <returns>An object that can be used to navigate through the search results</returns>
         public SearchResultPager GetResourcesPaged(string filter, int pageSize, IEnumerable<string> attributesToGet, IEnumerable<SortingAttribute> sortAttributes)
         {
             return this.searchClient.EnumeratePaged(filter, pageSize, attributesToGet, sortAttributes);
         }
 
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, using a SearchResultPager to navigate through the result set
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="sortAttribute">The name of the attribute to sort the search results by</param>
+        /// <param name="sortAscending">Indicates if the attribute sort order should be ascending or descending</param>
+        /// <returns>An object that can be used to navigate through the search results</returns>
         public SearchResultPager GetResourcesPaged(string filter, int pageSize, IEnumerable<string> attributesToGet, string sortAttribute, bool sortAscending)
         {
             if (string.IsNullOrWhiteSpace(sortAttribute))

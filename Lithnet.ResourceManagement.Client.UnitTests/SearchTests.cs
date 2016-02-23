@@ -14,6 +14,11 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
     [TestClass]
     public class SearchTests
     {
+        public SearchTests()
+        {
+         var x =   UnitTestHelper.client;
+        }
+
         [TestMethod]
         public void SearchTestAsync()
         {
@@ -340,13 +345,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             results.CurrentIndex = 3;
             ResourceObject[] arrayResults = results.GetNextPage().ToArray();
             Assert.AreEqual(2, arrayResults.Length);
-            Assert.AreEqual("reftest2", arrayResults[0].Attributes[AttributeNames.AccountName].StringValue);
-            Assert.AreEqual("reftest1", arrayResults[1].Attributes[AttributeNames.AccountName].StringValue);
+            Assert.AreEqual("reftest3", arrayResults[0].Attributes[AttributeNames.AccountName].StringValue);
+            Assert.AreEqual("reftest2", arrayResults[1].Attributes[AttributeNames.AccountName].StringValue);
         }
 
         [TestMethod]
         public void SearchTestResultCount()
         {
+            
             ResourceManagementClient c = new ResourceManagementClient();
             var query = String.Format("/{0}[starts-with('{1}', 'reftest')]", UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName);
 

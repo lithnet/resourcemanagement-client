@@ -121,6 +121,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// Gets the next page of search results from the Resource Management Service
         /// </summary>
+        /// <returns>An enumeration of the ResourceObjects in the page</returns>
         public IEnumerable<ResourceObject> GetNextPage()
         {
             PullResponse r = this.searchClient.Pull(this.context, this.PageSize);

@@ -36,6 +36,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// Initializes a new instance of the XpathQueryGroup class
         /// </summary>
+        /// <param name="groupOperator">The logical operator to apply to queries within this group</param>
         public XPathQueryGroup(GroupOperator groupOperator)
             : this(groupOperator, new List<IXPathQueryObject>())
         {

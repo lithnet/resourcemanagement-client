@@ -96,7 +96,7 @@ namespace Lithnet.ResourceManagement.Client
         /// Gets the string representation of the expression
         /// </summary>
         /// <param name="wrapFilterXml">A value that indicates if the expression should be wrapped in an XML filter element</param>
-        /// <returns></returns>
+        /// <returns>The string representation of the expression</returns>
         public string ToString(bool wrapFilterXml)
         {
             if (wrapFilterXml)

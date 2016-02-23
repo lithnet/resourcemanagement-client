@@ -513,7 +513,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// Gets the hash code for this object
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The hash code for the object</returns>
         public override int GetHashCode()
         {
             return this.value == null ? 0 : this.value.GetHashCode();
