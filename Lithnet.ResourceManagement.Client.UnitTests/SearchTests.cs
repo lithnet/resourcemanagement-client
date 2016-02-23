@@ -7,7 +7,6 @@ using Microsoft.ResourceManagement.WebServices;
 using Microsoft.ResourceManagement.WebServices.WSEnumeration;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Lithnet.ResourceManagement.Client.ServiceImplementation;
 using System.Linq;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
@@ -214,19 +213,19 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             // Move forward through the result set, getting two items per page
             Assert.AreEqual(2, results.Length);
-            Assert.AreEqual(true, pager.HasMoreItems());
+            Assert.AreEqual(true, pager.HasMoreItems);
             Assert.AreEqual("reftest1", results[0].Attributes[AttributeNames.AccountName].StringValue);
             Assert.AreEqual("reftest2", results[1].Attributes[AttributeNames.AccountName].StringValue);
 
             results = pager.GetNextPage().ToArray();
             Assert.AreEqual(2, results.Length);
-            Assert.AreEqual(true, pager.HasMoreItems());
+            Assert.AreEqual(true, pager.HasMoreItems);
             Assert.AreEqual("reftest3", results[0].Attributes[AttributeNames.AccountName].StringValue);
             Assert.AreEqual("reftest4", results[1].Attributes[AttributeNames.AccountName].StringValue);
 
             results = pager.GetNextPage().ToArray();
             Assert.AreEqual(2, results.Length);
-            Assert.AreEqual(false, pager.HasMoreItems());
+            Assert.AreEqual(false, pager.HasMoreItems);
             Assert.AreEqual("reftest5", results[0].Attributes[AttributeNames.AccountName].StringValue);
             Assert.AreEqual("reftest6", results[1].Attributes[AttributeNames.AccountName].StringValue);
 
@@ -235,7 +234,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             pager.PageSize = 4;
             results = pager.GetNextPage().ToArray();
             Assert.AreEqual(4, results.Length);
-            Assert.AreEqual(false, pager.HasMoreItems());
+            Assert.AreEqual(false, pager.HasMoreItems);
             Assert.AreEqual("reftest3", results[0].Attributes[AttributeNames.AccountName].StringValue);
             Assert.AreEqual("reftest4", results[1].Attributes[AttributeNames.AccountName].StringValue);
             Assert.AreEqual("reftest5", results[2].Attributes[AttributeNames.AccountName].StringValue);
@@ -259,19 +258,19 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             // Move forward through the result set, getting two items per page
             Assert.AreEqual(2, results.Length);
-            Assert.AreEqual(true, pager.HasMoreItems());
+            Assert.AreEqual(true, pager.HasMoreItems);
             Assert.AreEqual("reftest6", results[0].Attributes[AttributeNames.AccountName].StringValue);
             Assert.AreEqual("reftest5", results[1].Attributes[AttributeNames.AccountName].StringValue);
 
             results = pager.GetNextPage().ToArray();
             Assert.AreEqual(2, results.Length);
-            Assert.AreEqual(true, pager.HasMoreItems());
+            Assert.AreEqual(true, pager.HasMoreItems);
             Assert.AreEqual("reftest4", results[0].Attributes[AttributeNames.AccountName].StringValue);
             Assert.AreEqual("reftest3", results[1].Attributes[AttributeNames.AccountName].StringValue);
 
             results = pager.GetNextPage().ToArray();
             Assert.AreEqual(2, results.Length);
-            Assert.AreEqual(false, pager.HasMoreItems());
+            Assert.AreEqual(false, pager.HasMoreItems);
             Assert.AreEqual("reftest2", results[0].Attributes[AttributeNames.AccountName].StringValue);
             Assert.AreEqual("reftest1", results[1].Attributes[AttributeNames.AccountName].StringValue);
 
@@ -280,7 +279,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             pager.PageSize = 4;
             results = pager.GetNextPage().ToArray();
             Assert.AreEqual(4, results.Length);
-            Assert.AreEqual(false, pager.HasMoreItems());
+            Assert.AreEqual(false, pager.HasMoreItems);
             Assert.AreEqual("reftest4", results[0].Attributes[AttributeNames.AccountName].StringValue);
             Assert.AreEqual("reftest3", results[1].Attributes[AttributeNames.AccountName].StringValue);
             Assert.AreEqual("reftest2", results[2].Attributes[AttributeNames.AccountName].StringValue);
@@ -296,17 +295,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             var attributesToGet = new List<string>();
             attributesToGet.Add(AttributeNames.AccountName);
 
-            DataPage<ResourceObject> results = c.GetPagedResources(query, 0, 0, attributesToGet, AttributeNames.AccountName, false);
-            Assert.AreEqual(results.TotalItemsCount, 6);
+            SearchResultPager results = c.GetResourcesPaged(query, 100, attributesToGet, AttributeNames.AccountName, false);
+            Assert.AreEqual(results.TotalCount, 6);
 
-            var arrayResults = results.Items.ToArray();
-            Assert.AreEqual(results.Items.Count(), 6);
-            Assert.AreEqual(arrayResults[0].Attributes[AttributeNames.AccountName].StringValue, "reftest6");
-            Assert.AreEqual(arrayResults[1].Attributes[AttributeNames.AccountName].StringValue, "reftest5");
-            Assert.AreEqual(arrayResults[2].Attributes[AttributeNames.AccountName].StringValue, "reftest4");
-            Assert.AreEqual(arrayResults[3].Attributes[AttributeNames.AccountName].StringValue, "reftest3");
-            Assert.AreEqual(arrayResults[4].Attributes[AttributeNames.AccountName].StringValue, "reftest2");
-            Assert.AreEqual(arrayResults[5].Attributes[AttributeNames.AccountName].StringValue, "reftest1");
+            ResourceObject[] arrayResults = results.GetNextPage().ToArray();
+            Assert.AreEqual(6, arrayResults.Length);
+            Assert.AreEqual("reftest6", arrayResults[0].Attributes[AttributeNames.AccountName].StringValue);
+            Assert.AreEqual("reftest5", arrayResults[1].Attributes[AttributeNames.AccountName].StringValue);
+            Assert.AreEqual("reftest4", arrayResults[2].Attributes[AttributeNames.AccountName].StringValue);
+            Assert.AreEqual("reftest3", arrayResults[3].Attributes[AttributeNames.AccountName].StringValue);
+            Assert.AreEqual("reftest2", arrayResults[4].Attributes[AttributeNames.AccountName].StringValue);
+            Assert.AreEqual("reftest1", arrayResults[5].Attributes[AttributeNames.AccountName].StringValue);
         }
 
         [TestMethod]
@@ -318,13 +317,13 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             var attributesToGet = new List<string>();
             attributesToGet.Add(AttributeNames.AccountName);
 
-            DataPage<ResourceObject> results = c.GetPagedResources(query, 2, 2, attributesToGet, AttributeNames.AccountName, true);
-            Assert.AreEqual(results.TotalItemsCount, 6);
-
-            var arrayResults = results.Items.ToArray();
-            Assert.AreEqual(results.Items.Count(), 2);
-            Assert.AreEqual(arrayResults[0].Attributes[AttributeNames.AccountName].StringValue, "reftest3");
-            Assert.AreEqual(arrayResults[1].Attributes[AttributeNames.AccountName].StringValue, "reftest4");
+            SearchResultPager results = c.GetResourcesPaged(query, 2, attributesToGet, AttributeNames.AccountName, true);
+            Assert.AreEqual(6, results.TotalCount);
+            results.CurrentIndex = 2;
+            ResourceObject[] arrayResults = results.GetNextPage().ToArray();
+            Assert.AreEqual(2, arrayResults.Length);
+            Assert.AreEqual("reftest3", arrayResults[0].Attributes[AttributeNames.AccountName].StringValue);
+            Assert.AreEqual("reftest4", arrayResults[1].Attributes[AttributeNames.AccountName].StringValue);
         }
 
         [TestMethod]
@@ -336,32 +335,13 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             var attributesToGet = new List<string>();
             attributesToGet.Add(AttributeNames.AccountName);
 
-            DataPage<ResourceObject> results = c.GetPagedResources(query, 3, 2, attributesToGet, AttributeNames.AccountName, false);
-            Assert.AreEqual(results.TotalItemsCount, 6);
-
-            var arrayResults = results.Items.ToArray();
-            Assert.AreEqual(results.Items.Count(), 2);
-            Assert.AreEqual(arrayResults[0].Attributes[AttributeNames.AccountName].StringValue, "reftest2");
-            Assert.AreEqual(arrayResults[1].Attributes[AttributeNames.AccountName].StringValue, "reftest1");
-        }
-
-
-        [TestMethod]
-        public void SearchTestPagedShouldNotThrowExceptionIfNoAttrsSpecified()
-        {
-            ResourceManagementClient c = new ResourceManagementClient();
-
-            var query = String.Format("/{0}[starts-with('{1}', 'reftest')]", UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName);
-            var attributesToGet = new List<string>();
-            attributesToGet.Add(AttributeNames.AccountName);
-
-            DataPage<ResourceObject> results = c.GetPagedResources(query, 2, 2, null, null, true);
-            Assert.AreEqual(results.TotalItemsCount, 6);
-
-            var arrayResults = results.Items.ToArray();
-            Assert.AreEqual(results.Items.Count(), 2);
-            Assert.AreEqual(arrayResults[0].Attributes[AttributeNames.AccountName].StringValue, "reftest3");
-            Assert.AreEqual(arrayResults[1].Attributes[AttributeNames.AccountName].StringValue, "reftest4");
+            SearchResultPager results = c.GetResourcesPaged(query, 2, attributesToGet, AttributeNames.AccountName, false);
+            Assert.AreEqual(6, results.TotalCount);
+            results.CurrentIndex = 3;
+            ResourceObject[] arrayResults = results.GetNextPage().ToArray();
+            Assert.AreEqual(2, arrayResults.Length);
+            Assert.AreEqual("reftest2", arrayResults[0].Attributes[AttributeNames.AccountName].StringValue);
+            Assert.AreEqual("reftest1", arrayResults[1].Attributes[AttributeNames.AccountName].StringValue);
         }
 
         [TestMethod]
@@ -371,55 +351,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             var query = String.Format("/{0}[starts-with('{1}', 'reftest')]", UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName);
 
             Assert.AreEqual(6, c.GetResourceCount(query));
-        }
-
-        [TestMethod]
-        public void TestDataPagePerformance()
-        {
-            int page = 0;
-            int count = 0;
-            var query = String.Format("/Person");
-            ResourceManagementClient c = new ResourceManagementClient();
-            DataPage<ResourceObject> results;
-            Stopwatch timer = new Stopwatch();
-            timer.Start();
-            do
-            {
-                timer.Restart();
-                page++;
-                results = c.GetPagedResources(query, page, 10, new List<string>(), null, true);
-
-                foreach(var result in results.Items)
-                {
-                    count++;
-                }
-
-                Debug.WriteLine("Page time: {0}", timer.Elapsed.TotalSeconds);
-            }
-            while (results.Items.Count() > 0);
-        }
-
-        [TestMethod]
-        public void TestSearchPagerPerformance()
-        {
-            var query = String.Format("/Person");
-            ResourceManagementClient c = new ResourceManagementClient();
-            var results = c.GetResourcesPaged(query, 10, new List<string>(), null);
-            int count = 0;
-            Stopwatch timer = new Stopwatch();
-            timer.Start();
-
-            while (results.HasMoreItems())
-            {
-                timer.Restart();
-
-                foreach (var result in results.GetNextPage())
-                {
-                    count++;  
-                }
-
-                Debug.WriteLine("Page time: {0}", timer.Elapsed.TotalSeconds);
-            }
         }
     }
 }

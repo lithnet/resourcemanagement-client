@@ -16,7 +16,6 @@
     using System.Collections.Concurrent;
     using Lithnet.ResourceManagement.Client;
     using System.Globalization;
-    using ServiceImplementation;
 
     /// <summary>
     /// The main class used to create, update, delete, and search for objects in the resource management service
@@ -1049,22 +1048,6 @@
 
             SortingAttribute attribute = new SortingAttribute(sortAttribute, sortAscending);
             return this.searchClient.EnumeratePaged(filter, pageSize, attributesToGet, new SortingAttribute[] { attribute });
-        }
-
-        /// <summary>
-        /// Uses the specified XPath filter to find matching objects in the resource management service, using the specified page number, using the specified page size, retrieving the specified attributes, using specified sorting attribute
-        /// </summary>
-        /// <param name="filter">The XPath filter defining the search criteria</param>
-        /// <param name="pageNumber">The page number starting from 1 as first page</param>
-        /// <param name="pageSize">The number of results to request from the server at a time</param>
-        /// <param name="attributesToGet">The list of attributes to retrieve</param>
-        /// <param name="sortingAttributeName">The attribute name by which results should be sorted</param>
-        /// <param name="sortingAscending">Determines whether sorting should be ascending or desending if sorting attribute is specified</param>
-        /// <returns>A data page which contains records and total number of elements for specified parameters</returns>
-        public DataPage<ResourceObject> GetPagedResources(string filter, int pageNumber, int pageSize, IEnumerable<string> attributesToGet,
-            string sortingAttributeName, bool sortingAscending)
-        {
-            return this.searchClient.EnumeratePagedSync(filter, pageNumber, pageSize, attributesToGet, sortingAttributeName, sortingAscending);
         }
 
         /// <summary>

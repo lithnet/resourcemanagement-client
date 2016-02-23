@@ -3,13 +3,13 @@
   <metadata>
     <id>Lithnet.ResourceManagement.Client</id>
     <version>$version$</version>
-    <title>Lithnet Resource Management Client for FIM 2010 R2</title>
+    <title>Lithnet Resource Management Client for FIM 2010 R2 and MIM 2016</title>
     <authors>ryan@lithiumblue.com</authors>
     <licenseUrl>https://lithnetrmc.codeplex.com/license</licenseUrl>
     <projectUrl>https://lithnetrmc.codeplex.com</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>The Lithnet Resource Management Client is a .NET client library for interacting with the FIM service. It supports create, update, delete, and search operations against the FIM service.</description>
-    <tags>FIM FIM2010 FIMService FIM2010R2</tags>
+    <tags>FIM FIM2010 FIMService FIM2010R2 MIM MIM2016</tags>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="Microsoft.ResourceManagement"  />
     </frameworkAssemblies>

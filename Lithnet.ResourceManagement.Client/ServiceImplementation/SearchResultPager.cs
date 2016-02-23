@@ -39,6 +39,20 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         public int TotalCount { get; private set; }
 
+        /// <summary>
+        /// Gets a value indicating whether there are more results on the server
+        /// </summary>
+        public bool HasMoreItems
+        {
+            get
+            {
+                return this.TotalCount > 0 && !this.EndOfSequence;
+            }
+        }
+
+        /// <summary>
+        /// Gets the current starting index of the paged search
+        /// </summary>
         public int CurrentIndex
         {
             get
@@ -121,11 +135,6 @@ namespace Lithnet.ResourceManagement.Client
             }
 
             return this.EnumerateResultSet(r.Items);
-        }
-
-        public bool HasMoreItems()
-        {
-            return !this.EndOfSequence;
         }
     }
 }
