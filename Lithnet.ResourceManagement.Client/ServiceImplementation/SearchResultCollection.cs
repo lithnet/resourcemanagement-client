@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Xml;
-using Lithnet.ResourceManagement.Client.ResourceManagementService;
-using Microsoft.ResourceManagement.WebServices.WSEnumeration;
-using Microsoft.ResourceManagement.WebServices.WSResourceManagement;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -15,34 +10,14 @@ namespace Lithnet.ResourceManagement.Client
     public class SearchResultCollection : ISearchResultCollection
     {
         /// <summary>
-        /// The enumeration context object provided by the Resource Management Service
+        /// The search pager used for result enumeration
         /// </summary>
-        private EnumerationContextType context;
-
-        /// <summary>
-        /// The details of the enumeration operation
-        /// </summary>
-        private EnumerationDetailType details;
-
-        /// <summary>
-        /// The search client used for this search operation
-        /// </summary>
-        private SearchClient searchClient;
-
-        /// <summary>
-        /// The resource management client used for this search operation
-        /// </summary>
-        private ResourceManagementClient client;
+        private SearchResultPager pager;
 
         /// <summary>
         /// The result set obtained from the Resource Management Service
         /// </summary>
         private List<ResourceObject> resultSet;
-
-        /// <summary>
-        /// The page size used for the search operation
-        /// </summary>
-        private int pageSize = 0;
 
         /// <summary>
         /// Gets the number of results in the search response
@@ -51,74 +26,72 @@ namespace Lithnet.ResourceManagement.Client
         {
             get
             {
-                if (this.details != null && this.details.Count != null)
-                {
-                    return Convert.ToInt32(this.details.Count);
-                }
-                else
-                {
-                    return -1;
-                }
+                return this.pager.TotalCount;
             }
         }
-
-        /// <summary>
-        /// Indicates if the Resource Management Service has provided all the results and signaled the end of sequence flag
-        /// </summary>
-        private bool EndOfSequence = false;
 
         /// <summary>
         /// Initializes a new instance of the SearchResultCollection class
         /// </summary>
-        /// <param name="response">The initial enumeration response from the Resource Management Service</param>
-        /// <param name="pageSize">The page size used in the search operation</param>
-        /// <param name="searchClient">The client proxy used for performing the search</param>
-        /// <param name="client">The client used to convert response data into ResourceObjects</param>
-        internal SearchResultCollection(EnumerateResponse response, int pageSize, SearchClient searchClient, ResourceManagementClient client)
+        /// <param name="pager">The search pager used for result enumeration</param>
+        internal SearchResultCollection(SearchResultPager pager)
         {
-            if (response == null)
+            if (pager == null)
             {
-                throw new ArgumentNullException("response");
+                throw new ArgumentNullException("pager");
             }
 
-            if (pageSize < 0)
-            {
-                throw new ArgumentException("The page size must be zero or greater", "pageSize");
-            }
-
-            if (searchClient == null)
-            {
-                throw new ArgumentNullException("client");
-            }
-
+            this.pager = pager;
             this.resultSet = new List<ResourceObject>();
-            this.client = client;
-            this.context = response.EnumerationContext;
-            this.pageSize = pageSize;
-            this.details = response.EnumerationDetail;
-            this.searchClient = searchClient;
-            this.EndOfSequence = response.EndOfSequence != null;
-            this.PopulateResultSet(response.Items);
+        }
 
-            if (!this.EndOfSequence)
+        /// <summary>
+        /// Gets the next page of the search results
+        /// </summary>
+        private void GetNextPage()
+        {
+            if (this.pager.HasMoreItems)
             {
-                this.GetNextPage();
+                this.resultSet.AddRange(this.pager.GetNextPage());
             }
         }
 
         /// <summary>
-        /// Populates the internal result set with the items obtained from the search response
+        /// Gets the object at the specified index in the result collection
         /// </summary>
-        /// <param name="items">The items obtained from the enumeration or pull response</param>
-        private void PopulateResultSet(ItemListType items)
+        /// <param name="index"></param>
+        /// <returns></returns>
+        internal ResourceObject GetObjectAtIndex(int index)
         {
-            if (items != null)
+            if (index >= this.Count)
             {
-                foreach (XmlElement item in items.Any.OfType<XmlElement>())
+                throw new ArgumentOutOfRangeException(string.Format("The specified index was out of range of the allowed values. Index: {0}, Total Count: {1}", index, this.Count));
+            }
+
+            if ((index >= this.resultSet.Count))
+            {
+                if (this.pager.HasMoreItems)
                 {
-                    this.resultSet.Add(new ResourceObject(item, this.client));
+                    this.GetNextPage();
+                    return this.GetObjectAtIndex(index);
+                }
+                else
+                {
+                    throw new InvalidOperationException("There are no more pages in the result set");
                 }
             }
+
+            return this.resultSet[index];
+        }
+
+        /// <summary>
+        /// Gets a value that indicates if there are more items in the result set after the specified index
+        /// </summary>
+        /// <param name="index">The value to query if there are proceeding items in the collection</param>
+        /// <returns>True if there are more items in the results set</returns>
+        internal bool HasMoreItems(int index)
+        {
+            return index < this.Count;
         }
 
         /// <summary>
@@ -137,58 +110,6 @@ namespace Lithnet.ResourceManagement.Client
         IEnumerator IEnumerable.GetEnumerator()
         {
             return new SearchResultEnumerator(this);
-        }
-
-        internal ResourceObject GetObjectAtIndex(int index)
-        {
-            if (index == this.resultSet.Count)
-            {
-                if (this.EndOfSequence == false)
-                {
-                    this.GetNextPage();
-                }
-                else
-                {
-                    throw new InvalidOperationException(string.Format("The index supplied was not valid: {0}", index));
-                }
-            }
-
-            return this.resultSet[index];
-        }
-
-        /// <summary>
-        /// Gets the next page of search results from the Resource Management Service
-        /// </summary>
-        private void GetNextPage()
-        {
-            PullResponse r = this.searchClient.Pull(this.context, this.pageSize);
-            if (r.EndOfSequence != null)
-            {
-                this.EndOfSequence = true;
-            }
-
-            this.context = r.EnumerationContext;
-
-            this.PopulateResultSet(r.Items);
-        }
-
-        internal bool HasMoreItems(int index)
-        {
-            if (index < this.resultSet.Count)
-            {
-                return true;
-            }
-            else
-            {
-                if (this.EndOfSequence)
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
         }
     }
 }

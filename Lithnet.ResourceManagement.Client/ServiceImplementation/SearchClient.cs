@@ -23,12 +23,12 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
         public ISearchResultCollection EnumerateAsync(string filter, int pageSize, IEnumerable<string> attributesToReturn, IEnumerable<SortingAttribute> sortingAttributes, CancellationTokenSource cancellationToken)
         {
-            return this.Enumerate(filter, pageSize, attributesToReturn, sortingAttributes, cancellationToken, true);
+            return new SearchResultCollectionAsync(this.EnumeratePaged(filter, pageSize, attributesToReturn, sortingAttributes), cancellationToken);
         }
 
         public ISearchResultCollection EnumerateSync(string filter, int pageSize, IEnumerable<string> attributesToReturn, IEnumerable<SortingAttribute> sortingAttributes)
         {
-            return this.Enumerate(filter, pageSize, attributesToReturn, sortingAttributes, null, false);
+            return new SearchResultCollection(this.EnumeratePaged(filter, pageSize, attributesToReturn, sortingAttributes));
         }
 
         public SearchResultPager EnumeratePaged(string filter, int pageSize, IEnumerable<string> attributesToReturn, IEnumerable<SortingAttribute> sortingAttributes)
@@ -58,24 +58,6 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                     EnumerateResponse response = responseMessage.DeserializeMessageWithPayload<EnumerateResponse>();
                     return response;
                 }
-            }
-        }
-
-        private ISearchResultCollection Enumerate(string filter, int pageSize, IEnumerable<string> attributesToReturn, IEnumerable<SortingAttribute> sortingAttributes, CancellationTokenSource cancellationToken, bool searchAsync)
-        {
-            if (pageSize < 0)
-            {
-                pageSize = DefaultPageSize;
-            }
-
-            var response = this.Enumerate(filter, pageSize, attributesToReturn, sortingAttributes);
-            if (searchAsync)
-            {
-                return new SearchResultCollectionAsync(response, pageSize, this, cancellationToken, this.client);
-            }
-            else
-            {
-                return new SearchResultCollection(response, pageSize, this, this.client);
             }
         }
 

@@ -24,15 +24,11 @@ namespace Lithnet.ResourceManagement.Client
             }
         }
 
-        public void Dispose()
-        {
-        }
-
         object System.Collections.IEnumerator.Current
         {
             get
             {
-                return this.collection.GetObjectAtIndex(index);
+                return this.Current;
             }
         }
 
@@ -46,6 +42,10 @@ namespace Lithnet.ResourceManagement.Client
         public void Reset()
         {
             this.index = -1;
+        }
+
+        public void Dispose()
+        {
         }
     }
 }
