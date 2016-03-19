@@ -12,6 +12,10 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
     internal static class MessageComposer
     {
         private const string DefaultPageSize = "200";
+        private static UniqueIdentifier builtInAdminAccount = new UniqueIdentifier("7fb2b853-24f0-4498-9534-4e10589723c4");
+        private static UniqueIdentifier syncServiceAccount = new UniqueIdentifier("fb89aefa-5ea1-47f1-8890-abe7797d6497");
+        private static UniqueIdentifier fimServiceAccount = new UniqueIdentifier("e05d1f1b-3d5e-4014-baa6-94dee7d68c89");
+        private static UniqueIdentifier anonymousResource = new UniqueIdentifier("b0b36673-d43b-4cfa-a7a2-aff14fd90522 ");
 
         internal static Message CreateGetMessage(UniqueIdentifier id)
         {
@@ -114,7 +118,6 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             return message;
         }
 
-
         internal static Message CreatePutMessage(ResourceObject resource)
         {
             Put op = new Put();
@@ -184,6 +187,8 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                 throw new ArgumentNullException("id");
             }
 
+            MessageComposer.ThrowOnDeleteBuiltInResource(id);
+
             Message message;
             message = Message.CreateMessage(MessageVersion.Default, Namespaces.Delete);
             message.AddHeader(HeaderConstants.ResourceReferenceProperty, id.ToString());
@@ -202,6 +207,8 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             {
                 return MessageComposer.CreateDeleteMessage(ids.First());
             }
+
+            MessageComposer.ThrowOnDeleteBuiltInResource(ids);
 
             Message message;
             message = Message.CreateMessage(MessageVersion.Default, Namespaces.Delete);
@@ -228,7 +235,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                 request.Sorting.Dialect = Namespaces.ResourceManagement;
                 request.Sorting.SortingAttributes = sortingAttributes.ToArray();
             }
-            
+
             Message requestMessage = Message.CreateMessage(MessageVersion.Default, Namespaces.Enumerate, new SerializerBodyWriter(request));
             requestMessage.AddHeader(Namespaces.ResourceManagement, "IncludeCount", null);
 
@@ -240,7 +247,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             Pull op = new Pull();
             op.EnumerationContext = context;
             op.MaxElements = pageSize.ToString();
-            
+
             return Message.CreateMessage(MessageVersion.Soap12WSAddressing10, Namespaces.Pull, new SerializerBodyWriter(op));
         }
 
@@ -267,6 +274,26 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             }
 
             return set;
+        }
+
+        private static void ThrowOnDeleteBuiltInResource(IEnumerable<UniqueIdentifier> ids)
+        {
+            foreach (UniqueIdentifier id in ids)
+            {
+                MessageComposer.ThrowOnDeleteBuiltInResource(id);
+            }
+        }
+
+        private static void ThrowOnDeleteBuiltInResource(UniqueIdentifier id)
+        {
+            if (id == MessageComposer.anonymousResource ||
+                id == MessageComposer.builtInAdminAccount ||
+                id == MessageComposer.fimServiceAccount ||
+                id == MessageComposer.syncServiceAccount)
+            {
+                throw new InvalidOperationException(string.Format("A request to delete a built-in resource has been stopped by the client library. Resource: {0}", id.ToString()));
+            }
+
         }
     }
 }
