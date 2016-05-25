@@ -259,7 +259,15 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             return Message.CreateMessage(MessageVersion.Soap12WSAddressing10, Namespaces.Release, new SerializerBodyWriter(op));
         }
 
-        private static HashSet<string> AddMandatoryAttributes(IEnumerable<string> attributes)
+        internal static Message CreateApprovalMessage(UniqueIdentifier workflowID, ApprovalResponse response)
+        {
+            Message message = Message.CreateMessage(MessageVersion.Default, Namespaces.Create, new SerializerBodyWriter(response));
+            message.Headers.Add(new ContextHeader(workflowID.Value));
+            
+            return message;
+        }
+
+        private static IEnumerable<string> AddMandatoryAttributes(IEnumerable<string> attributes)
         {
             HashSet<string> set = new HashSet<string>();
 

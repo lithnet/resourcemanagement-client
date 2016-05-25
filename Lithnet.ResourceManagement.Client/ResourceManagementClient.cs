@@ -14,6 +14,7 @@
     using System.Xml;
     using System.Threading.Tasks;
     using System.Collections.Concurrent;
+    using System.Diagnostics.CodeAnalysis;
     using Lithnet.ResourceManagement.Client;
     using System.Globalization;
 
@@ -24,6 +25,7 @@
     /// <example>
     /// <code language="cs" title="Using the Resource Management Client" source="..\Lithnet.ResourceManagement.Client.Help.Examples\T_ResourceManagementClient.cs" />
     /// </example>
+    [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
     public class ResourceManagementClient
     {
         /// <summary>
@@ -40,11 +42,15 @@
         /// The local instance of the Search proxy
         /// </summary>
         private SearchClient searchClient;
-
+        
         /// <summary>
         /// The binding used to connect to the resource management service
         /// </summary>
         private static Binding WsHttpContextBinding;
+
+        private string UserName { get; set; }
+
+        private string Domain { get; set; }
 
         /// <summary>
         /// Gets the credentials used to connect to the resource management service as specified in the configuration file
@@ -314,8 +320,9 @@
         /// <param name="resources">The collection of resources to update</param>
         public void SaveResources(IEnumerable<ResourceObject> resources)
         {
+            IEnumerable<ResourceObject> resourceObjects = resources as IList<ResourceObject> ?? resources.ToList();
 
-            List<ResourceObject> objectsToCreate = resources.Where(t => t.ModificationType == OperationType.Create).ToList();
+            List<ResourceObject> objectsToCreate = resourceObjects.Where(t => t.ModificationType == OperationType.Create).ToList();
             if (objectsToCreate.Count > 0)
             {
                 if (objectsToCreate.Count > 1)
@@ -328,8 +335,8 @@
                 }
             }
 
-            List<ResourceObject> objectsToDelete = resources.Where(t => t.ModificationType == OperationType.Delete).ToList();
-            List<ResourceObject> objectsToUpdate = resources.Where(t => t.ModificationType == OperationType.Update).ToList();
+            List<ResourceObject> objectsToDelete = resourceObjects.Where(t => t.ModificationType == OperationType.Delete).ToList();
+            List<ResourceObject> objectsToUpdate = resourceObjects.Where(t => t.ModificationType == OperationType.Update).ToList();
 
             if (objectsToDelete.Count > 0)
             {
@@ -340,7 +347,7 @@
             {
                 this.resourceClient.Put(objectsToUpdate);
 
-                foreach (ResourceObject resource in resources)
+                foreach (ResourceObject resource in objectsToUpdate)
                 {
                     resource.CommitChanges();
                 }
@@ -755,6 +762,76 @@
         }
 
         /// <summary>
+        /// Returns the pending approvals for the currently connected user
+        /// </summary>
+        /// <returns>A collection of pending approvals</returns>
+        public ISearchResultCollection GetPendingApprovals()
+        {
+            string xpath = $"/Approval[ApprovalStatus='Pending' and Approver=/Person[AccountName = '{this.UserName}' and Domain = '{this.Domain}']]";
+            return this.GetResources(xpath, ResourceManagementSchema.ObjectTypes[ObjectTypeNames.Approval].Attributes.Select(t => t.SystemName));
+        }
+
+        /// <summary>
+        /// Returns the pending approvals for the specified user
+        /// </summary>
+        /// <param name="userID">The unique identifer of the user</param>
+        /// <returns>A collection of pending approvals</returns>
+        public ISearchResultCollection GetPendingApprovals(UniqueIdentifier userID)
+        {
+            string xpath = $"/Approval[ApprovalStatus='Pending' and Approver='{userID.Value}'";
+            return this.GetResources(xpath, ResourceManagementSchema.ObjectTypes[ObjectTypeNames.Approval].Attributes.Select(t => t.SystemName));
+        }
+
+        /// <summary>
+        /// Approves or rejects a pending request
+        /// </summary>
+        /// <remarks>It is recommended to use the <see cref="GetPendingApprovals()"/> method to obtain the pending approval request</remarks>
+        /// <param name="approvalRequest">The approval object to process.The object must be in the 'pending' state</param>
+        /// <param name="approve">A value indicating is the request should be approved</param>
+        /// <param name="reason">An optional reason for the approval or rejection</param>
+        public void Approve(ResourceObject approvalRequest, bool approve, string reason = null)
+        {
+            if (approvalRequest.ObjectTypeName != ObjectTypeNames.Approval)
+            {
+                throw new ArgumentException("The specified object was not an approval request", nameof(approvalRequest));
+            }
+
+            if (!approvalRequest.Attributes.ContainsAttribute(AttributeNames.WorkflowInstance))
+            {
+                throw new ArgumentException("The approval object did not contain the 'WorkflowInstance' attribute value. Ensure the attribute was selected as part of the GET request");
+            }
+
+            if (!approvalRequest.Attributes.ContainsAttribute(AttributeNames.EndpointAddress))
+            {
+                throw new ArgumentException("The approval object did not contain the 'EndpointAddress' attribute value. Ensure the attribute was selected as part of the GET request");
+            }
+
+            if (!approvalRequest.Attributes.ContainsAttribute(AttributeNames.ApprovalStatus))
+            {
+                throw new ArgumentException("The approval object did not contain the 'EndpointAddress' attribute value. Ensure the attribute was selected as part of the GET request");
+            }
+
+            if (approvalRequest.Attributes[AttributeNames.ApprovalStatus].StringValue != "Pending")
+            {
+                throw new InvalidOperationException("The specified approval request is not in a pending state");
+            }
+
+            UniqueIdentifier approval = approvalRequest.Attributes[AttributeNames.ObjectID].ReferenceValue;
+            UniqueIdentifier workflowInstance = approvalRequest.Attributes[AttributeNames.WorkflowInstance].ReferenceValue;
+            string endpointAddress = approvalRequest.Attributes[AttributeNames.EndpointAddress].StringValues.FirstOrDefault(t => t.StartsWith("http", StringComparison.OrdinalIgnoreCase));
+
+            if (endpointAddress == null)
+            {
+                throw new InvalidOperationException("The endpoint address was not of a supported type");
+            }
+
+            using (ResourceFactoryClient client = this.CreateApprovalClient(endpointAddress))
+            {
+                client.Approve(workflowInstance, approval, approve, reason);
+            }
+        }
+
+        /// <summary>
         /// Uses the specified XPath filter to find matching objects in the resource management service, synchronously, using the specified page size, and retrieving the specified attributes
         /// </summary>
         /// <param name="filter">The XPath filter defining the search criteria</param>
@@ -1149,12 +1226,19 @@
                 this.resourceClient.ClientCredentials.Windows.ClientCredential = credentials;
                 this.resourceFactoryClient.ClientCredentials.Windows.ClientCredential = credentials;
                 this.searchClient.ClientCredentials.Windows.ClientCredential = credentials;
+                this.UserName = credentials.UserName;
+                this.Domain = credentials.Domain;
+            }
+            else
+            {
+                this.UserName = Environment.UserName;
+                this.Domain = Environment.UserDomainName;
             }
 
 #pragma warning disable 0618
             this.resourceClient.ClientCredentials.Windows.AllowNtlm = allowNtlm;
-            this.resourceClient.ClientCredentials.Windows.AllowNtlm = allowNtlm;
-            this.resourceClient.ClientCredentials.Windows.AllowNtlm = allowNtlm;
+            this.resourceFactoryClient.ClientCredentials.Windows.AllowNtlm = allowNtlm;
+            this.searchClient.ClientCredentials.Windows.AllowNtlm = allowNtlm;
 #pragma warning restore 0618
 
             this.resourceClient.Initialize(this);
@@ -1166,6 +1250,30 @@
             this.searchClient.Open();
 
             ResourceManagementSchema.LoadSchema(endpointManager);
+        }
+
+        private ResourceFactoryClient CreateApprovalClient(string endpoint)
+        {
+            return this.CreateApprovalClient(new EndpointAddress(endpoint));
+        }
+
+        private ResourceFactoryClient CreateApprovalClient(EndpointAddress endpoint)
+        {
+            ResourceFactoryClient client = new ResourceFactoryClient(ResourceManagementClient.WsHttpContextBinding, endpoint);
+
+            if (this.resourceClient.ClientCredentials.Windows.ClientCredential != null)
+            {
+                client.ClientCredentials.Windows.ClientCredential = this.resourceFactoryClient.ClientCredentials.Windows.ClientCredential;
+            }
+            
+#pragma warning disable 0618
+            client.ClientCredentials.Windows.AllowNtlm = this.resourceFactoryClient.ClientCredentials.Windows.AllowNtlm;
+#pragma warning restore 0618
+
+            client.Initialize(this);
+            client.Open();
+
+            return client;
         }
     }
 }

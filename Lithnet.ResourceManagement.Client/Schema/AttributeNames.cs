@@ -29,6 +29,11 @@ namespace Lithnet.ResourceManagement.Client
         public const string AccountName = "AccountName";
 
         /// <summary>
+        /// The Domain attribute
+        /// </summary>
+        public const string Domain = "Domain";
+
+        /// <summary>
         /// The Creator attribute
         /// </summary>
         public const string Creator = "Creator";
@@ -67,6 +72,11 @@ namespace Lithnet.ResourceManagement.Client
         /// The ObjectID attribute
         /// </summary>
         public const string ObjectID = "ObjectID";
+
+        /// <summary>
+        /// The ObjectSid attribute
+        /// </summary>
+        public const string ObjectSid = "ObjectSid";
 
         /// <summary>
         /// The ResourceTime attribute
@@ -122,6 +132,26 @@ namespace Lithnet.ResourceManagement.Client
         /// The Member attribute
         /// </summary>
         public const string Member = "Member";
+
+        /// <summary>
+        /// The ApprovalStatus attribute
+        /// </summary>
+        public const string ApprovalStatus = "ApprovalStatus";
+
+        /// <summary>
+        /// The Approver attribute
+        /// </summary>
+        public const string Approver = "Approver";
+
+        /// <summary>
+        /// The EndpointAddress attribute
+        /// </summary>
+        public const string EndpointAddress = "EndpointAddress";
+
+        /// <summary>
+        /// The WorkflowInstance attribute
+        /// </summary>
+        public const string WorkflowInstance = "WorkflowInstance";
     }
 }
 

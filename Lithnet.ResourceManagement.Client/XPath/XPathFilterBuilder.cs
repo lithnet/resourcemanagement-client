@@ -85,7 +85,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>An XPath query string</returns>
         public static string CreateUnionFilter(params XPathExpression[] expressions)
         {
-            return expressions.Select(t => t.ToString()).ToSeparatedString(" | ");
+            return string.Join(" | ", expressions.Select(t => t.ToString()));
         }
 
         /// <summary>

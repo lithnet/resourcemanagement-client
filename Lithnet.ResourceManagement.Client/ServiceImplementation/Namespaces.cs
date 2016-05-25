@@ -35,6 +35,6 @@ namespace Lithnet.ResourceManagement.Client
         public const string XmlSchema = "http://www.w3.org/2001/XMLSchema";
         public const string XmlSchemaInstance = "http://www.w3.org/2001/XMLSchema-instance";
         public const string XPathDialect = "http://schemas.microsoft.com/2006/11/XPathFilterDialect";
-
+        public const string Context = "http://schemas.microsoft.com/ws/2006/05/context";
     }
 }

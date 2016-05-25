@@ -39,6 +39,16 @@ namespace Lithnet.ResourceManagement.Client
         public const string Group = "Group";
 
         /// <summary>
+        /// The Approval object type
+        /// </summary>
+        public const string Approval = "Approval";
+
+        /// <summary>
+        /// The ApprovalResponse object type
+        /// </summary>
+        public const string ApprovalResponse = "ApprovalResponse";
+
+        /// <summary>
         /// The AttributeTypeDescription object type
         /// </summary>
         public const string AttributeTypeDescription = "AttributeTypeDescription";

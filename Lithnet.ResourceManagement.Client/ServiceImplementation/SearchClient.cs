@@ -41,7 +41,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             var response = this.Enumerate(filter, 0, attributesToReturn, sortingAttributes);
             return new SearchResultPager(response, pageSize, this, this.client);
         }
-
+       
         private EnumerateResponse Enumerate(string filter, int pageSize, IEnumerable<string> attributesToReturn, IEnumerable<SortingAttribute> sortingAttributes)
         {
             if (pageSize < 0)

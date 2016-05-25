@@ -47,6 +47,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.ResourceManagement">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Microsoft.ResourceManagement.dll</HintPath>
@@ -56,13 +57,10 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApprovalResponse.cs" />
     <Compile Include="AttributeValuePair.cs" />
     <Compile Include="AttributeValuePairCollection.cs" />
     <Compile Include="Enums\OperationType.cs" />
@@ -87,6 +85,7 @@
     <Compile Include="Schema\ObjectTypeNames.cs" />
     <Compile Include="ServiceImplementation\BindingManager.cs" />
     <Compile Include="ServiceImplementation\ClientConfigurationSection.cs" />
+    <Compile Include="ServiceImplementation\ContextHeader.cs" />
     <Compile Include="ServiceImplementation\EndpointManager.cs" />
     <Compile Include="ServiceImplementation\HeaderConstants.cs" />
     <Compile Include="ServiceImplementation\ISearchResultCollection.cs" />
