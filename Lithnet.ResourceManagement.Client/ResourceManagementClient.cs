@@ -754,7 +754,7 @@
         {
             if (string.IsNullOrWhiteSpace(sortAttribute))
             {
-                throw new ArgumentNullException("sortAttribute");
+                throw new ArgumentNullException(nameof(sortAttribute));
             }
 
             SortingAttribute attribute = new SortingAttribute(sortAttribute, sortAscending);
@@ -762,30 +762,46 @@
         }
 
         /// <summary>
-        /// Returns the pending approvals for the currently connected user
+        /// Returns approval requests of the specified type for the currently connected user
         /// </summary>
+        /// <param name="status">Specifies the types of approvals to return</param>
         /// <returns>A collection of pending approvals</returns>
-        public ISearchResultCollection GetPendingApprovals()
+        public ISearchResultCollection GetApprovals(ApprovalStatus status)
         {
-            string xpath = $"/Approval[ApprovalStatus='Pending' and Approver=/Person[AccountName = '{this.UserName}' and Domain = '{this.Domain}']]";
+            string approvalStatusString = string.Empty;
+
+            if (status != ApprovalStatus.Unknown)
+            {
+                approvalStatusString = $"ApprovalStatus = '{status}' and ";
+            }
+       
+            string xpath = $"/Approval[{approvalStatusString}Approver=/Person[AccountName = '{this.UserName}' and Domain = '{this.Domain}']]";
             return this.GetResources(xpath, ResourceManagementSchema.ObjectTypes[ObjectTypeNames.Approval].Attributes.Select(t => t.SystemName));
         }
 
         /// <summary>
-        /// Returns the pending approvals for the specified user
+        /// Returns approval requests of the specified type for the specified user
         /// </summary>
+        /// <param name="status">Specifies the types of approvals to return</param>
         /// <param name="userID">The unique identifer of the user</param>
         /// <returns>A collection of pending approvals</returns>
-        public ISearchResultCollection GetPendingApprovals(UniqueIdentifier userID)
+        public ISearchResultCollection GetApprovals(ApprovalStatus status, UniqueIdentifier userID)
         {
-            string xpath = $"/Approval[ApprovalStatus='Pending' and Approver='{userID.Value}'";
+            string approvalStatusString = string.Empty;
+
+            if (status != ApprovalStatus.Unknown)
+            {
+                approvalStatusString = $"ApprovalStatus = '{status}' and ";
+            }
+
+            string xpath = $"/Approval[{approvalStatusString}Approver='{userID.Value}'";
             return this.GetResources(xpath, ResourceManagementSchema.ObjectTypes[ObjectTypeNames.Approval].Attributes.Select(t => t.SystemName));
         }
 
         /// <summary>
         /// Approves or rejects a pending request
         /// </summary>
-        /// <remarks>It is recommended to use the <see cref="GetPendingApprovals()"/> method to obtain the pending approval request</remarks>
+        /// <remarks>It is recommended to use the <see cref="GetApprovals(ApprovalStatus)"/> method to obtain the pending approval request</remarks>
         /// <param name="approvalRequest">The approval object to process.The object must be in the 'pending' state</param>
         /// <param name="approve">A value indicating is the request should be approved</param>
         /// <param name="reason">An optional reason for the approval or rejection</param>
@@ -1226,8 +1242,19 @@
                 this.resourceClient.ClientCredentials.Windows.ClientCredential = credentials;
                 this.resourceFactoryClient.ClientCredentials.Windows.ClientCredential = credentials;
                 this.searchClient.ClientCredentials.Windows.ClientCredential = credentials;
-                this.UserName = credentials.UserName;
-                this.Domain = credentials.Domain;
+
+                if (credentials.UserName.IndexOf("\\", StringComparison.Ordinal) >= 0)
+                {
+                    string[] split = credentials.UserName.Split('\\');
+
+                    this.UserName = split[0];
+                    this.Domain = split[1];
+                }
+                else
+                {
+                    this.UserName = credentials.UserName;
+                    this.Domain = credentials.Domain;
+                }
             }
             else
             {
@@ -1254,7 +1281,7 @@
 
         private ResourceFactoryClient CreateApprovalClient(string endpoint)
         {
-            return this.CreateApprovalClient(new EndpointAddress(endpoint));
+            return this.CreateApprovalClient(EndpointManager.EndpointFromAddress(endpoint));
         }
 
         private ResourceFactoryClient CreateApprovalClient(EndpointAddress endpoint)

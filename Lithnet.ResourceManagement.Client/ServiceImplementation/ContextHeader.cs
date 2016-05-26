@@ -27,11 +27,8 @@ namespace Lithnet.ResourceManagement.Client
             writer.WriteEndElement();
         }
 
-        // Properties
         public override string Name => "Context";
 
-        /// <summary>Gets the namespace of the message header.</summary>
-        /// <returns>The namespace of the message header.</returns>
         public override string Namespace => Namespaces.Context;
     }
 }

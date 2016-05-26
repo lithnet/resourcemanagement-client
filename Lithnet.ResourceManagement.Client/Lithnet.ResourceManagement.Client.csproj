@@ -63,6 +63,7 @@
     <Compile Include="ApprovalResponse.cs" />
     <Compile Include="AttributeValuePair.cs" />
     <Compile Include="AttributeValuePairCollection.cs" />
+    <Compile Include="Enums\ApprovalStatus.cs" />
     <Compile Include="Enums\OperationType.cs" />
     <Compile Include="Enums\GroupOperator.cs" />
     <Compile Include="Enums\ComparisonOperator.cs" />

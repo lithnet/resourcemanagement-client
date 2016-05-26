@@ -30,7 +30,7 @@ namespace Lithnet.ResourceManagement.Client
 
             if (spn == null)
             {
-                this.EndpointSpn = EndpointIdentity.CreateSpnIdentity(string.Format("FIMService/{0}", this.baseUri.Host));
+                this.EndpointSpn = EndpointManager.SpnIdentityFromUri(baseUri);
             }
             else
             {
@@ -53,6 +53,18 @@ namespace Lithnet.ResourceManagement.Client
         public EndpointManager(string baseUri)
             : this(new Uri(baseUri), null)
         {
+        }
+
+
+        public static EndpointIdentity SpnIdentityFromUri(Uri uri)
+        {
+            return EndpointIdentity.CreateSpnIdentity($"FIMService/{uri.Host}");
+        }
+
+        public static EndpointAddress EndpointFromAddress(string address)
+        {
+            Uri uri = new Uri(address);
+            return new EndpointAddress(uri, EndpointManager.SpnIdentityFromUri(uri), new AddressHeader[0]);
         }
     }
 }
