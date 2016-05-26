@@ -46,11 +46,77 @@
         /// <summary>
         /// The binding used to connect to the resource management service
         /// </summary>
-        private static Binding WsHttpContextBinding;
+        private static Binding wsHttpContextBinding;
 
-        private string UserName { get; set; }
+        /// <summary>
+        /// The explicit credentials for this client
+        /// </summary>
+        private NetworkCredential creds;
 
-        private string Domain { get; set; }
+        /// <summary>
+        /// The endpoint manager for the client
+        /// </summary>
+        private EndpointManager endpointManager;
+
+        /// <summary>
+        /// Gets the username of the current user
+        /// </summary>
+        private string UserName
+        {
+            get
+            {
+                string value;
+
+                if (this.creds != null)
+                {
+                    value = this.creds.UserName;
+                }
+                else
+                {
+                    value = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+                }
+
+                if (value.IndexOf("\\", StringComparison.Ordinal) >= 0)
+                {
+                    string[] split = value.Split('\\');
+                    return split[1];
+                }
+                else
+                {
+                    return value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the domain of the current user
+        /// </summary>
+        private string Domain
+        {
+            get
+            {
+                string value;
+
+                if (this.creds != null)
+                {
+                    value = this.creds.Domain ?? this.creds.UserName;
+                }
+                else
+                {
+                    value = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+                }
+
+                if (value.IndexOf("\\", StringComparison.Ordinal) >= 0)
+                {
+                    string[] split = value.Split('\\');
+                    return split[0];
+                }
+                else
+                {
+                    return value;
+                }
+            }
+        }
 
         /// <summary>
         /// Gets the credentials used to connect to the resource management service as specified in the configuration file
@@ -68,7 +134,6 @@
         /// </summary>
         internal static ClientConfigurationSection Configuration { get; private set; }
 
-        private EndpointManager endpointManager { get; set; }
 
         /// <summary>
         /// Initializes the static members of the ResourceManagementClient class
@@ -105,7 +170,7 @@
             }
 
             ResourceManagementClient.EndpointManager = new EndpointManager(baseAddress, spn);
-            ResourceManagementClient.WsHttpContextBinding = BindingManager.GetWsHttpContextBinding();
+            ResourceManagementClient.wsHttpContextBinding = BindingManager.GetWsHttpContextBinding();
 
             if (!string.IsNullOrWhiteSpace(Configuration.Username))
             {
@@ -774,7 +839,12 @@
             {
                 approvalStatusString = $"ApprovalStatus = '{status}' and ";
             }
-       
+
+            if (this.UserName == null || this.Domain == null)
+            {
+                throw new InvalidOperationException("The username or domain parameters were unknown");
+            }
+
             string xpath = $"/Approval[{approvalStatusString}Approver=/Person[AccountName = '{this.UserName}' and Domain = '{this.Domain}']]";
             return this.GetResources(xpath, ResourceManagementSchema.ObjectTypes[ObjectTypeNames.Approval].Attributes.Select(t => t.SystemName));
         }
@@ -1233,33 +1303,16 @@
         {
             this.endpointManager = endpointManager;
 
-            this.resourceClient = new ResourceClient(ResourceManagementClient.WsHttpContextBinding, this.endpointManager.ResourceEndpoint);
-            this.resourceFactoryClient = new ResourceFactoryClient(ResourceManagementClient.WsHttpContextBinding, this.endpointManager.ResourceFactoryEndpoint);
-            this.searchClient = new SearchClient(ResourceManagementClient.WsHttpContextBinding, this.endpointManager.SearchEndpoint);
+            this.resourceClient = new ResourceClient(ResourceManagementClient.wsHttpContextBinding, this.endpointManager.ResourceEndpoint);
+            this.resourceFactoryClient = new ResourceFactoryClient(ResourceManagementClient.wsHttpContextBinding, this.endpointManager.ResourceFactoryEndpoint);
+            this.searchClient = new SearchClient(ResourceManagementClient.wsHttpContextBinding, this.endpointManager.SearchEndpoint);
+            this.creds = credentials;
 
             if (credentials != null)
             {
                 this.resourceClient.ClientCredentials.Windows.ClientCredential = credentials;
                 this.resourceFactoryClient.ClientCredentials.Windows.ClientCredential = credentials;
                 this.searchClient.ClientCredentials.Windows.ClientCredential = credentials;
-
-                if (credentials.UserName.IndexOf("\\", StringComparison.Ordinal) >= 0)
-                {
-                    string[] split = credentials.UserName.Split('\\');
-
-                    this.UserName = split[0];
-                    this.Domain = split[1];
-                }
-                else
-                {
-                    this.UserName = credentials.UserName;
-                    this.Domain = credentials.Domain;
-                }
-            }
-            else
-            {
-                this.UserName = Environment.UserName;
-                this.Domain = Environment.UserDomainName;
             }
 
 #pragma warning disable 0618
@@ -1286,11 +1339,11 @@
 
         private ResourceFactoryClient CreateApprovalClient(EndpointAddress endpoint)
         {
-            ResourceFactoryClient client = new ResourceFactoryClient(ResourceManagementClient.WsHttpContextBinding, endpoint);
+            ResourceFactoryClient client = new ResourceFactoryClient(ResourceManagementClient.wsHttpContextBinding, endpoint);
 
-            if (this.resourceClient.ClientCredentials.Windows.ClientCredential != null)
+            if (this.creds != null)
             {
-                client.ClientCredentials.Windows.ClientCredential = this.resourceFactoryClient.ClientCredentials.Windows.ClientCredential;
+                client.ClientCredentials.Windows.ClientCredential = this.creds;
             }
             
 #pragma warning disable 0618
