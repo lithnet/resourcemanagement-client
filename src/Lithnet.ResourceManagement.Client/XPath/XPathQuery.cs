@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.ResourceManagement.WebServices;
 using Lithnet.ResourceManagement.Client;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -137,6 +138,8 @@ namespace Lithnet.ResourceManagement.Client
                 throw new ArgumentNullException(attributeName);
             }
 
+            ResourceManagementSchema.ValidateAttributeName(attributeName);
+
             if (value == null)
             {
                 if (comparisonOperator != ComparisonOperator.IsNotPresent && comparisonOperator != ComparisonOperator.IsPresent)
@@ -229,7 +232,11 @@ namespace Lithnet.ResourceManagement.Client
         {
             string expression;
 
-            if (this.attributeType == AttributeType.Integer || this.attributeType == AttributeType.Boolean)
+            if (this.attributeType == AttributeType.Integer)
+            {
+                expression = string.Format("({0} = {1})", this.AttributeName, TypeConverter.ToString(this.Value));
+            }
+            else if (this.attributeType == AttributeType.Boolean)
             {
                 expression = string.Format("({0} = {1})", this.AttributeName, TypeConverter.ToString(this.Value));
             }
@@ -256,7 +263,7 @@ namespace Lithnet.ResourceManagement.Client
             }
             else
             {
-                expression = string.Format("({0} = '{1}')", this.AttributeName, TypeConverter.ToString(this.Value));
+                expression = string.Format("({0} = {1})", this.AttributeName, this.QuoteTextValue(TypeConverter.ToString(this.Value)));
             }
 
             return ProcessNegation(expression);
@@ -268,70 +275,35 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>A string containing the query</returns>
         private string GetExpressionNotEquals()
         {
-            //if (this.isMultivalued)
-            //{
-                if (this.attributeType == AttributeType.Integer || this.attributeType == AttributeType.Boolean)
-                {
-                    return string.Format("(not({0} = {1}))", this.AttributeName, TypeConverter.ToString(this.Value));
-                }
-                else if (this.attributeType == AttributeType.Reference)
-                {
-                    string valuetoUse;
+            if (this.attributeType == AttributeType.Integer || this.attributeType == AttributeType.Boolean)
+            {
+                return string.Format("(not({0} = {1}))", this.AttributeName, TypeConverter.ToString(this.Value));
+            }
+            else if (this.attributeType == AttributeType.Reference)
+            {
+                string valuetoUse;
 
-                    XPathExpression childExpression = this.Value as XPathExpression;
+                XPathExpression childExpression = this.Value as XPathExpression;
 
-                    if (childExpression != null)
-                    {
-                        valuetoUse = childExpression.ToString();
-                    }
-                    else
-                    {
-                        valuetoUse = string.Format("'{0}'", TypeConverter.ToUniqueIdentifier(this.Value).Value);
-                    }
-
-                    return string.Format("(not({0} = {1}))", this.AttributeName, valuetoUse);
-                }
-                else if (this.attributeType == AttributeType.DateTime)
+                if (childExpression != null)
                 {
-                    return string.Format("(not({0} = {1}))", this.AttributeName, TypeConverter.ToString(this.QuoteIfNotFunction(this.Value)));
+                    valuetoUse = childExpression.ToString();
                 }
                 else
                 {
-                    return string.Format("(not({0} = '{1}'))", this.AttributeName, TypeConverter.ToString(this.Value));
+                    valuetoUse = string.Format("'{0}'", TypeConverter.ToUniqueIdentifier(this.Value).Value);
                 }
-            //}
-            //else
-            //{
-            //    if (this.attributeType == AttributeType.Integer || this.attributeType == AttributeType.Boolean)
-            //    {
-            //        return string.Format("({0} != {1})", this.AttributeName, TypeConverter.ToString(this.Value));
-            //    }
-            //    else if (this.attributeType == AttributeType.DateTime)
-            //    {
-            //        return string.Format("({0} != {1})", this.AttributeName, TypeConverter.ToString(this.QuoteIfNotFunction(this.Value)));
-            //    }
-            //    else if (this.attributeType == AttributeType.Reference)
-            //    {
-            //        string valuetoUse;
 
-            //        XPathExpression childExpression = this.Value as XPathExpression;
-
-            //        if (childExpression != null)
-            //        {
-            //            valuetoUse = childExpression.ToString();
-            //        }
-            //        else
-            //        {
-            //            valuetoUse = string.Format("'{0}'", TypeConverter.ToUniqueIdentifier(this.Value).Value);
-            //        }
-
-            //        return string.Format("(not({0} = {1}))", this.AttributeName, valuetoUse);
-            //    }
-            //    else
-            //    {
-            //        return string.Format("({0} != '{1}')", this.AttributeName, TypeConverter.ToString(this.Value));
-            //    }
-            //}
+                return string.Format("(not({0} = {1}))", this.AttributeName, valuetoUse);
+            }
+            else if (this.attributeType == AttributeType.DateTime)
+            {
+                return string.Format("(not({0} = {1}))", this.AttributeName, TypeConverter.ToString(this.QuoteIfNotFunction(this.Value)));
+            }
+            else
+            {
+                return string.Format("(not({0} = {1}))", this.AttributeName, this.QuoteTextValue(TypeConverter.ToString(this.Value)));
+            }
         }
 
         /// <summary>
@@ -492,7 +464,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>A string containing the query</returns>
         private string GetExpressionContains()
         {
-            return ProcessNegation(string.Format("(contains({0}, '{1}'))", this.AttributeName, TypeConverter.ToString(this.Value)));
+            return ProcessNegation(string.Format("(contains({0}, {1}))", this.AttributeName, this.QuoteTextValue(TypeConverter.ToString(this.Value))));
         }
 
         /// <summary>
@@ -501,7 +473,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>A string containing the query</returns>
         private string GetExpressionStartsWith()
         {
-            return ProcessNegation(string.Format("(starts-with({0}, '{1}'))", this.AttributeName, TypeConverter.ToString(this.Value)));
+            return ProcessNegation(string.Format("(starts-with({0}, {1}))", this.AttributeName, this.QuoteTextValue(TypeConverter.ToString(this.Value))));
         }
 
         /// <summary>
@@ -510,7 +482,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>A string containing the query</returns>
         private string GetExpressionEndsWith()
         {
-            return ProcessNegation(string.Format("(ends-with({0}, '{1}'))", this.AttributeName, TypeConverter.ToString(this.Value)));
+            return ProcessNegation(string.Format("(ends-with({0}, {1}))", this.AttributeName, this.QuoteTextValue(TypeConverter.ToString(this.Value))));
         }
 
         private object QuoteIfNotFunction(object value)
@@ -524,7 +496,7 @@ namespace Lithnet.ResourceManagement.Client
             string trimmedValue = ((string)value).TrimStart();
 
             DateTime result;
-            
+
             if (DateTime.TryParseExact((string)value, TypeConverter.FimServiceDateFormat, CultureInfo.CurrentCulture, DateTimeStyles.AssumeUniversal, out result))
             {
                 // The string was a date time value, so pass it back as a string
@@ -717,6 +689,23 @@ namespace Lithnet.ResourceManagement.Client
                         break;
                 }
             }
+        }
+
+        private string QuoteTextValue(string value)
+        {
+            if (value.Contains("'"))
+            {
+                if (value.Contains("\""))
+                {
+                    throw new ArgumentException("Cannot quote a value that contains both single and double quotes");
+                }
+                else
+                {
+                    return $"\"{value}\"";
+                }
+            }
+
+            return $"'{value}'";
         }
     }
 }

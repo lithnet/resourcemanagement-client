@@ -73,6 +73,11 @@ namespace Lithnet.ResourceManagement.Client
         {
             StringBuilder sb = new StringBuilder();
 
+            if (this.ObjectType != "*")
+            {
+                ResourceManagementSchema.ValidateObjectTypeName(this.ObjectType);
+            }
+
             sb.AppendFormat("/{0}", this.ObjectType);
 
             if (this.Query != null)

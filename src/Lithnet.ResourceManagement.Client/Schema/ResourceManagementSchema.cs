@@ -11,6 +11,7 @@ using System.Xml.Schema;
 using System.ServiceModel;
 using System.Collections.ObjectModel;
 using Lithnet.ResourceManagement.Client;
+using System.Text.RegularExpressions;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -33,6 +34,16 @@ namespace Lithnet.ResourceManagement.Client
         /// Gets a list of attributes that are computed and cannot be changed
         /// </summary>
         public static ReadOnlyCollection<string> ComputedAttributes { get; private set; }
+
+        /// <summary>
+        /// A regular expression that validates an attribute name according to the resource management service's rules
+        /// </summary>
+        public static Regex AttributeNameValidationRegex { get; private set; }
+
+        /// <summary>
+        /// A regular expression that validates an attribute name according to the resource management service's rules
+        /// </summary>
+        public static Regex ObjectTypeNameValidationRegex { get; private set; }
 
         /// <summary>
         /// The object used to synchronize access updates to the schema from multiple threads
@@ -86,6 +97,7 @@ namespace Lithnet.ResourceManagement.Client
                 if (!isLoaded)
                 {
                     ResourceManagementSchema.RefreshSchema(e);
+                    ResourceManagementSchema.LoadNameValidationRegularExpressions();
                 }
             }
         }
@@ -233,6 +245,41 @@ namespace Lithnet.ResourceManagement.Client
                     ResourceManagementSchema.ObjectTypes.Add(definition.SystemName, definition);
                 }
             }
+        }
+
+        /// <summary>
+        /// Validates that an attribute name contains only valid characters
+        /// </summary>
+        /// <param name="attributeName">The name of the attribute to validate</param>
+        public static void ValidateAttributeName(string attributeName)
+        {
+            if (!ResourceManagementSchema.AttributeNameValidationRegex.IsMatch(attributeName))
+            {
+                throw new ArgumentException("The attribute name contains invalid characters", nameof(attributeName));
+            }
+        }
+
+        /// <summary>
+        /// Validates that an object type name contains only valid characters
+        /// </summary>
+        /// <param name="objectTypeName">The name of the object type to validate</param>
+        public static void ValidateObjectTypeName(string objectTypeName)
+        {
+            if (!ResourceManagementSchema.ObjectTypeNameValidationRegex.IsMatch(objectTypeName))
+            {
+                throw new ArgumentException("The object type name contains invalid characters", nameof(objectTypeName));
+            }
+        }
+
+        private static void LoadNameValidationRegularExpressions()
+        {
+            ObjectTypeDefinition objectTypeDefinition = ResourceManagementSchema.ObjectTypes[ObjectTypeNames.AttributeTypeDescription];
+            AttributeTypeDefinition nameAttribute = objectTypeDefinition.Attributes.First(t => t.SystemName == AttributeNames.Name);
+            ResourceManagementSchema.AttributeNameValidationRegex = new Regex(nameAttribute.Regex);
+
+            objectTypeDefinition = ResourceManagementSchema.ObjectTypes[ObjectTypeNames.ObjectTypeDescription];
+            nameAttribute = objectTypeDefinition.Attributes.First(t => t.SystemName == AttributeNames.Name);
+            ResourceManagementSchema.ObjectTypeNameValidationRegex = new Regex(nameAttribute.Regex);
         }
     }
 }

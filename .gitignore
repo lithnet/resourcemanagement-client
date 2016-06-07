@@ -188,4 +188,4 @@ GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
 /lib
-/Lithnet.ResourceManagement.Client.Help/Help
+/src/Lithnet.ResourceManagement.Client.Help/Help

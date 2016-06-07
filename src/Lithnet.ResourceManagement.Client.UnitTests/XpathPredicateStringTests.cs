@@ -41,6 +41,77 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         }
 
         [TestMethod]
+        public void TestSVStringEqualsWithSingleQuote()
+        {
+            string queryValue = "user'0001";
+            string nonMatchValue = "user0002";
+            string matchValue = "user'0001";
+
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, nonMatchValue);
+
+            try
+            {
+                string expected = string.Format("/{0}[({1} = \"{2}\")]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringSV, queryValue);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeStringSV, ComparisonOperator.Equals, GroupOperator.And, matchResource);
+            }
+            finally
+            {
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
+            }
+        }
+
+        [TestMethod]
+        public void TestSVStringEqualsWithDoubleQuote()
+        {
+            string queryValue = "user\"0001";
+            string nonMatchValue = "user0002";
+            string matchValue = "user\"0001";
+
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, nonMatchValue);
+
+            try
+            {
+                string expected = string.Format("/{0}[({1} = '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringSV, queryValue);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeStringSV, ComparisonOperator.Equals, GroupOperator.And, matchResource);
+            }
+            finally
+            {
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
+            }
+        }
+
+
+        [TestMethod]
+        public void TestSVStringEqualsWithSingleAndDoubleQuote()
+        {
+            string queryValue = "user\"'0001";
+            string nonMatchValue = "user0002";
+            string matchValue = "user\"'0001";
+
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, nonMatchValue);
+
+            try
+            {
+                string expected = string.Format("/{0}[({1} = '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringSV, queryValue);
+                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeStringSV, ComparisonOperator.Equals, GroupOperator.And, matchResource);
+            }
+            catch (ArgumentException)
+            {
+                return;
+            }
+            finally
+            {
+                UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
+            }
+
+            Assert.Fail("The expected exception was not thrown");
+        }
+
+
+        [TestMethod]
         public void TestSVStringNotEquals()
         {
             string queryValue = "user0001";

@@ -37,6 +37,7 @@ namespace Lithnet.ResourceManagement.Client
             : base(objectType, query, wrapFilterXml)
         {
             this.DereferenceAttribute = dereferenceAttribute;
+            ResourceManagementSchema.ValidateObjectTypeName(this.DereferenceAttribute);
         }
 
         /// <summary>

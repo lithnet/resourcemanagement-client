@@ -18,6 +18,35 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         }
 
         [TestMethod]
+        public void ThrowOnInvalidAttribute()
+        {
+            try
+            {
+                XPathQuery predicate1 = new XPathQuery("legalName", ComparisonOperator.Equals, "test");
+                XPathQuery predicate2 = new XPathQuery("also:validName", ComparisonOperator.Equals, "test");
+                XPathQuery predicate3 = new XPathQuery("%%%%%", ComparisonOperator.Equals, "test");
+                Assert.Fail("The expected exception was not thrown");
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void ThrowOnInvalidObjectTypeName()
+        {
+            try
+            {
+                string testValue1 = "test1";
+                XPathQuery predicate1 = new XPathQuery(UnitTestHelper.AttributeStringSV, ComparisonOperator.Equals, testValue1);
+                XPathExpression childExpression = new XPathExpression("legalName", predicate1);
+                childExpression = new XPathExpression("also:legalName", predicate1);
+                childExpression = new XPathExpression("%%%%%", predicate1);
+
+                Assert.Fail("The expected exception was not thrown");
+            }
+            catch { }
+        }
+
+        [TestMethod]
         public void XpathExpressionNestedTest()
         {
             string testValue1 = "test1";
