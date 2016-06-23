@@ -8,7 +8,7 @@ You can install this package directly from [NuGet](https://www.nuget.org/package
 See the [config file guide](https://github.com/lithnet/resourcemanagement-client/wiki/configuration-file-reference) for instructions on how to configure your web/app.config file
 
 ## Getting started
-Read the getting started [quick guide](https://github.com/lithnet/resourcemanagement-client/wiki/getting-started) or review the [API documentation](http://documentation.lithiumblue.com/lithnet/rmc)
+Read the getting started [quick guide](https://github.com/lithnet/resourcemanagement-client/wiki/getting-started) or review the [API documentation](https://lithnet.github.io/documentation/rmc)
 
 ## How can I contribute to the project
 Found an issue?
