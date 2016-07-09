@@ -6,6 +6,7 @@ using System.ServiceModel.Channels;
 using System.Threading;
 using Microsoft.ResourceManagement.WebServices.WSEnumeration;
 using System.Xml;
+using System.Globalization;
 
 namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 {
@@ -21,35 +22,35 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             this.client = client;
         }
 
-        public ISearchResultCollection EnumerateAsync(string filter, int pageSize, IEnumerable<string> attributesToReturn, IEnumerable<SortingAttribute> sortingAttributes, CancellationTokenSource cancellationToken)
+        public ISearchResultCollection EnumerateAsync(string filter, int pageSize, IEnumerable<string> attributesToReturn, IEnumerable<SortingAttribute> sortingAttributes, CultureInfo locale, CancellationTokenSource cancellationToken)
         {
-            return new SearchResultCollectionAsync(this.EnumeratePaged(filter, pageSize, attributesToReturn, sortingAttributes), cancellationToken);
+            return new SearchResultCollectionAsync(this.EnumeratePaged(filter, pageSize, attributesToReturn, sortingAttributes, locale), cancellationToken);
         }
 
-        public ISearchResultCollection EnumerateSync(string filter, int pageSize, IEnumerable<string> attributesToReturn, IEnumerable<SortingAttribute> sortingAttributes)
+        public ISearchResultCollection EnumerateSync(string filter, int pageSize, IEnumerable<string> attributesToReturn, IEnumerable<SortingAttribute> sortingAttributes, CultureInfo locale)
         {
-            return new SearchResultCollection(this.EnumeratePaged(filter, pageSize, attributesToReturn, sortingAttributes));
+            return new SearchResultCollection(this.EnumeratePaged(filter, pageSize, attributesToReturn, sortingAttributes, locale));
         }
 
-        public SearchResultPager EnumeratePaged(string filter, int pageSize, IEnumerable<string> attributesToReturn, IEnumerable<SortingAttribute> sortingAttributes)
+        public SearchResultPager EnumeratePaged(string filter, int pageSize, IEnumerable<string> attributesToReturn, IEnumerable<SortingAttribute> sortingAttributes, CultureInfo locale)
         {
             if (pageSize < 0)
             {
                 pageSize = DefaultPageSize;
             }
 
-            var response = this.Enumerate(filter, 0, attributesToReturn, sortingAttributes);
-            return new SearchResultPager(response, pageSize, this, this.client);
+            var response = this.Enumerate(filter, 0, attributesToReturn, sortingAttributes, locale);
+            return new SearchResultPager(response, pageSize, this, this.client, locale);
         }
        
-        private EnumerateResponse Enumerate(string filter, int pageSize, IEnumerable<string> attributesToReturn, IEnumerable<SortingAttribute> sortingAttributes)
+        private EnumerateResponse Enumerate(string filter, int pageSize, IEnumerable<string> attributesToReturn, IEnumerable<SortingAttribute> sortingAttributes, CultureInfo locale)
         {
             if (pageSize < 0)
             {
                 pageSize = DefaultPageSize;
             }
 
-            using (Message requestMessage = MessageComposer.CreateEnumerateMessage(filter, pageSize, attributesToReturn, sortingAttributes))
+            using (Message requestMessage = MessageComposer.CreateEnumerateMessage(filter, pageSize, attributesToReturn, sortingAttributes, locale))
             {
                 using (Message responseMessage = this.Invoke((c) => c.Enumerate(requestMessage)))
                 {

@@ -13,6 +13,26 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
     public class GetTests
     {
         [TestMethod]
+        public void TestLocale()
+        {
+            ResourceManagementClient client = new ResourceManagementClient();
+
+            try
+            {
+                //ResourceObject resource = client.GetResourceByKey("AttributeTypeDescription", "Name", "DisplayName", UnitTestHelper.TestCulture);
+
+                ResourceObject resource = client.GetResource("7dcc83b6-8be7-4717-a1ac-62b0b1b7ce29", UnitTestHelper.TestCulture);
+                Assert.AreEqual(UnitTestHelper.TestCulture, resource.Locale);
+                //Nome visualizzato
+            }
+            finally
+            {
+
+            }
+        }
+
+
+        [TestMethod]
         public void GetObjectByIDWithAllAttributes()
         {
             ResourceManagementClient client = new ResourceManagementClient();

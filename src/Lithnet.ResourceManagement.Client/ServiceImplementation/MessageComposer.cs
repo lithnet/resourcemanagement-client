@@ -6,6 +6,7 @@ using System.ServiceModel.Channels;
 using Microsoft.ResourceManagement.WebServices;
 using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
 using Microsoft.ResourceManagement.WebServices.WSEnumeration;
+using Microsoft.ResourceManagement.WebServices.WSResourceManagement;
 
 namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 {
@@ -19,7 +20,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
         internal static Message CreateGetMessage(UniqueIdentifier id)
         {
-            return CreateGetMessage(id, null, CultureInfo.InvariantCulture);
+            return CreateGetMessage(id, null, null);
         }
 
         internal static Message CreateGetMessage(UniqueIdentifier id, IEnumerable<string> attributes, CultureInfo locale)
@@ -30,7 +31,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             {
                 op = new Get();
                 op.Dialect = Namespaces.RMIdentityAttributeType;
-                op.Expressions = MessageComposer.AddMandatoryAttributes(attributes).ToArray();
+                op.Expressions = MessageComposer.AddMandatoryAttributes(attributes, locale).ToArray();
             }
 
             Message message;
@@ -45,7 +46,11 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                 message.AddHeader(Namespaces.IdMDirectoryAccess, HeaderConstants.IdentityManagementOperation, null, true);
             }
 
-            message.AddHeader("Locale", locale ?? CultureInfo.InvariantCulture);
+            if (locale != null)
+            {
+                message.AddHeader(AttributeNames.Locale, locale);
+            }
+
             message.AddHeader(HeaderConstants.ResourceReferenceProperty, id.ToString());
 
             return message;
@@ -118,7 +123,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             return message;
         }
 
-        internal static Message CreatePutMessage(ResourceObject resource)
+        internal static Message CreatePutMessage(ResourceObject resource, CultureInfo locale)
         {
             Put op = new Put();
 
@@ -136,10 +141,15 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             message.AddHeader(Namespaces.IdMDirectoryAccess, HeaderConstants.IdentityManagementOperation, null, true);
             message.AddHeader(HeaderConstants.ResourceReferenceProperty, resource.ObjectID.ToString());
 
+            if (locale != null || resource.Locale != null)
+            {
+                message.AddHeader(AttributeNames.Locale, locale ?? resource.Locale);
+            }
+
             return message;
         }
 
-        internal static Message CreatePutMessage(IEnumerable<ResourceObject> resources)
+        internal static Message CreatePutMessage(IEnumerable<ResourceObject> resources, CultureInfo locale)
         {
             int count = resources.Count();
             if (count == 0)
@@ -148,15 +158,22 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             }
             else if (count == 1)
             {
-                return MessageComposer.CreatePutMessage(resources.First());
+                return MessageComposer.CreatePutMessage(resources.First(), locale);
             }
 
             Put op = new Put();
 
             op.Dialect = Namespaces.RMIdentityAttributeType;
             List<PutFragmentType> fragments = new List<PutFragmentType>();
+            CultureInfo lastCulture = resources.First().Locale;
+
             foreach (ResourceObject resource in resources)
             {
+                if (lastCulture != resource.Locale)
+                {
+                    throw new NotSupportedException();
+                }
+
                 foreach (PutFragmentType fragment in resource.GetPutFragements())
                 {
                     fragment.TargetIdentifier = resource.ObjectID.Value;
@@ -176,6 +193,11 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             message.AddHeader(Namespaces.IdMDirectoryAccess, HeaderConstants.IdentityManagementOperation, null, true);
             message.AddHeader(Namespaces.ResourceManagement, HeaderConstants.CompositeTypeOperation, null);
             message.AddHeader(HeaderConstants.ResourceReferenceProperty, resources.Select(t => t.ObjectID.ToString()).ToCommaSeparatedString());
+
+            if (locale != null)
+            {
+                message.AddHeader(AttributeNames.Locale, locale);
+            }
 
             return message;
         }
@@ -218,7 +240,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             return message;
         }
 
-        internal static Message CreateEnumerateMessage(string filter, int pageSize, IEnumerable<string> attributes, IEnumerable<SortingAttribute> sortingAttributes)
+        internal static Message CreateEnumerateMessage(string filter, int pageSize, IEnumerable<string> attributes, IEnumerable<SortingAttribute> sortingAttributes, CultureInfo locale)
         {
             Enumerate request = new Enumerate();
             request.Filter = new FilterType(filter);
@@ -226,7 +248,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
             if (attributes != null)
             {
-                request.Selection = MessageComposer.AddMandatoryAttributes(attributes).ToArray();
+                request.Selection = MessageComposer.AddMandatoryAttributes(attributes, locale).ToArray();
             }
 
             if (sortingAttributes != null && sortingAttributes.Any())
@@ -234,6 +256,12 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                 request.Sorting = new Sorting();
                 request.Sorting.Dialect = Namespaces.ResourceManagement;
                 request.Sorting.SortingAttributes = sortingAttributes.ToArray();
+            }
+
+            if (locale != null)
+            {
+                request.LocalePreferences = new LocalePreferenceType[1];
+                request.LocalePreferences[0] = new LocalePreferenceType(locale, 1);
             }
 
             Message requestMessage = Message.CreateMessage(MessageVersion.Default, Namespaces.Enumerate, new SerializerBodyWriter(request));
@@ -263,11 +291,11 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
         {
             Message message = Message.CreateMessage(MessageVersion.Default, Namespaces.Create, new SerializerBodyWriter(response));
             message.Headers.Add(new ContextHeader(workflowID.Value));
-            
+
             return message;
         }
 
-        private static IEnumerable<string> AddMandatoryAttributes(IEnumerable<string> attributes)
+        private static IEnumerable<string> AddMandatoryAttributes(IEnumerable<string> attributes, CultureInfo locale)
         {
             HashSet<string> set = new HashSet<string>();
 
@@ -279,6 +307,11 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             foreach (string item in ResourceManagementSchema.MandatoryAttributes)
             {
                 set.Add(item);
+            }
+
+            if (locale != null)
+            {
+                set.Add(AttributeNames.Locale);
             }
 
             return set;

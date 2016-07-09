@@ -152,6 +152,11 @@ namespace Lithnet.ResourceManagement.Client
         /// The WorkflowInstance attribute
         /// </summary>
         public const string WorkflowInstance = "WorkflowInstance";
+
+        /// <summary>
+        /// The Locale attribute
+        /// </summary>
+        public const string Locale = "Locale";
     }
 }
 

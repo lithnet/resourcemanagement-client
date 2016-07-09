@@ -6,6 +6,7 @@ using System.Xml;
 using Lithnet.ResourceManagement.Client.ResourceManagementService;
 using Microsoft.ResourceManagement.WebServices.WSEnumeration;
 using Microsoft.ResourceManagement.WebServices.WSResourceManagement;
+using System.Globalization;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -14,6 +15,8 @@ namespace Lithnet.ResourceManagement.Client
     /// </summary>
     public class SearchResultPager 
     {
+        private CultureInfo locale;
+
         /// <summary>
         /// The enumeration context object provided by the Resource Management Service
         /// </summary>
@@ -77,7 +80,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="pageSize">The page size used in the search operation</param>
         /// <param name="searchClient">The client proxy used for performing the search</param>
         /// <param name="client">The client used to convert response data into ResourceObjects</param>
-        internal SearchResultPager(EnumerateResponse response, int pageSize, SearchClient searchClient, ResourceManagementClient client)
+        internal SearchResultPager(EnumerateResponse response, int pageSize, SearchClient searchClient, ResourceManagementClient client, CultureInfo locale)
         {
             if (response == null)
             {
@@ -96,6 +99,7 @@ namespace Lithnet.ResourceManagement.Client
 
             this.TotalCount = Convert.ToInt32(response.EnumerationDetail.Count);
             this.client = client;
+            this.locale = locale;
             this.context = response.EnumerationContext;
             this.context.CurrentIndex = 0;
             this.PageSize = pageSize;
@@ -113,7 +117,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 foreach (XmlElement item in items.Any.OfType<XmlElement>())
                 {
-                    yield return new ResourceObject(item, this.client);
+                    yield return new ResourceObject(item, this.client, this.locale);
                 }
             }
         }
