@@ -48,6 +48,7 @@ namespace Lithnet.ResourceManagement.Client
             builder.AppendLine(failure.AdministratorDetails.FailureMessage);
             builder.AppendLine("Details: " + failure.AdministratorDetails.AdditionalTextDetails);
             builder.AppendLine("Source: " + failure.AdministratorDetails.DispatchRequestFailureSource);
+            builder.AppendLine("Correlation ID: " + failure.CorrelationIdentifier);
             throw new UnwillingToPerformException(builder.ToString());
         }
 
@@ -73,7 +74,7 @@ namespace Lithnet.ResourceManagement.Client
             }
 
             AttributeRepresentationFailure failure = representationFailures.AttributeRepresentationFailures[0];
-
+            
             return new InvalidRepresentationException(failure.AttributeFailureCode, failure.AttributeType, failure.AttributeValue);
         }
 
@@ -98,11 +99,14 @@ namespace Lithnet.ResourceManagement.Client
             {
                 return new ResourceNotFoundException();
             }
-
+            
             StringBuilder builder = new StringBuilder();
             builder.AppendLine(fault.Reason.ToString());
             builder.AppendLine(fault.Code.Name);
             builder.AppendFormat("Source: {0}\n", failures.RequestAdministratorDetails.RequestFailureSource.ToString());
+            builder.AppendLine("Correlation ID: " + failures.CorrelationIdentifier);
+            builder.AppendLine("Additional text details: " + failures.RequestAdministratorDetails.AdditionalTextDetails);
+            builder.AppendLine("Failure message: " + failures.RequestAdministratorDetails.FailureMessage);
 
             if (attributes != null)
             {
