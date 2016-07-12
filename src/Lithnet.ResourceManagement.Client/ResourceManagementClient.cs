@@ -864,7 +864,7 @@
                 approvalStatusString = $"ApprovalStatus = '{status}' and ";
             }
 
-            string xpath = $"/Approval[{approvalStatusString}Approver='{userID.Value}'";
+            string xpath = $"/Approval[{approvalStatusString}Approver='{userID.Value}']";
             return this.GetResources(xpath, ResourceManagementSchema.ObjectTypes[ObjectTypeNames.Approval].Attributes.Select(t => t.SystemName));
         }
 
