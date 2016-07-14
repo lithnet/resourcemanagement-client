@@ -31,7 +31,7 @@ namespace Lithnet.ResourceManagement.Client
                 default:
                     break;
             }
-
+            
             return new FaultException(fault, fault.GetReaderAtDetailContents().ReadOuterXml());
         }
 
@@ -43,78 +43,37 @@ namespace Lithnet.ResourceManagement.Client
             {
                 return new FaultException(fault);
             }
-
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine(failure.AdministratorDetails.FailureMessage);
-            builder.AppendLine("Details: " + failure.AdministratorDetails.AdditionalTextDetails);
-            builder.AppendLine("Source: " + failure.AdministratorDetails.DispatchRequestFailureSource);
-            builder.AppendLine("Correlation ID: " + failure.CorrelationIdentifier);
-            throw new UnwillingToPerformException(builder.ToString());
+            
+            throw new UnwillingToPerformException(failure);
         }
 
         public static Exception GetInvalidRepresentationException(MessageFault fault)
         {
-            RepresentationFailures representationFailures = fault.DeserializeMessageWithPayload<RepresentationFailures>();
+            RepresentationFailures failure = fault.DeserializeMessageWithPayload<RepresentationFailures>();
 
-            if (representationFailures == null)
+            if (failure == null)
             {
                 return new FaultException(fault);
             }
 
-            if (representationFailures.AttributeRepresentationFailures == null || representationFailures.AttributeRepresentationFailures.Length == 0)
-            {
-                if (representationFailures.MessageRepresentationFailures != null && representationFailures.MessageRepresentationFailures.Length > 0)
-                {
-                    return new InvalidRepresentationException(representationFailures.MessageRepresentationFailures[0].MessageFailureCode);
-                }
-                else
-                {
-                    return new FaultException(fault);
-                }
-            }
-
-            AttributeRepresentationFailure failure = representationFailures.AttributeRepresentationFailures[0];
-            
-            return new InvalidRepresentationException(failure.AttributeFailureCode, failure.AttributeType, failure.AttributeValue);
+            return InvalidRepresentationException.GetException(failure);
         }
 
         public static Exception GetPermissionDeniedException(MessageFault fault)
         {
-            RequestFailures failures = fault.DeserializeMessageWithPayload<RequestFailures>();
+            RequestFailures failure = fault.DeserializeMessageWithPayload<RequestFailures>();
 
-            if (failures == null || failures.RequestAdministratorDetails == null)
+            if (failure == null)
             {
-                return new PermissionDeniedException(fault.Reason.ToString());
+                return new FaultException(fault);
             }
 
-            string[] failedAttributeNames = failures.RequestAdministratorDetails.FailedAttributes == null ? null : failures.RequestAdministratorDetails.FailedAttributes.AttributeType;
-            string attributes = string.Empty;
-
-            if (failedAttributeNames != null)
-            {
-                attributes = failures.RequestAdministratorDetails.FailedAttributes == null ? null : failures.RequestAdministratorDetails.FailedAttributes.AttributeType.ToCommaSeparatedString();
-            }
-
-            if (failures.RequestAdministratorDetails.RequestFailureSource == RequestFailureSource.ResourceIsMissing)
+            if (failure.RequestAdministratorDetails?.RequestFailureSource == RequestFailureSource.ResourceIsMissing)
             {
                 return new ResourceNotFoundException();
             }
-            
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine(fault.Reason.ToString());
-            builder.AppendLine(fault.Code.Name);
-            builder.AppendFormat("Source: {0}\n", failures.RequestAdministratorDetails.RequestFailureSource.ToString());
-            builder.AppendLine("Correlation ID: " + failures.CorrelationIdentifier);
-            builder.AppendLine("Additional text details: " + failures.RequestAdministratorDetails.AdditionalTextDetails);
-            builder.AppendLine("Failure message: " + failures.RequestAdministratorDetails.FailureMessage);
 
-            if (attributes != null)
-            {
-                builder.AppendFormat("Attributes: {0}\n", attributes);
-            }
-
-            PermissionDeniedException ex = new PermissionDeniedException(failures.RequestAdministratorDetails.RequestFailureSource, null, failedAttributeNames);
-            return new PermissionDeniedException(builder.ToString(), ex);
+            return new PermissionDeniedException(failure);
         }
     }
 }

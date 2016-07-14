@@ -9,7 +9,7 @@ namespace Lithnet.ResourceManagement.Client
     /// The exception that is thrown when an resource could not be found
     /// </summary>
     [Serializable]
-    public class ResourceNotFoundException : Exception
+    public class ResourceNotFoundException : ResourceManagementException
     {
         /// <summary>
         /// Initializes a new instance of the ResourceNotFoundException class
@@ -33,8 +33,8 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <param name="message">The error message that explains the reason for the exception</param>
         /// <param name="innerException">The exception that was the cause of this exception</param>
-        public ResourceNotFoundException(string message, Exception innerException) :
-            base(message,innerException)
+        public ResourceNotFoundException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
     }
