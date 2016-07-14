@@ -46,7 +46,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             }
             catch (FaultException<RepresentationFailures> e)
             {
-                throw new InvalidRepresentationException(e.Detail.AttributeRepresentationFailures[0].AttributeFailureCode, e.Detail.AttributeRepresentationFailures[0].AttributeType, e.Detail.AttributeRepresentationFailures[0].AttributeValue);
+                throw InvalidRepresentationException.GetException(e.Detail);
             }
         }
         
@@ -103,7 +103,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             }
             catch (FaultException<RepresentationFailures> e)
             {
-                throw new InvalidRepresentationException(e.Detail.AttributeRepresentationFailures[0].AttributeFailureCode, e.Detail.AttributeRepresentationFailures[0].AttributeType, e.Detail.AttributeRepresentationFailures[0].AttributeValue);
+                throw InvalidRepresentationException.GetException(e.Detail);
             }
         }
     }
