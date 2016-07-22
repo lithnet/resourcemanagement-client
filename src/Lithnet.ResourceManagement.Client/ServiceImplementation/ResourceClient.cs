@@ -20,14 +20,14 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             this.client = client;
         }
 
-        public void Put(ResourceObject resource)
+        public void Put(ResourceObject resource, CultureInfo locale)
         {
             if (resource == null)
             {
                 throw new ArgumentNullException("resource");
             }
 
-            using (Message message = MessageComposer.CreatePutMessage(resource))
+            using (Message message = MessageComposer.CreatePutMessage(resource, locale))
             {
                 if (message == null)
                 {
@@ -47,7 +47,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             {
                 throw new ArgumentNullException("resources");
             }
-
+           
             using (Message message = MessageComposer.CreatePutMessage(resources))
             {
                 if (message == null)
@@ -68,8 +68,9 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             {
                 throw new ArgumentNullException("id");
             }
-            bool partialResponse = attributes != null;
 
+            bool partialResponse = attributes != null;
+            
             GetResponse r = new GetResponse();
 
             using (Message message = MessageComposer.CreateGetMessage(id, attributes, locale))
@@ -81,12 +82,12 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                     if (partialResponse)
                     {
                         GetResponse response = responseMessage.DeserializeMessageWithPayload<GetResponse>();
-                        return new ResourceObject(response.Results.OfType<XmlElement>(), this.client);
+                        return new ResourceObject(response.Results.OfType<XmlElement>(), this.client, locale);
                     }
                     else
                     {
                         XmlDictionaryReader fullObject = responseMessage.GetReaderAtBodyContents();
-                        return new ResourceObject(fullObject, this.client);
+                        return new ResourceObject(fullObject, this.client, locale);
                     }
                 }
             }
@@ -129,21 +130,6 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             }
         }
 
-        internal ResourceObject Get(UniqueIdentifier id)
-        {
-            return this.Get(id, null, null);
-        }
-
-        internal ResourceObject Get(UniqueIdentifier id, CultureInfo locale)
-        {
-            return this.Get(id, null, locale);
-        }
-
-        internal ResourceObject Get(UniqueIdentifier id, IEnumerable<string> attributesToGet)
-        {
-            return this.Get(id, attributesToGet, null);
-        }
-
         internal XmlDictionaryReader GetFullObjectForUpdate(ResourceObject resource)
         {
             if (resource == null)
@@ -153,7 +139,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
             GetResponse r = new GetResponse();
 
-            using (Message message = MessageComposer.CreateGetMessage(resource.ObjectID))
+            using (Message message = MessageComposer.CreateGetMessage(resource.ObjectID, null, resource.Locale))
             {
                 using (Message responseMessage = this.Invoke((c) => c.Get(message)))
                 {

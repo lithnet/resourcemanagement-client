@@ -42,7 +42,7 @@
         /// The local instance of the Search proxy
         /// </summary>
         private SearchClient searchClient;
-        
+
         /// <summary>
         /// The binding used to connect to the resource management service
         /// </summary>
@@ -385,7 +385,12 @@
         /// <param name="resources">The collection of resources to update</param>
         public void SaveResources(IEnumerable<ResourceObject> resources)
         {
-            IEnumerable<ResourceObject> resourceObjects = resources as IList<ResourceObject> ?? resources.ToList();
+            IList<ResourceObject> resourceObjects = resources as IList<ResourceObject> ?? resources.ToList();
+
+            if (resourceObjects.Any(t => t.Locale != null))
+            {
+                throw new InvalidOperationException("Cannot perform a composite save on a localized resource");
+            }
 
             List<ResourceObject> objectsToCreate = resourceObjects.Where(t => t.ModificationType == OperationType.Create).ToList();
             if (objectsToCreate.Count > 0)
@@ -428,7 +433,7 @@
         /// <param name="resources">The resources to save</param>
         public void SaveResourcesParallel(IEnumerable<ResourceObject> resources)
         {
-            this.SaveResourcesParallel(resources, 0);
+            this.SaveResourcesParallel(resources, 0, null);
 
         }
 
@@ -442,6 +447,20 @@
         /// <param name="resources">The resources to save</param>
         public void SaveResourcesParallel(IEnumerable<ResourceObject> resources, int maxDegreeOfParallelism)
         {
+            this.SaveResourcesParallel(resources, maxDegreeOfParallelism, null);
+        }
+
+        /// <summary>
+        /// Saves the specified resources in the resource management service. Each update is performed on its own thread
+        /// </summary>
+        /// <remarks>
+        /// This method will reorder the operations to perform creates first, followed by updates and finally deletes
+        /// </remarks>
+        /// <param name="maxDegreeOfParallelism">The maximum number of threads to use for the operation</param>
+        /// <param name="locale">The localization culture to use when saving the object</param>
+        /// <param name="resources">The resources to save</param>
+        public void SaveResourcesParallel(IEnumerable<ResourceObject> resources, int maxDegreeOfParallelism, CultureInfo locale)
+        {
             ConcurrentQueue<ResourceObject> createResources = new ConcurrentQueue<ResourceObject>(resources.Where(t => t.ModificationType == OperationType.Create));
             ConcurrentQueue<ResourceObject> updateResources = new ConcurrentQueue<ResourceObject>(resources.Where(t => t.ModificationType == OperationType.Update));
             ConcurrentQueue<ResourceObject> deleteResources = new ConcurrentQueue<ResourceObject>(resources.Where(t => t.ModificationType == OperationType.Delete));
@@ -454,17 +473,17 @@
 
             Parallel.ForEach(createResources, op, (resource =>
             {
-                this.SaveResource(resource);
+                this.SaveResource(resource, locale);
             }));
 
             Parallel.ForEach(updateResources, op, (resource =>
             {
-                this.SaveResource(resource);
+                this.SaveResource(resource, locale);
             }));
 
             Parallel.ForEach(deleteResources, op, (resource =>
             {
-                this.SaveResource(resource);
+                this.SaveResource(resource, locale);
             }));
         }
 
@@ -473,6 +492,16 @@
         /// </summary>
         /// <param name="resource">The resource to save</param>
         public void SaveResource(ResourceObject resource)
+        {
+            this.SaveResource(resource, null);
+        }
+
+        /// <summary>
+        /// Saves the specified resource in the resource management service
+        /// </summary>
+        /// <param name="resource">The resource to save</param>
+        /// <param name="locale">The localization culture to use when saving the object</param>
+        public void SaveResource(ResourceObject resource, CultureInfo locale)
         {
             switch (resource.ModificationType)
             {
@@ -484,7 +513,7 @@
                     break;
 
                 case OperationType.Update:
-                    this.PutResource(resource);
+                    this.PutResource(resource, locale);
                     resource.CommitChanges();
                     break;
 
@@ -495,7 +524,6 @@
                 default:
                     break;
             }
-
         }
 
         /// <summary>
@@ -540,7 +568,18 @@
         /// </example>
         public ResourceObject GetResource(Guid id)
         {
-            return this.GetResource(new UniqueIdentifier(id), null);
+            return this.GetResource(new UniqueIdentifier(id), null, null);
+        }
+
+        /// <summary>
+        /// Gets a resource from the resource management service, retrieving all attributes for the resource
+        /// </summary>
+        /// <param name="id">The ID of the resource to get</param>
+        /// <param name="locale">The culture to use to request a localized version of the object</param>
+        /// <returns>The resource represented by the specified ID</returns>
+        public ResourceObject GetResource(Guid id, CultureInfo locale)
+        {
+            return this.GetResource(new UniqueIdentifier(id), null, locale);
         }
 
         /// <summary>
@@ -558,6 +597,19 @@
             return this.GetResource(new UniqueIdentifier(id), attributesToGet);
         }
 
+
+        /// <summary>
+        /// Gets a resource from the resource management service, retrieving only a specified set of attributes for the resource
+        /// </summary>
+        /// <param name="id">The ID of the resource to get</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="locale">The culture to use to request a localized version of the object</param>
+        /// <returns>The resource represented by the specified ID</returns>
+        public ResourceObject GetResource(Guid id, IEnumerable<string> attributesToGet, CultureInfo locale)
+        {
+            return this.GetResource(new UniqueIdentifier(id), attributesToGet, locale);
+        }
+
         /// <summary>
         /// Gets a resource from the resource management service, retrieving all attributes for the resource
         /// </summary>
@@ -569,7 +621,18 @@
         /// </example>
         public ResourceObject GetResource(string id)
         {
-            return this.GetResource(new UniqueIdentifier(id), null);
+            return this.GetResource(new UniqueIdentifier(id), null, null);
+        }
+
+        /// <summary>
+        /// Gets a resource from the resource management service, retrieving all attributes for the resource
+        /// </summary>
+        /// <param name="id">The ID of the resource to get as a GUID in string format</param>
+        /// <param name="locale">The culture to use to request a localized version of the object</param>
+        /// <returns>The resource represented by the specified ID</returns>
+        public ResourceObject GetResource(string id, CultureInfo locale)
+        {
+            return this.GetResource(new UniqueIdentifier(id), null, locale);
         }
 
         /// <summary>
@@ -588,6 +651,18 @@
         }
 
         /// <summary>
+        /// Gets a resource from the resource management service, retrieving only a specified set of attributes for the resource
+        /// </summary>
+        /// <param name="id">The ID of the resource to get as a GUID in string format</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="locale">The culture to use to request a localized version of the object</param>
+        /// <returns>The resource represented by the specified ID</returns>
+        public ResourceObject GetResource(string id, IEnumerable<string> attributesToGet, CultureInfo locale)
+        {
+            return this.GetResource(new UniqueIdentifier(id), attributesToGet, locale);
+        }
+
+        /// <summary>
         /// Gets a resource from the resource management service, retrieving all attributes for the resource
         /// </summary>
         /// <param name="id">The ID of the resource to get</param>
@@ -598,7 +673,18 @@
         /// </example>
         public ResourceObject GetResource(UniqueIdentifier id)
         {
-            return this.resourceClient.Get(id);
+            return this.resourceClient.Get(id, null, null);
+        }
+
+        /// <summary>
+        /// Gets a resource from the resource management service, retrieving all attributes for the resource
+        /// </summary>
+        /// <param name="id">The ID of the resource to get</param>
+        /// <param name="locale">The culture to use to request a localized version of the object</param>
+        /// <returns>The resource represented by the specified ID</returns>
+        public ResourceObject GetResource(UniqueIdentifier id, CultureInfo locale)
+        {
+            return this.resourceClient.Get(id, null, locale);
         }
 
         /// <summary>
@@ -613,7 +699,7 @@
         /// </example>
         public ResourceObject GetResource(UniqueIdentifier id, IEnumerable<string> attributesToGet)
         {
-            return this.resourceClient.Get(id, attributesToGet);
+            return this.resourceClient.Get(id, attributesToGet, null);
         }
 
         /// <summary>
@@ -621,7 +707,7 @@
         /// </summary>
         /// <param name="id">The ID of the resource to get</param>
         /// <param name="attributesToGet">The list of attributes to retrieve</param>
-        /// <param name="locale">The locale to submit with the get request</param>
+        /// <param name="locale">The culture to use to request a localized version of the object</param>
         /// <returns>The resource represented by the specified ID</returns>
         /// <example>
         /// The following example shows how to get an object from a reference value
@@ -631,7 +717,6 @@
         {
             return this.resourceClient.Get(id, attributesToGet, locale);
         }
-
 
         /// <summary>
         /// Gets a resource from the resource management service using a unique attribute and value combination, retrieving all attributes for the resource
@@ -647,7 +732,25 @@
         /// </example>
         public ResourceObject GetResourceByKey(string objectType, string attributeName, object value)
         {
-            return this.GetResourceByKey(objectType, attributeName, value, null);
+            return this.GetResourceByKey(objectType, attributeName, value, null, null);
+        }
+
+        /// <summary>
+        /// Gets a resource from the resource management service using a unique attribute and value combination, retrieving all attributes for the resource
+        /// </summary>
+        /// <param name="objectType">The type of object to retrieve</param>
+        /// <param name="attributeName">The name of the attribute used as the key</param>
+        /// <param name="value">The value of the attribute</param>
+        /// <param name="locale">The culture to use to request a localized version of the object</param>
+        /// <returns>A resource that matches the specified criteria, or null of no object was found</returns>
+        /// <exception cref="TooManyResultsException">The method will throw this exception when more that one match was found for the specified criteria</exception>
+        /// <example>
+        /// The following example shows how get a user by its AccountName attribute
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, String, String)"/>
+        /// </example>
+        public ResourceObject GetResourceByKey(string objectType, string attributeName, object value, CultureInfo locale)
+        {
+            return this.GetResourceByKey(objectType, attributeName, value, null, locale);
         }
 
         /// <summary>
@@ -669,6 +772,28 @@
             values.Add(attributeName, value);
 
             return this.GetResourceByKey(objectType, values, attributesToGet);
+        }
+
+        /// <summary>
+        /// Gets a resource from the resource management service using a unique attribute and value combination, retrieving the specified attributes for the resource
+        /// </summary>
+        /// <param name="objectType">The type of object to retrieve</param>
+        /// <param name="attributeName">The name of the attribute used as the key</param>
+        /// <param name="value">The value of the attribute</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="locale">The culture to use to request a localized version of the object</param>
+        /// <returns>A resource that matches the specified criteria, or null of no object was found</returns>
+        /// <exception cref="TooManyResultsException">The method will throw this exception when more that one match was found for the specified criteria</exception>
+        /// <example>
+        /// The following example shows how get a user by its AccountName attribute
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, String, String)"/>
+        /// </example>
+        public ResourceObject GetResourceByKey(string objectType, string attributeName, object value, IEnumerable<string> attributesToGet, CultureInfo locale)
+        {
+            Dictionary<string, object> values = new Dictionary<string, object>();
+            values.Add(attributeName, value);
+
+            return this.GetResourceByKey(objectType, values, attributesToGet, locale);
         }
 
         /// <summary>
@@ -701,6 +826,24 @@
         /// </example>
         public ResourceObject GetResourceByKey(string objectType, Dictionary<string, object> attributeValuePairs, IEnumerable<string> attributesToGet)
         {
+            return this.GetResourceByKey(objectType, attributeValuePairs, attributesToGet, null);
+        }
+
+        /// <summary>
+        /// Gets a resource from the resource management service using a set of unique attribute and value combinations, retrieving the specified attributes for the resource
+        /// </summary>
+        /// <param name="objectType">The type of object to retrieve</param>
+        /// <param name="attributeValuePairs">A list of attribute value pairs that make this object unique</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="locale">The culture to use to request a localized version of the object</param>
+        /// <returns>A resource that matches the specified criteria, or null of no object was found</returns>
+        /// <exception cref="TooManyResultsException">The method will throw this exception when more that one match was found for the specified criteria</exception>
+        /// <example>
+        /// The following example shows how get a user by using the AccountName and Domain pair of anchor attributes
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, Dictionary{String, String})"/>
+        /// </example>
+        public ResourceObject GetResourceByKey(string objectType, Dictionary<string, object> attributeValuePairs, IEnumerable<string> attributesToGet, CultureInfo locale)
+        {
             string filter = XPathFilterBuilder.CreateFilter(objectType, attributeValuePairs, ComparisonOperator.Equals, GroupOperator.And);
 
             if (attributesToGet == null)
@@ -708,7 +851,7 @@
                 attributesToGet = ResourceManagementSchema.GetObjectType(objectType).Attributes.Select(t => t.SystemName);
             }
 
-            ISearchResultCollection results = this.searchClient.EnumerateSync(filter, 1, attributesToGet, null);
+            ISearchResultCollection results = this.searchClient.EnumerateSync(filter, 1, attributesToGet, null, locale);
 
             if (results.Count == 0)
             {
@@ -732,7 +875,19 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResources(string filter)
         {
-            return this.searchClient.EnumerateSync(filter, -1, null, null);
+            return this.searchClient.EnumerateSync(filter, -1, null, null, null);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, synchronously, using the default page size
+        /// WARNING: Due to the way that the resource management client processes unconstrained XPath queries, this function can cause excessive load on the underlying database. If the object type or attributes are known, use the overload of this function that supports specifying the attributes to get
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="locale">The culture to use to request a localized version of the objects</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResources(string filter, CultureInfo locale)
+        {
+            return this.searchClient.EnumerateSync(filter, -1, null, null, locale);
         }
 
         /// <summary>
@@ -743,7 +898,19 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResources(string filter, IEnumerable<string> attributesToGet)
         {
-            return this.searchClient.EnumerateSync(filter, -1, attributesToGet, null);
+            return this.searchClient.EnumerateSync(filter, -1, attributesToGet, null, null);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, synchronously, using the default page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="locale">The culture to use to request a localized version of the objects</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResources(string filter, IEnumerable<string> attributesToGet, CultureInfo locale)
+        {
+            return this.searchClient.EnumerateSync(filter, -1, attributesToGet, null, locale);
         }
 
         /// <summary>
@@ -762,7 +929,7 @@
             }
 
             SortingAttribute attribute = new SortingAttribute(sortAttribute, sortAscending);
-            return this.searchClient.EnumerateSync(filter, -1, attributesToGet, new SortingAttribute[] { attribute });
+            return this.searchClient.EnumerateSync(filter, -1, attributesToGet, new SortingAttribute[] { attribute }, null);
         }
 
         /// <summary>
@@ -779,7 +946,25 @@
                 throw new ArgumentNullException("sortAttributes");
             }
 
-            return this.searchClient.EnumerateSync(filter, -1, attributesToGet, sortAttributes);
+            return this.searchClient.EnumerateSync(filter, -1, attributesToGet, sortAttributes, null);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, synchronously, using the specified page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="sortAttributes">A collection of attribute names and sort directions to order the results with</param>
+        /// <param name="locale">The culture to use to request a localized version of the objects</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResources(string filter, IEnumerable<string> attributesToGet, IEnumerable<SortingAttribute> sortAttributes, CultureInfo locale)
+        {
+            if (sortAttributes == null)
+            {
+                throw new ArgumentNullException("sortAttributes");
+            }
+
+            return this.searchClient.EnumerateSync(filter, -1, attributesToGet, sortAttributes, locale);
         }
 
         /// <summary>
@@ -791,7 +976,7 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResources(string filter, int pageSize)
         {
-            return this.searchClient.EnumerateSync(filter, pageSize, null, null);
+            return this.searchClient.EnumerateSync(filter, pageSize, null, null, null);
         }
 
         /// <summary>
@@ -803,7 +988,20 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResources(string filter, int pageSize, IEnumerable<string> attributesToGet)
         {
-            return this.searchClient.EnumerateSync(filter, pageSize, attributesToGet, null);
+            return this.searchClient.EnumerateSync(filter, pageSize, attributesToGet, null, null);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, synchronously, using the specified page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="locale">The culture to use to request a localized version of the objects</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResources(string filter, int pageSize, IEnumerable<string> attributesToGet, CultureInfo locale)
+        {
+            return this.searchClient.EnumerateSync(filter, pageSize, attributesToGet, null, locale);
         }
 
         /// <summary>
@@ -823,7 +1021,7 @@
             }
 
             SortingAttribute attribute = new SortingAttribute(sortAttribute, sortAscending);
-            return this.searchClient.EnumerateSync(filter, pageSize, attributesToGet, new SortingAttribute[] { attribute });
+            return this.searchClient.EnumerateSync(filter, pageSize, attributesToGet, new SortingAttribute[] { attribute }, null);
         }
 
         /// <summary>
@@ -932,7 +1130,26 @@
                 throw new ArgumentNullException("sortAttributes");
             }
 
-            return this.searchClient.EnumerateSync(filter, pageSize, attributesToGet, sortAttributes);
+            return this.searchClient.EnumerateSync(filter, pageSize, attributesToGet, sortAttributes, null);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, synchronously, using the specified page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="sortAttributes">A collection of attribute names and sort directions to order the results with</param>
+        /// <param name="locale">The culture to use to request a localized version of the objects</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResources(string filter, int pageSize, IEnumerable<string> attributesToGet, IEnumerable<SortingAttribute> sortAttributes, CultureInfo locale)
+        {
+            if (sortAttributes == null)
+            {
+                throw new ArgumentNullException("sortAttributes");
+            }
+
+            return this.searchClient.EnumerateSync(filter, pageSize, attributesToGet, sortAttributes, locale);
         }
 
         /// <summary>
@@ -943,7 +1160,19 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResourcesAsync(string filter)
         {
-            return this.searchClient.EnumerateAsync(filter, -1, null, null, null);
+            return this.searchClient.EnumerateAsync(filter, -1, null, null, null, null);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the default page size
+        /// WARNING: Due to the way that the resource management client processes unconstrained XPath queries, this function can cause excessive load on the underlying database. If the object type or attributes are known, use the overload of this function that supports specifying the attributes to get
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="locale">The culture to use to request a localized version of the objects</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, CultureInfo locale)
+        {
+            return this.searchClient.EnumerateAsync(filter, -1, null, null, locale, null);
         }
 
         /// <summary>
@@ -954,8 +1183,21 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResourcesAsync(string filter, IEnumerable<string> attributesToGet)
         {
-            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, null, null);
+            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, null, null, null);
         }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the default page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="locale">The culture to use to request a localized version of the objects</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, IEnumerable<string> attributesToGet, CultureInfo locale)
+        {
+            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, null, locale, null);
+        }
+
 
         /// <summary>
         /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size, and retrieving the specified attributes
@@ -973,7 +1215,7 @@
             }
 
             SortingAttribute attribute = new SortingAttribute(sortAttribute, sortAscending);
-            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, new SortingAttribute[] { attribute }, null);
+            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, new SortingAttribute[] { attribute }, null, null);
         }
 
         /// <summary>
@@ -990,7 +1232,25 @@
                 throw new ArgumentNullException("sortAttributes");
             }
 
-            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, sortAttributes, null);
+            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, sortAttributes, null, null);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="sortAttributes">A collection of attribute names and sort directions to order the results with</param>
+        /// <param name="locale">The culture to use to request a localized version of the objects</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, IEnumerable<string> attributesToGet, IEnumerable<SortingAttribute> sortAttributes, CultureInfo locale)
+        {
+            if (sortAttributes == null)
+            {
+                throw new ArgumentNullException("sortAttributes");
+            }
+
+            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, sortAttributes, locale, null);
         }
 
         /// <summary>
@@ -1002,7 +1262,20 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResourcesAsync(string filter, int pageSize)
         {
-            return this.searchClient.EnumerateAsync(filter, pageSize, null, null, null);
+            return this.searchClient.EnumerateAsync(filter, pageSize, null, null, null, null);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size
+        /// WARNING: Due to the way that the resource management client processes unconstrained XPath queries, this function can cause excessive load on the underlying database. If the object type or attributes are known, use the overload of this function that supports specifying the attributes to get
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="locale">The culture to use to request a localized version of the objects</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, int pageSize, CultureInfo locale)
+        {
+            return this.searchClient.EnumerateAsync(filter, pageSize, null, null, locale, null);
         }
 
         /// <summary>
@@ -1014,7 +1287,20 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResourcesAsync(string filter, int pageSize, IEnumerable<string> attributesToGet)
         {
-            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, null, null);
+            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, null, null, null);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="locale">The culture to use to request a localized version of the objects</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, int pageSize, IEnumerable<string> attributesToGet, CultureInfo locale)
+        {
+            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, null, locale, null);
         }
 
         /// <summary>
@@ -1034,7 +1320,7 @@
             }
 
             SortingAttribute attribute = new SortingAttribute(sortAttribute, sortAscending);
-            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, new SortingAttribute[] { attribute }, null);
+            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, new SortingAttribute[] { attribute }, null, null);
         }
 
         /// <summary>
@@ -1052,7 +1338,26 @@
                 throw new ArgumentNullException("sortAttributes");
             }
 
-            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, sortAttributes, null);
+            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, sortAttributes, null, null);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="sortAttributes">A collection of attribute names and sort directions to order the results with</param>
+        /// <param name="locale">The culture to use to request a localized version of the objects</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, int pageSize, IEnumerable<string> attributesToGet, IEnumerable<SortingAttribute> sortAttributes, CultureInfo locale)
+        {
+            if (sortAttributes == null)
+            {
+                throw new ArgumentNullException("sortAttributes");
+            }
+
+            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, sortAttributes, locale, null);
         }
 
         /// <summary>
@@ -1064,7 +1369,20 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResourcesAsync(string filter, CancellationTokenSource cancellationToken)
         {
-            return this.searchClient.EnumerateAsync(filter, -1, null, null, cancellationToken);
+            return this.searchClient.EnumerateAsync(filter, -1, null, null, null, cancellationToken);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the default page size
+        /// WARNING: Due to the way that the resource management client processes unconstrained XPath queries, this function can cause excessive load on the underlying database. If the object type or attributes are known, use the overload of this function that supports specifying the attributes to get
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="locale">The culture to use to request a localized version of the objects</param>
+        /// <param name="cancellationToken">A cancellation object that can be used to terminate the search</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, CultureInfo locale, CancellationTokenSource cancellationToken)
+        {
+            return this.searchClient.EnumerateAsync(filter, -1, null, null, locale, cancellationToken);
         }
 
         /// <summary>
@@ -1076,7 +1394,20 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResourcesAsync(string filter, IEnumerable<string> attributesToGet, CancellationTokenSource cancellationToken)
         {
-            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, null, cancellationToken);
+            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, null, null, cancellationToken);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the default page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="locale">The culture to use to request a localized version of the objects</param>
+        /// <param name="cancellationToken">A cancellation object that can be used to terminate the search</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, IEnumerable<string> attributesToGet, CultureInfo locale, CancellationTokenSource cancellationToken)
+        {
+            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, null, locale, cancellationToken);
         }
 
         /// <summary>
@@ -1096,7 +1427,7 @@
             }
 
             SortingAttribute attribute = new SortingAttribute(sortAttribute, sortAscending);
-            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, new SortingAttribute[] { attribute }, cancellationToken);
+            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, new SortingAttribute[] { attribute }, null, cancellationToken);
         }
 
         /// <summary>
@@ -1114,7 +1445,26 @@
                 throw new ArgumentNullException("sortAttributes");
             }
 
-            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, sortAttributes, cancellationToken);
+            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, sortAttributes, null, cancellationToken);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="sortAttributes">A collection of attribute names and sort directions to order the results with</param>
+        /// <param name="locale">The culture to use to request a localized version of the objects</param>
+        /// <param name="cancellationToken">A cancellation object that can be used to terminate the search</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, IEnumerable<string> attributesToGet, IEnumerable<SortingAttribute> sortAttributes, CultureInfo locale, CancellationTokenSource cancellationToken)
+        {
+            if (sortAttributes == null)
+            {
+                throw new ArgumentNullException("sortAttributes");
+            }
+
+            return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, sortAttributes, locale, cancellationToken);
         }
 
         /// <summary>
@@ -1127,7 +1477,21 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResourcesAsync(string filter, int pageSize, CancellationTokenSource cancellationToken)
         {
-            return this.searchClient.EnumerateAsync(filter, pageSize, null, null, cancellationToken);
+            return this.searchClient.EnumerateAsync(filter, pageSize, null, null, null, cancellationToken);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size
+        /// WARNING: Due to the way that the resource management client processes unconstrained XPath queries, this function can cause excessive load on the underlying database. If the object type or attributes are known, use the overload of this function that supports specifying the attributes to get
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="locale">The culture to use to request a localized version of the objects</param>
+        /// <param name="cancellationToken">A cancellation object that can be used to terminate the search</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, int pageSize, CultureInfo locale, CancellationTokenSource cancellationToken)
+        {
+            return this.searchClient.EnumerateAsync(filter, pageSize, null, null, locale, cancellationToken);
         }
 
         /// <summary>
@@ -1140,7 +1504,21 @@
         /// <returns>A collection of matching resource objects</returns>
         public ISearchResultCollection GetResourcesAsync(string filter, int pageSize, IEnumerable<string> attributesToGet, CancellationTokenSource cancellationToken)
         {
-            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, null, cancellationToken);
+            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, null, null, cancellationToken);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="locale">The culture to use to request a localized version of the objects</param>
+        /// <param name="cancellationToken">A cancellation object that can be used to terminate the search</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, int pageSize, IEnumerable<string> attributesToGet, CultureInfo locale, CancellationTokenSource cancellationToken)
+        {
+            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, null, locale, cancellationToken);
         }
 
         /// <summary>
@@ -1161,7 +1539,7 @@
             }
 
             SortingAttribute attribute = new SortingAttribute(sortAttribute, sortAscending);
-            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, new SortingAttribute[] { attribute }, cancellationToken);
+            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, new SortingAttribute[] { attribute }, null, cancellationToken);
         }
 
         /// <summary>
@@ -1180,7 +1558,27 @@
                 throw new ArgumentNullException("sortAttributes");
             }
 
-            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, sortAttributes, cancellationToken);
+            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, sortAttributes, null, cancellationToken);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size, and retrieving the specified attributes
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="sortAttributes">A collection of attribute names and sort directions to order the results with</param>
+        /// <param name="locale">The culture to use to request a localized version of the objects</param>
+        /// <param name="cancellationToken">A cancellation object that can be used to terminate the search</param>
+        /// <returns>A collection of matching resource objects</returns>
+        public ISearchResultCollection GetResourcesAsync(string filter, int pageSize, IEnumerable<string> attributesToGet, IEnumerable<SortingAttribute> sortAttributes, CultureInfo locale, CancellationTokenSource cancellationToken)
+        {
+            if (sortAttributes == null)
+            {
+                throw new ArgumentNullException("sortAttributes");
+            }
+
+            return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, sortAttributes, locale, cancellationToken);
         }
 
         /// <summary>
@@ -1191,7 +1589,19 @@
         /// <returns>An object that can be used to navigate through the search results</returns>
         public SearchResultPager GetResourcesPaged(string filter, int pageSize)
         {
-            return this.searchClient.EnumeratePaged(filter, pageSize, null, null);
+            return this.searchClient.EnumeratePaged(filter, pageSize, null, null, null);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, using a SearchResultPager to navigate through the result set
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="locale">The culture to use to request a localized version of the objects</param>
+        /// <returns>An object that can be used to navigate through the search results</returns>
+        public SearchResultPager GetResourcesPaged(string filter, int pageSize, CultureInfo locale)
+        {
+            return this.searchClient.EnumeratePaged(filter, pageSize, null, null, locale);
         }
 
         /// <summary>
@@ -1203,7 +1613,20 @@
         /// <returns>An object that can be used to navigate through the search results</returns>
         public SearchResultPager GetResourcesPaged(string filter, int pageSize, IEnumerable<string> attributesToGet)
         {
-            return this.searchClient.EnumeratePaged(filter, pageSize, attributesToGet, null);
+            return this.searchClient.EnumeratePaged(filter, pageSize, attributesToGet, null, null);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, using a SearchResultPager to navigate through the result set
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="locale">The culture to use to request a localized version of the objects</param>
+        /// <returns>An object that can be used to navigate through the search results</returns>
+        public SearchResultPager GetResourcesPaged(string filter, int pageSize, IEnumerable<string> attributesToGet, CultureInfo locale)
+        {
+            return this.searchClient.EnumeratePaged(filter, pageSize, attributesToGet, null, locale);
         }
 
         /// <summary>
@@ -1216,7 +1639,21 @@
         /// <returns>An object that can be used to navigate through the search results</returns>
         public SearchResultPager GetResourcesPaged(string filter, int pageSize, IEnumerable<string> attributesToGet, IEnumerable<SortingAttribute> sortAttributes)
         {
-            return this.searchClient.EnumeratePaged(filter, pageSize, attributesToGet, sortAttributes);
+            return this.searchClient.EnumeratePaged(filter, pageSize, attributesToGet, sortAttributes, null);
+        }
+
+        /// <summary>
+        /// Uses the specified XPath filter to find matching objects in the resource management service, using a SearchResultPager to navigate through the result set
+        /// </summary>
+        /// <param name="filter">The XPath filter defining the search criteria</param>
+        /// <param name="pageSize">The number of results to request from the server at a time</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="sortAttributes">A collection of attribute names and sort directions to order the results with</param>
+        /// <param name="locale">The culture to use to request a localized version of the objects</param>
+        /// <returns>An object that can be used to navigate through the search results</returns>
+        public SearchResultPager GetResourcesPaged(string filter, int pageSize, IEnumerable<string> attributesToGet, IEnumerable<SortingAttribute> sortAttributes, CultureInfo locale)
+        {
+            return this.searchClient.EnumeratePaged(filter, pageSize, attributesToGet, sortAttributes, locale);
         }
 
         /// <summary>
@@ -1236,7 +1673,7 @@
             }
 
             SortingAttribute attribute = new SortingAttribute(sortAttribute, sortAscending);
-            return this.searchClient.EnumeratePaged(filter, pageSize, attributesToGet, new SortingAttribute[] { attribute });
+            return this.searchClient.EnumeratePaged(filter, pageSize, attributesToGet, new SortingAttribute[] { attribute }, null);
         }
 
         /// <summary>
@@ -1246,7 +1683,7 @@
         /// <returns>The number of resources that match the specified criteria</returns>
         public int GetResourceCount(string filter)
         {
-            ISearchResultCollection result = this.searchClient.EnumerateSync(filter, 0, new List<string>(), null);
+            ISearchResultCollection result = this.searchClient.EnumerateSync(filter, 0, new List<string>(), null, null);
             return result.Count;
         }
 
@@ -1278,14 +1715,14 @@
             this.resourceFactoryClient.Create(resources);
         }
 
-
         /// <summary>
         /// Submits a resource template to the resource management service for update
         /// </summary>
         /// <param name="resource">The resource to update</param>
-        internal void PutResource(ResourceObject resource)
+        /// <param name="locale">The culture to use when saving a localized version of the object</param>
+        internal void PutResource(ResourceObject resource, CultureInfo locale)
         {
-            this.resourceClient.Put(resource);
+            this.resourceClient.Put(resource, locale);
         }
 
         /// <summary>
@@ -1345,7 +1782,7 @@
             {
                 client.ClientCredentials.Windows.ClientCredential = this.creds;
             }
-            
+
 #pragma warning disable 0618
             client.ClientCredentials.Windows.AllowNtlm = this.resourceFactoryClient.ClientCredentials.Windows.AllowNtlm;
 #pragma warning restore 0618

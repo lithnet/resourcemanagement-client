@@ -5,12 +5,16 @@ using System.Text;
 using Lithnet.ResourceManagement.Client;
 using Microsoft.ResourceManagement.WebServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Globalization;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
     public static class UnitTestHelper
     {
         internal static ResourceManagementClient client = new ResourceManagementClient();
+
+        internal const string TestLocale = "it-IT";
+        internal static CultureInfo TestCulture = new CultureInfo(UnitTestHelper.TestLocale);
 
         public static string TestDataString1 = "testString1";
         public static string TestDataString2 = "testString2";
@@ -83,6 +87,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         internal const string AttributeBinarySV = "ut_svbinary";
         internal const string AttributeBinaryMV = "ut_mvbinary";
         internal const string AttributeBooleanSV = "ut_svboolean";
+
+        
 
         static UnitTestHelper()
         {

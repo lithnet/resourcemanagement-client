@@ -32,9 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.ResourceManagement, Version=4.1.3634.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Microsoft.ResourceManagement.dll</HintPath>
+    <Reference Include="Microsoft.ResourceManagement">
+      <HintPath>..\Lithnet.ResourceManagement.Client\bin\Release (nuget)\Microsoft.ResourceManagement.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

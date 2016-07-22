@@ -11,6 +11,7 @@ using Lithnet.ResourceManagement.Client.ResourceManagementService;
 using System.Runtime.Serialization;
 using System.Collections.ObjectModel;
 using Lithnet.ResourceManagement.Client;
+using System.Globalization;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -25,7 +26,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The client object used to pass save, update, and create operations to
         /// </summary>
         private ResourceManagementClient client;
-        
+
         /// <summary>
         /// The internal representation of attributes of the object
         /// </summary>
@@ -79,6 +80,11 @@ namespace Lithnet.ResourceManagement.Client
         public ObjectTypeDefinition ObjectType { get; private set; }
 
         /// <summary>
+        /// Gets the localization culture of this object
+        /// </summary>
+        public CultureInfo Locale { get; private set; }
+
+        /// <summary>
         /// Gets the collection of attributes and values associated with this object
         /// </summary>
         public AttributeValueCollection Attributes
@@ -115,7 +121,7 @@ namespace Lithnet.ResourceManagement.Client
                     }
 
                     return newId;
-                    
+
                 }
             }
         }
@@ -143,11 +149,13 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <param name="opType">The type of modification to set on the object</param>
         /// <param name="client">The client used for further operations on this object</param>
-        private ResourceObject(OperationType opType, ResourceManagementClient client)
+        /// <param name="locale">The localization culture that this object is represented as</param>
+        private ResourceObject(OperationType opType, ResourceManagementClient client, CultureInfo locale)
         {
             this.ModificationType = opType;
             this.attributes = new AttributeValueCollection();
             this.client = client;
+            this.Locale = locale;
         }
 
         /// <summary>
@@ -166,7 +174,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="type">The object type that this object will represent</param>
         /// <param name="client">The client used for further operations on this object</param>
         internal ResourceObject(string type, ResourceManagementClient client)
-            : this(OperationType.Create, client)
+            : this(OperationType.Create, client, null)
         {
             if (!ResourceManagementSchema.ObjectTypes.ContainsKey(type))
             {
@@ -188,7 +196,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="id">The ID of the object</param>
         /// <param name="client">The client used for further operations on this object</param>
         internal ResourceObject(string type, UniqueIdentifier id, ResourceManagementClient client)
-            : this(OperationType.Update, client)
+            : this(OperationType.Update, client, null)
         {
             if (!ResourceManagementSchema.ObjectTypes.ContainsKey(type))
             {
@@ -208,8 +216,9 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <param name="objectElements">An enumeration of XmlElements that make up a partial response</param>
         /// <param name="client">The client used for further operations on this object</param>
-        internal ResourceObject(IEnumerable<XmlElement> objectElements, ResourceManagementClient client)
-            : this(OperationType.Update, client)
+        /// <param name="locale">The localization culture that this object is represented as</param>
+        internal ResourceObject(IEnumerable<XmlElement> objectElements, ResourceManagementClient client, CultureInfo locale)
+            : this(OperationType.Update, client, locale)
         {
             this.PopulateResourceFromPartialResponse(objectElements);
         }
@@ -219,8 +228,9 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <param name="reader">An XmlDictionaryReader containing the full object definition</param>
         /// <param name="client">The client used for further operations on this object</param>
-        internal ResourceObject(XmlDictionaryReader reader, ResourceManagementClient client)
-            : this(OperationType.Update, client)
+        /// <param name="locale">The localization culture that this object is represented as</param>
+        internal ResourceObject(XmlDictionaryReader reader, ResourceManagementClient client, CultureInfo locale)
+            : this(OperationType.Update, client, locale)
         {
             this.PopulateResourceFromFullObject(reader);
         }
@@ -230,8 +240,9 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <param name="element">An XmlElement containing definition of the object from a set of fragments obtained from an enumeration response</param>
         /// <param name="client">The client used for further operations on this object</param>
-        internal ResourceObject(XmlElement element, ResourceManagementClient client)
-            : this(OperationType.Update, client)
+        /// <param name="locale">The localization culture that this object is represented as</param>
+        internal ResourceObject(XmlElement element, ResourceManagementClient client, CultureInfo locale)
+            : this(OperationType.Update, client, locale)
         {
             this.PopulateResourceFromFragment(element);
         }
@@ -301,7 +312,7 @@ namespace Lithnet.ResourceManagement.Client
                     break;
 
                 case OperationType.Update:
-                    this.Client.PutResource(this);
+                    this.Client.PutResource(this, this.Locale);
                     break;
 
                 case OperationType.Delete:
@@ -534,6 +545,11 @@ namespace Lithnet.ResourceManagement.Client
                     {
                         this.attributes.Add(d.SystemName, new AttributeValue(d, kvp.Value.First()));
                     }
+
+                    if (d.SystemName == AttributeNames.Locale)
+                    {
+                        this.Locale = new CultureInfo(kvp.Value.First());
+                    }
                 }
             }
 
@@ -688,7 +704,6 @@ namespace Lithnet.ResourceManagement.Client
 
             foreach (SerializationEntry entry in info)
             {
-
                 IEnumerable<string> entryValues = entry.Value as IEnumerable<string>;
 
                 if (entryValues != null)
