@@ -149,6 +149,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <param name="opType">The type of modification to set on the object</param>
         /// <param name="client">The client used for further operations on this object</param>
+        /// <param name="locale">The localization culture that this object is represented as</param>
         private ResourceObject(OperationType opType, ResourceManagementClient client, CultureInfo locale)
         {
             this.ModificationType = opType;
@@ -215,6 +216,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <param name="objectElements">An enumeration of XmlElements that make up a partial response</param>
         /// <param name="client">The client used for further operations on this object</param>
+        /// <param name="locale">The localization culture that this object is represented as</param>
         internal ResourceObject(IEnumerable<XmlElement> objectElements, ResourceManagementClient client, CultureInfo locale)
             : this(OperationType.Update, client, locale)
         {
@@ -226,6 +228,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <param name="reader">An XmlDictionaryReader containing the full object definition</param>
         /// <param name="client">The client used for further operations on this object</param>
+        /// <param name="locale">The localization culture that this object is represented as</param>
         internal ResourceObject(XmlDictionaryReader reader, ResourceManagementClient client, CultureInfo locale)
             : this(OperationType.Update, client, locale)
         {
@@ -237,6 +240,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <param name="element">An XmlElement containing definition of the object from a set of fragments obtained from an enumeration response</param>
         /// <param name="client">The client used for further operations on this object</param>
+        /// <param name="locale">The localization culture that this object is represented as</param>
         internal ResourceObject(XmlElement element, ResourceManagementClient client, CultureInfo locale)
             : this(OperationType.Update, client, locale)
         {

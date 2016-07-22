@@ -149,7 +149,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             return message;
         }
 
-        internal static Message CreatePutMessage(IEnumerable<ResourceObject> resources, CultureInfo locale)
+        internal static Message CreatePutMessage(IEnumerable<ResourceObject> resources)
         {
             int count = resources.Count();
             if (count == 0)
@@ -158,22 +158,16 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             }
             else if (count == 1)
             {
-                return MessageComposer.CreatePutMessage(resources.First(), locale);
+                return MessageComposer.CreatePutMessage(resources.First(), null);
             }
 
             Put op = new Put();
 
             op.Dialect = Namespaces.RMIdentityAttributeType;
             List<PutFragmentType> fragments = new List<PutFragmentType>();
-            CultureInfo lastCulture = resources.First().Locale;
 
             foreach (ResourceObject resource in resources)
             {
-                if (lastCulture != resource.Locale)
-                {
-                    throw new NotSupportedException();
-                }
-
                 foreach (PutFragmentType fragment in resource.GetPutFragements())
                 {
                     fragment.TargetIdentifier = resource.ObjectID.Value;
@@ -193,11 +187,6 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             message.AddHeader(Namespaces.IdMDirectoryAccess, HeaderConstants.IdentityManagementOperation, null, true);
             message.AddHeader(Namespaces.ResourceManagement, HeaderConstants.CompositeTypeOperation, null);
             message.AddHeader(HeaderConstants.ResourceReferenceProperty, resources.Select(t => t.ObjectID.ToString()).ToCommaSeparatedString());
-
-            if (locale != null)
-            {
-                message.AddHeader(AttributeNames.Locale, locale);
-            }
 
             return message;
         }

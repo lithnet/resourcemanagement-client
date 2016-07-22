@@ -376,7 +376,7 @@
         /// <param name="resources">The resources to update</param>
         public void SaveResources(params ResourceObject[] resources)
         {
-            this.SaveResources(resources, null);
+            this.SaveResources(resources);
         }
 
         /// <summary>
@@ -385,17 +385,12 @@
         /// <param name="resources">The collection of resources to update</param>
         public void SaveResources(IEnumerable<ResourceObject> resources)
         {
-            this.SaveResources(resources, null);
-        }
+            IList<ResourceObject> resourceObjects = resources as IList<ResourceObject> ?? resources.ToList();
 
-        /// <summary>
-        /// Saves the specified resources in the resource management service. Updates and Adds are committed as a single composite operation.
-        /// </summary>
-        /// <param name="resources">The collection of resources to update</param>
-        /// <param name="locale">The localization culture to use when saving the object</param>
-        public void SaveResources(IEnumerable<ResourceObject> resources, CultureInfo locale)
-        {
-            IEnumerable<ResourceObject> resourceObjects = resources as IList<ResourceObject> ?? resources.ToList();
+            if (resourceObjects.Any(t => t.Locale != null))
+            {
+                throw new InvalidOperationException("Cannot perform a composite save on a localized resource");
+            }
 
             List<ResourceObject> objectsToCreate = resourceObjects.Where(t => t.ModificationType == OperationType.Create).ToList();
             if (objectsToCreate.Count > 0)
@@ -420,7 +415,7 @@
 
             if (objectsToUpdate.Count > 0)
             {
-                this.resourceClient.Put(objectsToUpdate, locale);
+                this.resourceClient.Put(objectsToUpdate);
 
                 foreach (ResourceObject resource in objectsToUpdate)
                 {

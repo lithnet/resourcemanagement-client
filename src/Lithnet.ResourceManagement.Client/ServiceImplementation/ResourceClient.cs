@@ -41,24 +41,14 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             }
         }
 
-        public void Put(IEnumerable<ResourceObject> resources, CultureInfo locale)
+        public void Put(IEnumerable<ResourceObject> resources)
         {
             if (resources == null)
             {
                 throw new ArgumentNullException("resources");
             }
-
-            if (resources.Any(t => t.Locale != null && t.Locale != locale))
-            {
-                foreach (ResourceObject resource in resources)
-                {
-                    this.Put(resource, locale);
-                }
-
-                return;
-            }
-
-            using (Message message = MessageComposer.CreatePutMessage(resources, locale))
+           
+            using (Message message = MessageComposer.CreatePutMessage(resources))
             {
                 if (message == null)
                 {

@@ -49,8 +49,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.ResourceManagement">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Microsoft.ResourceManagement.dll</HintPath>
+      <HintPath>..\Lithnet.ResourceManagement.Client\bin\Release (nuget)\Microsoft.ResourceManagement.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">

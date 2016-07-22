@@ -80,6 +80,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="pageSize">The page size used in the search operation</param>
         /// <param name="searchClient">The client proxy used for performing the search</param>
         /// <param name="client">The client used to convert response data into ResourceObjects</param>
+        /// <param name="locale">The localization culture that the search results are represented as</param>
         internal SearchResultPager(EnumerateResponse response, int pageSize, SearchClient searchClient, ResourceManagementClient client, CultureInfo locale)
         {
             if (response == null)
