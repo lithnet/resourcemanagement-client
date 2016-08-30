@@ -97,5 +97,31 @@ namespace Lithnet.ResourceManagement.Client
                 this["concurrentConnectionLimit"] = value;
             }
         }
+
+        [ConfigurationProperty("sendTimeout", IsRequired = false, DefaultValue = 20 * 60)]
+        public int SendTimeoutSeconds
+        {
+            get
+            {
+                return (int)this["sendTimeout"];
+            }
+            set
+            {
+                this["sendTimeout"] = value;
+            }
+        }
+
+        [ConfigurationProperty("receiveTimeout", IsRequired = false, DefaultValue = 20 * 60)]
+        public int ReceiveTimeoutSeconds
+        {
+            get
+            {
+                return (int)this["receiveTimeout"];
+            }
+            set
+            {
+                this["receiveTimeout"] = value;
+            }
+        }
     }
 }
