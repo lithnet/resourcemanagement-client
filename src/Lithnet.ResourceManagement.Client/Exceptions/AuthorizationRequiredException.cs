@@ -1,8 +1,5 @@
-﻿using Microsoft.ResourceManagement.WebServices.WSAddressing;
+﻿using System;
 using Microsoft.ResourceManagement.WebServices.WSResourceManagement;
-using System;
-using Microsoft.ResourceManagement.WebServices.Exceptions;
-using Microsoft.ResourceManagement.WebServices.Faults;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -30,7 +27,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// Gets ID of the authorization reference
         /// </summary>
-        public string ResourceReference => this.details.EndpointReference.ReferenceProperties.ResourceReferenceProperty.Text;
+        public string ResourceReference { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the AuthorizationRequiredException class
@@ -40,6 +37,7 @@ namespace Lithnet.ResourceManagement.Client
             : base(GetMessage(failure))
         {
             this.details = failure;
+            this.ResourceReference = this.details.EndpointReference?.ReferenceProperties?.ResourceReferenceProperty?.Text?.Replace("urn:uuid:", string.Empty);
         }
 
         /// <summary>
