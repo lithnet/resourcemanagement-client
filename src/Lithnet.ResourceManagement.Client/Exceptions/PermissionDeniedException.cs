@@ -104,7 +104,7 @@
             }
             else
             {
-                return string.Format("A generic permission dened failure was returned from the server that did not contain detailed information. Correlation ID: {0}", correlationID ?? string.Empty);
+                return string.Format("A generic permission denied failure was returned from the server that did not contain detailed information. Correlation ID: {0}", correlationID ?? string.Empty);
             }
         }
     }

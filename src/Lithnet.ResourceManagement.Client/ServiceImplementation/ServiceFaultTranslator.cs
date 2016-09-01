@@ -5,6 +5,7 @@ using Microsoft.ResourceManagement.WebServices.Exceptions;
 using Microsoft.ResourceManagement.WebServices.Faults;
 using System.Xml;
 using System.Text;
+using Microsoft.ResourceManagement.WebServices.WSResourceManagement;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -12,11 +13,11 @@ namespace Lithnet.ResourceManagement.Client
     {
         public static Exception GetExceptionFromFaultMessage(MessageFault fault)
         {
-            if (fault.Code == null || fault.Code.SubCode == null)
+            if (fault.Code?.SubCode == null)
             {
                 return new FaultException(fault);
             }
-
+            
             switch (fault.Code.SubCode.Name)
             {
                 case "InvalidRepresentation":
@@ -27,6 +28,9 @@ namespace Lithnet.ResourceManagement.Client
 
                 case "UnwillingToPerform":
                     return GetUnwillingToPerformException(fault);
+
+                case "AuthorizationRequiredFault":
+                    return GetAuthorizationRequiredException(fault);
 
                 default:
                     break;
@@ -39,7 +43,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             DispatchRequestFailures failure = fault.DeserializeMessageWithPayload<DispatchRequestFailures>();
 
-            if (failure == null || failure.AdministratorDetails == null)
+            if (failure?.AdministratorDetails == null)
             {
                 return new FaultException(fault);
             }
@@ -74,6 +78,18 @@ namespace Lithnet.ResourceManagement.Client
             }
 
             return new PermissionDeniedException(failure);
+        }
+
+        public static Exception GetAuthorizationRequiredException(MessageFault fault)
+        {
+            AuthorizationRequiredFault failure = fault.DeserializeMessageWithPayload<AuthorizationRequiredFault>();
+
+            if (failure == null)
+            {
+                return new FaultException(fault);
+            }
+
+            return new AuthorizationRequiredException(failure);
         }
     }
 }

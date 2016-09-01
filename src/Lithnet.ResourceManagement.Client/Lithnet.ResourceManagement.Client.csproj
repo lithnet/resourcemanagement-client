@@ -70,6 +70,7 @@
     <Compile Include="Exceptions\AttributeRepresentationFailureException.cs" />
     <Compile Include="Exceptions\NoSuchObjectTypeException.cs" />
     <Compile Include="Exceptions\NoSuchAttributeException.cs" />
+    <Compile Include="Exceptions\AuthorizationRequiredException.cs" />
     <Compile Include="Exceptions\ResourceNotFoundException.cs" />
     <Compile Include="Exceptions\LdapFilterParserException.cs" />
     <Compile Include="Exceptions\ResourceManagementException.cs" />
