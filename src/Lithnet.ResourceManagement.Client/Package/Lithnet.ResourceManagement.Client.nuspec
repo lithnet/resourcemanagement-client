@@ -9,9 +9,10 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>The Lithnet Resource Management Client is a .NET client library for interacting with the FIM service. It supports create, update, delete, and search operations against the FIM service.</description>
     <tags>FIM FIM2010 FIMService FIM2010R2 MIM MIM2016</tags>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="Microsoft.ResourceManagement"  />
-    </frameworkAssemblies>
+    <references>
+      <reference file="Microsoft.ResourceManagement.dll" />
+    </references>
+
   </metadata>
   <files>
     <file src="Package\app.config.install.xdt" target="Content\app.config.install.xdt" />
@@ -20,5 +21,6 @@
     <file src="Package\web.config.uninstall.xdt" target="Content\web.config.uninstall.xdt" />
     <file src="Package\app.config.transform" target="Content\app.config.transform" />
     <file src="Package\web.config.transform" target="Content\web.config.transform" />
+    <file src="..\lib\Microsoft.ResourceManagement.dll" target="lib"/>
   </files>
 </package>

@@ -1752,6 +1752,9 @@
                 this.searchClient.ClientCredentials.Windows.ClientCredential = credentials;
             }
 
+            this.resourceClient.ClientCredentials.Windows.AllowedImpersonationLevel = System.Security.Principal.TokenImpersonationLevel.Delegation;
+            this.resourceFactoryClient.ClientCredentials.Windows.AllowedImpersonationLevel = System.Security.Principal.TokenImpersonationLevel.Delegation;
+            this.searchClient.ClientCredentials.Windows.AllowedImpersonationLevel = System.Security.Principal.TokenImpersonationLevel.Delegation;
 #pragma warning disable 0618
             this.resourceClient.ClientCredentials.Windows.AllowNtlm = allowNtlm;
             this.resourceFactoryClient.ClientCredentials.Windows.AllowNtlm = allowNtlm;
