@@ -146,7 +146,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 if (this.Negate)
                 {
-                    return string.Format("(not{0})", sb.ToString());
+                    return string.Format("(not({0}))", sb.ToString());
                 }
                 else
                 {
