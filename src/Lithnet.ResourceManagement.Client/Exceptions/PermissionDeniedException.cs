@@ -90,7 +90,7 @@
             {
                 if (details.FailedAttributes != null)
                 {
-                    attributes = string.Join(",", details.FailedAttributes);
+                    attributes = string.Join(",", details.FailedAttributes?.AttributeType);
                 }
 
                 return string.Format(
