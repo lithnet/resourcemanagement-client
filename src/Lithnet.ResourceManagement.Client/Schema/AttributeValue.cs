@@ -411,43 +411,13 @@ namespace Lithnet.ResourceManagement.Client
                 }
                 else
                 {
-                    foreach (object newValue in this.values)
-                    {
-                        bool found = false;
+                    // Add values not found in initial values
+                    foreach (object newValue in this.values.Except(this.initialValues, AttributeValue.ValueComparer))
+                        tempValueChanges.Add(new AttributeValueChange(ModeType.Insert, newValue));
 
-                        foreach (object initialValue in this.initialValues)
-                        {
-                            if (AttributeValue.ValueComparer.Equals(initialValue, newValue))
-                            {
-                                found = true;
-                                break;
-                            }
-                        }
-
-                        if (!found)
-                        {
-                            tempValueChanges.Add(new AttributeValueChange(ModeType.Insert, newValue));
-                        }
-                    }
-
-                    foreach (object initialValue in this.initialValues)
-                    {
-                        bool found = false;
-
-                        foreach (object newValue in this.values)
-                        {
-                            if (AttributeValue.ValueComparer.Equals(initialValue, newValue))
-                            {
-                                found = true;
-                                break;
-                            }
-                        }
-
-                        if (!found)
-                        {
-                            tempValueChanges.Add(new AttributeValueChange(ModeType.Remove, initialValue));
-                        }
-                    }
+                    // Remove values that shouldn't exist anymore
+                    foreach (object removedValue in this.initialValues.Except(this.values, AttributeValue.ValueComparer))
+                        tempValueChanges.Add(new AttributeValueChange(ModeType.Remove, removedValue));
                 }
             }
 
