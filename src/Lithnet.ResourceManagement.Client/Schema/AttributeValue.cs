@@ -452,43 +452,13 @@ namespace Lithnet.ResourceManagement.Client
                 }
                 else
                 {
-                    foreach (object newValue in this.values)
-                    {
-                        bool found = false;
+                    // Add values not found in the initial values
+                    foreach (object newValue in this.values.Except(this.initialValues, AttributeValue.ValueComparer))
+                        tempValueChanges.Add(new AttributeValueChange(ModeType.Insert, newValue));
 
-                        foreach (object iv in this.initialValues)
-                        {
-                            if (AttributeValue.ValueComparer.Equals(iv, newValue))
-                            {
-                                found = true;
-                                break;
-                            }
-                        }
-
-                        if (!found)
-                        {
-                            tempValueChanges.Add(new AttributeValueChange(ModeType.Insert, newValue));
-                        }
-                    }
-
-                    foreach (object iv in this.initialValues)
-                    {
-                        bool found = false;
-
-                        foreach (object newValue in this.values)
-                        {
-                            if (AttributeValue.ValueComparer.Equals(iv, newValue))
-                            {
-                                found = true;
-                                break;
-                            }
-                        }
-
-                        if (!found)
-                        {
-                            tempValueChanges.Add(new AttributeValueChange(ModeType.Remove, iv));
-                        }
-                    }
+                    // Remove values that shouldn't exist anymore
+                    foreach (object removedValue in this.initialValues.Except(this.values, AttributeValue.ValueComparer))
+                        tempValueChanges.Add(new AttributeValueChange(ModeType.Remove, removedValue));
                 }
             }
 
