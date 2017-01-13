@@ -63,9 +63,14 @@
     <Compile Include="AttributeValuePair.cs" />
     <Compile Include="AttributeValuePairCollection.cs" />
     <Compile Include="Enums\ApprovalStatus.cs" />
+    <Compile Include="Enums\ResourceSerializationHandling.cs" />
+    <Compile Include="Enums\AttributeValueSerializationHandling.cs" />
+    <Compile Include="Enums\ArraySerializationHandling.cs" />
     <Compile Include="Enums\OperationType.cs" />
     <Compile Include="Enums\GroupOperator.cs" />
     <Compile Include="Enums\ComparisonOperator.cs" />
+    <Compile Include="Enums\AttributePermission.cs" />
+    <Compile Include="ResourceSerializationSettings.cs" />
     <Compile Include="Exceptions\MessageRepresentationFailureException.cs" />
     <Compile Include="Exceptions\AttributeRepresentationFailureException.cs" />
     <Compile Include="Exceptions\NoSuchObjectTypeException.cs" />

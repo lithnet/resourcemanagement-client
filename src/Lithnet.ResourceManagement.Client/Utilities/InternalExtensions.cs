@@ -1,14 +1,7 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="Extensions.cs" company="Ryan Newington">
-// Copyright (c) 2013
-// </copyright>
-// -----------------------------------------------------------------------
-
-namespace Lithnet.ResourceManagement.Client
+﻿namespace Lithnet.ResourceManagement.Client
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Channels;
 
@@ -65,6 +58,21 @@ namespace Lithnet.ResourceManagement.Client
                 ((IClientChannel)c).Abort();
                 throw;
             }
+        }
+
+        public static List<string> ToList(this Enum p)
+        {
+            List<string> permissions = new List<string>();
+
+            foreach (Enum value in Enum.GetValues(p.GetType()))
+            {
+                if (p.HasFlag(value) && Convert.ToInt32(value) != 0)
+                {
+                    permissions.Add(value.ToString());
+                }
+            }
+
+            return permissions;
         }
     }
 }

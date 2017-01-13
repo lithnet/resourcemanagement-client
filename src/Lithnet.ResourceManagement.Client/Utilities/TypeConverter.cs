@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.ResourceManagement.WebServices;
 using System.Globalization;
 
@@ -76,9 +73,45 @@ namespace Lithnet.ResourceManagement.Client
             {
                 return ((UniqueIdentifier)value).Value;
             }
-            else if (value is bool || value is long || value is int || value is XPathExpression || value is XPathDereferencedExpression)
+            else if (value is bool || value is long || value is int || value is XPathExpression)
             {
                 return value.ToString();
+            }
+            else
+            {
+                throw new UnsupportedDataTypeException(typeof(string), value.GetType());
+            }
+        }
+
+        public static object ToSerializableValue(object value)
+        {
+            if (value == null)
+            {
+                return null;
+            }
+            else if (value is byte[])
+            {
+                return Convert.ToBase64String((byte[])value);
+            }
+            else if (value is DateTime)
+            {
+                return ((DateTime)value).ToResourceManagementServiceDateFormat();
+            }
+            else if (value is string)
+            {
+                return (string)value;
+            }
+            else if (value is UniqueIdentifier)
+            {
+                return ((UniqueIdentifier)value).Value;
+            }
+            else if (value is XPathExpression)
+            {
+                return value.ToString();
+            }
+            else if (value is bool || value is long || value is int)
+            {
+                return value;
             }
             else
             {

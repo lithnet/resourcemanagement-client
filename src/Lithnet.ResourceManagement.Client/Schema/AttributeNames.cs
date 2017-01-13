@@ -157,6 +157,11 @@ namespace Lithnet.ResourceManagement.Client
         /// The Locale attribute
         /// </summary>
         public const string Locale = "Locale";
+
+        /// <summary>
+        /// The RequestParameter attribute
+        /// </summary>
+        public const string RequestParameter = "RequestParameter";
     }
 }
 

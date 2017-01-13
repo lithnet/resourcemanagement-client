@@ -62,6 +62,11 @@ namespace Lithnet.ResourceManagement.Client
         /// The BindingDescription object type
         /// </summary>
         public const string BindingDescription = "BindingDescription";
+
+        /// <summary>
+        /// The Request object type
+        /// </summary>
+        public const string Request = "Request";
     }
 }
 

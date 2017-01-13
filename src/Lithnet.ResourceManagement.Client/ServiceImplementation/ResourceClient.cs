@@ -62,7 +62,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             }
         }
 
-        public ResourceObject Get(UniqueIdentifier id, IEnumerable<string> attributes, CultureInfo locale)
+        public ResourceObject Get(UniqueIdentifier id, IEnumerable<string> attributes, CultureInfo locale, bool getPermissions)
         {
             if (id == null)
             {
@@ -73,7 +73,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             
             GetResponse r = new GetResponse();
 
-            using (Message message = MessageComposer.CreateGetMessage(id, attributes, locale))
+            using (Message message = MessageComposer.CreateGetMessage(id, attributes, locale, getPermissions))
             {
                 using (Message responseMessage = this.Invoke((c) => c.Get(message)))
                 {
@@ -139,7 +139,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
             GetResponse r = new GetResponse();
 
-            using (Message message = MessageComposer.CreateGetMessage(resource.ObjectID, null, resource.Locale))
+            using (Message message = MessageComposer.CreateGetMessage(resource.ObjectID, null, resource.Locale, resource.HasPermissionHints))
             {
                 using (Message responseMessage = this.Invoke((c) => c.Get(message)))
                 {

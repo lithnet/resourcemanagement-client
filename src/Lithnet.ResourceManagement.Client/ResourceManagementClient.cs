@@ -628,11 +628,38 @@
         /// Gets a resource from the resource management service, retrieving all attributes for the resource
         /// </summary>
         /// <param name="id">The ID of the resource to get as a GUID in string format</param>
+        /// <param name="getPermissionHints">Gets the permission hints for each attribute of the resource</param>
+        /// <returns>The resource represented by the specified ID</returns>
+        /// <example>
+        /// The following example shows how to get an object from a known GUID value
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(String)"/>
+        /// </example>
+        public ResourceObject GetResource(string id, bool getPermissionHints)
+        {
+            return this.GetResource(new UniqueIdentifier(id), null, null, getPermissionHints);
+        }
+
+        /// <summary>
+        /// Gets a resource from the resource management service, retrieving all attributes for the resource
+        /// </summary>
+        /// <param name="id">The ID of the resource to get as a GUID in string format</param>
         /// <param name="locale">The culture to use to request a localized version of the object</param>
         /// <returns>The resource represented by the specified ID</returns>
         public ResourceObject GetResource(string id, CultureInfo locale)
         {
             return this.GetResource(new UniqueIdentifier(id), null, locale);
+        }
+
+        /// <summary>
+        /// Gets a resource from the resource management service, retrieving all attributes for the resource
+        /// </summary>
+        /// <param name="id">The ID of the resource to get as a GUID in string format</param>
+        /// <param name="locale">The culture to use to request a localized version of the object</param>
+        /// <param name="getPermissionHints">Gets the permission hints for each attribute of the resource</param>
+        /// <returns>The resource represented by the specified ID</returns>
+        public ResourceObject GetResource(string id, CultureInfo locale, bool getPermissionHints)
+        {
+            return this.GetResource(new UniqueIdentifier(id), null, locale, getPermissionHints);
         }
 
         /// <summary>
@@ -655,11 +682,40 @@
         /// </summary>
         /// <param name="id">The ID of the resource to get as a GUID in string format</param>
         /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="getPermissionHints">Gets the permission hints for each attribute of the resource</param>
+        /// <returns>The resource represented by the specified ID</returns>
+        /// <example>
+        /// The following example shows how to get an object from a known GUID value
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(String)"/>
+        /// </example>
+        public ResourceObject GetResource(string id, IEnumerable<string> attributesToGet, bool getPermissionHints)
+        {
+            return this.GetResource(new UniqueIdentifier(id), attributesToGet, getPermissionHints);
+        }
+
+        /// <summary>
+        /// Gets a resource from the resource management service, retrieving only a specified set of attributes for the resource
+        /// </summary>
+        /// <param name="id">The ID of the resource to get as a GUID in string format</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
         /// <param name="locale">The culture to use to request a localized version of the object</param>
         /// <returns>The resource represented by the specified ID</returns>
         public ResourceObject GetResource(string id, IEnumerable<string> attributesToGet, CultureInfo locale)
         {
             return this.GetResource(new UniqueIdentifier(id), attributesToGet, locale);
+        }
+
+        /// <summary>
+        /// Gets a resource from the resource management service, retrieving only a specified set of attributes for the resource
+        /// </summary>
+        /// <param name="id">The ID of the resource to get as a GUID in string format</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="locale">The culture to use to request a localized version of the object</param>
+        /// <param name="getPermissionHints">Gets the permission hints for each attribute of the resource</param>
+        /// <returns>The resource represented by the specified ID</returns>
+        public ResourceObject GetResource(string id, IEnumerable<string> attributesToGet, CultureInfo locale, bool getPermissionHints)
+        {
+            return this.GetResource(new UniqueIdentifier(id), attributesToGet, locale, getPermissionHints);
         }
 
         /// <summary>
@@ -673,7 +729,22 @@
         /// </example>
         public ResourceObject GetResource(UniqueIdentifier id)
         {
-            return this.resourceClient.Get(id, null, null);
+            return this.resourceClient.Get(id, null, null, false);
+        }
+
+        /// <summary>
+        /// Gets a resource from the resource management service, retrieving all attributes for the resource
+        /// </summary>
+        /// <param name="id">The ID of the resource to get</param>
+        /// <param name="getPermissionHints">Gets the permission hints for each attribute of the resource</param>
+        /// <returns>The resource represented by the specified ID</returns>
+        /// <example>
+        /// The following example shows how to get an object from a reference value
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(UniqueIdentifier)"/>
+        /// </example>
+        public ResourceObject GetResource(UniqueIdentifier id, bool getPermissionHints)
+        {
+            return this.resourceClient.Get(id, null, null, getPermissionHints);
         }
 
         /// <summary>
@@ -684,8 +755,22 @@
         /// <returns>The resource represented by the specified ID</returns>
         public ResourceObject GetResource(UniqueIdentifier id, CultureInfo locale)
         {
-            return this.resourceClient.Get(id, null, locale);
+            return this.resourceClient.Get(id, null, locale, false);
         }
+
+
+        /// <summary>
+        /// Gets a resource from the resource management service, retrieving all attributes for the resource
+        /// </summary>
+        /// <param name="id">The ID of the resource to get</param>
+        /// <param name="locale">The culture to use to request a localized version of the object</param>
+        /// <param name="getPermissionHints">Gets the permission hints for each attribute of the resource</param>
+        /// <returns>The resource represented by the specified ID</returns>
+        public ResourceObject GetResource(UniqueIdentifier id, CultureInfo locale, bool getPermissionHints)
+        {
+            return this.resourceClient.Get(id, null, locale, getPermissionHints);
+        }
+
 
         /// <summary>
         /// Gets a resource from the resource management service, retrieving only a specified set of attributes for the resource
@@ -699,8 +784,26 @@
         /// </example>
         public ResourceObject GetResource(UniqueIdentifier id, IEnumerable<string> attributesToGet)
         {
-            return this.resourceClient.Get(id, attributesToGet, null);
+            return this.resourceClient.Get(id, attributesToGet, null, false);
         }
+
+
+        /// <summary>
+        /// Gets a resource from the resource management service, retrieving only a specified set of attributes for the resource
+        /// </summary>
+        /// <param name="id">The ID of the resource to get</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="getPermissionHints">Gets the permission hints for each attribute of the resource</param>
+        /// <returns>The resource represented by the specified ID</returns>
+        /// <example>
+        /// The following example shows how to get an object from a reference value
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(UniqueIdentifier)"/>
+        /// </example>
+        public ResourceObject GetResource(UniqueIdentifier id, IEnumerable<string> attributesToGet, bool getPermissionHints)
+        {
+            return this.resourceClient.Get(id, attributesToGet, null, getPermissionHints);
+        }
+
 
         /// <summary>
         /// Gets a resource from the resource management service, retrieving only a specified set of attributes for the resource
@@ -715,8 +818,27 @@
         /// </example>
         public ResourceObject GetResource(UniqueIdentifier id, IEnumerable<string> attributesToGet, CultureInfo locale)
         {
-            return this.resourceClient.Get(id, attributesToGet, locale);
+            return this.resourceClient.Get(id, attributesToGet, locale, false);
         }
+
+
+        /// <summary>
+        /// Gets a resource from the resource management service, retrieving only a specified set of attributes for the resource
+        /// </summary>
+        /// <param name="id">The ID of the resource to get</param>
+        /// <param name="attributesToGet">The list of attributes to retrieve</param>
+        /// <param name="locale">The culture to use to request a localized version of the object</param>
+        /// <param name="getPermissionHints">Gets the permission hints for each attribute of the resource</param>
+        /// <returns>The resource represented by the specified ID</returns>
+        /// <example>
+        /// The following example shows how to get an object from a reference value
+        /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(UniqueIdentifier)"/>
+        /// </example>
+        public ResourceObject GetResource(UniqueIdentifier id, IEnumerable<string> attributesToGet, CultureInfo locale, bool getPermissionHints)
+        {
+            return this.resourceClient.Get(id, attributesToGet, locale, getPermissionHints);
+        }
+
 
         /// <summary>
         /// Gets a resource from the resource management service using a unique attribute and value combination, retrieving all attributes for the resource

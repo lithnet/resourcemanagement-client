@@ -20,10 +20,10 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
         internal static Message CreateGetMessage(UniqueIdentifier id)
         {
-            return CreateGetMessage(id, null, null);
+            return CreateGetMessage(id, null, null, false);
         }
 
-        internal static Message CreateGetMessage(UniqueIdentifier id, IEnumerable<string> attributes, CultureInfo locale)
+        internal static Message CreateGetMessage(UniqueIdentifier id, IEnumerable<string> attributes, CultureInfo locale, bool includePermissions)
         {
             Get op = null;
 
@@ -49,6 +49,11 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             if (locale != null)
             {
                 message.AddHeader(AttributeNames.Locale, locale);
+            }
+
+            if (includePermissions)
+            {
+                message.AddHeader(HeaderConstants.IncludePermissionHints, null);
             }
 
             message.AddHeader(HeaderConstants.ResourceReferenceProperty, id.ToString());

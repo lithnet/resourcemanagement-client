@@ -11,6 +11,6 @@ namespace Lithnet.ResourceManagement.Client
         public const string IncludeCount = "IncludeCount";
         public const string CompositeTypeOperation = "CompositeTypeOperation";
         public const string ResourceReferenceProperty = "ResourceReferenceProperty";
-
+        public const string IncludePermissionHints = "IncludePermissionHints";
     }
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.Serialization;
 using Microsoft.ResourceManagement.WebServices;
 using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
 
@@ -11,8 +12,10 @@ namespace Lithnet.ResourceManagement.Client
     /// <summary>
     /// Contains the value or values of a specified attribute, and tracks changes made to the values
     /// </summary>
-    public class AttributeValue
+    public class AttributeValue : ISerializable
     {
+        private bool hasPermissionHint;
+
         /// <summary>
         /// A static comparer object used to test for equality between values
         /// </summary>
@@ -22,6 +25,11 @@ namespace Lithnet.ResourceManagement.Client
         /// Gets the attribute that represents the values in this collection
         /// </summary>
         public AttributeTypeDefinition Attribute { get; private set; }
+
+        /// <summary>
+        /// Gets the permissions the user has on this attribute, if they are known. Permission hints can only be obtained with a Get request
+        /// </summary>
+        public AttributePermission PermissionHint { get; private set; }
 
         /// <summary>
         /// Gets a list of pending value changes for this attribute
@@ -89,11 +97,21 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
+        /// This method has not been implemented
+        /// </summary>
+        /// <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> to populate with data. </param>
+        /// <param name="context">The destination (see <see cref="T:System.Runtime.Serialization.StreamingContext" />) for this serialization. </param>
+        protected internal AttributeValue(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Initializes a new instance of the AttributeValue class
         /// </summary>
         /// <param name="type">The definition of the attribute to hold the values for</param>
         internal AttributeValue(AttributeTypeDefinition type)
-            : this(type, null)
+            : this(type, null, null)
         {
         }
 
@@ -103,8 +121,31 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="type">The definition of the attribute to hold the values for</param>
         /// <param name="value">The initial value of the attribute</param>
         internal AttributeValue(AttributeTypeDefinition type, object value)
+            : this(type, null, value)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the AttributeValue class
+        /// </summary>
+        /// <param name="type">The definition of the attribute to hold the values for</param>
+        /// <param name="permission">The user's permission on this attribute, if known</param>
+        internal AttributeValue(AttributeTypeDefinition type, AttributePermission permission)
+            : this(type, permission, null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the AttributeValue class
+        /// </summary>
+        /// <param name="type">The definition of the attribute to hold the values for</param>
+        /// <param name="permission">The user's permission on this attribute, if known</param>
+        /// <param name="value">The initial value of the attribute</param>
+        internal AttributeValue(AttributeTypeDefinition type, AttributePermission? permission, object value)
         {
             this.Attribute = type;
+            this.hasPermissionHint = permission != null;
+            this.PermissionHint = permission ?? 0;
 
             if (this.Attribute.IsMultivalued)
             {
@@ -404,9 +445,9 @@ namespace Lithnet.ResourceManagement.Client
                 }
                 else if (this.values.Count == 0)
                 {
-                    foreach (object initialValue in this.initialValues)
+                    foreach (object iv in this.initialValues)
                     {
-                        tempValueChanges.Add(new AttributeValueChange(ModeType.Remove, initialValue));
+                        tempValueChanges.Add(new AttributeValueChange(ModeType.Remove, iv));
                     }
                 }
                 else
@@ -415,9 +456,9 @@ namespace Lithnet.ResourceManagement.Client
                     {
                         bool found = false;
 
-                        foreach (object initialValue in this.initialValues)
+                        foreach (object iv in this.initialValues)
                         {
-                            if (AttributeValue.ValueComparer.Equals(initialValue, newValue))
+                            if (AttributeValue.ValueComparer.Equals(iv, newValue))
                             {
                                 found = true;
                                 break;
@@ -430,13 +471,13 @@ namespace Lithnet.ResourceManagement.Client
                         }
                     }
 
-                    foreach (object initialValue in this.initialValues)
+                    foreach (object iv in this.initialValues)
                     {
                         bool found = false;
 
                         foreach (object newValue in this.values)
                         {
-                            if (AttributeValue.ValueComparer.Equals(initialValue, newValue))
+                            if (AttributeValue.ValueComparer.Equals(iv, newValue))
                             {
                                 found = true;
                                 break;
@@ -445,7 +486,7 @@ namespace Lithnet.ResourceManagement.Client
 
                         if (!found)
                         {
-                            tempValueChanges.Add(new AttributeValueChange(ModeType.Remove, initialValue));
+                            tempValueChanges.Add(new AttributeValueChange(ModeType.Remove, iv));
                         }
                     }
                 }
@@ -462,15 +503,15 @@ namespace Lithnet.ResourceManagement.Client
         private object ConvertValueToAttributeType(object value)
         {
             if (!(
-                value is string || 
+                value is string ||
                 value is byte[] ||
-                value is int || 
-                value is long || 
-                value is bool || 
+                value is int ||
+                value is long ||
+                value is bool ||
                 value is UniqueIdentifier ||
-                value is DateTime || 
-                value is ResourceObject || 
-                value is XPathExpression || 
+                value is DateTime ||
+                value is ResourceObject ||
+                value is XPathExpression ||
                 value is XPathDereferencedExpression))
             {
                 throw new UnsupportedDataTypeException(this.Attribute.Type, value.GetType());
@@ -516,7 +557,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>The hash code for the object</returns>
         public override int GetHashCode()
         {
-            return this.value == null ? 0 : this.value.GetHashCode();
+            return this.value?.GetHashCode() ?? 0;
         }
 
         /// <summary>
@@ -739,27 +780,134 @@ namespace Lithnet.ResourceManagement.Client
             }
         }
 
-        /// <summary>
-        /// Gets the values of the attribute converted to strings for serialization
-        /// </summary>
-        /// <returns></returns>
-        internal IList<string> GetSerializationValues()
+        /// <summary>Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with the data needed to serialize the target object.</summary>
+        /// <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> to populate with data. </param>
+        /// <param name="context">The destination (see <see cref="T:System.Runtime.Serialization.StreamingContext" />) for this serialization. </param>
+        /// <exception cref="T:System.Security.SecurityException">The caller does not have the required permission. </exception>
+        void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            List<string> values = new List<string>();
+            ResourceSerializationSettings settings = context.Context as ResourceSerializationSettings? ?? new ResourceSerializationSettings();
+
+            this.Serialize(info, settings);
+        }
+
+        internal void Serialize(SerializationInfo info, ResourceSerializationSettings settings)
+        {
+            if (settings.ResourceFormat == ResourceSerializationHandling.FixedStructure)
+            {
+                info.AddValue("Name", this.AttributeName);
+            }
+
+            if (this.hasPermissionHint && settings.IncludePermissionHints)
+            {
+                List<string> permissions = this.PermissionHint.ToList();
+
+                if (permissions.Count > 0)
+                {
+                    info.AddValue("PermissionHint", permissions);
+                }
+                else
+                {
+                    info.AddValue("PermissionHint", null);
+                }
+            }
+
+            this.SerializeValues(info, settings, "Values");
+        }
+
+        internal void SerializeValues(SerializationInfo info, ResourceSerializationSettings settings, string elementName)
+        {
+            if (this.IsNull)
+            {
+                if (settings.IncludeNullValues)
+                {
+                    if (settings.ArrayHandling == ArraySerializationHandling.AllAttributes || 
+                        settings.ResourceFormat == ResourceSerializationHandling.FixedStructure ||
+                        (this.Attribute.IsMultivalued && settings.ArrayHandling != ArraySerializationHandling.WhenRequired))
+                    {
+                        info.AddValue(elementName, new object[0]);
+                    }
+                    else
+                    {
+                        info.AddValue(elementName, null);
+                    }
+                }
+
+                return;
+            }
+
+            IList<object> serializedValues = this.GetSerializationValues(settings);
 
             if (this.Attribute.IsMultivalued)
             {
-                foreach (object value in this.values)
+                if (serializedValues.Count == 1 && settings.ArrayHandling == ArraySerializationHandling.WhenRequired && settings.ResourceFormat != ResourceSerializationHandling.FixedStructure)
                 {
-                    values.Add(TypeConverter.ToString(value));
+                    info.AddValue(elementName, serializedValues.First());
+                }
+                else
+                {
+                    info.AddValue(elementName, serializedValues);
                 }
             }
             else
             {
-                values.Add(TypeConverter.ToString(this.value));
+                if (settings.ArrayHandling == ArraySerializationHandling.AllAttributes || 
+                    settings.ResourceFormat == ResourceSerializationHandling.FixedStructure)
+                {
+                    info.AddValue(elementName, serializedValues);
+                }
+                else
+                {
+                    info.AddValue(elementName, serializedValues.First());
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the values of the attribute converted to types suitable for serialization
+        /// </summary>
+        /// <returns></returns>
+        internal IList<object> GetSerializationValues()
+        {
+            return this.GetSerializationValues(new ResourceSerializationSettings());
+        }
+
+        /// <summary>
+        /// Gets the values of the attribute converted to types suitable for serialization
+        /// </summary>
+        /// <param name="settings">The settings used to control serialization</param>
+        /// <returns></returns>
+        internal IList<object> GetSerializationValues(ResourceSerializationSettings settings)
+        {
+            List<object> serializationValues = new List<object>();
+
+            if (this.Attribute.IsMultivalued)
+            {
+                foreach (object v in this.values)
+                {
+                    if (settings.ValueFormat == AttributeValueSerializationHandling.ConvertToString)
+                    {
+                        serializationValues.Add(TypeConverter.ToString(v));
+                    }
+                    else
+                    {
+                        serializationValues.Add(TypeConverter.ToSerializableValue(v));
+                    }
+                }
+            }
+            else
+            {
+                if (settings.ValueFormat == AttributeValueSerializationHandling.ConvertToString)
+                {
+                    serializationValues.Add(TypeConverter.ToString(this.value));
+                }
+                else
+                {
+                    serializationValues.Add(TypeConverter.ToSerializableValue(this.value));
+                }
             }
 
-            return values;
+            return serializationValues;
         }
 
         /// <summary>
@@ -771,7 +919,7 @@ namespace Lithnet.ResourceManagement.Client
         public static bool operator ==(AttributeValue a, object b)
         {
             // If both are null, or both are same instance, return true.
-            if (System.Object.ReferenceEquals(a, b))
+            if (object.ReferenceEquals(a, b))
             {
                 return true;
             }
@@ -805,7 +953,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             if (this.Attribute.IsMultivalued)
             {
-                return this.values.Select(t => TypeConverter.ToString(t)).ToCommaSeparatedString();
+                return this.values.Select(TypeConverter.ToString).ToCommaSeparatedString();
             }
             else
             {

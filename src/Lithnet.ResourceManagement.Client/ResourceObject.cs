@@ -3,14 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.ResourceManagement.WebServices;
-using Microsoft.ResourceManagement.WebServices.Client;
 using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
-using System.Xml.Serialization;
 using System.Xml;
-using Lithnet.ResourceManagement.Client.ResourceManagementService;
 using System.Runtime.Serialization;
-using System.Collections.ObjectModel;
-using Lithnet.ResourceManagement.Client;
 using System.Globalization;
 
 namespace Lithnet.ResourceManagement.Client
@@ -20,6 +15,7 @@ namespace Lithnet.ResourceManagement.Client
     /// </summary>
     [Serializable]
     [KnownType(typeof(List<string>))]
+    [KnownType(typeof(List<object>))]
     public class ResourceObject : ISerializable
     {
         /// <summary>
@@ -51,13 +47,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// Gets the object type name of this object
         /// </summary>
-        public string ObjectTypeName
-        {
-            get
-            {
-                return this.ObjectType.SystemName;
-            }
-        }
+        public string ObjectTypeName => this.ObjectType.SystemName;
 
         /// <summary>
         /// Gets a value indicating whether this object is a placeholder, and has not been obtained directly from the Resource Management Service
@@ -87,13 +77,12 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// Gets the collection of attributes and values associated with this object
         /// </summary>
-        public AttributeValueCollection Attributes
-        {
-            get
-            {
-                return this.attributes;
-            }
-        }
+        public AttributeValueCollection Attributes => this.attributes;
+
+        /// <summary>
+        /// Gets a value indicating if this object has attribute permission hints available
+        /// </summary>
+        public bool HasPermissionHints { get; private set; }
 
         /// <summary>
         /// Gets the object ID for this object
@@ -351,7 +340,7 @@ namespace Lithnet.ResourceManagement.Client
                 return false;
             }
 
-            return !attributes[name].IsNull;
+            return !this.attributes[name].IsNull;
         }
 
         /// <summary>
@@ -387,7 +376,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             StringBuilder sb = new StringBuilder();
 
-            foreach (KeyValuePair<string, IList<string>> kvp in this.GetSerializationValues())
+            foreach (KeyValuePair<string, IList<object>> kvp in this.GetSerializationValues())
             {
                 foreach (string value in kvp.Value)
                 {
@@ -399,18 +388,28 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets a list of attributes and values for the resource in a string format suitable for serialization
+        /// Gets a list of attributes and values for the resource in a primative format suitable for serialization
         /// </summary>
-        /// <returns></returns>
-        internal Dictionary<string, IList<string>> GetSerializationValues()
+        /// <returns>A list of attribute and value pairs</returns>
+        internal Dictionary<string, IList<object>> GetSerializationValues()
         {
-            Dictionary<string, IList<string>> values = new Dictionary<string, IList<string>>();
+            return this.GetSerializationValues(new ResourceSerializationSettings());
+        }
+
+        /// <summary>
+        /// Gets a list of attributes and values for the resource in a primative format suitable for serialization
+        /// </summary>
+        /// <param name="settings">The settings used to serialize the resource</param>
+        /// <returns>A list of attribute and value pairs</returns>
+        internal Dictionary<string, IList<object>> GetSerializationValues(ResourceSerializationSettings settings)
+        {
+            Dictionary<string, IList<object>> values = new Dictionary<string, IList<object>>();
 
             foreach (AttributeValue kvp in this.attributes)
             {
                 if (!kvp.IsNull)
                 {
-                    values.Add(kvp.AttributeName, kvp.GetSerializationValues());
+                    values.Add(kvp.AttributeName, kvp.GetSerializationValues(settings));
                 }
             }
 
@@ -516,34 +515,51 @@ namespace Lithnet.ResourceManagement.Client
         /// Sets the internal attribute value collection with the initial values contained in the dictionary
         /// </summary>
         /// <param name="values">The initial attributes and values to set</param>
-        private void SetInitialAttributeValues(Dictionary<string, List<string>> values)
+        /// <param name="permissions">The permission hints for the attributes</param>
+        private void SetInitialAttributeValues(Dictionary<string, List<string>> values, Dictionary<string, AttributePermission> permissions)
         {
             this.attributes = new AttributeValueCollection();
+            this.HasPermissionHints = false;
 
             foreach (KeyValuePair<string, List<string>> kvp in values)
             {
-                if (kvp.Value.Count == 0)
-                {
-                    continue;
-                }
-
                 string attributeName = kvp.Key;
                 AttributeTypeDefinition d = this.ObjectType[attributeName];
+                AttributePermission p = AttributePermission.Unknown;
+
+                if (permissions != null)
+                {
+                    if (permissions.ContainsKey(attributeName))
+                    {
+                        p = permissions[attributeName];
+
+                        if (p != AttributePermission.Unknown)
+                        {
+                            this.HasPermissionHints = true;
+                        }
+                    }
+                }
 
                 if (d != null)
                 {
                     if (!d.IsMultivalued && kvp.Value.Count > 1)
                     {
-                        throw new InvalidOperationException("The attribute {0} is listed in the schema as a multivalued attribute, but more than one value was returned");
+                        throw new InvalidOperationException($"The attribute {d.SystemName} is listed in the schema as a multivalued attribute, but more than one value was returned");
+                    }
+
+                    if (kvp.Value.Count == 0)
+                    {
+                        this.attributes.Add(d.SystemName, new AttributeValue(d, p));
+                        continue;
                     }
 
                     if (d.IsMultivalued)
                     {
-                        this.attributes.Add(d.SystemName, new AttributeValue(d, kvp.Value));
+                        this.attributes.Add(d.SystemName, new AttributeValue(d, p, kvp.Value));
                     }
                     else
                     {
-                        this.attributes.Add(d.SystemName, new AttributeValue(d, kvp.Value.First()));
+                        this.attributes.Add(d.SystemName, new AttributeValue(d, p, kvp.Value.First()));
                     }
 
                     if (d.SystemName == AttributeNames.Locale)
@@ -571,12 +587,13 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Populates the ResourceObject from its full object definition
+        /// Populates the ResourceObject from its full object definition received from a Get request
         /// </summary>
         /// <param name="reader">The XmlDictionaryReader containing the full object definition</param>
         private void PopulateResourceFromFullObject(XmlDictionaryReader reader)
         {
             Dictionary<string, List<string>> values = new Dictionary<string, List<string>>();
+            Dictionary<string, AttributePermission> permissions = new Dictionary<string, AttributePermission>();
 
             reader.MoveToStartElement();
 
@@ -595,6 +612,19 @@ namespace Lithnet.ResourceManagement.Client
                     values.Add(reader.LocalName, new List<string>());
                 }
 
+                AttributePermission p;
+                if (Enum.TryParse(reader.GetAttribute("permissions", Namespaces.ResourceManagement), out p))
+                {
+                    if (!permissions.ContainsKey(reader.LocalName))
+                    {
+                        permissions.Add(reader.LocalName, p);
+                    }
+                    else
+                    {
+                        permissions[reader.LocalName] = p;
+                    }
+                }
+
                 string value = reader.ReadString();
                 if (!string.IsNullOrEmpty(value))
                 {
@@ -602,7 +632,7 @@ namespace Lithnet.ResourceManagement.Client
                 }
             }
 
-            this.SetInitialAttributeValues(values);
+            this.SetInitialAttributeValues(values, permissions);
         }
 
         /// <summary>
@@ -632,7 +662,7 @@ namespace Lithnet.ResourceManagement.Client
                 }
             }
 
-            this.SetInitialAttributeValues(values);
+            this.SetInitialAttributeValues(values, null);
         }
 
         /// <summary>
@@ -642,6 +672,7 @@ namespace Lithnet.ResourceManagement.Client
         private void PopulateResourceFromPartialResponse(IEnumerable<XmlElement> objectElements)
         {
             Dictionary<string, List<string>> values = new Dictionary<string, List<string>>();
+            Dictionary<string, AttributePermission> permissions = new Dictionary<string, AttributePermission>();
 
             foreach (XmlElement partialAttributeElement in objectElements.Where(t => t.LocalName == "PartialAttribute"))
             {
@@ -650,6 +681,19 @@ namespace Lithnet.ResourceManagement.Client
                     if (!values.ContainsKey(attributeElement.LocalName))
                     {
                         values.Add(attributeElement.LocalName, new List<string>());
+                    }
+
+                    AttributePermission p;
+                    if (Enum.TryParse(attributeElement.GetAttribute("permissions", Namespaces.ResourceManagement), out p))
+                    {
+                        if (!permissions.ContainsKey(attributeElement.LocalName))
+                        {
+                            permissions.Add(attributeElement.LocalName, p);
+                        }
+                        else
+                        {
+                            permissions[attributeElement.LocalName] = p;
+                        }
                     }
 
                     values[attributeElement.LocalName].Add(attributeElement.InnerText);
@@ -667,7 +711,7 @@ namespace Lithnet.ResourceManagement.Client
                 throw new ArgumentException("No object type was specified in the response");
             }
 
-            this.SetInitialAttributeValues(values);
+            this.SetInitialAttributeValues(values, permissions);
         }
 
         /// <summary>
@@ -677,20 +721,43 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="context">The serialization context</param>
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            foreach (KeyValuePair<string, IList<string>> kvp in this.GetSerializationValues())
+            ResourceSerializationSettings settings = context.Context as ResourceSerializationSettings? ?? new ResourceSerializationSettings();
+
+            if (settings.ResourceFormat == ResourceSerializationHandling.FixedStructure || settings.IncludePermissionHints)
             {
-                if (kvp.Value.Count > 1)
+                this.SerializeObjectComplex(info, settings);
+            }
+            else
+            {
+                this.SerializeObjectSimple(info, settings);
+            }
+        }
+
+        private void SerializeObjectComplex(SerializationInfo info, ResourceSerializationSettings settings)
+        {
+            if (settings.ResourceFormat == ResourceSerializationHandling.FixedStructure)
+            {
+                info.AddValue("Resource", this.Attributes.Where(t => !t.IsNull || settings.IncludeNullValues));
+            }
+            else
+            {
+                foreach (AttributeValue a in this.Attributes)
                 {
-                    info.AddValue(kvp.Key, kvp.Value, typeof(List<string>));
+                    if (a.IsNull && !settings.IncludeNullValues)
+                    {
+                        continue;
+                    }
+
+                    info.AddValue(a.AttributeName, a);
                 }
-                else if (kvp.Value.Count == 1)
-                {
-                    info.AddValue(kvp.Key, kvp.Value.First(), typeof(string));
-                }
-                else
-                {
-                    continue;
-                }
+            }
+        }
+
+        private void SerializeObjectSimple(SerializationInfo info, ResourceSerializationSettings settings)
+        {
+            foreach (AttributeValue a in this.Attributes)
+            {
+                a.SerializeValues(info, settings, a.AttributeName);
             }
         }
 
@@ -728,7 +795,7 @@ namespace Lithnet.ResourceManagement.Client
 
             string objectTypeName = values[AttributeNames.ObjectType].First();
             this.ObjectType = ResourceManagementSchema.ObjectTypes[objectTypeName];
-            this.SetInitialAttributeValues(values);
+            this.SetInitialAttributeValues(values, null);
             this.AddRemainingAttributesFromSchema();
         }
     }
