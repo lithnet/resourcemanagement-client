@@ -38,7 +38,6 @@ namespace Lithnet.ResourceManagement.Client
             else
             {
                 return convertedDateTime.ToString(TypeConverter.FimServiceDateFormat);
-
             }
         }
 
@@ -65,7 +64,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Removes a specific value from the specifed attribute
+        /// Removes a specific value from the specified attribute
         /// </summary>
         /// <param name="attributeName">Name of the attribute</param>
         /// <param name="value">The value to remove</param>
@@ -76,7 +75,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Sets the value of the attribute, overwriting any existing values present on the object
+        /// Sets the value of the specified attribute, overwriting any existing values present on the object
         /// </summary>
         /// <param name="attributeName">Name of the attribute</param>
         /// <param name="value">The value to set</param>
@@ -85,6 +84,5 @@ namespace Lithnet.ResourceManagement.Client
             if (rObject != null)
                 rObject.Attributes[attributeName].SetValue(value);
         }
-
     }
 }
