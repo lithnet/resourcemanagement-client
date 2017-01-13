@@ -411,7 +411,7 @@ namespace Lithnet.ResourceManagement.Client
                 }
                 else
                 {
-                    // Add values not found in initial values
+                    // Add values not found in the initial values
                     foreach (object newValue in this.values.Except(this.initialValues, AttributeValue.ValueComparer))
                         tempValueChanges.Add(new AttributeValueChange(ModeType.Insert, newValue));
 
