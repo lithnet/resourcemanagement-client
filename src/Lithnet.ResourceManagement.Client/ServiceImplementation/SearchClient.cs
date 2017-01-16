@@ -1,12 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ServiceModel.Channels;
 using System.Threading;
 using Microsoft.ResourceManagement.WebServices.WSEnumeration;
 using System.Globalization;
+using System.Linq;
 
 namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 {
-    internal partial class SearchClient : System.ServiceModel.ClientBase<Lithnet.ResourceManagement.Client.ResourceManagementService.Search>, Lithnet.ResourceManagement.Client.ResourceManagementService.Search
+    internal partial class SearchClient 
     {
         private const int DefaultPageSize = 200;
 
@@ -46,7 +48,12 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                 pageSize = DefaultPageSize;
             }
 
-            using (Message requestMessage = MessageComposer.CreateEnumerateMessage(filter, pageSize, attributesToReturn, sortingAttributes, locale))
+            if (filter == null)
+            {
+                throw new ArgumentNullException(nameof(filter));
+            }
+
+            using (Message requestMessage = MessageComposer.CreateEnumerateMessage(filter, pageSize, attributesToReturn?.ToArray(), sortingAttributes?.ToArray(), locale))
             {
                 using (Message responseMessage = this.Invoke((c) => c.Enumerate(requestMessage)))
                 {
@@ -60,6 +67,11 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
         internal PullResponse Pull(EnumerationContextType context, int pageSize)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             using (Message pullRequest = MessageComposer.GeneratePullMessage(context, pageSize))
             {
                 using (Message responseMessage = this.Invoke((c) => c.Pull(pullRequest)))
@@ -74,11 +86,16 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
         internal void Release(EnumerationContextType context)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             using (Message releaseRequest = MessageComposer.GenerateReleaseMessage(context))
             {
-                using (Message responseMessage = Release(releaseRequest))
+                using (Message responseMessage = this.Release(releaseRequest))
                 {
-                    releaseRequest.ThrowOnFault();
+                    responseMessage.ThrowOnFault();
                 }
             }
         }

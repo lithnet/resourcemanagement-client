@@ -47,7 +47,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                 throw new ArgumentNullException(nameof(resources));
             }
            
-            using (Message message = MessageComposer.CreatePutMessage(resources))
+            using (Message message = MessageComposer.CreatePutMessage(resources.ToArray()))
             {
                 if (message == null)
                 {
@@ -70,7 +70,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
             bool partialResponse = attributes != null;
             
-            using (Message message = MessageComposer.CreateGetMessage(id, attributes, locale, getPermissions))
+            using (Message message = MessageComposer.CreateGetMessage(id, attributes?.ToArray(), locale, getPermissions))
             {
                 using (Message responseMessage = this.Invoke((c) => c.Get(message)))
                 {
@@ -92,17 +92,22 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
         public void Delete(IEnumerable<ResourceObject> resources)
         {
+            if (resources == null)
+            {
+                throw new ArgumentNullException(nameof(resources));
+            }
+
             this.Delete(resources.Select(t => t.ObjectID));
         }
 
         public void Delete(IEnumerable<UniqueIdentifier> resourceIDs)
         {
-            if (!resourceIDs.Any())
+            if (resourceIDs == null)
             {
-                return;
+                throw new ArgumentNullException(nameof(resourceIDs));
             }
 
-            using (Message message = MessageComposer.CreateDeleteMessage(resourceIDs))
+            using (Message message = MessageComposer.CreateDeleteMessage(resourceIDs.ToArray()))
             {
                 using (Message responseMessage = this.Invoke((c) => c.Delete(message)))
                 {
@@ -113,11 +118,21 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
         public void Delete(ResourceObject resource)
         {
+            if (resource == null)
+            {
+                throw new ArgumentNullException(nameof(resource));
+            }
+
             this.Delete(resource.ObjectID);
         }
 
         public void Delete(UniqueIdentifier id)
         {
+            if (id == null)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
             using (Message message = MessageComposer.CreateDeleteMessage(id))
             {
                 using (Message responseMessage = this.Invoke((c) => c.Delete(message)))

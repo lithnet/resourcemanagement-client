@@ -32,11 +32,11 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             return CreateGetMessage(id, null, null, false);
         }
 
-        internal static Message CreateGetMessage(UniqueIdentifier id, IEnumerable<string> attributes, CultureInfo locale, bool includePermissions)
+        internal static Message CreateGetMessage(UniqueIdentifier id, string[] attributes, CultureInfo locale, bool includePermissions)
         {
             Get op = null;
 
-            if (!attributes.IsNullOrEmpty())
+            if (attributes != null && attributes.Length > 0)
             {
                 op = new Get
                 {
@@ -87,20 +87,18 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             return message;
         }
 
-        internal static Message CreateCreateMessage(IEnumerable<ResourceObject> resources)
+        internal static Message CreateCreateMessage(ResourceObject[] resources)
         {
             Create op = new Create();
             op.Dialect = Namespaces.RMIdentityAttributeType;
-
-            int count = resources.CountZeroOneOrMore();
-
-            if (count == 0)
+            
+            if (resources == null || resources.Length == 0)
             {
                 throw new ArgumentNullException(nameof(resources));
             }
-            else if (count == 1)
+            else if (resources.Length == 1)
             {
-                return MessageComposer.CreateCreateMessage(resources.First());
+                return MessageComposer.CreateCreateMessage(resources[0]);
             }
 
             List<FragmentType> fragments = new List<FragmentType>();
@@ -167,17 +165,15 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             return message;
         }
 
-        internal static Message CreatePutMessage(IEnumerable<ResourceObject> resources)
+        internal static Message CreatePutMessage(ResourceObject[] resources)
         {
-            int count = resources.CountZeroOneOrMore();
-
-            if (count == 0)
+            if (resources == null || resources.Length == 0)
             {
                 throw new ArgumentNullException(nameof(resources));
             }
-            else if (count == 1)
+            else if (resources.Length == 1)
             {
-                return MessageComposer.CreatePutMessage(resources.First(), null);
+                return MessageComposer.CreatePutMessage(resources[0], null);
             }
 
             Put op = new Put();
@@ -224,15 +220,13 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             return message;
         }
 
-        internal static Message CreateDeleteMessage(IEnumerable<UniqueIdentifier> ids)
+        internal static Message CreateDeleteMessage(UniqueIdentifier[] ids)
         {
-            int count = ids.CountZeroOneOrMore();
-
-            if (count == 0)
+            if (ids == null || ids.Length == 0)
             {
                 throw new ArgumentNullException(nameof(ids));
             }
-            else if (count == 1)
+            else if (ids.Length == 1)
             {
                 return MessageComposer.CreateDeleteMessage(ids.First());
             }
@@ -246,7 +240,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             return message;
         }
 
-        internal static Message CreateEnumerateMessage(string filter, int pageSize, IEnumerable<string> attributes, IEnumerable<SortingAttribute> sortingAttributes, CultureInfo locale)
+        internal static Message CreateEnumerateMessage(string filter, int pageSize, string[] attributes, SortingAttribute[] sortingAttributes, CultureInfo locale)
         {
             Enumerate request = new Enumerate
             {
@@ -254,19 +248,17 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                 MaxElements = pageSize < 0 ? MessageComposer.DefaultPageSize : pageSize.ToString()
             };
 
-            if (attributes != null)
+            if (attributes != null && attributes.Length > 0)
             {
                 request.Selection = MessageComposer.AddMandatoryAttributes(attributes, locale).ToArray();
             }
 
-            SortingAttribute[] sa = sortingAttributes?.ToArray();
-
-            if (sa != null && sa.Length > 0)
+            if (sortingAttributes != null && sortingAttributes.Length > 0)
             {
                 request.Sorting = new Sorting
                 {
                     Dialect = Namespaces.ResourceManagement,
-                    SortingAttributes = sa
+                    SortingAttributes = sortingAttributes
                 };
             }
 
@@ -308,14 +300,9 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             return message;
         }
 
-        private static IEnumerable<string> AddMandatoryAttributes(IEnumerable<string> attributes, CultureInfo locale)
+        private static IEnumerable<string> AddMandatoryAttributes(string[] attributes, CultureInfo locale)
         {
-            HashSet<string> set = new HashSet<string>();
-
-            foreach (string attribute in attributes)
-            {
-                set.Add(attribute);
-            }
+            HashSet<string> set = new HashSet<string>(attributes);
 
             foreach (string item in ResourceManagementSchema.MandatoryAttributes)
             {
