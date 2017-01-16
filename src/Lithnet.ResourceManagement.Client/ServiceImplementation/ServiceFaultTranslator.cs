@@ -3,8 +3,6 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using Microsoft.ResourceManagement.WebServices.Exceptions;
 using Microsoft.ResourceManagement.WebServices.Faults;
-using System.Xml;
-using System.Text;
 using Microsoft.ResourceManagement.WebServices.WSResourceManagement;
 
 namespace Lithnet.ResourceManagement.Client

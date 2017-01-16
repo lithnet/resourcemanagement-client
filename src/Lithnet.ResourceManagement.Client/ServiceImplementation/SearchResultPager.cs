@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using Lithnet.ResourceManagement.Client.ResourceManagementService;
 using Microsoft.ResourceManagement.WebServices.WSEnumeration;
-using Microsoft.ResourceManagement.WebServices.WSResourceManagement;
 using System.Globalization;
 
 namespace Lithnet.ResourceManagement.Client
@@ -85,17 +83,17 @@ namespace Lithnet.ResourceManagement.Client
         {
             if (response == null)
             {
-                throw new ArgumentNullException("response");
+                throw new ArgumentNullException(nameof(response));
             }
 
             if (pageSize < 0)
             {
-                throw new ArgumentException("The page size must be zero or greater", "pageSize");
+                throw new ArgumentException("The page size must be zero or greater", nameof(pageSize));
             }
 
             if (searchClient == null)
             {
-                throw new ArgumentNullException("client");
+                throw new ArgumentNullException(nameof(client));
             }
 
             this.TotalCount = Convert.ToInt32(response.EnumerationDetail.Count);

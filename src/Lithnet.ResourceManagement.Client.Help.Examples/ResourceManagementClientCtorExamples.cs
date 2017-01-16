@@ -1,5 +1,4 @@
-﻿using System;
-using Lithnet.ResourceManagement.Client;
+﻿using Lithnet.ResourceManagement.Client;
 
 namespace ConsoleApplication1
 {

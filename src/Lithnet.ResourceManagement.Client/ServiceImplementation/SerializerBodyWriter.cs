@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.ServiceModel.Channels;
 using System.Xml;
 using System.Xml.Serialization;

@@ -1,9 +1,5 @@
 ﻿using Microsoft.ResourceManagement.WebServices.Exceptions;
 using Microsoft.ResourceManagement.WebServices.Faults;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Lithnet.ResourceManagement.Client
 {

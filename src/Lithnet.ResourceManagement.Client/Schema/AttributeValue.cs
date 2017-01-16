@@ -454,11 +454,15 @@ namespace Lithnet.ResourceManagement.Client
                 {
                     // Add values not found in the initial values
                     foreach (object newValue in this.values.Except(this.initialValues, AttributeValue.ValueComparer))
+                    {
                         tempValueChanges.Add(new AttributeValueChange(ModeType.Insert, newValue));
+                    }
 
                     // Remove values that shouldn't exist anymore
                     foreach (object removedValue in this.initialValues.Except(this.values, AttributeValue.ValueComparer))
+                    {
                         tempValueChanges.Add(new AttributeValueChange(ModeType.Remove, removedValue));
+                    }
                 }
             }
 
@@ -791,7 +795,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 if (settings.IncludeNullValues)
                 {
-                    if (settings.ArrayHandling == ArraySerializationHandling.AllAttributes || 
+                    if (settings.ArrayHandling == ArraySerializationHandling.AllAttributes ||
                         settings.ResourceFormat == ResourceSerializationHandling.FixedStructure ||
                         (this.Attribute.IsMultivalued && settings.ArrayHandling != ArraySerializationHandling.WhenRequired))
                     {
@@ -821,7 +825,7 @@ namespace Lithnet.ResourceManagement.Client
             }
             else
             {
-                if (settings.ArrayHandling == ArraySerializationHandling.AllAttributes || 
+                if (settings.ArrayHandling == ArraySerializationHandling.AllAttributes ||
                     settings.ResourceFormat == ResourceSerializationHandling.FixedStructure)
                 {
                     info.AddValue(elementName, serializedValues);

@@ -18,7 +18,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             if (writer == null)
             {
-                throw new ArgumentNullException("writer");
+                throw new ArgumentNullException(nameof(writer));
             }
 
             writer.WriteStartElement("Property", this.Namespace);

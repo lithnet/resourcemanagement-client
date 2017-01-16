@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using Lithnet.ResourceManagement.Client;
-using Lithnet.ResourceManagement.Client.ResourceManagementService;
-using Microsoft.ResourceManagement.WebServices;
-using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests

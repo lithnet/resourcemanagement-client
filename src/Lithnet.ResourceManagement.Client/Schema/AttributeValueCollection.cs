@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -65,12 +61,12 @@ namespace Lithnet.ResourceManagement.Client
         {
             if (attributeName == null)
             {
-                throw new ArgumentNullException("attributeName");
+                throw new ArgumentNullException(nameof(attributeName));
             }
 
             if (value == null)
             {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             }
 
             this.internalValues.Add(attributeName, value);
@@ -84,7 +80,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             if (value == null)
             {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             }
 
             if (value.AttributeName == null)

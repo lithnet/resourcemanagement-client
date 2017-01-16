@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Lithnet.ResourceManagement.Client
+﻿namespace Lithnet.ResourceManagement.Client
 {
     /// <summary>
     /// Defines the settings that control the serialization of resources

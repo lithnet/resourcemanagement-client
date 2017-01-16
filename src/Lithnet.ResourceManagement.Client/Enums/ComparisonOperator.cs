@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Lithnet.ResourceManagement.Client
+﻿namespace Lithnet.ResourceManagement.Client
 {
     /// <summary>
     /// /The type of value comparison to perform between an attribute and a value in an XPath query

@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
     using Lithnet.ResourceManagement.Client.ResourceManagementService;
     using Microsoft.ResourceManagement.WebServices;
     using Microsoft.ResourceManagement.WebServices.WSEnumeration;
@@ -15,7 +14,6 @@
     using System.Threading.Tasks;
     using System.Collections.Concurrent;
     using System.Diagnostics.CodeAnalysis;
-    using Lithnet.ResourceManagement.Client;
     using System.Globalization;
 
     /// <summary>
@@ -376,7 +374,7 @@
         /// <param name="resources">The resources to update</param>
         public void SaveResources(params ResourceObject[] resources)
         {
-            this.SaveResources(resources);
+            this.SaveResources((IEnumerable<ResourceObject>)resources);
         }
 
         /// <summary>
@@ -1047,7 +1045,7 @@
         {
             if (string.IsNullOrWhiteSpace(sortAttribute))
             {
-                throw new ArgumentNullException("sortAttribute");
+                throw new ArgumentNullException(nameof(sortAttribute));
             }
 
             SortingAttribute attribute = new SortingAttribute(sortAttribute, sortAscending);
@@ -1065,7 +1063,7 @@
         {
             if (sortAttributes == null)
             {
-                throw new ArgumentNullException("sortAttributes");
+                throw new ArgumentNullException(nameof(sortAttributes));
             }
 
             return this.searchClient.EnumerateSync(filter, -1, attributesToGet, sortAttributes, null);
@@ -1083,7 +1081,7 @@
         {
             if (sortAttributes == null)
             {
-                throw new ArgumentNullException("sortAttributes");
+                throw new ArgumentNullException(nameof(sortAttributes));
             }
 
             return this.searchClient.EnumerateSync(filter, -1, attributesToGet, sortAttributes, locale);
@@ -1249,7 +1247,7 @@
         {
             if (sortAttributes == null)
             {
-                throw new ArgumentNullException("sortAttributes");
+                throw new ArgumentNullException(nameof(sortAttributes));
             }
 
             return this.searchClient.EnumerateSync(filter, pageSize, attributesToGet, sortAttributes, null);
@@ -1268,7 +1266,7 @@
         {
             if (sortAttributes == null)
             {
-                throw new ArgumentNullException("sortAttributes");
+                throw new ArgumentNullException(nameof(sortAttributes));
             }
 
             return this.searchClient.EnumerateSync(filter, pageSize, attributesToGet, sortAttributes, locale);
@@ -1333,7 +1331,7 @@
         {
             if (string.IsNullOrWhiteSpace(sortAttribute))
             {
-                throw new ArgumentNullException("sortAttribute");
+                throw new ArgumentNullException(nameof(sortAttribute));
             }
 
             SortingAttribute attribute = new SortingAttribute(sortAttribute, sortAscending);
@@ -1351,7 +1349,7 @@
         {
             if (sortAttributes == null)
             {
-                throw new ArgumentNullException("sortAttributes");
+                throw new ArgumentNullException(nameof(sortAttributes));
             }
 
             return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, sortAttributes, null, null);
@@ -1369,7 +1367,7 @@
         {
             if (sortAttributes == null)
             {
-                throw new ArgumentNullException("sortAttributes");
+                throw new ArgumentNullException(nameof(sortAttributes));
             }
 
             return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, sortAttributes, locale, null);
@@ -1438,7 +1436,7 @@
         {
             if (string.IsNullOrWhiteSpace(sortAttribute))
             {
-                throw new ArgumentNullException("sortAttribute");
+                throw new ArgumentNullException(nameof(sortAttribute));
             }
 
             SortingAttribute attribute = new SortingAttribute(sortAttribute, sortAscending);
@@ -1457,7 +1455,7 @@
         {
             if (sortAttributes == null)
             {
-                throw new ArgumentNullException("sortAttributes");
+                throw new ArgumentNullException(nameof(sortAttributes));
             }
 
             return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, sortAttributes, null, null);
@@ -1476,7 +1474,7 @@
         {
             if (sortAttributes == null)
             {
-                throw new ArgumentNullException("sortAttributes");
+                throw new ArgumentNullException(nameof(sortAttributes));
             }
 
             return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, sortAttributes, locale, null);
@@ -1545,7 +1543,7 @@
         {
             if (string.IsNullOrWhiteSpace(sortAttribute))
             {
-                throw new ArgumentNullException("sortAttribute");
+                throw new ArgumentNullException(nameof(sortAttribute));
             }
 
             SortingAttribute attribute = new SortingAttribute(sortAttribute, sortAscending);
@@ -1564,7 +1562,7 @@
         {
             if (sortAttributes == null)
             {
-                throw new ArgumentNullException("sortAttributes");
+                throw new ArgumentNullException(nameof(sortAttributes));
             }
 
             return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, sortAttributes, null, cancellationToken);
@@ -1583,7 +1581,7 @@
         {
             if (sortAttributes == null)
             {
-                throw new ArgumentNullException("sortAttributes");
+                throw new ArgumentNullException(nameof(sortAttributes));
             }
 
             return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, sortAttributes, locale, cancellationToken);
@@ -1657,7 +1655,7 @@
         {
             if (string.IsNullOrWhiteSpace(sortAttribute))
             {
-                throw new ArgumentNullException("sortAttribute");
+                throw new ArgumentNullException(nameof(sortAttribute));
             }
 
             SortingAttribute attribute = new SortingAttribute(sortAttribute, sortAscending);
@@ -1677,7 +1675,7 @@
         {
             if (sortAttributes == null)
             {
-                throw new ArgumentNullException("sortAttributes");
+                throw new ArgumentNullException(nameof(sortAttributes));
             }
 
             return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, sortAttributes, null, cancellationToken);
@@ -1697,7 +1695,7 @@
         {
             if (sortAttributes == null)
             {
-                throw new ArgumentNullException("sortAttributes");
+                throw new ArgumentNullException(nameof(sortAttributes));
             }
 
             return this.searchClient.EnumerateAsync(filter, pageSize, attributesToGet, sortAttributes, locale, cancellationToken);
@@ -1791,7 +1789,7 @@
         {
             if (string.IsNullOrWhiteSpace(sortAttribute))
             {
-                throw new ArgumentNullException("sortAttribute");
+                throw new ArgumentNullException(nameof(sortAttribute));
             }
 
             SortingAttribute attribute = new SortingAttribute(sortAttribute, sortAscending);

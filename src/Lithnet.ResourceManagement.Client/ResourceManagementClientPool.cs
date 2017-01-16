@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Collections.Concurrent;
 
@@ -55,7 +52,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             if (client == null)
             {
-                throw new ArgumentNullException("client");
+                throw new ArgumentNullException(nameof(client));
             }
 
             pool.Add(client);

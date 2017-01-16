@@ -1,16 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ServiceModel;
 using System.ServiceModel.Channels;
-using Lithnet.ResourceManagement.Client.ResourceManagementService;
-using System.Xml;
 using System.Xml.Serialization;
-using Microsoft.ResourceManagement.WebServices.Exceptions;
-using Microsoft.ResourceManagement.WebServices.Client;
-using Microsoft.ResourceManagement.WebServices.WSTransfer;
-using Microsoft.ResourceManagement.WebServices;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -25,7 +15,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             if (message.Headers.FindHeader(name, xsdName) <= 0)
             {
-                message.Headers.Add(MessageHeader.CreateHeader(name, xsdName, (value == null) ? null : value.ToString(), mustUnderstand));
+                message.Headers.Add(MessageHeader.CreateHeader(name, xsdName, value?.ToString(), mustUnderstand));
             }
         }
 
@@ -33,7 +23,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             if (message.Headers.FindHeader(name, xsdName) <= 0)
             {
-                message.Headers.Add(MessageHeader.CreateHeader(name, xsdName, (value == null) ? null : value.ToString()));
+                message.Headers.Add(MessageHeader.CreateHeader(name, xsdName, value?.ToString()));
             }
         }
 

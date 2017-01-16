@@ -38,7 +38,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             if (pager == null)
             {
-                throw new ArgumentNullException("pager");
+                throw new ArgumentNullException(nameof(pager));
             }
 
             this.pager = pager;

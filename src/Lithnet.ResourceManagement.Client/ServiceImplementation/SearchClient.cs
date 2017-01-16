@@ -1,11 +1,7 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.ServiceModel;
+﻿using System.Collections.Generic;
 using System.ServiceModel.Channels;
 using System.Threading;
 using Microsoft.ResourceManagement.WebServices.WSEnumeration;
-using System.Xml;
 using System.Globalization;
 
 namespace Lithnet.ResourceManagement.Client.ResourceManagementService

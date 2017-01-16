@@ -1,9 +1,5 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Lithnet.ResourceManagement.Client.ResourceManagementService;
-using Lithnet.ResourceManagement.Client;
-using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
-using Microsoft.ResourceManagement.WebServices;
 using Microsoft.ResourceManagement.WebServices.WSEnumeration;
 using System.Collections.Generic;
 using System.Diagnostics;

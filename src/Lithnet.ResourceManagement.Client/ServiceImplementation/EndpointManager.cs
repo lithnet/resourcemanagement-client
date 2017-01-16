@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ServiceModel.Security;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 
@@ -38,16 +34,16 @@ namespace Lithnet.ResourceManagement.Client
             }
 
             builder.Path = "ResourceManagementService/Resource";
-            this.ResourceEndpoint = new EndpointAddress(builder.Uri, this.EndpointSpn, new AddressHeader[0]);
+            this.ResourceEndpoint = new EndpointAddress(builder.Uri, this.EndpointSpn);
 
             builder.Path = "ResourceManagementService/ResourceFactory";
-            this.ResourceFactoryEndpoint = new EndpointAddress(builder.Uri, this.EndpointSpn, new AddressHeader[0]);
+            this.ResourceFactoryEndpoint = new EndpointAddress(builder.Uri, this.EndpointSpn);
 
             builder.Path = "ResourceManagementService/Enumeration";
-            this.SearchEndpoint = new EndpointAddress(builder.Uri, this.EndpointSpn, new AddressHeader[0]);
+            this.SearchEndpoint = new EndpointAddress(builder.Uri, this.EndpointSpn);
 
             builder.Path = "ResourceManagementService/MEX";
-            this.MetadataEndpoint = new EndpointAddress(builder.Uri, this.EndpointSpn, new AddressHeader[0]);
+            this.MetadataEndpoint = new EndpointAddress(builder.Uri, this.EndpointSpn);
         }
 
         public EndpointManager(string baseUri)
@@ -64,7 +60,7 @@ namespace Lithnet.ResourceManagement.Client
         public static EndpointAddress EndpointFromAddress(string address)
         {
             Uri uri = new Uri(address);
-            return new EndpointAddress(uri, EndpointManager.SpnIdentityFromUri(uri), new AddressHeader[0]);
+            return new EndpointAddress(uri, EndpointManager.SpnIdentityFromUri(uri));
         }
     }
 }

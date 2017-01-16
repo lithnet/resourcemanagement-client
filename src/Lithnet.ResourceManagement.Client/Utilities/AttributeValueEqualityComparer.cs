@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Collections;
-using Lithnet.ResourceManagement.Client;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -53,20 +50,20 @@ namespace Lithnet.ResourceManagement.Client
                 return false;
             }
 
-            IList list1 = x as IList;
-            IList list2 = y as IList;
-
-            if (list1 != null && list2 != null)
-            {
-                return this.Equals(list1, list2);
-            }
-
             byte[] byte1 = x as byte[];
             byte[] byte2 = y as byte[];
 
             if (byte1 != null && byte2 != null)
             {
                 return StructuralComparisons.StructuralEqualityComparer.Equals(byte1, byte2);
+            }
+
+            IList list1 = x as IList;
+            IList list2 = y as IList;
+
+            if (list1 != null && list2 != null)
+            {
+                return this.Equals(list1, list2);
             }
 
             string string1 = x.ToString();
@@ -110,14 +107,7 @@ namespace Lithnet.ResourceManagement.Client
 
         public int GetHashCode(object obj)
         {
-            if (obj == null)
-            {
-                return 0;
-            }
-            else
-            {
-                return obj.GetHashCode();
-            }
+            return obj?.GetHashCode() ?? 0;
         }
     }
 }

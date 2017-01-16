@@ -2,14 +2,8 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
-using Lithnet.ResourceManagement.Client.ResourceManagementService;
-using Microsoft.ResourceManagement.WebServices.WSEnumeration;
-using Microsoft.ResourceManagement.WebServices.WSResourceManagement;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -58,7 +52,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             if (pager == null)
             {
-                throw new ArgumentNullException("pager");
+                throw new ArgumentNullException(nameof(pager));
             }
 
             this.resultSet = new BlockingCollection<ResourceObject>();

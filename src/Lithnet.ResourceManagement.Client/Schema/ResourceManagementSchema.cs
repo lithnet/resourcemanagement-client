@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.ResourceManagement.WebServices;
 using Microsoft.ResourceManagement.WebServices.WSMetadataExchange;
 using System.ServiceModel.Description;
 using System.ServiceModel.Channels;
@@ -10,7 +8,6 @@ using Lithnet.ResourceManagement.Client.ResourceManagementService;
 using System.Xml.Schema;
 using System.ServiceModel;
 using System.Collections.ObjectModel;
-using Lithnet.ResourceManagement.Client;
 using System.Text.RegularExpressions;
 
 namespace Lithnet.ResourceManagement.Client
@@ -221,7 +218,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             if (set == null)
             {
-                throw new ArgumentNullException("set");
+                throw new ArgumentNullException(nameof(set));
             }
 
             if (set.MetadataSections.Count != 1)

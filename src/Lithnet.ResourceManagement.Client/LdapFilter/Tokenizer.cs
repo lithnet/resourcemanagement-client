@@ -1,10 +1,7 @@
 ﻿namespace Lithnet.ResourceManagement.Client
 {
     using System;
-    using System.IO;
-    using System.Linq;
     using System.Text;
-    using System.Collections;
     using System.Collections.Generic;
 
     internal class StringTokenizer
@@ -36,7 +33,7 @@
         {
             if (data == null)
             {
-                throw new ArgumentNullException("data");
+                throw new ArgumentNullException(nameof(data));
             }
 
             this.data = data;

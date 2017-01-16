@@ -2,7 +2,6 @@
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using Microsoft.ResourceManagement.WebServices;
-using Microsoft.ResourceManagement.WebServices.Exceptions;
 using Microsoft.ResourceManagement.WebServices.Faults;
 using Microsoft.ResourceManagement.WebServices.WSTransfer;
 using System.Collections.Generic;
@@ -83,7 +82,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
         {
             if (resources == null)
             {
-                throw new ArgumentNullException("resources");
+                throw new ArgumentNullException(nameof(resources));
             }
 
             try

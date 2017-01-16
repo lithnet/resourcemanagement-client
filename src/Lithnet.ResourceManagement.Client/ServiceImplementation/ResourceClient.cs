@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Xml;
 using Microsoft.ResourceManagement.WebServices;
@@ -10,7 +9,7 @@ using System.Globalization;
 
 namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 {
-    internal partial class ResourceClient : ClientBase<Resource>, Resource
+    internal partial class ResourceClient 
     {
         private ResourceManagementClient client;
 
@@ -24,7 +23,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
         {
             if (resource == null)
             {
-                throw new ArgumentNullException("resource");
+                throw new ArgumentNullException(nameof(resource));
             }
 
             using (Message message = MessageComposer.CreatePutMessage(resource, locale))
@@ -34,7 +33,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                     return;
                 }
 
-                using (Message responseMessage = this.Invoke((c) => c.Put(message)))
+                using (Message responseMessage = this.Invoke(c => c.Put(message)))
                 {
                     responseMessage.ThrowOnFault();
                 }
@@ -45,7 +44,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
         {
             if (resources == null)
             {
-                throw new ArgumentNullException("resources");
+                throw new ArgumentNullException(nameof(resources));
             }
            
             using (Message message = MessageComposer.CreatePutMessage(resources))
@@ -66,13 +65,11 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
         {
             if (id == null)
             {
-                throw new ArgumentNullException("id");
+                throw new ArgumentNullException(nameof(id));
             }
 
             bool partialResponse = attributes != null;
             
-            GetResponse r = new GetResponse();
-
             using (Message message = MessageComposer.CreateGetMessage(id, attributes, locale, getPermissions))
             {
                 using (Message responseMessage = this.Invoke((c) => c.Get(message)))
@@ -134,10 +131,8 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
         {
             if (resource == null)
             {
-                throw new ArgumentNullException("resource");
+                throw new ArgumentNullException(nameof(resource));
             }
-
-            GetResponse r = new GetResponse();
 
             using (Message message = MessageComposer.CreateGetMessage(resource.ObjectID, null, resource.Locale, resource.HasPermissionHints))
             {
