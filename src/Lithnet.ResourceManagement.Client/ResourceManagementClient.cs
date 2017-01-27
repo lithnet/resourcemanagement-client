@@ -139,7 +139,7 @@
         static ResourceManagementClient()
         {
             ResourceManagementClient.Configuration = ClientConfigurationSection.GetConfiguration();
-
+            
             if (ResourceManagementClient.Configuration.ConcurrentConnectionLimit > 0)
             {
                 System.Net.ServicePointManager.DefaultConnectionLimit = ResourceManagementClient.Configuration.ConcurrentConnectionLimit;

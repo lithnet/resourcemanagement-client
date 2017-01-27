@@ -1,20 +1,44 @@
 ﻿using System;
 using System.Configuration;
+using System.Reflection;
 
 namespace Lithnet.ResourceManagement.Client
 {
     internal class ClientConfigurationSection : ConfigurationSection
     {
+        private object resourceConfigSection;
+
+        private Type resourceConfigSectionType;
+
         internal static ClientConfigurationSection GetConfiguration()
         {
             ClientConfigurationSection section = (ClientConfigurationSection)ConfigurationManager.GetSection("lithnetResourceManagementClient");
 
             if (section == null)
             {
-                section = new ClientConfigurationSection();
+                object s2 = ConfigurationManager.GetSection("resourceManagementClient");
+
+                if (s2 != null)
+                {
+                    section = new Client.ClientConfigurationSection(s2);
+                }
+                else
+                {
+                    section = new ClientConfigurationSection();
+                }
             }
 
             return section;
+        }
+
+        internal ClientConfigurationSection()
+        {
+        }
+
+        internal ClientConfigurationSection(object resourceConfigSection)
+        {
+            this.resourceConfigSection = resourceConfigSection;
+            this.resourceConfigSectionType = resourceConfigSection.GetType();
         }
 
         [ConfigurationProperty("resourceManagementServiceBaseAddress", IsRequired = true, DefaultValue = "http://localhost:5725")]
@@ -22,7 +46,15 @@ namespace Lithnet.ResourceManagement.Client
         {
             get
             {
-                return (Uri)this["resourceManagementServiceBaseAddress"];
+                if (this.resourceConfigSection != null)
+                {
+                    PropertyInfo p = this.resourceConfigSectionType.GetProperty("ResourceManagementServiceBaseAddress");
+                    return (Uri)p.GetValue(this.resourceConfigSection, null);
+                }
+                else
+                {
+                    return (Uri) this["resourceManagementServiceBaseAddress"];
+                }
             }
             set
             {
@@ -35,7 +67,15 @@ namespace Lithnet.ResourceManagement.Client
         {
             get
             {
-                return (string)this["servicePrincipalName"];
+                if (this.resourceConfigSection != null)
+                {
+                    PropertyInfo p = this.resourceConfigSectionType.GetProperty("ServicePrincipalName");
+                    return (string)p.GetValue(this.resourceConfigSection, null);
+                }
+                else
+                {
+                    return (string) this["servicePrincipalName"];
+                }
             }
             set
             {
@@ -48,7 +88,15 @@ namespace Lithnet.ResourceManagement.Client
         {
             get
             {
-                return (bool)this["forceKerberos"];
+                if (this.resourceConfigSection != null)
+                {
+                    PropertyInfo p = this.resourceConfigSectionType.GetProperty("RequireKerberos");
+                    return (bool)p.GetValue(this.resourceConfigSection, null);
+                }
+                else
+                {
+                    return (bool) this["forceKerberos"];
+                }
             }
             set
             {
@@ -100,7 +148,15 @@ namespace Lithnet.ResourceManagement.Client
         {
             get
             {
-                return (int)this["sendTimeout"];
+                if (this.resourceConfigSection != null)
+                {
+                    PropertyInfo p = this.resourceConfigSectionType.GetProperty("TimeoutInMilliseconds");
+                    return (int)p.GetValue(this.resourceConfigSection, null);
+                }
+                else
+                {
+                    return (int) this["sendTimeout"];
+                }
             }
             set
             {
@@ -113,7 +169,15 @@ namespace Lithnet.ResourceManagement.Client
         {
             get
             {
-                return (int)this["receiveTimeout"];
+                if (this.resourceConfigSection != null)
+                {
+                    PropertyInfo p = this.resourceConfigSectionType.GetProperty("TimeoutInMilliseconds");
+                    return (int)p.GetValue(this.resourceConfigSection, null);
+                }
+                else
+                {
+                    return (int) this["receiveTimeout"];
+                }
             }
             set
             {
