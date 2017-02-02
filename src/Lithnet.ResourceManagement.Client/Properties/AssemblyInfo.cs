@@ -33,4 +33,4 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.*")]
-[assembly: InternalsVisibleTo("Lithnet.ResourceManagement.Client.UnitTests")]
+[assembly: InternalsVisibleTo("Lithnet.ResourceManagement.Client.UnitTests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100e31eeb7a5a88e230804f547c0ba9953c9d5d4a938d8a7980fa785ff64d0a20c6fbdb9f7654e3e613367e1a1245cf23114794a9295a5ed531e1a19caf8637ab668b74b8653b2783a2929732662c588446353c4fb3284f40b7f67bf6fdaa290990528d5eba29a72e6e3c2dcabec3318ca9182194e1e03e42441957d1052ef6f6be")]
