@@ -63,11 +63,6 @@ namespace Lithnet.ResourceManagement.Client
         private List<object> initialValues;
 
         /// <summary>
-        /// An internal field used to track if the attribute value has been changed
-        /// </summary>
-        private bool hasChanged;
-
-        /// <summary>
         /// Gets the name of the attribute
         /// </summary>
         public string AttributeName
@@ -182,6 +177,24 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
+        /// Gets the raw values of the attribute
+        /// </summary>
+        public ReadOnlyCollection<object> Values
+        {
+            get
+            {
+                if (this.Attribute.IsMultivalued)
+                {
+                    return this.values.AsReadOnly();
+                }
+                else
+                {
+                    return new List<object>() { this.value }.AsReadOnly();
+                }
+            }
+        }
+
+        /// <summary>
         /// Sets the internal initial value fields of the class to the current values
         /// </summary>
         internal void Commit()
@@ -195,8 +208,6 @@ namespace Lithnet.ResourceManagement.Client
             {
                 this.initialValue = this.value;
             }
-
-            this.hasChanged = false;
         }
 
         /// <summary>
@@ -213,8 +224,6 @@ namespace Lithnet.ResourceManagement.Client
             {
                 this.value = this.initialValue;
             }
-
-            this.hasChanged = false;
         }
 
         /// <summary>
@@ -254,8 +263,6 @@ namespace Lithnet.ResourceManagement.Client
             {
                 throw new ReadOnlyValueModificationException(this.Attribute);
             }
-
-            this.hasChanged = !initialLoad;
 
             if (value == null || value == DBNull.Value)
             {
@@ -364,8 +371,6 @@ namespace Lithnet.ResourceManagement.Client
             {
                 throw new ReadOnlyValueModificationException(this.Attribute);
             }
-
-            this.hasChanged = !initialLoad;
 
             if (value == null || value == DBNull.Value)
             {
@@ -545,10 +550,11 @@ namespace Lithnet.ResourceManagement.Client
             {
                 return true;
             }
-            else if (obj is AttributeValue)
-            {
-                AttributeValue obj2 = obj as AttributeValue;
 
+            AttributeValue obj2 = obj as AttributeValue;
+
+            if (obj2 != null)
+            {
                 if (obj2.AttributeName != this.AttributeName)
                 {
                     return false;
@@ -565,7 +571,6 @@ namespace Lithnet.ResourceManagement.Client
                 }
 
                 return AttributeValue.ValueComparer.Equals(obj2.Value, this.Value);
-
             }
             else
             {
@@ -686,7 +691,25 @@ namespace Lithnet.ResourceManagement.Client
                     throw new InvalidOperationException("Cannot get a single-valued attribute value from GetValues");
                 }
 
-                return this.values.Cast<string>().ToList().AsReadOnly();
+                return this.values.ConvertAll(TypeConverter.ToString).AsReadOnly();
+            }
+        }
+
+        /// <summary>
+        /// Gets the values of the attribute as a collection of string values
+        /// </summary>
+        public ReadOnlyCollection<string> ValuesAsString
+        {
+            get
+            {
+                if (this.Attribute.IsMultivalued)
+                {
+                    return this.values.ConvertAll(TypeConverter.ToString).AsReadOnly();
+                }
+                else
+                {
+                    return new List<string>() { TypeConverter.ToString(this.value) }.AsReadOnly();
+                }
             }
         }
 
