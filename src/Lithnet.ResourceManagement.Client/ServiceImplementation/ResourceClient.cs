@@ -46,7 +46,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             {
                 throw new ArgumentNullException(nameof(resources));
             }
-           
+
             using (Message message = MessageComposer.CreatePutMessage(resources.ToArray()))
             {
                 if (message == null)
@@ -107,7 +107,14 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                 throw new ArgumentNullException(nameof(resourceIDs));
             }
 
-            using (Message message = MessageComposer.CreateDeleteMessage(resourceIDs.ToArray()))
+            UniqueIdentifier[] ids = resourceIDs.ToArray();
+
+            if (ids.Length == 0)
+            {
+                return;
+            }
+
+            using (Message message = MessageComposer.CreateDeleteMessage(ids))
             {
                 using (Message responseMessage = this.Invoke((c) => c.Delete(message)))
                 {

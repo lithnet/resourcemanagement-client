@@ -8,6 +8,22 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
     public class DeleteTests
     {
         [TestMethod]
+        public void DeleteEmptyListResource()
+        {
+            ResourceManagementClient client = new ResourceManagementClient();
+
+            client.DeleteResources(new List<ResourceObject>());
+        }
+
+        [TestMethod]
+        public void DeleteEmptyListUniqueIdentifier()
+        {
+            ResourceManagementClient client = new ResourceManagementClient();
+
+            client.DeleteResources(new List<UniqueIdentifier>());
+        }
+
+        [TestMethod]
         public void DeleteByID()
         {
             ResourceManagementClient client = new ResourceManagementClient();
