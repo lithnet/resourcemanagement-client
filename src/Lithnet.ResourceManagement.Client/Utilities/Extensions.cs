@@ -123,12 +123,22 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Gets the value of the specified attribute (can be a list of objects if multivalue attribute). If attribute doesn't exist then the defaultvalue is returned.
+        /// Gets the value of the specified attribute or null if the attribute doesn't exist on the object
+        /// </summary>
+        /// <param name="resource">The resource to set the value on</param>
+        /// <param name="attributeName">The name of the attribute</param>
+        public static object GetValueOrDefault(this ResourceObject resource, string attributeName)
+        {
+            return resource.GetValueOrDefault(attributeName, null);
+        }
+
+        /// <summary>
+        /// Gets the value of the specified attribute, or the specified default value if the attribute doesn't exist on the object or it's value is null
         /// </summary>
         /// <param name="resource">The resource to set the value on</param>
         /// <param name="attributeName">Name of the attribute</param>
         /// <param name="defaultValue">The defaultValue to return if attribute doesn't exist</param>
-        public static object GetValue(this ResourceObject resource, string attributeName, object defaultValue = null)
+        public static object GetValueOrDefault(this ResourceObject resource, string attributeName, object defaultValue)
         {
             if (resource == null)
             {
@@ -139,12 +149,15 @@ namespace Lithnet.ResourceManagement.Client
             {
                 throw new ArgumentNullException(nameof(attributeName));
             }
-
-            if (resource.Attributes.ContainsAttribute(attributeName))
+            
+            if (resource.HasValue(attributeName))
+            {
                 return resource.Attributes[attributeName].Value;
+            }
             else
+            {
                 return defaultValue;
+            }
         }
-
     }
 }
