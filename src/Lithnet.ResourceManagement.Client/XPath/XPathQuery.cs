@@ -512,7 +512,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             if (this.Negate)
             {
-                expression = string.Format("(not{0})", expression);
+                expression = string.Format("(not({0}))", expression);
             }
 
             return expression;
