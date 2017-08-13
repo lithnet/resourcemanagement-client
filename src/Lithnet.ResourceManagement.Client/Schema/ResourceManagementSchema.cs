@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.ResourceManagement.WebServices.WSMetadataExchange;
@@ -9,6 +10,7 @@ using System.Xml.Schema;
 using System.ServiceModel;
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -17,10 +19,12 @@ namespace Lithnet.ResourceManagement.Client
     /// </summary>
     public static class ResourceManagementSchema
     {
+        private static ManualResetEvent schemaLock;
+
         /// <summary>
         /// The internal dictionary containing the object type name to object type definition mapping
         /// </summary>
-        public static Dictionary<string, ObjectTypeDefinition> ObjectTypes { get; private set; }
+        private static ConcurrentDictionary<string, ObjectTypeDefinition> ObjectTypes { get; set; }
 
         /// <summary>
         /// Gets the list of attributes that are considered mandatory for all object classes
@@ -43,11 +47,6 @@ namespace Lithnet.ResourceManagement.Client
         public static Regex ObjectTypeNameValidationRegex { get; private set; }
 
         /// <summary>
-        /// The object used to synchronize access updates to the schema from multiple threads
-        /// </summary>
-        private static object lockObject;
-
-        /// <summary>
         /// A value that indicates if the schema has been loaded from the Resource Management Service
         /// </summary>
         private static bool isLoaded;
@@ -63,8 +62,8 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         static ResourceManagementSchema()
         {
-            lockObject = new object();
-            ResourceManagementSchema.ObjectTypes = new Dictionary<string, ObjectTypeDefinition>();
+            schemaLock = new ManualResetEvent(true);
+            ResourceManagementSchema.ObjectTypes = new ConcurrentDictionary<string, ObjectTypeDefinition>();
             ResourceManagementSchema.ElementsToIgnore = new List<string>();
             ResourceManagementSchema.ElementsToIgnore.Add("ReferenceType");
             ResourceManagementSchema.ElementsToIgnore.Add("BinaryCollectionType");
@@ -89,13 +88,9 @@ namespace Lithnet.ResourceManagement.Client
 
         internal static void LoadSchema(EndpointManager e)
         {
-            lock (lockObject)
+            if (!isLoaded)
             {
-                if (!isLoaded)
-                {
-                    ResourceManagementSchema.RefreshSchema(e);
-                    ResourceManagementSchema.LoadNameValidationRegularExpressions();
-                }
+                ResourceManagementSchema.RefreshSchema(e);
             }
         }
 
@@ -107,13 +102,19 @@ namespace Lithnet.ResourceManagement.Client
         /// </remarks>
         internal static void RefreshSchema(EndpointManager e)
         {
-            lock (lockObject)
+            try
             {
-                ResourceManagementSchema.ObjectTypes = new Dictionary<string, ObjectTypeDefinition>();
-
+                ResourceManagementSchema.schemaLock.WaitOne();
+                ResourceManagementSchema.schemaLock.Reset();
                 MetadataSet set = ResourceManagementSchema.GetMetadataSet(e);
                 ResourceManagementSchema.PopulateSchemaFromMetadata(set);
+                ResourceManagementSchema.LoadNameValidationRegularExpressions();
+
                 isLoaded = true;
+            }
+            finally
+            {
+                ResourceManagementSchema.schemaLock.Set();
             }
         }
 
@@ -124,6 +125,8 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>An <c>AttributeType</c> value</returns>
         public static AttributeType GetAttributeType(string attributeName)
         {
+            ResourceManagementSchema.schemaLock.WaitOne();
+
             ResourceManagementSchema.LoadSchema(ResourceManagementClient.EndpointManager);
 
             foreach (ObjectTypeDefinition objectType in ResourceManagementSchema.ObjectTypes.Values)
@@ -147,6 +150,8 @@ namespace Lithnet.ResourceManagement.Client
         /// <exception cref="NoSuchObjectTypeException">Throw when an object type could not be found in the schema with a matching name</exception>
         public static ObjectTypeDefinition GetObjectType(string name)
         {
+            ResourceManagementSchema.schemaLock.WaitOne();
+
             ResourceManagementSchema.LoadSchema(ResourceManagementClient.EndpointManager);
 
             if (ResourceManagementSchema.ObjectTypes.ContainsKey(name))
@@ -160,12 +165,41 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
+        /// Gets a value indicating if the object type exists in the schema
+        /// </summary>
+        /// <param name="name">The system name of the object type</param>
+        /// <returns>True if the object type exists in the schema, false if it does not</returns>
+        public static bool ContainsObjectType(string name)
+        {
+            ResourceManagementSchema.schemaLock.WaitOne();
+
+            ResourceManagementSchema.LoadSchema(ResourceManagementClient.EndpointManager);
+
+            return ResourceManagementSchema.ObjectTypes.ContainsKey(name);
+        }
+
+        /// <summary>
+        /// Gets each object type definition from the schema 
+        /// </summary>
+        /// <returns>An enumeration of ObjectTypeDefinitions</returns>
+        public static IEnumerable<ObjectTypeDefinition> GetObjectTypes()
+        {
+            ResourceManagementSchema.schemaLock.WaitOne();
+
+            ResourceManagementSchema.LoadSchema(ResourceManagementClient.EndpointManager);
+
+            return ResourceManagementSchema.ObjectTypes.Values;
+        }
+
+        /// <summary>
         /// Gets a value indicating whether the specific attribute is multivalued
         /// </summary>
         /// <param name="attributeName">The attribute name</param>
         /// <returns>A value indicating whether the specific attribute is multivalued</returns>
         public static bool IsAttributeMultivalued(string attributeName)
         {
+            ResourceManagementSchema.schemaLock.WaitOne();
+
             ResourceManagementSchema.LoadSchema(ResourceManagementClient.EndpointManager);
 
             foreach (ObjectTypeDefinition objectType in ResourceManagementSchema.ObjectTypes.Values)
@@ -211,7 +245,7 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
-        /// Populates the internal defintion of the schema based on the representation contained in the metadata set
+        /// Populates the internal definition of the schema based on the representation contained in the metadata set
         /// </summary>
         /// <param name="set">The metadata set describing the schema</param>
         private static void PopulateSchemaFromMetadata(MetadataSet set)
@@ -234,12 +268,14 @@ namespace Lithnet.ResourceManagement.Client
                 throw new NotSupportedException("The metadata returned from the resource management service did not contain the expected metadata section");
             }
 
+            ResourceManagementSchema.ObjectTypes.Clear();
+            
             foreach (XmlSchemaComplexType complexType in metadata.Items.OfType<XmlSchemaComplexType>())
             {
                 if (!ResourceManagementSchema.ElementsToIgnore.Contains(complexType.Name))
                 {
                     ObjectTypeDefinition definition = new ObjectTypeDefinition(complexType);
-                    ResourceManagementSchema.ObjectTypes.Add(definition.SystemName, definition);
+                    ResourceManagementSchema.ObjectTypes.TryAdd(definition.SystemName, definition);
                 }
             }
         }

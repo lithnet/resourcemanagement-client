@@ -1164,7 +1164,7 @@
             }
 
             string xpath = $"/Approval[{approvalStatusString}Approver=/Person[AccountName = '{this.UserName}' and Domain = '{this.Domain}']]";
-            return this.GetResources(xpath, ResourceManagementSchema.ObjectTypes[ObjectTypeNames.Approval].Attributes.Select(t => t.SystemName));
+            return this.GetResources(xpath, ResourceManagementSchema.GetObjectType(ObjectTypeNames.Approval).Attributes.Select(t => t.SystemName));
         }
 
         /// <summary>
@@ -1183,7 +1183,7 @@
             }
 
             string xpath = $"/Approval[{approvalStatusString}Approver='{userID.Value}']";
-            return this.GetResources(xpath, ResourceManagementSchema.ObjectTypes[ObjectTypeNames.Approval].Attributes.Select(t => t.SystemName));
+            return this.GetResources(xpath, ResourceManagementSchema.GetObjectType(ObjectTypeNames.Approval).Attributes.Select(t => t.SystemName));
         }
 
         /// <summary>
