@@ -58,6 +58,11 @@ namespace Lithnet.ResourceManagement.Client
         private static List<string> ElementsToIgnore;
 
         /// <summary>
+        /// Gets the location that currently loaded schema was obtained from
+        /// </summary>
+        public static Uri SchemaEndpoint { get; private set; }
+
+        /// <summary>
         /// Initializes the static instance of the ResourceManagementSchema class
         /// </summary>
         static ResourceManagementSchema()
@@ -109,7 +114,7 @@ namespace Lithnet.ResourceManagement.Client
                 MetadataSet set = ResourceManagementSchema.GetMetadataSet(e);
                 ResourceManagementSchema.PopulateSchemaFromMetadata(set);
                 ResourceManagementSchema.LoadNameValidationRegularExpressions();
-
+                ResourceManagementSchema.SchemaEndpoint = e.MetadataEndpoint.Uri;
                 isLoaded = true;
             }
             finally
