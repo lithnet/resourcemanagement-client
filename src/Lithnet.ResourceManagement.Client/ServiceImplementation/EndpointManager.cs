@@ -20,8 +20,13 @@ namespace Lithnet.ResourceManagement.Client
 
         public EndpointManager(Uri baseUri, EndpointIdentity spn)
         {
-            UriBuilder builder = new UriBuilder(baseUri);
+            if (!baseUri.IsAbsoluteUri)
+            {
+                baseUri = new Uri($"http://{baseUri}:5725");
+            }
 
+            UriBuilder builder = new UriBuilder(baseUri);
+            
             this.baseUri = baseUri;
 
             if (spn == null)
