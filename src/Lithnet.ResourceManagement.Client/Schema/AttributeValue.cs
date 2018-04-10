@@ -189,7 +189,7 @@ namespace Lithnet.ResourceManagement.Client
                 }
                 else
                 {
-                    return new List<object>() { this.value }.AsReadOnly();
+                    return new List<object>() {this.value}.AsReadOnly();
                 }
             }
         }
@@ -294,6 +294,7 @@ namespace Lithnet.ResourceManagement.Client
                 {
                     this.values.Add(typedValue);
                 }
+
                 //else
                 //{
                 //    throw new ArgumentException("The value provided already exists in the collection");
@@ -510,7 +511,7 @@ namespace Lithnet.ResourceManagement.Client
                 case AttributeType.Integer:
                     if (value is int)
                     {
-                        return (long)(int)value;
+                        return (long) (int) value;
                     }
                     else
                     {
@@ -708,7 +709,7 @@ namespace Lithnet.ResourceManagement.Client
                 }
                 else
                 {
-                    return new List<string>() { TypeConverter.ToString(this.value) }.AsReadOnly();
+                    return new List<string>() {TypeConverter.ToString(this.value)}.AsReadOnly();
                 }
             }
         }
@@ -922,7 +923,7 @@ namespace Lithnet.ResourceManagement.Client
             }
 
             // If one is null, but not both, return false.
-            if (((object)a == null) || ((object)b == null))
+            if (((object) a == null) || ((object) b == null))
             {
                 return false;
             }
@@ -957,7 +958,27 @@ namespace Lithnet.ResourceManagement.Client
                 return TypeConverter.ToString(this.value);
             }
         }
+
+        /// <summary>
+        /// Returns the values of this object as a string enumeration
+        /// </summary>
+        /// <returns>A comma separated string</returns>
+        public IEnumerable<string> ToStringValues()
+        {
+            if (this.Attribute.IsMultivalued)
+            {
+                foreach (object v in this.values)
+                {
+                    yield return TypeConverter.ToString(v);
+                }
+            }
+            else
+            {
+                if (this.value != null)
+                {
+                    yield return TypeConverter.ToString(this.value);
+                }
+            }
+        }
     }
 }
-
-
