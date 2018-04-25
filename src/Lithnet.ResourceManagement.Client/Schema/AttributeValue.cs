@@ -63,6 +63,12 @@ namespace Lithnet.ResourceManagement.Client
         private List<object> initialValues;
 
         /// <summary>
+        /// A list of attribute values requested to be removed, but were not present on the attribute
+        /// </summary>
+        private List<object> blindRemovals;
+
+
+        /// <summary>
         /// Gets the name of the attribute
         /// </summary>
         public string AttributeName
@@ -145,6 +151,7 @@ namespace Lithnet.ResourceManagement.Client
             if (this.Attribute.IsMultivalued)
             {
                 this.initialValues = new List<object>();
+                this.blindRemovals = new List<object>();
                 this.values = new List<object>();
                 this.SetMultiValue(value, true);
             }
@@ -202,6 +209,7 @@ namespace Lithnet.ResourceManagement.Client
             if (this.Attribute.IsMultivalued)
             {
                 this.initialValues.Clear();
+                this.blindRemovals.Clear();
                 this.initialValues.AddRange(this.values);
             }
             else
@@ -218,6 +226,7 @@ namespace Lithnet.ResourceManagement.Client
             if (this.Attribute.IsMultivalued)
             {
                 this.values.Clear();
+                this.blindRemovals.Clear();
                 this.values.AddRange(this.initialValues);
             }
             else
@@ -346,11 +355,27 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="value">The value to remove</param>
         public void RemoveValue(object value)
         {
+            this.RemoveValue(value, false);
+        }
+
+        /// <summary>
+        /// Removes a specific value from an attribute
+        /// </summary>
+        /// <param name="value">The value to remove</param>
+        /// <param name="removeIfNotPresent">A flag indicating if the client should attempt to delete the value from the FIM service, even if the value is not currently present in the local representation of the object</param>
+        public void RemoveValue(object value, bool removeIfNotPresent)
+        {
             object typedValue = this.ConvertValueToAttributeType(value);
 
             if (this.Attribute.IsMultivalued)
             {
-                this.values.RemoveAll(t => AttributeValue.ValueComparer.Equals(t, typedValue));
+                if (this.values.RemoveAll(t => AttributeValue.ValueComparer.Equals(t, typedValue)) == 0)
+                {
+                    if (removeIfNotPresent)
+                    {
+                        this.blindRemovals.Add(typedValue);
+                    }
+                }
             }
             else
             {
@@ -469,6 +494,11 @@ namespace Lithnet.ResourceManagement.Client
                     {
                         tempValueChanges.Add(new AttributeValueChange(ModeType.Remove, removedValue));
                     }
+                }
+
+                foreach (object removedValue in this.blindRemovals)
+                {
+                    tempValueChanges.Add(new AttributeValueChange(ModeType.Remove, removedValue));
                 }
             }
 
