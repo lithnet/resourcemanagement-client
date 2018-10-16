@@ -684,7 +684,12 @@ namespace Lithnet.ResourceManagement.Client
                         }
                     }
 
-                    values[attributeElement.LocalName].Add(attributeElement.InnerText);
+                    string value = attributeElement.InnerText;
+
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        values[attributeElement.LocalName].Add(value);
+                    }
                 }
             }
 
