@@ -76,6 +76,7 @@
     <Compile Include="Enums\GroupOperator.cs" />
     <Compile Include="Enums\ComparisonOperator.cs" />
     <Compile Include="Enums\AttributePermission.cs" />
+    <Compile Include="Exceptions\CannotProcessFilterException.cs" />
     <Compile Include="ResourceSerializationSettings.cs" />
     <Compile Include="Exceptions\MessageRepresentationFailureException.cs" />
     <Compile Include="Exceptions\AttributeRepresentationFailureException.cs" />

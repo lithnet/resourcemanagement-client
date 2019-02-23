@@ -30,11 +30,26 @@ namespace Lithnet.ResourceManagement.Client
                 case "AuthorizationRequiredFault":
                     return GetAuthorizationRequiredException(fault);
 
+                case "CannotProcessFilter":
+                    return GetCannotProcessFilterException(fault);
+
                 default:
                     break;
             }
             
-            return new FaultException(fault, fault.GetReaderAtDetailContents().ReadOuterXml());
+            if (fault.HasDetail)
+            {
+                return new FaultException(fault, fault.GetReaderAtDetailContents().ReadOuterXml());
+            }
+            else
+            {
+                return new FaultException(fault);
+            }
+        }
+
+        public static Exception GetCannotProcessFilterException(MessageFault fault)
+        {
+            return new CannotProcessFilterException(fault);
         }
 
         public static Exception GetUnwillingToPerformException(MessageFault fault)
@@ -45,7 +60,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 return new FaultException(fault);
             }
-            
+
             throw new UnwillingToPerformException(failure);
         }
 

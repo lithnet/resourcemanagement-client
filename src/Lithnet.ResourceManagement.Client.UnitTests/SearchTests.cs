@@ -12,7 +12,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
     {
         public SearchTests()
         {
-         var x =   UnitTestHelper.client;
+        //    var x = UnitTestHelper.client;
         }
 
         [TestMethod]
@@ -51,6 +51,28 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
 
             Assert.AreEqual(results.Count, count);
+        }
+
+        [TestMethod]
+        public void SearchBadFilter()
+        {
+            ResourceManagementClient c = new ResourceManagementClient();
+            try
+            {
+                ISearchResultCollection results = c.GetResources("!not a filter!", 200);
+                Debug.WriteLine("Getting {0} results", results.Count);
+
+                foreach (ResourceObject o in results)
+                {
+                    Debug.WriteLine("UT got object " + o.ObjectID);
+                }
+            }
+            catch (CannotProcessFilterException)
+            {
+                return;
+            }
+
+            Assert.Fail("The expected exception was not thrown");
         }
 
         [TestMethod]
@@ -348,7 +370,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void SearchTestResultCount()
         {
-            
+
             ResourceManagementClient c = new ResourceManagementClient();
             var query = String.Format("/{0}[starts-with('{1}', 'reftest')]", UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName);
 
