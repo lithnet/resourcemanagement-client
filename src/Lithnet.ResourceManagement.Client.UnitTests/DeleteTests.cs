@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Microsoft.ResourceManagement.WebServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
@@ -163,7 +162,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch (ResourceNotFoundException)
             {
             }
-
         }
 
         [TestMethod]
@@ -211,7 +209,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch (ResourceNotFoundException)
             {
             }
-
         }
     }
 }

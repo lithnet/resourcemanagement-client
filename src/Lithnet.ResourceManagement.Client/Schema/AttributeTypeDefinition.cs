@@ -288,7 +288,6 @@ namespace Lithnet.ResourceManagement.Client
 
                 default:
                     throw new ArgumentException("Unknown attribute type in schema " + typeName);
-
             }
         }
 

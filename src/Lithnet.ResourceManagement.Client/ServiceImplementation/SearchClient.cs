@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ServiceModel.Channels;
 using System.Threading;
-using Microsoft.ResourceManagement.WebServices.WSEnumeration;
 using System.Globalization;
 using System.Linq;
 

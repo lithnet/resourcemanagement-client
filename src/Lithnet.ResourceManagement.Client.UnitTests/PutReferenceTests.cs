@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.ResourceManagement.WebServices;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
@@ -163,7 +162,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 }
             }
         }
-
 
         [TestMethod]
         public void AddFirstReferenceMV()

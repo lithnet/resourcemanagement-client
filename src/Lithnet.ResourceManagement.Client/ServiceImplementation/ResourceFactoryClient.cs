@@ -1,9 +1,6 @@
 ﻿using System;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using Microsoft.ResourceManagement.WebServices;
-using Microsoft.ResourceManagement.WebServices.Faults;
-using Microsoft.ResourceManagement.WebServices.WSTransfer;
 using System.Collections.Generic;
 using System.Linq;
 

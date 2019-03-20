@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.ResourceManagement.WebServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Globalization;
 
@@ -68,7 +67,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         public static List<string> TestDataText1MV = new List<string>() { "testText4", "testText5", "testText6" };
         public static List<string> TestDataText2MV = new List<string>() { "testText7", "testText8", "testText9" };
-
 
         internal const string ObjectTypeUnitTestObjectName = "_unitTestObject";
         internal const string AttributeStringSV = "ut_svstring";
@@ -158,7 +156,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             UnitTestHelper.CreateBindingIfDoesntExist(objectClass, accountNameAttribute);
 
             client.RefreshSchema();
-
         }
 
         private static ResourceObject CreateUnitTestObjectTypeIfDoesntExist()
@@ -343,7 +340,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             {
                 CollectionAssert.AreEqual(UnitTestHelper.TestDataInteger1MV, resource.Attributes[UnitTestHelper.AttributeIntegerMV].IntegerValues);
             }
-
 
             if (attributesToCheck.Contains(UnitTestHelper.AttributeReferenceMV))
             {

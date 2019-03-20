@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ServiceModel;
-using System.ServiceModel.Channels;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -55,7 +54,6 @@ namespace Lithnet.ResourceManagement.Client
             : this(new Uri(baseUri), null)
         {
         }
-
 
         public static EndpointIdentity SpnIdentityFromUri(Uri uri)
         {

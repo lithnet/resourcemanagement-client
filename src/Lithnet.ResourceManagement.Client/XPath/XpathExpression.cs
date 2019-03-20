@@ -22,7 +22,6 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         public bool WrapFilterXml { get; set; }
 
-
         /// <summary>
         /// Initializes a new instance of the XPathExpression class
         /// </summary>

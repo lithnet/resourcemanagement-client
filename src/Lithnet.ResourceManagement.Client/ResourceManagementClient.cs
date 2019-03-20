@@ -4,8 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using Lithnet.ResourceManagement.Client.ResourceManagementService;
-    using Microsoft.ResourceManagement.WebServices;
-    using Microsoft.ResourceManagement.WebServices.WSEnumeration;
     using System.Threading;
     using System.Net;
     using System.ServiceModel;
@@ -132,7 +130,6 @@
         /// </summary>
         internal static ClientConfigurationSection Configuration { get; private set; }
 
-
         /// <summary>
         /// Initializes the static members of the ResourceManagementClient class
         /// </summary>
@@ -239,7 +236,6 @@
             else
             {
                 id = EndpointIdentity.CreateSpnIdentity(string.Format("FIMService/{0}", baseAddress.Host));
-
             }
 
             EndpointManager e = new EndpointManager(baseAddress, id);
@@ -432,7 +428,6 @@
         public void SaveResourcesParallel(IEnumerable<ResourceObject> resources)
         {
             this.SaveResourcesParallel(resources, 0, null);
-
         }
 
         /// <summary>
@@ -595,7 +590,6 @@
             return this.GetResource(new UniqueIdentifier(id), attributesToGet);
         }
 
-
         /// <summary>
         /// Gets a resource from the resource management service, retrieving only a specified set of attributes for the resource
         /// </summary>
@@ -756,7 +750,6 @@
             return this.resourceClient.Get(id, null, locale, false);
         }
 
-
         /// <summary>
         /// Gets a resource from the resource management service, retrieving all attributes for the resource
         /// </summary>
@@ -768,7 +761,6 @@
         {
             return this.resourceClient.Get(id, null, locale, getPermissionHints);
         }
-
 
         /// <summary>
         /// Gets a resource from the resource management service, retrieving only a specified set of attributes for the resource
@@ -784,7 +776,6 @@
         {
             return this.resourceClient.Get(id, attributesToGet, null, false);
         }
-
 
         /// <summary>
         /// Gets a resource from the resource management service, retrieving only a specified set of attributes for the resource
@@ -802,7 +793,6 @@
             return this.resourceClient.Get(id, attributesToGet, null, getPermissionHints);
         }
 
-
         /// <summary>
         /// Gets a resource from the resource management service, retrieving only a specified set of attributes for the resource
         /// </summary>
@@ -818,7 +808,6 @@
         {
             return this.resourceClient.Get(id, attributesToGet, locale, false);
         }
-
 
         /// <summary>
         /// Gets a resource from the resource management service, retrieving only a specified set of attributes for the resource
@@ -836,7 +825,6 @@
         {
             return this.resourceClient.Get(id, attributesToGet, locale, getPermissionHints);
         }
-
 
         /// <summary>
         /// Gets a resource from the resource management service using a unique attribute and value combination, retrieving all attributes for the resource
@@ -1317,7 +1305,6 @@
         {
             return this.searchClient.EnumerateAsync(filter, -1, attributesToGet, null, locale, null);
         }
-
 
         /// <summary>
         /// Uses the specified XPath filter to find matching objects in the resource management service, retrieving all results asynchronously on a separate thread, using the specified page size, and retrieving the specified attributes

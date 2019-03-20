@@ -11,7 +11,6 @@
     <tags>FIM FIM2010 FIMService FIM2010R2 MIM MIM2016</tags>
     <references>
       <reference file="Lithnet.ResourceManagement.Client.dll" />
-      <reference file="Microsoft.ResourceManagement.dll" />
     </references>
 
   </metadata>
@@ -22,6 +21,5 @@
     <file src="web.config.uninstall.xdt" target="Content\web.config.uninstall.xdt" />
     <file src="app.config.transform" target="Content\app.config.transform" />
     <file src="web.config.transform" target="Content\web.config.transform" />
-    <file src="..\..\lib\Microsoft.ResourceManagement.dll" target="lib\net40"/>
   </files>
 </package>

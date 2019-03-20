@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.ResourceManagement.WebServices.WSEnumeration;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -370,7 +369,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void SearchTestResultCount()
         {
-
             ResourceManagementClient c = new ResourceManagementClient();
             var query = String.Format("/{0}[starts-with('{1}', 'reftest')]", UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName);
 

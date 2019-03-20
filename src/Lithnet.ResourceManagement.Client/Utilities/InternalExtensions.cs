@@ -126,7 +126,6 @@ namespace Lithnet.ResourceManagement.Client
 
         public static T Invoke<T, T1>(this ClientBase<T1> client, Func<T1, T> action) where T1 : class
         {
-
             T1 c = client.ChannelFactory.CreateChannel();
 
             try

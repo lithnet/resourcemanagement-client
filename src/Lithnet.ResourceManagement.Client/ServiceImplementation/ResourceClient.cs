@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel.Channels;
 using System.Xml;
-using Microsoft.ResourceManagement.WebServices;
-using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
 using System.Globalization;
 
 namespace Lithnet.ResourceManagement.Client.ResourceManagementService

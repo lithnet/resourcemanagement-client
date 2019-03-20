@@ -54,9 +54,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.ResourceManagement">
-      <HintPath>..\lib\Microsoft.ResourceManagement.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -65,6 +62,65 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RmcImplementation\AnonymousInteractionRequiredFault.cs" />
+    <Compile Include="RmcImplementation\AttributedURIType.cs" />
+    <Compile Include="RmcImplementation\AttributeFailureCode.cs" />
+    <Compile Include="RmcImplementation\AttributeRepresentationFailure.cs" />
+    <Compile Include="RmcImplementation\AuthenticationRequiredFault.cs" />
+    <Compile Include="RmcImplementation\AuthorizationRequiredFault.cs" />
+    <Compile Include="RmcImplementation\CannotProcessFilterFault.cs" />
+    <Compile Include="RmcImplementation\Create.cs" />
+    <Compile Include="RmcImplementation\DataRequiredFault.cs" />
+    <Compile Include="RmcImplementation\DispatchRequestAdministratorDetails.cs" />
+    <Compile Include="RmcImplementation\DispatchRequestFailures.cs" />
+    <Compile Include="RmcImplementation\DispatchRequestFailureSource.cs" />
+    <Compile Include="RmcImplementation\EndpointAdministratorDetails.cs" />
+    <Compile Include="RmcImplementation\EndpointFailures.cs" />
+    <Compile Include="RmcImplementation\EndpointReferenceType.cs" />
+    <Compile Include="RmcImplementation\Enumerate.cs" />
+    <Compile Include="RmcImplementation\EnumerationContextType.cs" />
+    <Compile Include="RmcImplementation\EnumerationDetailType.cs" />
+    <Compile Include="RmcImplementation\EnumerationDirectionType.cs" />
+    <Compile Include="RmcImplementation\FailedAttributes.cs" />
+    <Compile Include="RmcImplementation\FilterType.cs" />
+    <Compile Include="RmcImplementation\FragementType.cs" />
+    <Compile Include="RmcImplementation\Get.cs" />
+    <Compile Include="RmcImplementation\GetMetadata.cs" />
+    <Compile Include="RmcImplementation\GetResponse.cs" />
+    <Compile Include="RmcImplementation\HealthFailureSource.cs" />
+    <Compile Include="RmcImplementation\InteractiveWorkflowAddress.cs" />
+    <Compile Include="RmcImplementation\InvalidEnumerationContextFault.cs" />
+    <Compile Include="RmcImplementation\InvalidExpirationTimeFault.cs" />
+    <Compile Include="RmcImplementation\IPullControl.cs" />
+    <Compile Include="RmcImplementation\IPullResponse.cs" />
+    <Compile Include="RmcImplementation\ItemListType.cs" />
+    <Compile Include="RmcImplementation\LocalePreferenceType.cs" />
+    <Compile Include="RmcImplementation\LocaleReferencePropertyType.cs" />
+    <Compile Include="RmcImplementation\MessageFailureCode.cs" />
+    <Compile Include="RmcImplementation\MessageRepresentationFailures.cs" />
+    <Compile Include="RmcImplementation\MetadataType.cs" />
+    <Compile Include="RmcImplementation\ModeType.cs" />
+    <Compile Include="RmcImplementation\Pull.cs" />
+    <Compile Include="RmcImplementation\PullAdjustmentType.cs" />
+    <Compile Include="RmcImplementation\PullHelper.cs" />
+    <Compile Include="RmcImplementation\Put.cs" />
+    <Compile Include="RmcImplementation\PutFragmentType.cs" />
+    <Compile Include="RmcImplementation\ReferencePropertiesType.cs" />
+    <Compile Include="RmcImplementation\Release.cs" />
+    <Compile Include="RmcImplementation\RepresentationFailures.cs" />
+    <Compile Include="RmcImplementation\RequestAdministatorDetails.cs" />
+    <Compile Include="RmcImplementation\RequestFailures.cs" />
+    <Compile Include="RmcImplementation\RequestFailureSource.cs" />
+    <Compile Include="RmcImplementation\RequestFault.cs" />
+    <Compile Include="RmcImplementation\ResourceCreatedType.cs" />
+    <Compile Include="RmcImplementation\ResourceReferencePropertyType.cs" />
+    <Compile Include="RmcImplementation\Sorting.cs" />
+    <Compile Include="RmcImplementation\SortingAttribute.cs" />
+    <Compile Include="RmcImplementation\SupportedDialect.cs" />
+    <Compile Include="RmcImplementation\TimeRestriction.cs" />
+    <Compile Include="RmcImplementation\UniqueIdentifier.cs" />
+    <Compile Include="RmcImplementation\EnumerateResponse.cs" />
+    <Compile Include="RmcImplementation\PullResponse.cs" />
     <Compile Include="ApprovalResponse.cs" />
     <Compile Include="AttributeValuePair.cs" />
     <Compile Include="AttributeValuePairCollection.cs" />
@@ -94,6 +150,7 @@
     <Compile Include="LdapFilter\TokenError.cs" />
     <Compile Include="LdapFilter\Tokenizer.cs" />
     <Compile Include="ResourceManagementClientPool.cs" />
+    <Compile Include="RmcImplementation\UnsupportedExpirationTypeFault.cs" />
     <Compile Include="Schema\AttributeNames.cs" />
     <Compile Include="Schema\AttributeValue.cs" />
     <Compile Include="Schema\AttributeValueChange.cs" />

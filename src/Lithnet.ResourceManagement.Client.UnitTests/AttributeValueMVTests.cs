@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.ResourceManagement.WebServices;
-using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
 using System.Collections.Generic;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
@@ -30,7 +28,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<object> testValues = new List<object>() { "myvalue1" };
             this.ExecuteMVTestRemoveBlind(AttributeType.String, testValues);
         }
-
 
         [TestMethod]
         public void TestMVSetStringWithNullInitialValue()
@@ -81,7 +78,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             this.ExecuteMVTestRemove(AttributeType.String, initialValues, testValues, expectedValues);
         }
-
 
         // Multivalued long 
 
@@ -387,7 +383,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             
             this.ExecuteMVTestRemove(AttributeType.Binary, initialValues, testValues, expectedValues);
         }
-
 
         private void ExecuteMVTestAdd(AttributeType type, IList<object> initialValues, IList<object> testValues, IList<object> expectedValues)
         {

@@ -64,7 +64,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 resource = client.GetResource(resource.ObjectID);
 
                 UnitTestHelper.ValidateTestUserData(resource);
-
             }
             finally
             {
@@ -97,7 +96,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 resource = client.GetResource(resource.ObjectID);
 
                 UnitTestHelper.ValidateTestUserData(resource);
-
             }
             finally
             {
@@ -130,7 +128,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 resource = client.GetResource(resource.ObjectID);
 
                 UnitTestHelper.ValidateTestUserData(resource);
-
             }
             finally
             {
@@ -172,16 +169,13 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                     ResourceObject resourceFetched = client.GetResource(resource.ObjectID);
 
                     UnitTestHelper.ValidateTestUserData(resourceFetched);
-
                 }
-
             }
             finally
             {
                     client.DeleteResources(resources.Where(r => r != null && !r.IsPlaceHolder));
             }
         }
-
 
     }
 }

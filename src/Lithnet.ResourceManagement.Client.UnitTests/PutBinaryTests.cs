@@ -198,7 +198,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 resource = client.GetResource(resource.ObjectID);
 
                 this.AreByteArraysEqual(expectedValues, resource.Attributes[UnitTestHelper.AttributeBinaryMV].BinaryValues);
-
             }
             finally
             {

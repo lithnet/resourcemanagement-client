@@ -54,9 +54,6 @@
     <AssemblyOriginatorKeyFile>lithnet.resourcemanagement.client.unittests.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.ResourceManagement">
-      <HintPath>..\Lithnet.ResourceManagement.Client\bin\Release (nuget)\Microsoft.ResourceManagement.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>

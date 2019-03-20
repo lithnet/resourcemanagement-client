@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.ResourceManagement.WebServices.WSMetadataExchange;
 using System.ServiceModel.Description;
 using System.ServiceModel.Channels;
 using Lithnet.ResourceManagement.Client.ResourceManagementService;

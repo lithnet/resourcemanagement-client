@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.ResourceManagement.WebServices.WSResourceManagement;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -47,7 +46,6 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>A string containing the details of the exception</returns>
         private static string GetMessage(AuthorizationRequiredFault failure)
         {
-
             if (failure != null)
             {
                 return string.Format(

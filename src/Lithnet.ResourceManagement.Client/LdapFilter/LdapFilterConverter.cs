@@ -126,7 +126,6 @@ namespace Lithnet.ResourceManagement.Client
             }
 
             return new XPathQuery(attributeName, op, expectedValue, false, AttributeType.String, false);
-
         }
 
         private static XPathQueryGroup ReadQueryGroup(StringTokenizer tokenizer, bool negate)
@@ -177,7 +176,6 @@ namespace Lithnet.ResourceManagement.Client
                 }
                 else
                 {
-
                     group.Queries.Add(ReadQueryGroup(tokenizer, false));
                     //t = tokenizer.Next();
                 }

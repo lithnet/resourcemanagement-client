@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.ResourceManagement.WebServices;
-using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
@@ -320,7 +318,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         }
 
         // Single-valued binary attributes
-
 
         [TestMethod]
         public void TestSVAddBinaryWithNullInitialValue()
