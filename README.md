@@ -13,12 +13,10 @@ See the [config file guide](https://github.com/lithnet/resourcemanagement-client
 ## Getting started
 Read the getting started [quick guide](https://github.com/lithnet/resourcemanagement-client/wiki/getting-started) or review the [API documentation](https://lithnet.github.io/documentation/rmc)
 
-## How can I contribute to the project
-Found an issue?
-* [Log it](https://github.com/lithnet/resourcemanagement-client/issues)
-
-Want to fix an issue?
-* Fork the project and submit a pull request 
+## How can I contribute to the project?
+* Found an issue and want us to fix it? [Log it](https://github.com/lithnet/resourcemanagement-client/issues)
+* Want to fix an issue yourself or add functionality? Clone the project and submit a pull request
+* Make a [donation](https://lithnet.io/donate) and help us cover our costs
 
 ## Keep up to date
 * [Visit my blog](http://blog.lithiumblue.com)
