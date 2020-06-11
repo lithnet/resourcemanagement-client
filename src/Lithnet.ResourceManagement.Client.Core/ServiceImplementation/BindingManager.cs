@@ -18,15 +18,16 @@ namespace Lithnet.ResourceManagement.Client
             binding.SendTimeout = TimeSpan.FromSeconds(ResourceManagementClient.Configuration.SendTimeoutSeconds);
             binding.BypassProxyOnLocal = false;
             binding.TransactionFlow = false;
-            binding.HostNameComparisonMode = HostNameComparisonMode.StrongWildcard;
+           // binding.HostNameComparisonMode = HostNameComparisonMode.StrongWildcard;
 
-            binding.Security.Mode = SecurityMode.Message;
-            binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.Windows;
-            binding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
-            binding.Security.Message.ClientCredentialType = MessageCredentialType.Windows;
+            binding.Security.Mode = SecurityMode.Transport;
+            //binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.Basic;
 
-            binding.Security.Message.EstablishSecurityContext = false;
-            binding.Security.Message.NegotiateServiceCredential = true;
+            //binding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
+            //binding.Security.Message.ClientCredentialType = MessageCredentialType.Windows;
+
+            //binding.Security.Message.EstablishSecurityContext = false;
+            //binding.Security.Message.NegotiateServiceCredential = true;
 
             return binding;
         }
@@ -43,7 +44,7 @@ namespace Lithnet.ResourceManagement.Client
             binding.SendTimeout = TimeSpan.FromSeconds(ResourceManagementClient.Configuration.SendTimeoutSeconds);
             binding.BypassProxyOnLocal = false;
             binding.TransactionFlow = false;
-            binding.HostNameComparisonMode = HostNameComparisonMode.StrongWildcard;
+            //binding.HostNameComparisonMode = HostNameComparisonMode.StrongWildcard;
 
             binding.Security.Mode = SecurityMode.None;
 

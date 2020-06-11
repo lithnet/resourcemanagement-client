@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lithnet.ResourceManagement.Client", "Lithnet.ResourceManagement.Client\Lithnet.ResourceManagement.Client.csproj", "{9EDCC4ED-2317-42A8-86F4-A6D228BBF9DB}"
 EndProject
@@ -10,6 +10,10 @@ EndProject
 Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "Lithnet.ResourceManagement.Client.Help", "Lithnet.ResourceManagement.Client.Help\Lithnet.ResourceManagement.Client.Help.shfbproj", "{9E38FA7E-BD0B-4B3B-912C-83A8E3B1708B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lithnet.ResourceManagement.Client.Help.Examples", "Lithnet.ResourceManagement.Client.Help.Examples\Lithnet.ResourceManagement.Client.Help.Examples.csproj", "{78822806-7FE0-4648-B460-A7DB5452D597}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lithnet.ResourceManagement.Client.Core", "Lithnet.ResourceManagement.Client.Core\Lithnet.ResourceManagement.Client.Core.csproj", "{4B9AF741-975D-4EDD-80D6-1F79529050BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lithnet.ResourceManagement.Client.Core.Test", "Lithnet.ResourceManagement.Client.Core.Test\Lithnet.ResourceManagement.Client.Core.Test.csproj", "{09A59DEA-9825-44EF-ADF0-DBD7236D4852}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,8 +43,23 @@ Global
 		{78822806-7FE0-4648-B460-A7DB5452D597}.Release (nuget)|Any CPU.Build.0 = Release|Any CPU
 		{78822806-7FE0-4648-B460-A7DB5452D597}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78822806-7FE0-4648-B460-A7DB5452D597}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B9AF741-975D-4EDD-80D6-1F79529050BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B9AF741-975D-4EDD-80D6-1F79529050BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B9AF741-975D-4EDD-80D6-1F79529050BB}.Release (nuget)|Any CPU.ActiveCfg = Release|Any CPU
+		{4B9AF741-975D-4EDD-80D6-1F79529050BB}.Release (nuget)|Any CPU.Build.0 = Release|Any CPU
+		{4B9AF741-975D-4EDD-80D6-1F79529050BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B9AF741-975D-4EDD-80D6-1F79529050BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09A59DEA-9825-44EF-ADF0-DBD7236D4852}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09A59DEA-9825-44EF-ADF0-DBD7236D4852}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09A59DEA-9825-44EF-ADF0-DBD7236D4852}.Release (nuget)|Any CPU.ActiveCfg = Release|Any CPU
+		{09A59DEA-9825-44EF-ADF0-DBD7236D4852}.Release (nuget)|Any CPU.Build.0 = Release|Any CPU
+		{09A59DEA-9825-44EF-ADF0-DBD7236D4852}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09A59DEA-9825-44EF-ADF0-DBD7236D4852}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C9172D78-9825-458B-A519-07FC27E81412}
 	EndGlobalSection
 EndGlobal
