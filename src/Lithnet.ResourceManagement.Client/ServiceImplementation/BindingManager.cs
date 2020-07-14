@@ -46,11 +46,6 @@ namespace Lithnet.ResourceManagement.Client
             binding.HostNameComparisonMode = HostNameComparisonMode.StrongWildcard;
 
             binding.Security.Mode = SecurityMode.None;
-            binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.Windows;
-            binding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
-            binding.Security.Message.ClientCredentialType = MessageCredentialType.Windows;
-            binding.Security.Message.EstablishSecurityContext = false;
-            binding.Security.Message.NegotiateServiceCredential = true;
 
             return binding;
         }
