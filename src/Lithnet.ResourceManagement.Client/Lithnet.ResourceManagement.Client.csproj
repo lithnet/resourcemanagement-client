@@ -1,243 +1,90 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9EDCC4ED-2317-42A8-86F4-A6D228BBF9DB}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lithnet.ResourceManagement.Client</RootNamespace>
-    <AssemblyName>Lithnet.ResourceManagement.Client</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
-    <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\Lithnet.ResourceManagement.Client.XML</DocumentationFile>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\Lithnet.ResourceManagement.Client.XML</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release %28nuget%29|AnyCPU'">
-    <OutputPath>bin\Release %28nuget%29\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>lithnet.resourcemanagement.client.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.ResourceManagement">
-      <HintPath>..\lib\Microsoft.ResourceManagement.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ApprovalResponse.cs" />
-    <Compile Include="AttributeValuePair.cs" />
-    <Compile Include="AttributeValuePairCollection.cs" />
-    <Compile Include="Enums\ApprovalStatus.cs" />
-    <Compile Include="Enums\ResourceSerializationHandling.cs" />
-    <Compile Include="Enums\AttributeValueSerializationHandling.cs" />
-    <Compile Include="Enums\ArraySerializationHandling.cs" />
-    <Compile Include="Enums\OperationType.cs" />
-    <Compile Include="Enums\GroupOperator.cs" />
-    <Compile Include="Enums\ComparisonOperator.cs" />
-    <Compile Include="Enums\AttributePermission.cs" />
-    <Compile Include="Exceptions\CannotProcessFilterException.cs" />
-    <Compile Include="ResourceSerializationSettings.cs" />
-    <Compile Include="Exceptions\MessageRepresentationFailureException.cs" />
-    <Compile Include="Exceptions\AttributeRepresentationFailureException.cs" />
-    <Compile Include="Exceptions\NoSuchObjectTypeException.cs" />
-    <Compile Include="Exceptions\NoSuchAttributeException.cs" />
-    <Compile Include="Exceptions\AuthorizationRequiredException.cs" />
-    <Compile Include="Exceptions\ResourceNotFoundException.cs" />
-    <Compile Include="Exceptions\LdapFilterParserException.cs" />
-    <Compile Include="Exceptions\ResourceManagementException.cs" />
-    <Compile Include="Exceptions\InvalidRepresentationException.cs" />
-    <Compile Include="Exceptions\PermissionDeniedException.cs" />
-    <Compile Include="Exceptions\UnwillingToPerformException.cs" />
-    <Compile Include="LdapFilter\LdapFilterConverter.cs" />
-    <Compile Include="LdapFilter\Token.cs" />
-    <Compile Include="LdapFilter\TokenError.cs" />
-    <Compile Include="LdapFilter\Tokenizer.cs" />
-    <Compile Include="ResourceManagementClientPool.cs" />
-    <Compile Include="Schema\AttributeNames.cs" />
-    <Compile Include="Schema\AttributeValue.cs" />
-    <Compile Include="Schema\AttributeValueChange.cs" />
-    <Compile Include="ResourceManagementClient.cs" />
-    <Compile Include="Exceptions\TooManyResultsException.cs" />
-    <Compile Include="ResourceObject.cs" />
-    <Compile Include="Schema\AttributeValueCollection.cs" />
-    <Compile Include="Schema\ObjectTypeNames.cs" />
-    <Compile Include="ServiceImplementation\BindingManager.cs" />
-    <Compile Include="ServiceImplementation\ClientConfigurationSection.cs" />
-    <Compile Include="ServiceImplementation\ContextHeader.cs" />
-    <Compile Include="ServiceImplementation\EndpointManager.cs" />
-    <Compile Include="ServiceImplementation\HeaderConstants.cs" />
-    <Compile Include="ServiceImplementation\ISearchResultCollection.cs" />
-    <Compile Include="ServiceImplementation\Namespaces.cs" />
-    <Compile Include="ServiceImplementation\SearchClient.cs" />
-    <Compile Include="ServiceImplementation\ResourceFactoryClient.cs" />
-    <Compile Include="ServiceImplementation\SearchResultPager.cs" />
-    <Compile Include="ServiceImplementation\SearchResultEnumerator.cs" />
-    <Compile Include="ServiceImplementation\SearchResultCollectionAsync.cs" />
-    <Compile Include="ServiceImplementation\SearchResultCollection.cs" />
-    <Compile Include="ServiceImplementation\ServiceFaultTranslator.cs" />
-    <Compile Include="Utilities\AttributeValueEqualityComparer.cs" />
-    <Compile Include="Enums\AttributeType.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Exceptions\ReadOnlyValueModificationException.cs" />
-    <Compile Include="Schema\AttributeTypeDefinition.cs" />
-    <Compile Include="Schema\ObjectTypeDefinition.cs" />
-    <Compile Include="Schema\ResourceManagementSchema.cs" />
-    <Compile Include="Service References\ResourceManagementService\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
-    <Compile Include="ServiceImplementation\MessageComposer.cs" />
-    <Compile Include="ServiceImplementation\ResourceClient.cs" />
-    <Compile Include="ServiceImplementation\SerializerBodyWriter.cs" />
-    <Compile Include="Utilities\Extensions.cs" />
-    <Compile Include="Utilities\InternalExtensions.cs" />
-    <Compile Include="Utilities\TypeConverter.cs" />
-    <Compile Include="Exceptions\UnsupportedDataTypeException.cs" />
-    <Compile Include="Utilities\MessageExtensions.cs" />
-    <Compile Include="XPath\IXPathQueryObject.cs" />
-    <Compile Include="XPath\XPathDereferencedExpression.cs" />
-    <Compile Include="XPath\XPathExpression.cs" />
-    <Compile Include="XPath\XPathFilterBuilder.cs" />
-    <Compile Include="XPath\XPathQuery.cs" />
-    <Compile Include="XPath\XPathQueryGroup.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="lithnet.resourcemanagement.client.snk" />
-    <None Include="Package\App.config.transform" />
-    <None Include="Package\Web.config.transform">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Package\web.config.uninstall.xdt" />
-    <None Include="Package\web.config.install.xdt" />
-    <None Include="Package\app.config.uninstall.xdt" />
-    <None Include="Package\app.config.install.xdt" />
-    <None Include="Package\Lithnet.ResourceManagement.Client.nuspec" />
-    <None Include="Properties\DataSources\System.ServiceModel.Channels.Message.datasource" />
-    <None Include="Service References\ResourceManagementService\addressing.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ResourceManagementService\Arrays.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ResourceManagementService\bindings.wsdl" />
-    <None Include="Service References\ResourceManagementService\DirectoryAccess.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ResourceManagementService\enumeration.wsdl" />
-    <None Include="Service References\ResourceManagementService\enumeration.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ResourceManagementService\Message.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ResourceManagementService\mex.wsdl" />
-    <None Include="Service References\ResourceManagementService\Microsoft.ResourceManagement.WebServices.Exceptions.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ResourceManagementService\Microsoft.ResourceManagement.WebServices.Faults.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ResourceManagementService\Microsoft.ResourceManagement.WebServices.WSAddressing.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ResourceManagementService\Microsoft.ResourceManagement.WebServices.WSEnumeration.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ResourceManagementService\Microsoft.ResourceManagement.WebServices.WSResourceManagement.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ResourceManagementService\Microsoft.ResourceManagement.WebServices.WSTransfer.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ResourceManagementService\ResourceManagement.wsdl" />
-    <None Include="Service References\ResourceManagementService\ResourceManagement.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ResourceManagementService\ResourceManagement1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ResourceManagementService\service.wsdl" />
-    <None Include="Service References\ResourceManagementService\service.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ResourceManagementService\transfer.wsdl" />
-    <None Include="Service References\ResourceManagementService\transfer.xsd">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadataStorage Include="Service References\ResourceManagementService\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\ResourceManagementService\configuration91.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\ResourceManagementService\configuration.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\ResourceManagementService\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>"C:\Program Files (x86)\Microsoft SDKs\ClickOnce\SignTool\signtool.exe" sign /sha1 "$(CSCERTTHUMBPRINT)" /t http://timestamp.digicert.com /fd sha256 /v "$(TargetFileName)"
-"C:\Program Files\Debugging Tools for Windows (x64)\symstore" add /f "$(TargetDir)*.pdb" /s \\localhost\symbols /t "$(ProjectName)" /v "@(VersionNumber)"
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
+		<LangVersion>8</LangVersion>
+		<Platforms>x64</Platforms>
+		<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+		<Deterministic>true</Deterministic>
+	</PropertyGroup>
 
-d:\nuget\NuGet.exe pack $(ProjectPath) -Exclude **\*.xml -OutputDirectory D:\nuget\packages</PostBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+	<PropertyGroup>
+		<Description>Lithnet Resource Management Client for Microsoft Identity Manager</Description>
+		<Company>Lithnet</Company>
+		<Copyright>Copyright 2022 Lithnet Pty Ltd</Copyright>
+		<ProductName>Lithnet Resource Management Client</ProductName>
+		<VersionPrefix>2.0.15</VersionPrefix>
+		<VersionSuffix>beta1</VersionSuffix>
+		<Authors>Lithnet</Authors>
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+		<AutoIncrementPackageRevision>true</AutoIncrementPackageRevision>
+		<IsPackable>true</IsPackable>
+		<PackageId>Lithnet.ResourceManagement.Client</PackageId>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RepositoryUrl>https://github.com/lithnet/resourcemanagement-client</RepositoryUrl>
+		<SupportUrl>https://github.com/lithnet/resourcemanagement-client</SupportUrl>
+	</PropertyGroup>
+
+	<ItemGroup Condition="$(TargetFramework)!='netstandard2.0'">
+		<Compile Remove="ServiceImplementation\Factories\RpcClientFactory.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Include="..\Lithnet.ResourceManagement.Client.Host\Shared\BindingManager.cs" Link="Shared\BindingManager.cs" />
+		<Compile Include="..\Lithnet.ResourceManagement.Client.Host\Shared\EndpointManager.cs" Link="Shared\EndpointManager.cs" />
+		<Compile Include="..\Lithnet.ResourceManagement.Client.Host\Shared\Rpc\JsonOptionsFactory.cs" Link="Shared\Rpc\JsonOptionsFactory.cs" Condition="$(TargetFramework)=='netstandard2.0'" />
+		<Compile Include="..\Lithnet.ResourceManagement.Client.Host\Shared\Rpc\MessageSerializer.cs" Link="Shared\Rpc\MessageSerializer.cs" Condition="$(TargetFramework)=='netstandard2.0'" />
+		<Compile Include="..\Lithnet.ResourceManagement.Client.Host\Shared\Rpc\MessageService.cs" Link="Shared\Rpc\MessageService.cs" Condition="$(TargetFramework)=='netstandard2.0'" />
+		<Compile Include="..\Lithnet.ResourceManagement.Client.Host\Shared\Rpc\RpcCore.cs" Link="Shared\Rpc\RpcCore.cs" Condition="$(TargetFramework)=='netstandard2.0'" />
+	</ItemGroup>
+
+	<ItemGroup Condition="$(TargetFramework)!='netstandard2.0'">
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
+	</ItemGroup>
+
+	<ItemGroup Condition="$(TargetFramework)=='netstandard2.0'">
+		<PackageReference Include="StreamJsonRpc" Version="2.13.33" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
+		<PackageReference Include="System.Reflection.MetadataLoadContext" Version="7.0.0" />
+		<PackageReference Include="System.ServiceModel.Http" Version="4.7.0" />
+		<PackageReference Include="System.ServiceModel.Security" Version="4.7.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
+	</ItemGroup>
+
+	<ItemGroup Condition="$(TargetFramework)!='netstandard2.0'">
+		<Reference Include="System.ServiceModel" />
+		<Reference Include="System.Configuration" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<WCFMetadata Include="Connected Services" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);GetMyPackageFiles</TargetsForTfmSpecificBuildOutput>
+	</PropertyGroup>
+
+	<Target Name="GetMyPackageFiles">
+		<ItemGroup>
+			<BuildOutputInPackage Include="$(OutputPath)native\Lithnet.ResourceManagement.Client.Host.exe" Condition="$(TargetFramework)=='netstandard2.0'" />
+		</ItemGroup>
+	</Target>
+	<!--<ItemGroup>
+		<Content Include="$(TargetDir)native\*">
+			<Pack>true</Pack>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<PackagePath>content\native</PackagePath>
+		</Content>
+	</ItemGroup>-->
+
+
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="$(TargetFramework)=='netstandard2.0'">
+		<ItemGroup>
+			<FilesToDelete Include="$(TargetDir)native\*" />
+		</ItemGroup>
+		<Delete Files="@(FilesToDelete)" />
+		<Exec Command="dotnet publish &quot;$(SolutionDir)Lithnet.ResourceManagement.Client.Host\Lithnet.ResourceManagement.Client.Host.csproj&quot; --framework net472 --configuration=$(configuration) --no-self-contained --output  &quot;$(TargetDir)native&quot;" />
+	</Target>
 </Project>

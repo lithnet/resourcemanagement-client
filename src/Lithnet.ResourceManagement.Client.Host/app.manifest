@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
+	<assemblyIdentity version="1.0.0.0"
+					  name="Lithnet.ResourceManagement.Client.Host"
+					  type="win32"
+					  processorArchitecture="amd64"  />
+	<clrClass clsid="{dbdea27a-3d96-483c-97d1-9047c70141ac}"
+			  progid="Lithnet.ResourceManagement.Client.ComHost"
+			  threadingModel="Both"
+			  runtimeVersion = "v4.0.30319"
+			  name="Lithnet.ResourceManagement.Client.Host.ComHost">
+	</clrClass>
+	<file name="Lithnet.ResourceManagement.Client.Host.dll"/>
+</assembly>

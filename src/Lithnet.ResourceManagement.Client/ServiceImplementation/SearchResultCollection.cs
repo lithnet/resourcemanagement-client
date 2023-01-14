@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -48,11 +49,14 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// Gets the next page of the search results
         /// </summary>
-        private void GetNextPage()
+        private async Task GetNextPageAsync()
         {
             if (this.pager.HasMoreItems)
             {
-                this.resultSet.AddRange(this.pager.GetNextPage());
+                await foreach (var item in this.pager.GetNextPageAsync())
+                {
+                    this.resultSet.Add(item);
+                }
             }
         }
 
@@ -61,7 +65,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        internal ResourceObject GetObjectAtIndex(int index)
+        internal async Task<ResourceObject> GetObjectAtIndexAsync(int index)
         {
             if (index >= this.Count)
             {
@@ -72,8 +76,8 @@ namespace Lithnet.ResourceManagement.Client
             {
                 if (this.pager.HasMoreItems)
                 {
-                    this.GetNextPage();
-                    return this.GetObjectAtIndex(index);
+                    await this.GetNextPageAsync().ConfigureAwait(false);
+                    return await this.GetObjectAtIndexAsync(index).ConfigureAwait(false);
                 }
                 else
                 {

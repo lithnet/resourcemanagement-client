@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Xml;
 using Lithnet.ResourceManagement.Client.ResourceManagementService;
-using Microsoft.ResourceManagement.WebServices.WSEnumeration;
-using System.Globalization;
 
 namespace Lithnet.ResourceManagement.Client
 {
     /// <summary>
     /// Provides an enumerator that can iterate through search results from the Resource Management Service in a paged manner
     /// </summary>
-    public class SearchResultPager 
+    public class SearchResultPager
     {
         private CultureInfo locale;
 
@@ -21,11 +20,6 @@ namespace Lithnet.ResourceManagement.Client
         private EnumerationContextType context;
 
         /// <summary>
-        /// The search client used for this search operation
-        /// </summary>
-        private SearchClient searchClient;
-
-        /// <summary>
         /// The resource management client used for this search operation
         /// </summary>
         private ResourceManagementClient client;
@@ -33,12 +27,18 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// The page size used for the search operation
         /// </summary>
-        public int PageSize { get; set; }
+        public int PageSize
+        {
+            get; set;
+        }
 
         /// <summary>
         /// Gets the number of results in the search response
         /// </summary>
-        public int TotalCount { get; private set; }
+        public int TotalCount
+        {
+            get; private set;
+        }
 
         /// <summary>
         /// Gets a value indicating whether there are more results on the server
@@ -76,10 +76,9 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <param name="response">The initial enumeration response from the Resource Management Service</param>
         /// <param name="pageSize">The page size used in the search operation</param>
-        /// <param name="searchClient">The client proxy used for performing the search</param>
         /// <param name="client">The client used to convert response data into ResourceObjects</param>
         /// <param name="locale">The localization culture that the search results are represented as</param>
-        internal SearchResultPager(EnumerateResponse response, int pageSize, SearchClient searchClient, ResourceManagementClient client, CultureInfo locale)
+        internal SearchResultPager(EnumerateResponse response, int pageSize, ResourceManagementClient client, CultureInfo locale)
         {
             if (response == null)
             {
@@ -91,18 +90,12 @@ namespace Lithnet.ResourceManagement.Client
                 throw new ArgumentException("The page size must be zero or greater", nameof(pageSize));
             }
 
-            if (searchClient == null)
-            {
-                throw new ArgumentNullException(nameof(client));
-            }
-
             this.TotalCount = Convert.ToInt32(response.EnumerationDetail.Count);
             this.client = client;
             this.locale = locale;
             this.context = response.EnumerationContext;
             this.context.CurrentIndex = 0;
             this.PageSize = pageSize;
-            this.searchClient = searchClient;
             this.EndOfSequence = response.EndOfSequence != null;
         }
 
@@ -125,9 +118,9 @@ namespace Lithnet.ResourceManagement.Client
         /// Gets the next page of search results from the Resource Management Service
         /// </summary>
         /// <returns>An enumeration of the ResourceObjects in the page</returns>
-        public IEnumerable<ResourceObject> GetNextPage()
+        public async IAsyncEnumerable<ResourceObject> GetNextPageAsync()
         {
-            PullResponse r = this.searchClient.Pull(this.context, this.PageSize);
+            PullResponse r = await this.client.SearchClient.PullAsync(this.context, this.PageSize).ConfigureAwait(false);
             if (r.EndOfSequence != null)
             {
                 this.EndOfSequence = true;
@@ -138,7 +131,10 @@ namespace Lithnet.ResourceManagement.Client
                 this.context = r.EnumerationContext;
             }
 
-            return this.EnumerateResultSet(r.Items);
+            foreach (var item in this.EnumerateResultSet(r.Items))
+            {
+                yield return item;
+            }
         }
     }
 }

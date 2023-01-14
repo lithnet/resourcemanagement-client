@@ -13,6 +13,7 @@ namespace Lithnet.ResourceManagement.Client
         internal static ClientConfigurationSection GetConfiguration()
         {
             object section = ConfigurationManager.GetSection("lithnetResourceManagementClient");
+            var myConfig = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).FilePath;
 
             if (section != null)
             {
@@ -78,6 +79,7 @@ namespace Lithnet.ResourceManagement.Client
             set => this["servicePrincipalName"] = value;
         }
 
+        [Obsolete]
         [ConfigurationProperty("forceKerberos", IsRequired = false, DefaultValue = false)]
         public bool ForceKerberos
         {

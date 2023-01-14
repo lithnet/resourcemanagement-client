@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ServiceModel;
-using System.ServiceModel.Channels;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -8,15 +7,30 @@ namespace Lithnet.ResourceManagement.Client
     {
         private Uri baseUri;
 
-        public EndpointIdentity EndpointSpn { get; private set; }
+        public EndpointIdentity EndpointSpn
+        {
+            get; private set;
+        }
 
-        public EndpointAddress ResourceFactoryEndpoint { get; private set; }
+        public EndpointAddress ResourceFactoryEndpoint
+        {
+            get; private set;
+        }
 
-        public EndpointAddress ResourceEndpoint { get; private set; }
+        public EndpointAddress ResourceEndpoint
+        {
+            get; private set;
+        }
 
-        public EndpointAddress SearchEndpoint { get; private set; }
+        public EndpointAddress SearchEndpoint
+        {
+            get; private set;
+        }
 
-        public EndpointAddress MetadataEndpoint { get; private set; }
+        public EndpointAddress MetadataEndpoint
+        {
+            get; private set;
+        }
 
         public EndpointManager(Uri baseUri, EndpointIdentity spn)
         {
@@ -26,7 +40,7 @@ namespace Lithnet.ResourceManagement.Client
             }
 
             UriBuilder builder = new UriBuilder(baseUri);
-            
+
             this.baseUri = baseUri;
 
             if (spn == null)
@@ -56,10 +70,13 @@ namespace Lithnet.ResourceManagement.Client
         {
         }
 
-
         public static EndpointIdentity SpnIdentityFromUri(Uri uri)
         {
+#if NETFRAMEWORK
             return EndpointIdentity.CreateSpnIdentity($"FIMService/{uri.Host}");
+#else
+            return new SpnEndpointIdentity($"FIMService/{uri.Host}");
+#endif
         }
 
         public static EndpointAddress EndpointFromAddress(string address)

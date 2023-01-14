@@ -1,13 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Lithnet.ResourceManagement.Client
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ServiceModel;
-    using System.ServiceModel.Channels;
-
     /// <summary>
     /// Defines extension methods used in the application
     /// </summary>
@@ -20,6 +20,18 @@ namespace Lithnet.ResourceManagement.Client
             return string.Format(InternalExtensions.FilterTextFormat, System.Security.SecurityElement.Escape(filter));
         }
 
+        public static async ValueTask<List<TSource>> ToListAsync<TSource>(this IAsyncEnumerable<TSource> source, CancellationToken cancellationToken = default)
+        {
+            var list = new List<TSource>();
+
+            await foreach (var item in source.WithCancellation(cancellationToken).ConfigureAwait(false))
+            {
+                list.Add(item);
+            }
+
+            return list;
+        }
+
         /// <summary>
         /// Converts an enumeration of strings into a comma separated list
         /// </summary>
@@ -30,19 +42,6 @@ namespace Lithnet.ResourceManagement.Client
             return strings == null ? null : string.Join(", ", strings);
         }
 
-        /// <summary>
-        /// Disables the context manager for the specified client
-        /// </summary>
-        /// <typeparam name="T">The type of client proxy</typeparam>
-        /// <param name="client">The client proxy to disable the context manager for</param>
-        public static void DisableContextManager<T>(this ClientBase<T> client) where T : class
-        {
-            IContextManager property = client.ChannelFactory.GetProperty<IContextManager>();
-            if (property != null)
-            {
-                property.Enabled = false;
-            }
-        }
 
         public static bool HasOne<T>(this IEnumerable<T> enumerable)
         {
@@ -88,7 +87,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 return list.Count >= 2 ? 2 : list.Count;
             }
-            
+
             IEnumerator e = enumerable.GetEnumerator();
 
             while (e.MoveNext())
@@ -126,7 +125,6 @@ namespace Lithnet.ResourceManagement.Client
 
         public static T Invoke<T, T1>(this ClientBase<T1> client, Func<T1, T> action) where T1 : class
         {
-
             T1 c = client.ChannelFactory.CreateChannel();
 
             try

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using Microsoft.ResourceManagement.WebServices.Exceptions;
-using Microsoft.ResourceManagement.WebServices.Faults;
-using Microsoft.ResourceManagement.WebServices.WSResourceManagement;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -13,9 +10,9 @@ namespace Lithnet.ResourceManagement.Client
         {
             if (fault.Code?.SubCode == null)
             {
-                return new FaultException(fault);
+                return new FaultException(fault, string.Empty);
             }
-            
+
             switch (fault.Code.SubCode.Name)
             {
                 case "InvalidRepresentation":
@@ -36,14 +33,14 @@ namespace Lithnet.ResourceManagement.Client
                 default:
                     break;
             }
-            
+
             if (fault.HasDetail)
             {
                 return new FaultException(fault, fault.GetReaderAtDetailContents().ReadOuterXml());
             }
             else
             {
-                return new FaultException(fault);
+                return new FaultException(fault, string.Empty);
             }
         }
 
@@ -58,7 +55,7 @@ namespace Lithnet.ResourceManagement.Client
 
             if (failure?.AdministratorDetails == null)
             {
-                return new FaultException(fault);
+                return new FaultException(fault, string.Empty);
             }
 
             throw new UnwillingToPerformException(failure);
@@ -70,7 +67,7 @@ namespace Lithnet.ResourceManagement.Client
 
             if (failure == null)
             {
-                return new FaultException(fault);
+                return new FaultException(fault, string.Empty);
             }
 
             return InvalidRepresentationException.GetException(failure);
@@ -82,7 +79,7 @@ namespace Lithnet.ResourceManagement.Client
 
             if (failure == null)
             {
-                return new FaultException(fault);
+                return new FaultException(fault, string.Empty);
             }
 
             if (failure.RequestAdministratorDetails?.RequestFailureSource == RequestFailureSource.ResourceIsMissing)
@@ -99,7 +96,7 @@ namespace Lithnet.ResourceManagement.Client
 
             if (failure == null)
             {
-                return new FaultException(fault);
+                return new FaultException(fault, string.Empty);
             }
 
             return new AuthorizationRequiredException(failure);

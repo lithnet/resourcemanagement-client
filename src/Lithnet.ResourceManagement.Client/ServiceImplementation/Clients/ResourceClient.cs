@@ -1,25 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.ServiceModel.Channels;
+using System.Threading.Tasks;
 using System.Xml;
-using Microsoft.ResourceManagement.WebServices;
-using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
-using System.Globalization;
 
 namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 {
-    internal partial class ResourceClient 
+    internal class ResourceClient : IResourceClient
     {
         private ResourceManagementClient client;
+        private IResource channel;
 
-        public void Initialize(ResourceManagementClient client)
+        public ResourceClient(ResourceManagementClient client, IResource channel)
         {
-            this.DisableContextManager();
             this.client = client;
+            this.channel = channel;
         }
 
-        public void Put(ResourceObject resource, CultureInfo locale)
+        public async Task PutAsync(ResourceObject resource, CultureInfo locale)
         {
             if (resource == null)
             {
@@ -33,14 +33,14 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                     return;
                 }
 
-                using (Message responseMessage = this.Invoke(c => c.Put(message)))
+                using (Message responseMessage = await this.channel.PutAsync(message).ConfigureAwait(false))
                 {
                     responseMessage.ThrowOnFault();
                 }
             }
         }
 
-        public void Put(IEnumerable<ResourceObject> resources)
+        public async Task PutAsync(IEnumerable<ResourceObject> resources)
         {
             if (resources == null)
             {
@@ -54,14 +54,14 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                     return;
                 }
 
-                using (Message responseMessage = this.Invoke((c) => c.Put(message)))
+                using (Message responseMessage = await this.channel.PutAsync(message).ConfigureAwait(false))
                 {
                     responseMessage.ThrowOnFault();
                 }
             }
         }
 
-        public ResourceObject Get(UniqueIdentifier id, IEnumerable<string> attributes, CultureInfo locale, bool getPermissions)
+        public async Task<ResourceObject> GetAsync(UniqueIdentifier id, IEnumerable<string> attributes, CultureInfo locale, bool getPermissions)
         {
             if (id == null)
             {
@@ -69,10 +69,10 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             }
 
             bool partialResponse = attributes != null;
-            
+
             using (Message message = MessageComposer.CreateGetMessage(id, attributes?.ToArray(), locale, getPermissions))
             {
-                using (Message responseMessage = this.Invoke((c) => c.Get(message)))
+                using (Message responseMessage = await this.channel.GetAsync(message).ConfigureAwait(false))
                 {
                     responseMessage.ThrowOnFault();
 
@@ -90,17 +90,17 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             }
         }
 
-        public void Delete(IEnumerable<ResourceObject> resources)
+        public async Task DeleteAsync(IEnumerable<ResourceObject> resources)
         {
             if (resources == null)
             {
                 throw new ArgumentNullException(nameof(resources));
             }
 
-            this.Delete(resources.Select(t => t.ObjectID));
+            await this.DeleteAsync(resources.Select(t => t.ObjectID)).ConfigureAwait(false);
         }
 
-        public void Delete(IEnumerable<UniqueIdentifier> resourceIDs)
+        public async Task DeleteAsync(IEnumerable<UniqueIdentifier> resourceIDs)
         {
             if (resourceIDs == null)
             {
@@ -116,24 +116,24 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
             using (Message message = MessageComposer.CreateDeleteMessage(ids))
             {
-                using (Message responseMessage = this.Invoke((c) => c.Delete(message)))
+                using (Message responseMessage = await this.channel.DeleteAsync(message).ConfigureAwait(false))
                 {
                     responseMessage.ThrowOnFault();
                 }
             }
         }
 
-        public void Delete(ResourceObject resource)
+        public async Task DeleteAsync(ResourceObject resource)
         {
             if (resource == null)
             {
                 throw new ArgumentNullException(nameof(resource));
             }
 
-            this.Delete(resource.ObjectID);
+            await this.DeleteAsync(resource.ObjectID).ConfigureAwait(false);
         }
 
-        public void Delete(UniqueIdentifier id)
+        public async Task DeleteAsync(UniqueIdentifier id)
         {
             if (id == null)
             {
@@ -142,14 +142,14 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
             using (Message message = MessageComposer.CreateDeleteMessage(id))
             {
-                using (Message responseMessage = this.Invoke((c) => c.Delete(message)))
+                using (Message responseMessage = await this.channel.DeleteAsync(message).ConfigureAwait(false))
                 {
                     responseMessage.ThrowOnFault();
                 }
             }
         }
 
-        internal XmlDictionaryReader GetFullObjectForUpdate(ResourceObject resource)
+        public async Task<XmlDictionaryReader> GetFullObjectForUpdateAsync(ResourceObject resource)
         {
             if (resource == null)
             {
@@ -158,7 +158,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
             using (Message message = MessageComposer.CreateGetMessage(resource.ObjectID, null, resource.Locale, resource.HasPermissionHints))
             {
-                using (Message responseMessage = this.Invoke((c) => c.Get(message)))
+                using (Message responseMessage = await this.channel.GetAsync(message).ConfigureAwait(false))
                 {
                     responseMessage.ThrowOnFault();
 

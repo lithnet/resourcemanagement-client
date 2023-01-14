@@ -1,29 +1,27 @@
 ﻿using System;
-using System.ServiceModel;
-using System.ServiceModel.Channels;
-using Microsoft.ResourceManagement.WebServices;
-using Microsoft.ResourceManagement.WebServices.Faults;
-using Microsoft.ResourceManagement.WebServices.WSTransfer;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
+using System.Threading.Tasks;
+using Rmc = Lithnet.ResourceManagement.Client;
 
 namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 {
-    internal partial class ResourceFactoryClient : System.ServiceModel.ClientBase<Lithnet.ResourceManagement.Client.ResourceManagementService.ResourceFactory>, Lithnet.ResourceManagement.Client.ResourceManagementService.ResourceFactory
+    internal class ResourceFactoryClient : IResourceFactoryClient
     {
-        private ResourceManagementClient client;
-
         private const string ApprovedText = "Approved";
 
         private const string RejectedText = "Rejected";
 
-        public void Initialize(ResourceManagementClient client)
+        private IResourceFactory channel;
+
+        public ResourceFactoryClient(IResourceFactory channel)
         {
-            this.DisableContextManager();
-            this.client = client;
+            this.channel = channel;
         }
 
-        public void Create(ResourceObject resource)
+        public async Task CreateAsync(ResourceObject resource)
         {
             if (resource == null)
             {
@@ -34,7 +32,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             {
                 using (Message message = MessageComposer.CreateCreateMessage(resource))
                 {
-                    using (Message responseMessage = this.Invoke((c) => c.Create(message)))
+                    using (Message responseMessage = await this.channel.CreateAsync(message).ConfigureAwait(false))
                     {
                         responseMessage.ThrowOnFault();
 
@@ -49,8 +47,8 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                 throw InvalidRepresentationException.GetException(e.Detail);
             }
         }
-        
-        public void Approve(UniqueIdentifier workflowInstance, UniqueIdentifier approvalRequest, bool approve, string reason = null)
+
+        public async Task ApproveAsync(UniqueIdentifier workflowInstance, UniqueIdentifier approvalRequest, bool approve, string reason = null)
         {
             if (workflowInstance == null)
             {
@@ -69,17 +67,17 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                 Approval = approvalRequest.ToString()
             };
 
-           
+
             using (Message message = MessageComposer.CreateApprovalMessage(workflowInstance, response))
             {
-                using (Message responseMessage = this.Invoke((c) => c.Create(message)))
+                using (Message responseMessage = await this.channel.CreateAsync(message).ConfigureAwait(false))
                 {
                     responseMessage.ThrowOnFault();
                 }
             }
         }
 
-        public void Create(IEnumerable<ResourceObject> resources)
+        public async Task CreateAsync(IEnumerable<ResourceObject> resources)
         {
             if (resources == null)
             {
@@ -92,7 +90,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             {
                 using (Message message = MessageComposer.CreateCreateMessage(resourceArray))
                 {
-                    using (Message responseMessage = this.Invoke((c) => c.Create(message)))
+                    using (Message responseMessage = await this.channel.CreateAsync(message).ConfigureAwait(false))
                     {
                         responseMessage.ThrowOnFault();
 
@@ -103,7 +101,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                     }
                 }
             }
-            catch (FaultException<RepresentationFailures> e)
+            catch (FaultException<Rmc.RepresentationFailures> e)
             {
                 throw InvalidRepresentationException.GetException(e.Detail);
             }

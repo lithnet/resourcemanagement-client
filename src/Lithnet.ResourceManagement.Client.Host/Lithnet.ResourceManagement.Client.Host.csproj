@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net472</TargetFrameworks>
+		<LangVersion>8</LangVersion>
+		<OutputType>Exe</OutputType>
+		<RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+
+	</PropertyGroup>
+
+	<ItemGroup>
+		<WCFMetadata Include="Connected Services" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Fody" Version="6.6.4" PrivateAssets="All"/>
+		<PackageReference Include="Costura.Fody" Version="5.7.0" PrivateAssets="All" />
+		<PackageReference Include="StreamJsonRpc" Version="2.13.33" />
+	</ItemGroup>
+	<PropertyGroup>
+		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<Nullable>disable</Nullable>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include="System.ServiceModel" />
+	</ItemGroup>
+</Project>

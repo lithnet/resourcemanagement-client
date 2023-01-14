@@ -72,20 +72,21 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         private void ExecuteProducer()
         {
-            Task task = new Task(() =>
-                {
-                    while (this.pager.HasMoreItems)
-                    {
-                        foreach(ResourceObject result in this.pager.GetNextPage())
-                        {
-                            this.resultSet.Add(result);
-                        }
-                    }
-
-                    this.resultSet.CompleteAdding();
-                }, this.token);
-            
+            Task task = Task.Run(this.ConsumeAsync, this.token);
             task.Start();
+        }
+
+        private async Task ConsumeAsync()
+        {
+            while (this.pager.HasMoreItems)
+            {
+                await foreach (ResourceObject result in this.pager.GetNextPageAsync())
+                {
+                    this.resultSet.Add(result);
+                }
+            }
+
+            this.resultSet.CompleteAdding();
         }
 
         /// <summary>
