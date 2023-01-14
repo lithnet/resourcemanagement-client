@@ -75,7 +75,6 @@ namespace Lithnet.ResourceManagement.Client
                     return null;
                 }
 
-
                 return this.Attributes.FirstOrDefault(t => t.SystemName == attributeName);
             }
         }

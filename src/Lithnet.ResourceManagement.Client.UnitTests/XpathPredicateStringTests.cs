@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
@@ -454,6 +455,11 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             XPathQuery predicate = new XPathQuery(attributeName, xpathOp, value);
             string xpath = XPathFilterBuilder.CreateFilter(UnitTestHelper.ObjectTypeUnitTestObjectName, queryOp, predicate);
             Assert.AreEqual(expected, xpath);
+            
+            if (xpathOp == ComparisonOperator.Contains)
+            {
+                Thread.Sleep(8000);
+            }
 
             ISearchResultCollection results = client.GetResources(xpath);
 

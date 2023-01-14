@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.ResourceManagement.WebServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Globalization;
 
@@ -53,13 +52,13 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public static List<byte[]> TestDataBinary1MV = new List<byte[]>() { new byte[4] { 12, 13, 14, 15 }, new byte[4] { 16, 17, 18, 19 }, new byte[4] { 20, 21, 22, 23 } };
         public static List<byte[]> TestDataBinary2MV = new List<byte[]>() { new byte[4] { 24, 25, 26, 27 }, new byte[4] { 28, 29, 30, 31 }, new byte[4] { 32, 33, 34, 35 } };
 
-        public static List<DateTime> TestDataDateTime1MV = new List<DateTime>() { 
-            DateTime.Parse(DateTime.UtcNow.AddDays(3).ToResourceManagementServiceDateFormat(true)), 
+        public static List<DateTime> TestDataDateTime1MV = new List<DateTime>() {
+            DateTime.Parse(DateTime.UtcNow.AddDays(3).ToResourceManagementServiceDateFormat(true)),
             DateTime.Parse(DateTime.UtcNow.AddDays(4).ToResourceManagementServiceDateFormat(true)),
             DateTime.Parse(DateTime.UtcNow.AddDays(5).ToResourceManagementServiceDateFormat(true)) };
 
         public static List<DateTime> TestDataDateTime2MV = new List<DateTime>() {
-            DateTime.Parse(DateTime.UtcNow.AddDays(6).ToResourceManagementServiceDateFormat(true)), 
+            DateTime.Parse(DateTime.UtcNow.AddDays(6).ToResourceManagementServiceDateFormat(true)),
             DateTime.Parse(DateTime.UtcNow.AddDays(7).ToResourceManagementServiceDateFormat(true)),
             DateTime.Parse(DateTime.UtcNow.AddDays(8).ToResourceManagementServiceDateFormat(true)) };
 
@@ -68,7 +67,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         public static List<string> TestDataText1MV = new List<string>() { "testText4", "testText5", "testText6" };
         public static List<string> TestDataText2MV = new List<string>() { "testText7", "testText8", "testText9" };
-
 
         internal const string ObjectTypeUnitTestObjectName = "_unitTestObject";
         internal const string AttributeStringSV = "ut_svstring";
@@ -85,7 +83,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         internal const string AttributeBinaryMV = "ut_mvbinary";
         internal const string AttributeBooleanSV = "ut_svboolean";
 
-        
+
 
         static UnitTestHelper()
         {
@@ -158,7 +156,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             UnitTestHelper.CreateBindingIfDoesntExist(objectClass, accountNameAttribute);
 
             client.RefreshSchema();
-
         }
 
         private static ResourceObject CreateUnitTestObjectTypeIfDoesntExist()
@@ -246,7 +243,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             resource.Attributes[UnitTestHelper.AttributeReferenceSV].SetValue( UnitTestHelper.TestDataReference1);
             resource.Attributes[UnitTestHelper.AttributeTextMV].SetValue( UnitTestHelper.TestDataText1MV);
             resource.Attributes[UnitTestHelper.AttributeTextSV].SetValue( UnitTestHelper.TestDataText1);
-            
+
             if (accountName != null)
             {
                 resource.Attributes[AttributeNames.AccountName].SetValue(accountName);
@@ -344,7 +341,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 CollectionAssert.AreEqual(UnitTestHelper.TestDataInteger1MV, resource.Attributes[UnitTestHelper.AttributeIntegerMV].IntegerValues);
             }
 
-
             if (attributesToCheck.Contains(UnitTestHelper.AttributeReferenceMV))
             {
                 CollectionAssert.AreEqual(UnitTestHelper.TestDataReference1MV, resource.Attributes[UnitTestHelper.AttributeReferenceMV].ReferenceValues);
@@ -418,7 +414,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 }
                 else
                 {
-                    if (ResourceManagementSchema.MandatoryAttributes.Contains(value.AttributeName))
+                    if (SchemaConstants.MandatoryAttributes.Contains(value.AttributeName))
                     {
                         continue;
                     }

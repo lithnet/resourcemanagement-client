@@ -1,7 +1,4 @@
-﻿using Microsoft.ResourceManagement.WebServices.Exceptions;
-using Microsoft.ResourceManagement.WebServices.Faults;
-
-namespace Lithnet.ResourceManagement.Client
+﻿namespace Lithnet.ResourceManagement.Client
 {
     /// <summary>
     /// An exception thrown by the resource management service when an unsupported request message is submitted

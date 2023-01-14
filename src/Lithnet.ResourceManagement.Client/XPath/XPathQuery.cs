@@ -96,7 +96,6 @@ namespace Lithnet.ResourceManagement.Client
             bool isMultivalued = ResourceManagementSchema.IsAttributeMultivalued(attributeName);
 
             this.SetupBuilder(attributeName, comparisonOperator, value, negate, attributeType, isMultivalued);
-
         }
 
         /// <summary>

@@ -55,7 +55,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                     client.DeleteResource(resource2);
                 }
             }
-
         }
     }
 }

@@ -10,19 +10,7 @@
 
         private int line;
         private int column;
-        private int pos;	// position within data
-
-        private string data;
-
         private List<Token> tokens;
-
-        private bool ignoreWhiteSpace;
-        private bool ignoreEqualChar;
-        private bool ignoreDigits;
-        private bool tokenSeparatedBySpace;
-        private char[] symbolChars;
-        private char[] symbolAsLetter;  //array of symbols treated as common letters inside words
-
         private int saveLine;
         private int saveCol;
         private int savePos;
@@ -36,7 +24,7 @@
                 throw new ArgumentNullException(nameof(data));
             }
 
-            this.data = data;
+            this.Data = data;
             this.Reset();
         }
 
@@ -44,13 +32,7 @@
         {
         }
 
-        public string Data
-        {
-            get
-            {
-                return this.data;
-            }
-        }
+        public string Data { get; private set; }
 
         /// <summary>
         /// Gets the list of tokens representing the input
@@ -68,110 +50,42 @@
             }
         }
 
-
         /// <summary>
         /// Gets or sets which characters are part of TokenKind.Symbol
         /// </summary>
-        public char[] SymbolChars
-        {
-            get
-            {
-                return this.symbolChars;
-            }
-
-            set
-            {
-                this.symbolChars = value;
-            }
-        }
-
+        public char[] SymbolChars { get; set; }
 
         /// <summary>
         /// Gets or sets which special characters (symbols) are treated as common letters inside words.
         /// Default is empty list.
         /// </summary>
-        public char[] SymbolAsLetter
-        {
-            get
-            {
-                return this.symbolAsLetter;
-            }
-
-            set
-            {
-                this.symbolAsLetter = value;
-            }
-        }
+        public char[] SymbolAsLetter { get; set; }
 
         /// <summary>
         /// if set to true, white space characters will be ignored,
         /// but EOL and whitespace inside of string will still be tokenized.
         /// Default is false.
         /// </summary>
-        public bool IgnoreWhiteSpace
-        {
-            get
-            {
-                return this.ignoreWhiteSpace;
-            }
-
-            set
-            {
-                this.ignoreWhiteSpace = value;
-            }
-        }
+        public bool IgnoreWhiteSpace { get; set; }
 
         /// <summary>
         /// if set to true, '=' character will be ignored,
         /// but EOL and whitespace inside of string will still be tokenized.
         /// Default is false.
         /// </summary>
-        public bool IgnoreEqualChar
-        {
-            get
-            {
-                return this.ignoreEqualChar;
-            }
-
-            set
-            {
-                this.ignoreEqualChar = value;
-            }
-        }
+        public bool IgnoreEqualChar { get; set; }
 
         /// <summary>
         /// if set to true, digits are treated as normal characters, like literals.
         /// Default is false.
         /// </summary>
-        public bool IgnoreDigits
-        {
-            get
-            {
-                return this.ignoreDigits;
-            }
-
-            set
-            {
-                this.ignoreDigits = value;
-            }
-        }
+        public bool IgnoreDigits { get; set; }
 
         /// <summary>
         /// if set to true, tokens must be separated by separators (spaces, tabs, etc).
         /// Default is false.
         /// </summary>
-        public bool TokenSeparatedBySpace
-        {
-            get
-            {
-                return this.tokenSeparatedBySpace;
-            }
-
-            set
-            {
-                this.tokenSeparatedBySpace = value;
-            }
-        }
+        public bool TokenSeparatedBySpace { get; set; }
 
         public bool EOF
         {
@@ -181,13 +95,7 @@
             }
         }
 
-        public int CurrentPosition
-        {
-            get
-            {
-                return this.pos;
-            }
-        }
+        public int CurrentPosition { get; private set; }
 
         public int TokenPosition
         {
@@ -209,7 +117,7 @@
 
         public void Parse(string data)
         {
-            this.data = data;
+            this.Data = data;
             this.Reset();
         }
 
@@ -257,23 +165,23 @@
 
         private void Reset()
         {
-            this.ignoreWhiteSpace = false;
-            this.ignoreEqualChar = false;
-            this.ignoreDigits = true;
-            this.tokenSeparatedBySpace = false;
-            this.symbolChars = new char[]{ };// '+', '-', '/', '*', '~', '@', '^',
+            this.IgnoreWhiteSpace = false;
+            this.IgnoreEqualChar = false;
+            this.IgnoreDigits = true;
+            this.TokenSeparatedBySpace = false;
+            this.SymbolChars = new char[]{ };// '+', '-', '/', '*', '~', '@', '^',
                                         //'=', '<', '>', '!', 
                                         //',', '.', ';', '_',
                                         //'$', '€', '£', '&', '?', '|', '\'', '§', '°', 
                                        // 'ç', 'ì', 'è', 'é', 'ò', 'à', 'ù',    
                                         //'(', ')', '[', ']'};
-            this.symbolAsLetter = new char[] { '-' };
+            this.SymbolAsLetter = new char[] { '-' };
 
             this.tokens = new List<Token>();
 
             this.line = 1;
             this.column = 1;
-            this.pos = 0;
+            this.CurrentPosition = 0;
             this.saveCol = 1;
             this.savePos = 0;
             this.saveLine = 1;
@@ -287,16 +195,16 @@
 
         protected char LookAhead(int count)
         {
-            if (pos + count >= data.Length)
+            if (CurrentPosition + count >= Data.Length)
                 return eofChar;
             else
-                return data[pos + count];
+                return Data[CurrentPosition + count];
         }
 
         protected char Consume()
         {
-            char ret = data[pos];
-            pos++;
+            char ret = Data[CurrentPosition];
+            CurrentPosition++;
             column++;
 
             return ret;
@@ -304,7 +212,7 @@
 
         protected Token CreateToken(TokenKind kind, string value)
         {
-            Token tmp = new Token(kind, value, line, column, pos);
+            Token tmp = new Token(kind, value, line, column, CurrentPosition);
             tokens.Add(tmp);
             this.CurrentToken = tmp;
             return tmp;
@@ -312,7 +220,7 @@
 
         protected Token CreateToken(TokenKind kind)
         {
-            string tokenData = data.Substring(savePos, pos - savePos);
+            string tokenData = Data.Substring(savePos, CurrentPosition - savePos);
             Token tmp = new Token(kind, tokenData, saveLine, saveCol, savePos);
             tokens.Add(tmp);
             this.CurrentToken = tmp;
@@ -324,7 +232,7 @@
             //initialization of the positions for the scrolling of the input string:
             line = 1;
             column = 1;
-            pos = 0;
+            CurrentPosition = 0;
             tokens.Clear();
 
             //sliding input in order to fill the array list:
@@ -358,7 +266,7 @@
 
                 case ' ':
                 case '\t':
-                    if (this.ignoreWhiteSpace)
+                    if (this.IgnoreWhiteSpace)
                     {
                         this.Consume();
                         return this.Next();
@@ -378,7 +286,7 @@
                 case '7':
                 case '8':
                 case '9':
-                    if (this.ignoreDigits)
+                    if (this.IgnoreDigits)
                     {
                         return this.ReadWord();
                     }
@@ -529,11 +437,10 @@
                         return this.CreateToken(TokenKind.LessThan);
                     }
 
-
                 default:
                     {
                         if (Char.IsLetter(ch) ||
-                            (ignoreDigits && Char.IsDigit(ch)) ||
+                            (IgnoreDigits && Char.IsDigit(ch)) ||
                             (ch == '_') ||
                             IsSymbolAsLetter(ch))
                         {
@@ -550,7 +457,7 @@
 
                             //if user wants tokens separated only by separators (spaces, tabs, etc.), check if 
                             //symbol is alone or within a word:
-                            if (this.tokenSeparatedBySpace &&
+                            if (this.TokenSeparatedBySpace &&
                                 (ch != eofChar) &&
                                 (ch != ' ') &&
                                 (ch != '\t') &&
@@ -579,7 +486,7 @@
         {
             this.saveLine = this.line;
             this.saveCol = this.column;
-            this.savePos = this.pos;
+            this.savePos = this.CurrentPosition;
         }
 
         /// <summary>
@@ -652,11 +559,11 @@
             {
                 char ch = LookAhead(0);
                 if (Char.IsLetter(ch) ||
-                    (this.ignoreDigits && Char.IsDigit(ch)) ||
+                    (this.IgnoreDigits && Char.IsDigit(ch)) ||
                     ch == '_' ||
-                    (this.ignoreEqualChar && (ch == '=')) ||
+                    (this.IgnoreEqualChar && (ch == '=')) ||
                     this.IsSymbolAsLetter(ch) ||
-                    (this.tokenSeparatedBySpace && this.IsSymbol(ch)))
+                    (this.TokenSeparatedBySpace && this.IsSymbol(ch)))
                 {
                     this.Consume();
                 }
@@ -684,11 +591,11 @@
             {
                 char ch = this.LookAhead(0);
                 if (Char.IsLetter(ch) ||
-                    (this.ignoreDigits && Char.IsDigit(ch)) ||
+                    (this.IgnoreDigits && Char.IsDigit(ch)) ||
                     ch == '_' ||
-                    (this.ignoreEqualChar && (ch == '=')) ||
+                    (this.IgnoreEqualChar && (ch == '=')) ||
                     this.IsSymbolAsLetter(ch) ||
-                    (this.tokenSeparatedBySpace && this.IsSymbol(ch)))
+                    (this.TokenSeparatedBySpace && this.IsSymbol(ch)))
                 {
                     this.Consume();
                 }
@@ -764,9 +671,9 @@
         /// </summary>
         protected bool IsSymbol(char c)
         {
-            for (int i = 0; i < this.symbolChars.Length; i++)
+            for (int i = 0; i < this.SymbolChars.Length; i++)
             {
-                if (this.symbolChars[i] == c)
+                if (this.SymbolChars[i] == c)
                 {
                     return true;
                 }
@@ -780,9 +687,9 @@
         /// </summary>
         protected bool IsSymbolAsLetter(char c)
         {
-            for (int i = 0; i < this.symbolAsLetter.Length; i++)
+            for (int i = 0; i < this.SymbolAsLetter.Length; i++)
             {
-                if (this.symbolAsLetter[i] == c)
+                if (this.SymbolAsLetter[i] == c)
                 {
                     return true;
                 }

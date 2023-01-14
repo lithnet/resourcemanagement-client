@@ -169,7 +169,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 resource = client.GetResourceByKey(UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName, newID, attributesToGet);
                 UnitTestHelper.ValidateSelectedAttributePresence(resource, attributesToGet);
                 UnitTestHelper.ValidateTestUserData(resource, attributesToGet);
-
             }
             finally
             {
@@ -225,7 +224,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 resource = client.GetResourceByKey(UnitTestHelper.ObjectTypeUnitTestObjectName, keys, attributesToGet);
                 UnitTestHelper.ValidateSelectedAttributePresence(resource, attributesToGet);
                 UnitTestHelper.ValidateTestUserData(resource, attributesToGet);
-
             }
             finally
             {

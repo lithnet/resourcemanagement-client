@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.ResourceManagement.WebServices;
 
 namespace Lithnet.ResourceManagement.Client.Help.Examples
 {

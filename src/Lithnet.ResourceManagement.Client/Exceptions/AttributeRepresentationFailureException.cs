@@ -1,7 +1,4 @@
-﻿using Microsoft.ResourceManagement.WebServices.Exceptions;
-using Microsoft.ResourceManagement.WebServices.Faults;
-
-namespace Lithnet.ResourceManagement.Client
+﻿namespace Lithnet.ResourceManagement.Client
 {
     /// <summary>
     /// An exception that is thrown when an unsupported attempt is made to modify an attribute

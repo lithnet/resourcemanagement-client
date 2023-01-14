@@ -1,12 +1,8 @@
-﻿using System.ServiceModel.Channels;
-using Microsoft.ResourceManagement.WebServices.WSResourceManagement;
+﻿using System;
+using System.ServiceModel.Channels;
 
 namespace Lithnet.ResourceManagement.Client
 {
-    using System;
-    using Microsoft.ResourceManagement.WebServices.Exceptions;
-    using Microsoft.ResourceManagement.WebServices.Faults;
-
     /// <summary>
     /// An exception thrown by the resource management service when an invalid request is submitted
     /// </summary>

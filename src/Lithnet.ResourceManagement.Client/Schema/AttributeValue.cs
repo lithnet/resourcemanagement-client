@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
-using Microsoft.ResourceManagement.WebServices;
-using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -66,7 +64,6 @@ namespace Lithnet.ResourceManagement.Client
         /// A list of attribute values requested to be removed, but were not present on the attribute
         /// </summary>
         private List<object> blindRemovals;
-
 
         /// <summary>
         /// Gets the name of the attribute
