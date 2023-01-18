@@ -7,7 +7,6 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
     [Serializable, XmlRoot(ElementName = "EnumerationDetail", Namespace = "http://schemas.microsoft.com/2006/11/ResourceManagement", IsNullable = false), XmlType(TypeName = "EnumerationDetail", Namespace = "http://schemas.microsoft.com/2006/11/ResourceManagement")]
     public class EnumerationDetailType
     {
-
         public EnumerationDetailType()
         {
         }

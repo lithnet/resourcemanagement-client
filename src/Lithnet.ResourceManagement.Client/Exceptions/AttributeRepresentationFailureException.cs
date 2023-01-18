@@ -76,7 +76,7 @@
         /// <param name="failure">The object containing the details of the failure</param>
         /// <param name="correlationID">The ID of the failed request </param>
         public AttributeRepresentationFailureException(AttributeRepresentationFailure failure, string correlationID)
-            : base(AttributeRepresentationFailureException.GetMessage(failure, correlationID),  correlationID)
+            : base(GetMessage(failure, correlationID),  correlationID)
         {
             this.failure = failure;
         }
@@ -90,7 +90,7 @@
         private static string GetMessage(AttributeRepresentationFailure failure, string correlationID)
         {
             return string.Format(
-                AttributeRepresentationFailureException.messageFormat,
+                messageFormat,
                 failure.FailureMessage,
                 failure.AttributeType, 
                 failure.AttributeValue, 

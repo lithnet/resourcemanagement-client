@@ -177,44 +177,21 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>A string containing the query</returns>
         private string BuildXpathPredicate()
         {
-            switch (this.Operator)
+            return this.Operator switch
             {
-                case ComparisonOperator.Equals:
-                    return this.GetExpressionEquals();
-
-                case ComparisonOperator.NotEquals:
-                    return this.GetExpressionNotEquals();
-
-                case ComparisonOperator.GreaterThan:
-                    return this.GetExpressionGreaterThan();
-
-                case ComparisonOperator.GreaterThanOrEquals:
-                    return this.GetExpressionGreaterThanOrEquals();
-
-                case ComparisonOperator.LessThan:
-                    return this.GetExpressionLessThan();
-
-                case ComparisonOperator.LessThanOrEquals:
-                    return this.GetExpressionLessThanOrEquals();
-
-                case ComparisonOperator.IsPresent:
-                    return this.GetExpressionIsPresent();
-
-                case ComparisonOperator.IsNotPresent:
-                    return this.GetExpressionIsNotPresent();
-
-                case ComparisonOperator.Contains:
-                    return this.GetExpressionContains();
-
-                case ComparisonOperator.StartsWith:
-                    return this.GetExpressionStartsWith();
-
-                case ComparisonOperator.EndsWith:
-                    return this.GetExpressionEndsWith();
-
-                default:
-                    throw new NotSupportedException("The operator was unknown");
-            }
+                ComparisonOperator.Equals => this.GetExpressionEquals(),
+                ComparisonOperator.NotEquals => this.GetExpressionNotEquals(),
+                ComparisonOperator.GreaterThan => this.GetExpressionGreaterThan(),
+                ComparisonOperator.GreaterThanOrEquals => this.GetExpressionGreaterThanOrEquals(),
+                ComparisonOperator.LessThan => this.GetExpressionLessThan(),
+                ComparisonOperator.LessThanOrEquals => this.GetExpressionLessThanOrEquals(),
+                ComparisonOperator.IsPresent => this.GetExpressionIsPresent(),
+                ComparisonOperator.IsNotPresent => this.GetExpressionIsNotPresent(),
+                ComparisonOperator.Contains => this.GetExpressionContains(),
+                ComparisonOperator.StartsWith => this.GetExpressionStartsWith(),
+                ComparisonOperator.EndsWith => this.GetExpressionEndsWith(),
+                _ => throw new NotSupportedException("The operator was unknown"),
+            };
         }
 
         /// <summary>
@@ -237,9 +214,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 string valuetoUse;
 
-                XPathExpression childExpression = this.Value as XPathExpression;
-
-                if (childExpression != null)
+                if (this.Value is XPathExpression childExpression)
                 {
                     valuetoUse = childExpression.ToString();
                 }
@@ -259,7 +234,7 @@ namespace Lithnet.ResourceManagement.Client
                 expression = string.Format("({0} = {1})", this.AttributeName, this.QuoteTextValue(TypeConverter.ToString(this.Value)));
             }
 
-            return ProcessNegation(expression);
+            return this.ProcessNegation(expression);
         }
 
         /// <summary>
@@ -276,9 +251,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 string valuetoUse;
 
-                XPathExpression childExpression = this.Value as XPathExpression;
-
-                if (childExpression != null)
+                if (this.Value is XPathExpression childExpression)
                 {
                     valuetoUse = childExpression.ToString();
                 }
@@ -320,7 +293,7 @@ namespace Lithnet.ResourceManagement.Client
                 expression = string.Format("({0} > '{1}')", this.AttributeName, TypeConverter.ToString(this.Value));
             }
 
-            return ProcessNegation(expression);
+            return this.ProcessNegation(expression);
         }
 
         /// <summary>
@@ -344,7 +317,7 @@ namespace Lithnet.ResourceManagement.Client
                 expression = string.Format("({0} >= '{1}')", this.AttributeName, TypeConverter.ToString(this.Value));
             }
 
-            return ProcessNegation(expression);
+            return this.ProcessNegation(expression);
         }
 
         /// <summary>
@@ -368,7 +341,7 @@ namespace Lithnet.ResourceManagement.Client
                 expression = string.Format("({0} < '{1}')", this.AttributeName, TypeConverter.ToString(this.Value));
             }
 
-            return ProcessNegation(expression);
+            return this.ProcessNegation(expression);
         }
 
         /// <summary>
@@ -392,7 +365,7 @@ namespace Lithnet.ResourceManagement.Client
                 expression = string.Format("({0} <= '{1}')", this.AttributeName, TypeConverter.ToString(this.Value));
             }
 
-            return ProcessNegation(expression);
+            return this.ProcessNegation(expression);
         }
 
         /// <summary>
@@ -401,19 +374,19 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>A string containing the query</returns>
         private string GetExpressionIsPresent()
         {
-            if (attributeType == AttributeType.Reference)
+            if (this.attributeType == AttributeType.Reference)
             {
                 return string.Format("({0} = /*)", this.AttributeName);
             }
-            else if (attributeType == AttributeType.Integer)
+            else if (this.attributeType == AttributeType.Integer)
             {
-                return string.Format("({0} <= {1})", this.AttributeName, XPathQuery.MaxLong);
+                return string.Format("({0} <= {1})", this.AttributeName, MaxLong);
             }
-            else if (attributeType == AttributeType.DateTime)
+            else if (this.attributeType == AttributeType.DateTime)
             {
-                return string.Format("({0} <= '{1}')", this.AttributeName, XPathQuery.MaxDate);
+                return string.Format("({0} <= '{1}')", this.AttributeName, MaxDate);
             }
-            else if (attributeType == AttributeType.Boolean)
+            else if (this.attributeType == AttributeType.Boolean)
             {
                 return string.Format("(({0} = true) or ({0} = false))", this.AttributeName);
             }
@@ -429,19 +402,19 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>A string containing the query</returns>
         private string GetExpressionIsNotPresent()
         {
-            if (attributeType == AttributeType.Reference)
+            if (this.attributeType == AttributeType.Reference)
             {
                 return string.Format("(not({0} = /*))", this.AttributeName);
             }
-            else if (attributeType == AttributeType.Integer)
+            else if (this.attributeType == AttributeType.Integer)
             {
-                return string.Format("(not({0} <= {1}))", this.AttributeName, XPathQuery.MaxLong);
+                return string.Format("(not({0} <= {1}))", this.AttributeName, MaxLong);
             }
-            else if (attributeType == AttributeType.DateTime)
+            else if (this.attributeType == AttributeType.DateTime)
             {
-                return string.Format("(not({0} <= '{1}'))", this.AttributeName, XPathQuery.MaxDate);
+                return string.Format("(not({0} <= '{1}'))", this.AttributeName, MaxDate);
             }
-            else if (attributeType == AttributeType.Boolean)
+            else if (this.attributeType == AttributeType.Boolean)
             {
                 return string.Format("(not(({0} = true) or ({0} = false)))", this.AttributeName);
             }
@@ -457,7 +430,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>A string containing the query</returns>
         private string GetExpressionContains()
         {
-            return ProcessNegation(string.Format("(contains({0}, {1}))", this.AttributeName, this.QuoteTextValue(TypeConverter.ToString(this.Value))));
+            return this.ProcessNegation(string.Format("(contains({0}, {1}))", this.AttributeName, this.QuoteTextValue(TypeConverter.ToString(this.Value))));
         }
 
         /// <summary>
@@ -466,7 +439,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>A string containing the query</returns>
         private string GetExpressionStartsWith()
         {
-            return ProcessNegation(string.Format("(starts-with({0}, {1}))", this.AttributeName, this.QuoteTextValue(TypeConverter.ToString(this.Value))));
+            return this.ProcessNegation(string.Format("(starts-with({0}, {1}))", this.AttributeName, this.QuoteTextValue(TypeConverter.ToString(this.Value))));
         }
 
         /// <summary>
@@ -475,7 +448,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>A string containing the query</returns>
         private string GetExpressionEndsWith()
         {
-            return ProcessNegation(string.Format("(ends-with({0}, {1}))", this.AttributeName, this.QuoteTextValue(TypeConverter.ToString(this.Value))));
+            return this.ProcessNegation(string.Format("(ends-with({0}, {1}))", this.AttributeName, this.QuoteTextValue(TypeConverter.ToString(this.Value))));
         }
 
         private object QuoteIfNotFunction(object value)
@@ -486,11 +459,7 @@ namespace Lithnet.ResourceManagement.Client
                 return string.Format("'{0}'", TypeConverter.ToString(value));
             }
 
-            string trimmedValue = ((string)value).TrimStart();
-
-            DateTime result;
-
-            if (DateTime.TryParseExact((string)value, TypeConverter.FimServiceDateFormat, CultureInfo.CurrentCulture, DateTimeStyles.AssumeUniversal, out result))
+            if (DateTime.TryParseExact((string)value, TypeConverter.FimServiceDateFormat, CultureInfo.CurrentCulture, DateTimeStyles.AssumeUniversal, out DateTime result))
             {
                 // The string was a date time value, so pass it back as a string
                 return string.Format("'{0}'", result.ToResourceManagementServiceDateFormat());
@@ -552,8 +521,8 @@ namespace Lithnet.ResourceManagement.Client
                     this.ThrowOnInvalidTextOperator();
                     break;
 
-                default:
                 case AttributeType.Unknown:
+                default:
                     break;
             }
         }

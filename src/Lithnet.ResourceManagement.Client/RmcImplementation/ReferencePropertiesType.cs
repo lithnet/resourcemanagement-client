@@ -7,7 +7,6 @@ namespace Lithnet.ResourceManagement.Client
     [Serializable, XmlType(TypeName = "ReferencePropertiesType", Namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing"), XmlRoot(ElementName = "ReferenceProperties", Namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing", IsNullable = false)]
     public class ReferencePropertiesType
     {
-
         public ReferencePropertiesType()
         {
         }

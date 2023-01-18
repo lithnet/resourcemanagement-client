@@ -19,7 +19,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             AttributeValuePairCollection dictionary = new AttributeValuePairCollection();
             dictionary.Add(attributeName, attributeValue);
-            return XPathFilterBuilder.CreateFilter(objectType, dictionary, ComparisonOperator.Equals, GroupOperator.And);
+            return CreateFilter(objectType, dictionary, ComparisonOperator.Equals, GroupOperator.And);
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace Lithnet.ResourceManagement.Client
             AttributeValuePairCollection dictionary = new AttributeValuePairCollection();
             
             dictionary.Add(attributeName, attributeValue);
-            return XPathFilterBuilder.CreateFilter(objectType, dictionary, comparisonOperator, GroupOperator.And);
+            return CreateFilter(objectType, dictionary, comparisonOperator, GroupOperator.And);
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>An XPath query string</returns>
         public static string CreateFilter(string objectType, Dictionary<string, object> keyValuePairs, ComparisonOperator valueComparisonOperator, GroupOperator groupOperator)
         {
-            return XPathFilterBuilder.CreateFilter(objectType, new XPathQueryGroup(groupOperator, keyValuePairs, valueComparisonOperator));
+            return CreateFilter(objectType, new XPathQueryGroup(groupOperator, keyValuePairs, valueComparisonOperator));
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>An XPath query string</returns>
         public static string CreateFilter(string objectType, AttributeValuePairCollection keyValuePairs, ComparisonOperator valueComparisonOperator, GroupOperator groupOperator)
         {
-            return XPathFilterBuilder.CreateFilter(objectType, new XPathQueryGroup(groupOperator, keyValuePairs, valueComparisonOperator));
+            return CreateFilter(objectType, new XPathQueryGroup(groupOperator, keyValuePairs, valueComparisonOperator));
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace Lithnet.ResourceManagement.Client
         public static string CreateDereferenceFilter(string searchObjectType, string searchAttributeName, object searchAttributeValue, string referenceAttributeName)
         {
             XPathQuery predicate = new XPathQuery(searchAttributeName, ComparisonOperator.Equals, searchAttributeValue);
-            return XPathFilterBuilder.CreateDereferenceFilter(searchObjectType, predicate, referenceAttributeName);
+            return CreateDereferenceFilter(searchObjectType, predicate, referenceAttributeName);
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace Lithnet.ResourceManagement.Client
         public static string CreateDereferenceFilter(string searchObjectType, AttributeValuePairCollection keyValuePairs, ComparisonOperator valueComparisonOperator, GroupOperator groupOperator, string referenceAttributeName)
         {
             XPathQueryGroup predicate = new XPathQueryGroup(groupOperator, keyValuePairs, valueComparisonOperator);
-            return XPathFilterBuilder.CreateDereferenceFilter(searchObjectType, predicate, referenceAttributeName);
+            return CreateDereferenceFilter(searchObjectType, predicate, referenceAttributeName);
         }
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace Lithnet.ResourceManagement.Client
         public static string CreateDereferenceFilter(string searchObjectType, Dictionary<string, object> keyValuePairs, ComparisonOperator valueComparisonOperator, GroupOperator groupOperator, string referenceAttributeName)
         {
             XPathQueryGroup predicate = new XPathQueryGroup(groupOperator, keyValuePairs, valueComparisonOperator);
-            return XPathFilterBuilder.CreateDereferenceFilter(searchObjectType, predicate, referenceAttributeName);
+            return CreateDereferenceFilter(searchObjectType, predicate, referenceAttributeName);
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>An XPath query string</returns>
         internal static string CreateFilter(string objectType, GroupOperator queryOperator, params IXPathQueryObject[] queries)
         {
-            return XPathFilterBuilder.CreateFilter(objectType, queryOperator, (IEnumerable<IXPathQueryObject>)queries);
+            return CreateFilter(objectType, queryOperator, (IEnumerable<IXPathQueryObject>)queries);
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             XPathQueryGroup group = new XPathQueryGroup(queryOperator, queries);
             group.GroupOperator = queryOperator;
-            return XPathFilterBuilder.CreateFilter(objectType, group);
+            return CreateFilter(objectType, group);
         }
     }
 }

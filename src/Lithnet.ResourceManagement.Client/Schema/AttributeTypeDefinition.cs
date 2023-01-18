@@ -61,16 +61,16 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         static AttributeTypeDefinition()
         {
-            AttributeTypeDefinition.ReadOnlyAttributeNames = new List<string>();
-            AttributeTypeDefinition.ReadOnlyAttributeNames.Add(AttributeNames.ObjectID);
-            AttributeTypeDefinition.ReadOnlyAttributeNames.Add("Creator");
-            AttributeTypeDefinition.ReadOnlyAttributeNames.Add("CreatedTime");
-            AttributeTypeDefinition.ReadOnlyAttributeNames.Add("ExpectedRulesList");
-            AttributeTypeDefinition.ReadOnlyAttributeNames.Add("DetectedRulesList");
-            AttributeTypeDefinition.ReadOnlyAttributeNames.Add("DeletedTime");
-            AttributeTypeDefinition.ReadOnlyAttributeNames.Add("ResourceTime");
-            AttributeTypeDefinition.ReadOnlyAttributeNames.Add("ComputedMember");
-            AttributeTypeDefinition.ReadOnlyAttributeNames.Add("ComputedActor");
+            ReadOnlyAttributeNames = new List<string>();
+            ReadOnlyAttributeNames.Add(AttributeNames.ObjectID);
+            ReadOnlyAttributeNames.Add("Creator");
+            ReadOnlyAttributeNames.Add("CreatedTime");
+            ReadOnlyAttributeNames.Add("ExpectedRulesList");
+            ReadOnlyAttributeNames.Add("DetectedRulesList");
+            ReadOnlyAttributeNames.Add("DeletedTime");
+            ReadOnlyAttributeNames.Add("ResourceTime");
+            ReadOnlyAttributeNames.Add("ComputedMember");
+            ReadOnlyAttributeNames.Add("ComputedActor");
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace Lithnet.ResourceManagement.Client
             this.SystemName = schemaObject.Name;
             this.GetAttributeDetails(schemaObject.Annotation);
 
-            if (AttributeTypeDefinition.ReadOnlyAttributeNames.Contains(this.SystemName))
+            if (ReadOnlyAttributeNames.Contains(this.SystemName))
             {
                 this.IsReadOnly = true;
             }

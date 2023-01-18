@@ -92,7 +92,7 @@
                 }
 
                 return string.Format(
-                    PermissionDeniedException.messageFormat,
+                    messageFormat,
                     details.FailureMessage,
                     attributes,
                     details.RequestFailureSource,

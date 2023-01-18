@@ -50,7 +50,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             if (this.Address != null)
             {
-                XmlDictionaryWriter w = (XmlDictionaryWriter)XmlDictionaryWriter.Create(writer);
+                XmlDictionaryWriter w = (XmlDictionaryWriter)XmlWriter.Create(writer);
                 this.Address.WriteContentsTo(this.AddressVersion, w);
             }
         }

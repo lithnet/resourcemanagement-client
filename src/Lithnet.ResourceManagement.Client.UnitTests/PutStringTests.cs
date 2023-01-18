@@ -114,7 +114,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-
         [TestMethod]
         public void DeleteStringSV()
         {
@@ -193,7 +192,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 }
             }
         }
-
 
         [TestMethod]
         public void AddFirstStringMV()

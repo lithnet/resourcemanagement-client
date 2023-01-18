@@ -145,7 +145,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             List<ResourceObject> resources = new List<ResourceObject>();
 
-
             for (int i = 0; i < 5; i++)
             {
                 ResourceObject resource = new ResourceObject(UnitTestHelper.ObjectTypeUnitTestObjectName, client);
@@ -176,6 +175,5 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 client.DeleteResources(resources.Where(r => r != null && !r.IsPlaceHolder));
             }
         }
-
     }
 }

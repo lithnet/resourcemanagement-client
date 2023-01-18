@@ -49,7 +49,7 @@ namespace Lithnet.ResourceManagement.Client
             if (failure != null)
             {
                 return string.Format(
-                    AuthorizationRequiredException.messageFormat,
+                    messageFormat,
                     failure.EndpointReference.ReferenceProperties?.ResourceReferenceProperty?.Text
                     );
             }

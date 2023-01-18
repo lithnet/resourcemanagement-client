@@ -90,7 +90,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-
         private void SubmitXpath(XPathExpression expression, string expectedXpath, params ResourceObject[] matchResources)
         {
             Assert.AreEqual(expectedXpath, expression.ToString());

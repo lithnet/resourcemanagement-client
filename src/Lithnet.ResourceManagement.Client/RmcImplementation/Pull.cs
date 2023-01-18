@@ -7,7 +7,6 @@ namespace Lithnet.ResourceManagement.Client
     [Serializable, XmlType(AnonymousType = true), XmlRoot(ElementName = "Pull", Namespace = "http://schemas.xmlsoap.org/ws/2004/09/enumeration", IsNullable = false)]
     public class Pull : IPullControl
     {
-
         // Properties
         [XmlAnyElement]
         public XmlElement[] Any { get; set; }

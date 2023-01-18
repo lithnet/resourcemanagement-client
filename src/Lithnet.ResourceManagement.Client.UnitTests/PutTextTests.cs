@@ -163,7 +163,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-
         [TestMethod]
         public void AddFirstTextMV()
         {

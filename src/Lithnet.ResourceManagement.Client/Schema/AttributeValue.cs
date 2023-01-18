@@ -296,7 +296,7 @@ namespace Lithnet.ResourceManagement.Client
 
             if (this.Attribute.IsMultivalued)
             {
-                if (!this.values.Any(t => AttributeValue.ValueComparer.Equals(t, typedValue)))
+                if (!this.values.Any(t => ValueComparer.Equals(t, typedValue)))
                 {
                     this.values.Add(typedValue);
                 }
@@ -323,11 +323,11 @@ namespace Lithnet.ResourceManagement.Client
 
             if (this.Attribute.IsMultivalued)
             {
-                return this.values.Any(t => AttributeValue.ValueComparer.Equals(t, typedValue));
+                return this.values.Any(t => ValueComparer.Equals(t, typedValue));
             }
             else
             {
-                return AttributeValue.ValueComparer.Equals(this.value, typedValue);
+                return ValueComparer.Equals(this.value, typedValue);
             }
         }
 
@@ -366,7 +366,7 @@ namespace Lithnet.ResourceManagement.Client
 
             if (this.Attribute.IsMultivalued)
             {
-                if (this.values.RemoveAll(t => AttributeValue.ValueComparer.Equals(t, typedValue)) == 0)
+                if (this.values.RemoveAll(t => ValueComparer.Equals(t, typedValue)) == 0)
                 {
                     if (removeIfNotPresent)
                     {
@@ -376,7 +376,7 @@ namespace Lithnet.ResourceManagement.Client
             }
             else
             {
-                if (AttributeValue.ValueComparer.Equals(this.value, typedValue))
+                if (ValueComparer.Equals(this.value, typedValue))
                 {
                     this.value = null;
                 }
@@ -457,7 +457,7 @@ namespace Lithnet.ResourceManagement.Client
 
             if (!this.Attribute.IsMultivalued)
             {
-                if (!AttributeValue.ValueComparer.Equals(this.value, this.initialValue))
+                if (!ValueComparer.Equals(this.value, this.initialValue))
                 {
                     tempValueChanges.Add(new AttributeValueChange(ModeType.Modify, this.value));
                 }
@@ -481,13 +481,13 @@ namespace Lithnet.ResourceManagement.Client
                 else
                 {
                     // Add values not found in the initial values
-                    foreach (object newValue in this.values.Except(this.initialValues, AttributeValue.ValueComparer))
+                    foreach (object newValue in this.values.Except(this.initialValues, ValueComparer))
                     {
                         tempValueChanges.Add(new AttributeValueChange(ModeType.Insert, newValue));
                     }
 
                     // Remove values that shouldn't exist anymore
-                    foreach (object removedValue in this.initialValues.Except(this.values, AttributeValue.ValueComparer))
+                    foreach (object removedValue in this.initialValues.Except(this.values, ValueComparer))
                     {
                         tempValueChanges.Add(new AttributeValueChange(ModeType.Remove, removedValue));
                     }
@@ -574,7 +574,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>True if the object has the same values as this object, or false if they are different</returns>
         public override bool Equals(object obj)
         {
-            if (object.ReferenceEquals(this, obj))
+            if (ReferenceEquals(this, obj))
             {
                 return true;
             }
@@ -598,11 +598,11 @@ namespace Lithnet.ResourceManagement.Client
                     return false;
                 }
 
-                return AttributeValue.ValueComparer.Equals(obj2.Value, this.Value);
+                return ValueComparer.Equals(obj2.Value, this.Value);
             }
             else
             {
-                return AttributeValue.ValueComparer.Equals(obj, this.Value);
+                return ValueComparer.Equals(obj, this.Value);
             }
         }
 
@@ -944,7 +944,7 @@ namespace Lithnet.ResourceManagement.Client
         public static bool operator ==(AttributeValue a, object b)
         {
             // If both are null, or both are same instance, return true.
-            if (object.ReferenceEquals(a, b))
+            if (ReferenceEquals(a, b))
             {
                 return true;
             }

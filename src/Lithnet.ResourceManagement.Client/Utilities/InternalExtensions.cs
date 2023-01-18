@@ -17,7 +17,7 @@ namespace Lithnet.ResourceManagement.Client
 
         public static string ToResourceManagementFilterXml(this string filter)
         {
-            return string.Format(InternalExtensions.FilterTextFormat, System.Security.SecurityElement.Escape(filter));
+            return string.Format(FilterTextFormat, System.Security.SecurityElement.Escape(filter));
         }
 
         public static async ValueTask<List<TSource>> ToListAsync<TSource>(this IAsyncEnumerable<TSource> source, CancellationToken cancellationToken = default)
@@ -41,7 +41,6 @@ namespace Lithnet.ResourceManagement.Client
         {
             return strings == null ? null : string.Join(", ", strings);
         }
-
 
         public static bool HasOne<T>(this IEnumerable<T> enumerable)
         {

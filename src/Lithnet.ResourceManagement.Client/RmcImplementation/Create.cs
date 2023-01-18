@@ -9,7 +9,6 @@ namespace Lithnet.ResourceManagement.Client
     [Serializable, XmlType(AnonymousType = true), XmlRoot(ElementName = "AddRequest", Namespace = "http://schemas.microsoft.com/2006/11/IdentityManagement/DirectoryAccess", IsNullable = false)]
     public class Create
     {
-
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();

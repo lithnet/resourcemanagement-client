@@ -68,7 +68,7 @@
         private static string GetMessage(MessageRepresentationFailure failure, string correlationID)
         {
             return string.Format(
-                MessageRepresentationFailureException.messageFormat,
+                messageFormat,
                 failure.FailureMessage,
                 failure.MessageFailureCode,
                 failure.AdditionalTextDetails,

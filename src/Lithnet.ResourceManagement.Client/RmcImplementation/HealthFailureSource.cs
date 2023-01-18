@@ -8,8 +8,3 @@ namespace Lithnet.ResourceManagement.Client
         Other
     }
 }
-
-
-
-
-

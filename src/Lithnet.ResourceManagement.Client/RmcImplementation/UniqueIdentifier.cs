@@ -70,7 +70,7 @@ namespace Lithnet.ResourceManagement.Client
 
         public static bool operator ==(UniqueIdentifier id1, UniqueIdentifier id2)
         {
-            if (!object.ReferenceEquals(id1, id2))
+            if (!ReferenceEquals(id1, id2))
             {
                 if ((null == id1) || (null == id2))
                 {

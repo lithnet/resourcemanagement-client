@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nito.AsyncEx;
 
@@ -7,6 +8,7 @@ namespace Lithnet.ResourceManagement.Client
     /// <summary>
     /// A static class that reflects the schema of the Resource Management Service
     /// </summary>
+    [Obsolete("Please use the instance methods on the ResourceManagementClient object instead of this static object")]
     public static class ResourceManagementSchema
     {
         internal static ISchemaClient schemaClient;

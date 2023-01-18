@@ -354,8 +354,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-
-
         // Exception tests
 
         [TestMethod]
@@ -423,7 +421,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             catch { }
         }
-
 
         private void SubmitXpath(object value, string expected, string attributeName, ComparisonOperator xpathOp, GroupOperator queryOp, params ResourceObject[] matchResources)
         {

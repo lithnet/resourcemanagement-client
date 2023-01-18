@@ -33,7 +33,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             get
             {
-                return System.Xml.Schema.XmlSchema.Namespace;
+                return XsdNS.XmlSchema.Namespace;
             }
         }
         public static string PolicyDialect
@@ -124,7 +124,7 @@ namespace Lithnet.ResourceManagement.Client
 
             MetadataSection section = new MetadataSection();
 
-            section.Dialect = MetadataSection.XmlSchemaDialect;
+            section.Dialect = XmlSchemaDialect;
             section.Identifier = schema.TargetNamespace;
             section.Metadata = schema;
 

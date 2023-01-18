@@ -83,8 +83,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         internal const string AttributeBinaryMV = "ut_mvbinary";
         internal const string AttributeBooleanSV = "ut_svboolean";
 
-
-
         static UnitTestHelper()
         {
             UnitTestHelper.PrepareRMSForUnitTests();

@@ -81,7 +81,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-
         [TestMethod]
         public void TestSVStringEqualsWithSingleAndDoubleQuote()
         {
@@ -108,7 +107,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             Assert.Fail("The expected exception was not thrown");
         }
-
 
         [TestMethod]
         public void TestSVStringNotEquals()
@@ -402,7 +400,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 UnitTestHelper.CleanupTestResources(matchResource, nonMatchResource);
             }
         }
-
 
         // Exception tests
 

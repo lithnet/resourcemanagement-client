@@ -70,7 +70,7 @@
         private static string GetMessage(DispatchRequestFailures failure, string correlationID)
         {
             return string.Format(
-                UnwillingToPerformException.messageFormat,
+                messageFormat,
                 failure.AdministratorDetails?.FailureMessage,
                 failure.AdministratorDetails?.DispatchRequestFailureSource,
                 failure.AdministratorDetails?.AdditionalTextDetails,

@@ -32,7 +32,7 @@ namespace Lithnet.ResourceManagement.Client
         private static string GetMessage(MessageFault fault)
         {
             return string.Format(
-                CannotProcessFilterException.messageFormat,
+                messageFormat,
                 fault.Reason.ToString());
         }
     }
