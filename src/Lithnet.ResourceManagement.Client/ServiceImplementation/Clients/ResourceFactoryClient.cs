@@ -48,35 +48,6 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             }
         }
 
-        public async Task ApproveAsync(UniqueIdentifier workflowInstance, UniqueIdentifier approvalRequest, bool approve, string reason = null)
-        {
-            if (workflowInstance == null)
-            {
-                throw new ArgumentNullException(nameof(workflowInstance));
-            }
-
-            if (approvalRequest == null)
-            {
-                throw new ArgumentNullException(nameof(approvalRequest));
-            }
-
-            ApprovalResponse response = new ApprovalResponse
-            {
-                Decision = approve ? ResourceFactoryClient.ApprovedText : ResourceFactoryClient.RejectedText,
-                Reason = reason,
-                Approval = approvalRequest.ToString()
-            };
-
-
-            using (Message message = MessageComposer.CreateApprovalMessage(workflowInstance, response))
-            {
-                using (Message responseMessage = await this.channel.CreateAsync(message).ConfigureAwait(false))
-                {
-                    responseMessage.ThrowOnFault();
-                }
-            }
-        }
-
         public async Task CreateAsync(IEnumerable<ResourceObject> resources)
         {
             if (resources == null)

@@ -17,6 +17,5 @@ namespace Lithnet.ResourceManagement.Client
 
             return new LengthHeaderMessageHandler(pipe, pipe, messageFormatter);
         }
-
     }
 }

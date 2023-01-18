@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lithnet.ResourceManagement.Client.Host
 {
-    public class PipeHost
+    internal class PipeHost
     {
-        private static ConcurrentDictionary<string, ServerInstance> servers = new ConcurrentDictionary<string, ServerInstance>();
+        private static readonly ConcurrentDictionary<string, ServerInstance> servers = new ConcurrentDictionary<string, ServerInstance>();
+
+        public void OpenPipe(string pipeName)
+        {
+            AsyncHelper.RunSync(async () => await this.OpenPipeAsync(pipeName));
+        }
 
         public async Task OpenPipeAsync(string pipeName)
         {
@@ -16,7 +20,6 @@ namespace Lithnet.ResourceManagement.Client.Host
             {
                 if (servers.ContainsKey(pipeName))
                 {
-                    Trace.WriteLine($"Pipe {pipeName} already exists");
                     throw new Exception("The specified pipe name is already in use");
                 }
 
@@ -26,26 +29,21 @@ namespace Lithnet.ResourceManagement.Client.Host
                     PipeName = pipeName,
                 };
 
-                Trace.WriteLine($"Creating new pipe instance: {pipeName}");
+                Logger.LogTrace($"Creating new pipe instance: {pipeName}");
 
                 RpcServer rpc = new RpcServer(pipeName);
-                Trace.WriteLine($"RPC server constructed for pipe {pipeName}");
+                Logger.LogTrace($"RPC server constructed for pipe {pipeName}");
                 instance.Server = rpc;
                 instance.ServerTask = rpc.StartNamedPipeServerAsync(instance.CancellationTokenSource.Token);
-                Trace.WriteLine($"RPC server listening on pipe {pipeName}");
+                Logger.LogTrace($"RPC server listening on pipe {pipeName}");
 
                 servers.TryAdd(pipeName, instance);
 
                 await instance.ServerTask;
 
-                Trace.WriteLine($"RPC server has completed and pipe {pipeName} will be closed");
+                Logger.LogTrace($"RPC server has completed and pipe {pipeName} will be closed");
             }
-            catch (Exception ex)
-            {
-                EventLog.WriteEntry("RMC", ex.ToString());
-                Console.WriteLine(ex.ToString());
-                throw;
-            }
+            catch (OperationCanceledException) { }
         }
 
         public void ClosePipe(string pipeName)

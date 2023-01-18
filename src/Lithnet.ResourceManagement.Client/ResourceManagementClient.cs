@@ -1,19 +1,17 @@
-﻿namespace Lithnet.ResourceManagement.Client
-{
-    using System;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Globalization;
-    using System.Linq;
-    using System.Net;
-    using System.Runtime.InteropServices;
-    using System.Threading.Tasks;
-    using System.Xml;
-    using Lithnet.ResourceManagement.Client.ResourceManagementService;
-    using Nito.AsyncEx;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using System.Xml;
+using Lithnet.ResourceManagement.Client.ResourceManagementService;
+using Nito.AsyncEx;
 
+namespace Lithnet.ResourceManagement.Client
+{
     /// <summary>
     /// The main class used to create, update, delete, and search for objects in the resource management service
     /// </summary>
@@ -21,47 +19,39 @@
     /// <example>
     /// <code language="cs" title="Using the Resource Management Client" source="..\Lithnet.ResourceManagement.Client.Help.Examples\T_ResourceManagementClient.cs" />
     /// </example>
-    [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
     public class ResourceManagementClient
     {
-        internal IClientFactory ClientFactory
-        {
-            get; private set;
-        }
-
-        internal ISchemaClient SchemaClient
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// The local instance of the Resource proxy
-        /// </summary>
-        internal IResourceClient ResourceClient
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// The local instance of the ResourceFactory proxy
-        /// </summary>
-        internal IResourceFactoryClient ResourceFactoryClient
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// The local instance of the Search proxy
-        /// </summary>
-        internal ISearchClient SearchClient
-        {
-            get; private set;
-        }
-
         /// <summary>
         /// The explicit credentials for this client
         /// </summary>
         private NetworkCredential creds;
+
+        /// <summary>
+        /// Gets the instance of the lithnetResourceManagementClient section from the configuration file
+        /// </summary>
+        internal static ClientConfigurationSection Configuration { get; }
+
+        internal ISchemaClient SchemaClient { get; private set; }
+
+        /// <summary>
+        /// The local instance of the Resource proxy
+        /// </summary>
+        internal IResourceClient ResourceClient { get; private set; }
+
+        /// <summary>
+        /// The local instance of the ResourceFactory proxy
+        /// </summary>
+        internal IResourceFactoryClient ResourceFactoryClient { get; private set; }
+
+        /// <summary>
+        /// The local instance of the Search proxy
+        /// </summary>
+        internal ISearchClient SearchClient { get; private set; }
+
+        /// <summary>
+        /// The local instance of the Search proxy
+        /// </summary>
+        internal IApprovalClient ApprovalClient { get; private set; }
 
         /// <summary>
         /// Gets the username of the current user
@@ -124,19 +114,11 @@
         }
 
         /// <summary>
-        /// Gets the instance of the lithnetResourceManagementClient section from the configuration file
-        /// </summary>
-        internal static ClientConfigurationSection Configuration
-        {
-            get; private set;
-        }
-
-        /// <summary>
         /// Initializes the static members of the ResourceManagementClient class
         /// </summary>
         static ResourceManagementClient()
         {
-            ResourceManagementClient.Configuration = ClientConfigurationSection.GetConfiguration();
+            Configuration = ClientConfigurationSection.GetConfiguration();
         }
 
         /// <summary>
@@ -187,7 +169,7 @@
         public ResourceManagementClient(string baseAddress, NetworkCredential credentials, string servicePrincipalName)
         {
             this.creds = credentials;
-            Nito.AsyncEx.AsyncContext.Run(async () => await this.InitializeClientsAsync(baseAddress, servicePrincipalName).ConfigureAwait(false));
+            AsyncContext.Run(async () => await this.InitializeClientsAsync(baseAddress, servicePrincipalName).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -514,8 +496,8 @@
         /// <remarks>
         /// This method will reorder the operations to perform creates first, followed by updates and finally deletes
         /// </remarks>
-        /// <param name="maxDegreeOfParallelism">The maximum number of threads to use for the operation</param>
         /// <param name="resources">The resources to save</param>
+        /// <param name="maxDegreeOfParallelism">The maximum number of threads to use for the operation</param>
         public void SaveResourcesParallel(IEnumerable<ResourceObject> resources, int maxDegreeOfParallelism)
         {
             this.SaveResourcesParallel(resources, maxDegreeOfParallelism, null);
@@ -527,9 +509,9 @@
         /// <remarks>
         /// This method will reorder the operations to perform creates first, followed by updates and finally deletes
         /// </remarks>
+        /// <param name="resources">The resources to save</param>
         /// <param name="maxDegreeOfParallelism">The maximum number of threads to use for the operation</param>
         /// <param name="locale">The localization culture to use when saving the object</param>
-        /// <param name="resources">The resources to save</param>
         public void SaveResourcesParallel(IEnumerable<ResourceObject> resources, int maxDegreeOfParallelism, CultureInfo locale)
         {
             ConcurrentQueue<ResourceObject> createResources = new ConcurrentQueue<ResourceObject>(resources.Where(t => t.ModificationType == OperationType.Create));
@@ -811,7 +793,6 @@
             return this.GetResourceAsync(new UniqueIdentifier(id), null, locale);
         }
 
-
         /// <summary>
         /// Gets a resource from the resource management service, retrieving all attributes for the resource
         /// </summary>
@@ -934,7 +915,6 @@
         {
             return this.GetResource(new UniqueIdentifier(id), attributesToGet, locale, getPermissionHints);
         }
-
 
         /// <summary>
         /// Gets a resource from the resource management service, retrieving only a specified set of attributes for the resource
@@ -1181,7 +1161,6 @@
             return await this.ResourceClient.GetAsync(id, attributesToGet, locale, getPermissionHints).ConfigureAwait(false);
         }
 
-
         /// <summary>
         /// Gets a resource from the resource management service using a unique attribute and value combination, retrieving all attributes for the resource
         /// </summary>
@@ -1267,8 +1246,10 @@
         /// </example>
         public Task<ResourceObject> GetResourceByKeyAsync(string objectType, string attributeName, object value, IEnumerable<string> attributesToGet)
         {
-            Dictionary<string, object> values = new Dictionary<string, object>();
-            values.Add(attributeName, value);
+            Dictionary<string, object> values = new Dictionary<string, object>
+            {
+                { attributeName, value }
+            };
 
             return this.GetResourceByKeyAsync(objectType, values, attributesToGet);
         }
@@ -1288,8 +1269,10 @@
         /// </example>
         public ResourceObject GetResourceByKey(string objectType, string attributeName, object value, IEnumerable<string> attributesToGet)
         {
-            Dictionary<string, object> values = new Dictionary<string, object>();
-            values.Add(attributeName, value);
+            Dictionary<string, object> values = new Dictionary<string, object>
+            {
+                { attributeName, value }
+            };
 
             return this.GetResourceByKey(objectType, values, attributesToGet);
         }
@@ -1310,8 +1293,10 @@
         /// </example>
         public ResourceObject GetResourceByKey(string objectType, string attributeName, object value, IEnumerable<string> attributesToGet, CultureInfo locale)
         {
-            Dictionary<string, object> values = new Dictionary<string, object>();
-            values.Add(attributeName, value);
+            Dictionary<string, object> values = new Dictionary<string, object>
+            {
+                { attributeName, value }
+            };
 
             return this.GetResourceByKey(objectType, values, attributesToGet, locale);
         }
@@ -1332,8 +1317,10 @@
         /// </example>
         public Task<ResourceObject> GetResourceByKeyAsync(string objectType, string attributeName, object value, IEnumerable<string> attributesToGet, CultureInfo locale)
         {
-            Dictionary<string, object> values = new Dictionary<string, object>();
-            values.Add(attributeName, value);
+            Dictionary<string, object> values = new Dictionary<string, object>
+            {
+                { attributeName, value }
+            };
 
             return this.GetResourceByKeyAsync(objectType, values, attributesToGet, locale);
         }
@@ -1439,10 +1426,7 @@
         {
             string filter = XPathFilterBuilder.CreateFilter(objectType, attributeValuePairs, ComparisonOperator.Equals, GroupOperator.And);
 
-            if (attributesToGet == null)
-            {
-                attributesToGet = ResourceManagementSchema.GetObjectType(objectType).Attributes.Select(t => t.SystemName);
-            }
+            attributesToGet ??= (await this.SchemaClient.GetObjectTypeAsync(objectType)).Attributes.Select(t => t.SystemName);
 
             ISearchResultCollection results = await this.SearchClient.EnumerateSyncAsync(filter, 1, attributesToGet, null, locale).ConfigureAwait(false);
 
@@ -1493,7 +1477,6 @@
         {
             return this.GetResourcesInternal(filter, -1, null, null, locale);
         }
-
 
         /// <summary>
         /// Uses the specified XPath filter to find matching objects in the resource management service, synchronously, using the default page size
@@ -1863,7 +1846,6 @@
             return AsyncContext.Run(async () => await this.GetResourcesInternalAsync(filter, pageSize, attributesToGet, sortAttributes, locale).ConfigureAwait(false));
         }
 
-
         private async Task<ISearchResultCollection> GetResourcesInternalAsync(string filter, int pageSize, IEnumerable<string> attributesToGet, IEnumerable<SortingAttribute> sortAttributes, CultureInfo locale)
         {
             return await this.SearchClient.EnumerateSyncAsync(filter, pageSize, attributesToGet, sortAttributes, locale).ConfigureAwait(false);
@@ -1875,6 +1857,16 @@
         /// <param name="status">Specifies the types of approvals to return</param>
         /// <returns>A collection of pending approvals</returns>
         public ISearchResultCollection GetApprovals(ApprovalStatus status)
+        {
+            return AsyncContext.Run(async () => await this.GetApprovalsAsync(status).ConfigureAwait(false));
+        }
+
+        /// <summary>
+        /// Returns approval requests of the specified type for the currently connected user
+        /// </summary>
+        /// <param name="status">Specifies the types of approvals to return</param>
+        /// <returns>A collection of pending approvals</returns>
+        public async Task<ISearchResultCollection> GetApprovalsAsync(ApprovalStatus status)
         {
             string approvalStatusString = string.Empty;
 
@@ -1889,7 +1881,7 @@
             }
 
             string xpath = $"/Approval[{approvalStatusString}Approver=/Person[AccountName = '{this.UserName}' and Domain = '{this.Domain}']]";
-            return this.GetResources(xpath, ResourceManagementSchema.GetObjectType(ObjectTypeNames.Approval).Attributes.Select(t => t.SystemName));
+            return await this.GetResourcesAsync(xpath, this.GetObjectType(ObjectTypeNames.Approval).Attributes.Select(t => t.SystemName)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1900,6 +1892,17 @@
         /// <returns>A collection of pending approvals</returns>
         public ISearchResultCollection GetApprovals(ApprovalStatus status, UniqueIdentifier userID)
         {
+            return AsyncContext.Run(async () => await this.GetApprovalsAsync(status, userID).ConfigureAwait(false));
+        }
+
+        /// <summary>
+        /// Returns approval requests of the specified type for the specified user
+        /// </summary>
+        /// <param name="status">Specifies the types of approvals to return</param>
+        /// <param name="userID">The unique identifer of the user</param>
+        /// <returns>A collection of pending approvals</returns>
+        public async Task<ISearchResultCollection> GetApprovalsAsync(ApprovalStatus status, UniqueIdentifier userID)
+        {
             string approvalStatusString = string.Empty;
 
             if (status != ApprovalStatus.Unknown)
@@ -1908,7 +1911,7 @@
             }
 
             string xpath = $"/Approval[{approvalStatusString}Approver='{userID.Value}']";
-            return this.GetResources(xpath, ResourceManagementSchema.GetObjectType(ObjectTypeNames.Approval).Attributes.Select(t => t.SystemName));
+            return await this.GetResourcesAsync(xpath, this.GetObjectType(ObjectTypeNames.Approval).Attributes.Select(t => t.SystemName)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1966,8 +1969,7 @@
                 throw new InvalidOperationException("The endpoint address was not of a supported type");
             }
 
-            var client = this.ClientFactory.CreateApprovalClient(endpointAddress);
-            await client.ApproveAsync(workflowInstance, approval, approve, reason).ConfigureAwait(false);
+            await this.ApprovalClient.ApproveAsync(endpointAddress, workflowInstance, approval, approve, reason).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -2217,7 +2219,6 @@
             return AsyncContext.Run(async () => await this.GetResourceCountAsync(filter).ConfigureAwait(false));
         }
 
-
         /// <summary>
         /// Gets the number of resources that match a specified criteria
         /// </summary>
@@ -2284,6 +2285,74 @@
         }
 
         /// <summary>
+        /// Gets the data type of the specific attribute
+        /// </summary>
+        /// <param name="attributeName">The attribute name</param>
+        /// <returns>An <c>AttributeType</c> value</returns>
+        public AttributeType GetAttributeType(string attributeName)
+        {
+            return AsyncContext.Run(async () => await this.SchemaClient.GetAttributeTypeAsync(attributeName).ConfigureAwait(false));
+        }
+
+        /// <summary>
+        /// Gets an object type definition from the schema by name
+        /// </summary>
+        /// <param name="name">The system name of the object type</param>
+        /// <returns>A ObjectTypeDefinition with a system name that matches the 'name' parameter</returns>
+        /// <exception cref="NoSuchObjectTypeException">Throw when an object type could not be found in the schema with a matching name</exception>
+        public ObjectTypeDefinition GetObjectType(string name)
+        {
+            return AsyncContext.Run(async () => await this.SchemaClient.GetObjectTypeAsync(name).ConfigureAwait(false));
+        }
+
+        /// <summary>
+        /// Gets a value indicating if the object type exists in the schema
+        /// </summary>
+        /// <param name="name">The system name of the object type</param>
+        /// <returns>True if the object type exists in the schema, false if it does not</returns>
+        public bool ContainsObjectType(string name)
+        {
+            return AsyncContext.Run(async () => await this.SchemaClient.ContainsObjectTypeAsync(name).ConfigureAwait(false));
+        }
+
+        /// <summary>
+        /// Gets each object type definition from the schema
+        /// </summary>
+        /// <returns>An enumeration of ObjectTypeDefinitions</returns>
+        public IEnumerable<ObjectTypeDefinition> GetObjectTypes()
+        {
+            return AsyncContext.Run(async () => await this.SchemaClient.GetObjectTypesAsync().ToListAsync().ConfigureAwait(false));
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the specific attribute is multivalued
+        /// </summary>
+        /// <param name="attributeName">The attribute name</param>
+        /// <returns>A value indicating whether the specific attribute is multivalued</returns>
+        public bool IsAttributeMultivalued(string attributeName)
+        {
+            return AsyncContext.Run(async () => await this.SchemaClient.IsAttributeMultivaluedAsync(attributeName).ConfigureAwait(false));
+        }
+
+        /// <summary>
+        /// Validates that an attribute name contains only valid characters
+        /// </summary>
+        /// <param name="attributeName">The name of the attribute to validate</param>
+        public void ValidateAttributeName(string attributeName)
+        {
+            this.SchemaClient.ValidateAttributeName(attributeName);
+        }
+
+        /// <summary>
+        /// Validates that an object type name contains only valid characters
+        /// </summary>
+        /// <param name="objectTypeName">The name of the object type to validate</param>
+        public void ValidateObjectTypeName(string objectTypeName)
+        {
+            this.SchemaClient.ValidateObjectTypeName(objectTypeName);
+        }
+
+        /// <summary>
         /// Initializes the WCF bindings, endpoints, and proxy objects
         /// </summary>
         private async Task InitializeClientsAsync(string baseUri, string spn)
@@ -2291,12 +2360,12 @@
             IClientFactory factory;
 
 #if NETFRAMEWORK
-            Trace.WriteLine("Initializing native .NET framework factory");
+            Trace.WriteLine("Initializing native .NET framework factory (netfx)");
             factory = new NativeClientFactory();
 #else
-            if (RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework", StringComparison.OrdinalIgnoreCase))
+            if (typeof(object).Assembly.FullName.StartsWith("mscorlib", StringComparison.OrdinalIgnoreCase))
             {
-                Trace.WriteLine("Initializing native .NET framework factory");
+                Trace.WriteLine("Initializing native .NET framework factory (netstandard2.0)");
                 factory = new NativeClientFactory();
             }
             else
@@ -2328,8 +2397,11 @@
             this.ResourceFactoryClient = factory.ResourceFactoryClient;
             this.SearchClient = factory.SearchClient;
             this.SchemaClient = factory.SchemaClient;
+            this.ApprovalClient = factory.ApprovalClient;
 
+#pragma warning disable CS0618 // Type or member is obsolete
             ResourceManagementSchema.schemaClient = this.SchemaClient;
+#pragma warning restore CS0618 // Type or member is obsolete
         }
     }
 }

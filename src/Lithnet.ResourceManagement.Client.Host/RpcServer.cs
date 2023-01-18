@@ -28,10 +28,9 @@ namespace Lithnet.ResourceManagement.Client.Host
 
         internal async Task StartNamedPipeServerAsync(CancellationToken ct)
         {
-            int clientId = 0;
             try
             {
-                if (Directory.GetFiles(@"\\.\pipe\").Contains(pipeName))
+                if (Directory.GetFiles(@"\\.\pipe\").Contains(this.pipeName))
                 {
                     var ex = new SecurityException("The RPC server cannot be started because the named pipe name is already in use. If there is another instance of the service running, close it before starting this instance. If there is not another instance running, this could indicate a security issue and should be investigated");
                     throw ex;
@@ -41,24 +40,20 @@ namespace Lithnet.ResourceManagement.Client.Host
                 pipeSecurity.AddAccessRule(new PipeAccessRule(new SecurityIdentifier(WellKnownSidType.NetworkSid, null), PipeAccessRights.FullControl, AccessControlType.Deny));
                 pipeSecurity.AddAccessRule(new PipeAccessRule(WindowsIdentity.GetCurrent().User, PipeAccessRights.FullControl, AccessControlType.Allow));
 
-                //while (!ct.IsCancellationRequested)
-                // {
-                NamedPipeServerStream serverPipe = new NamedPipeServerStream(pipeName, PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous | PipeOptions.WriteThrough, 0, 0, pipeSecurity);
+                NamedPipeServerStream serverPipe = new NamedPipeServerStream(this.pipeName, PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous | PipeOptions.WriteThrough, 0, 0, pipeSecurity);
 
                 await serverPipe.WaitForConnectionAsync(ct).ConfigureAwait(false);
                 ct.ThrowIfCancellationRequested();
 
-                await RespondToRpcRequestsAsync(serverPipe, ++clientId).ConfigureAwait(false);
-                // }
+                await this.RespondToRpcRequestsAsync(serverPipe).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                EventLog.WriteEntry("RMC", $"Unhandled exception named pipe start \r\n{ex}", EventLogEntryType.Error, 99);
-                Trace.WriteLine(ex.ToString());
+                Logger.LogError(ex, "Unhandled exception in pipe startup");
             }
         }
 
-        private async Task RespondToRpcRequestsAsync(NamedPipeServerStream serverPipe, int clientId)
+        private async Task RespondToRpcRequestsAsync(NamedPipeServerStream serverPipe)
         {
             using (serverPipe)
             {
@@ -67,25 +62,21 @@ namespace Lithnet.ResourceManagement.Client.Host
                     throw new InvalidDataException("The client sent incorrect initialization data");
                 }
 
-                Trace.WriteLine("Client has connected to pipe");
+                Logger.LogTrace("Client has connected to pipe");
 
-                jsonRpcServer = new JsonRpc(RpcCore.GetMessageHandler(serverPipe));
-                jsonRpcServer.TraceSource.Switch.Level = SourceLevels.Warning;
-                jsonRpcServer.ExceptionStrategy = ExceptionProcessing.ISerializable;
-                jsonRpcServer.AllowModificationWhileListening = true;
-                jsonRpcServer.AddLocalRpcTarget(this, new JsonRpcTargetOptions() { MethodNameTransform = (x) => $"Control_{x}" });
+                this.jsonRpcServer = new JsonRpc(RpcCore.GetMessageHandler(serverPipe));
+                this.jsonRpcServer.TraceSource.Switch.Level = SourceLevels.Warning;
+                this.jsonRpcServer.ExceptionStrategy = ExceptionProcessing.ISerializable;
+                this.jsonRpcServer.AllowModificationWhileListening = true;
+                this.jsonRpcServer.AddLocalRpcTarget(this, new JsonRpcTargetOptions() { MethodNameTransform = (x) => $"Control_{x}" });
 
-                jsonRpcServer.Disconnected += (sender, u) => { Trace.WriteLine("Client disconnected"); };
-                jsonRpcServer.StartListening();
+                this.jsonRpcServer.Disconnected += (sender, u) => Logger.LogTrace("Client has disconnected");
+                this.jsonRpcServer.StartListening();
 
-                Trace.WriteLine("RPC server has connected client and waiting for messages");
+                Logger.LogTrace("RPC server has connected client and waiting for messages");
+                await this.jsonRpcServer.Completion.ConfigureAwait(false);
 
-                //this.logger.LogTrace($"Rpc listener attached to instance {clientId}. Waiting for requests...");
-                await jsonRpcServer.Completion.ConfigureAwait(false);
-
-                Trace.WriteLine("RPC server has terminated");
-
-                // this.logger.LogTrace($"Pipe server instance {clientId} terminated.");
+                Logger.LogTrace("RPC server has completed");
             }
         }
 
@@ -101,7 +92,7 @@ namespace Lithnet.ResourceManagement.Client.Host
 
         public Task InitializeClientsAsync(string baseUri, string spn, int concurrentConnectionLimit, int sendTimeout, int recieveTimeout, string username, string password)
         {
-            if (initialized)
+            if (this.initialized)
             {
                 throw new InvalidOperationException("The server has already been initialized");
             }
@@ -126,27 +117,30 @@ namespace Lithnet.ResourceManagement.Client.Host
             sendTimeout = Math.Max(10, sendTimeout);
             recieveTimeout = Math.Max(10, recieveTimeout);
 
-            var wsContextBinding = BindingManager.GetWsHttpContextBinding(recieveTimeout, sendTimeout);
+            var wsAuthenticatedBinding = BindingManager.GetWsAuthenticatedBinding(recieveTimeout, sendTimeout);
             var wsHttpBinding = BindingManager.GetWsHttpBinding(recieveTimeout, sendTimeout);
 
-            ResourceClient resourceClient = new ResourceClient(wsContextBinding, endpoints.ResourceEndpoint);
-            InitializeClient(resourceClient, credentials);
+            ResourceClient resourceClient = new ResourceClient(wsAuthenticatedBinding, endpoints.ResourceEndpoint);
+            this.InitializeClient(resourceClient, credentials);
 
-            ResourceFactoryClient resourceFactoryClient = new ResourceFactoryClient(wsContextBinding, endpoints.ResourceFactoryEndpoint);
-            InitializeClient(resourceFactoryClient, credentials);
+            ResourceFactoryClient resourceFactoryClient = new ResourceFactoryClient(wsAuthenticatedBinding, endpoints.ResourceFactoryEndpoint);
+            this.InitializeClient(resourceFactoryClient, credentials);
 
             MetadataExchangeClient metadataClient = new MetadataExchangeClient(wsHttpBinding, endpoints.MetadataEndpoint);
-            InitializeClient(metadataClient, credentials);
+            this.InitializeClient(metadataClient, credentials);
 
-            SearchClient searchClient = new SearchClient(wsContextBinding, endpoints.SearchEndpoint);
-            InitializeClient(searchClient, credentials);
+            SearchClient searchClient = new SearchClient(wsAuthenticatedBinding, endpoints.SearchEndpoint);
+            this.InitializeClient(searchClient, credentials);
 
-            jsonRpcServer.AddLocalRpcTarget(metadataClient, JsonOptionsFactory.GetTargetOptions(JsonOptionsFactory.MetadataService));
-            jsonRpcServer.AddLocalRpcTarget(resourceClient, JsonOptionsFactory.GetTargetOptions(JsonOptionsFactory.ResourceService));
-            jsonRpcServer.AddLocalRpcTarget(resourceFactoryClient, JsonOptionsFactory.GetTargetOptions(JsonOptionsFactory.ResourceFactoryService));
-            jsonRpcServer.AddLocalRpcTarget(searchClient, JsonOptionsFactory.GetTargetOptions(JsonOptionsFactory.SearchService));
+            ApprovalService approvalService = new ApprovalService(wsAuthenticatedBinding, credentials);
 
-            initialized = true;
+            this.jsonRpcServer.AddLocalRpcTarget(metadataClient, JsonOptionsFactory.GetTargetOptions(JsonOptionsFactory.MetadataService));
+            this.jsonRpcServer.AddLocalRpcTarget(resourceClient, JsonOptionsFactory.GetTargetOptions(JsonOptionsFactory.ResourceService));
+            this.jsonRpcServer.AddLocalRpcTarget(resourceFactoryClient, JsonOptionsFactory.GetTargetOptions(JsonOptionsFactory.ResourceFactoryService));
+            this.jsonRpcServer.AddLocalRpcTarget(searchClient, JsonOptionsFactory.GetTargetOptions(JsonOptionsFactory.SearchService));
+            this.jsonRpcServer.AddLocalRpcTarget(approvalService, JsonOptionsFactory.GetTargetOptions(JsonOptionsFactory.ApprovalService));
+
+            this.initialized = true;
 
             return Task.CompletedTask;
         }

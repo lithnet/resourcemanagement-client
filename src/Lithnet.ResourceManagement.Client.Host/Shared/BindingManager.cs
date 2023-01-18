@@ -6,7 +6,7 @@ namespace Lithnet.ResourceManagement.Client
 {
     internal static class BindingManager
     {
-        public static Binding GetWsHttpContextBinding(int recieveTimeoutSeconds, int sendTimeoutSeconds)
+        public static Binding GetWsAuthenticatedBinding(int recieveTimeoutSeconds, int sendTimeoutSeconds)
         {
             WSHttpBinding binding = new WSHttpBinding();
             binding.MaxReceivedMessageSize = int.MaxValue;

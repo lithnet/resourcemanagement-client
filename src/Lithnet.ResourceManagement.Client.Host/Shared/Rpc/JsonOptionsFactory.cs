@@ -8,6 +8,7 @@ namespace Lithnet.ResourceManagement.Client
         public const string ResourceService = "Resource";
         public const string ResourceFactoryService = "ResourceFactory";
         public const string SearchService = "Search";
+        public const string ApprovalService = "Approval";
 
         public static JsonRpcTargetOptions GetTargetOptions(string serviceName)
         {

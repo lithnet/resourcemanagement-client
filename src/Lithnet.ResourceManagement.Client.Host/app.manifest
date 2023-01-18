@@ -10,5 +10,5 @@
 			  runtimeVersion = "v4.0.30319"
 			  name="Lithnet.ResourceManagement.Client.Host.ComHost">
 	</clrClass>
-	<file name="Lithnet.ResourceManagement.Client.Host.dll"/>
+	<file name="Lithnet.ResourceManagement.Client.Host.exe"/>
 </assembly>

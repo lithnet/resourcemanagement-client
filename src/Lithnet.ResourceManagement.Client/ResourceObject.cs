@@ -181,7 +181,7 @@ namespace Lithnet.ResourceManagement.Client
             : this(OperationType.Create, client, null)
         {
             this.IsPlaceHolder = true;
-            this.ObjectType = ResourceManagementSchema.GetObjectType(type);
+            this.ObjectType = client.GetObjectType(type);
             this.AddRemainingAttributesFromSchema();
             this.Attributes[AttributeNames.ObjectType].SetValue(type);
         }
@@ -195,7 +195,7 @@ namespace Lithnet.ResourceManagement.Client
         internal ResourceObject(string type, UniqueIdentifier id, ResourceManagementClient client)
             : this(OperationType.Update, client, null)
         {
-            this.ObjectType = ResourceManagementSchema.GetObjectType(type);
+            this.ObjectType = client.GetObjectType(type);
             this.AddRemainingAttributesFromSchema();
             this.IsPlaceHolder = true;
 
@@ -629,7 +629,7 @@ namespace Lithnet.ResourceManagement.Client
             reader.MoveToStartElement();
 
             string objectTypeName = reader.LocalName;
-            this.ObjectType = ResourceManagementSchema.GetObjectType(objectTypeName);
+            this.ObjectType = this.client.GetObjectType(objectTypeName);
 
             while (reader.Read())
             {
@@ -675,7 +675,7 @@ namespace Lithnet.ResourceManagement.Client
             Dictionary<string, List<string>> values = new Dictionary<string, List<string>>();
 
             string objectTypeName = element.LocalName;
-            this.ObjectType = ResourceManagementSchema.GetObjectType(objectTypeName);
+            this.ObjectType = this.client.GetObjectType(objectTypeName);
 
             foreach (XmlElement child in element.ChildNodes.OfType<XmlElement>())
             {
@@ -738,7 +738,7 @@ namespace Lithnet.ResourceManagement.Client
             if (values.ContainsKey(AttributeNames.ObjectType))
             {
                 string objectTypeName = values[AttributeNames.ObjectType].First();
-                ObjectTypeDefinition objectType = ResourceManagementSchema.GetObjectType(objectTypeName);
+                ObjectTypeDefinition objectType = this.client.GetObjectType(objectTypeName);
                 this.ObjectType = objectType;
             }
             else
@@ -829,7 +829,7 @@ namespace Lithnet.ResourceManagement.Client
             }
 
             string objectTypeName = values[AttributeNames.ObjectType].First();
-            this.ObjectType = ResourceManagementSchema.GetObjectType(objectTypeName);
+            this.ObjectType = this.client.GetObjectType(objectTypeName);
             this.SetInitialAttributeValues(values, null);
             this.AddRemainingAttributesFromSchema();
         }

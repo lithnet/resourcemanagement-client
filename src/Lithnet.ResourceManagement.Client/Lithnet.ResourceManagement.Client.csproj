@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0</TargetFrameworks>
 		<LangVersion>8</LangVersion>
 		<Platforms>x64</Platforms>
 		<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
@@ -12,7 +12,7 @@
 		<Company>Lithnet</Company>
 		<Copyright>Copyright 2022 Lithnet Pty Ltd</Copyright>
 		<ProductName>Lithnet Resource Management Client</ProductName>
-		<VersionPrefix>2.0.15</VersionPrefix>
+		<VersionPrefix>2.0.29</VersionPrefix>
 		<VersionSuffix>beta1</VersionSuffix>
 		<Authors>Lithnet</Authors>
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -35,6 +35,7 @@
 		<Compile Include="..\Lithnet.ResourceManagement.Client.Host\Shared\Rpc\MessageSerializer.cs" Link="Shared\Rpc\MessageSerializer.cs" Condition="$(TargetFramework)=='netstandard2.0'" />
 		<Compile Include="..\Lithnet.ResourceManagement.Client.Host\Shared\Rpc\MessageService.cs" Link="Shared\Rpc\MessageService.cs" Condition="$(TargetFramework)=='netstandard2.0'" />
 		<Compile Include="..\Lithnet.ResourceManagement.Client.Host\Shared\Rpc\RpcCore.cs" Link="Shared\Rpc\RpcCore.cs" Condition="$(TargetFramework)=='netstandard2.0'" />
+		<Compile Include="..\Lithnet.ResourceManagement.Client.Host\Shared\Rpc\IApprovalService.cs" Link="Shared\Rpc\IApprovalService.cs" Condition="$(TargetFramework)=='netstandard2.0'" />
 	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFramework)!='netstandard2.0'">

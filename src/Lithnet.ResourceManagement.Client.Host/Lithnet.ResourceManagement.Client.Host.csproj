@@ -5,24 +5,38 @@
 		<LangVersion>8</LangVersion>
 		<OutputType>Exe</OutputType>
 		<RestoreProjectStyle>PackageReference</RestoreProjectStyle>
-
-	</PropertyGroup>
-
-	<ItemGroup>
-		<WCFMetadata Include="Connected Services" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Fody" Version="6.6.4" PrivateAssets="All"/>
-		<PackageReference Include="Costura.Fody" Version="5.7.0" PrivateAssets="All" />
-		<PackageReference Include="StreamJsonRpc" Version="2.13.33" />
-	</ItemGroup>
-	<PropertyGroup>
 		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<Nullable>disable</Nullable>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
 	</PropertyGroup>
+
+	<PropertyGroup>
+		<Description>Lithnet Resource Management Client for Microsoft Identity Manager Framework Host</Description>
+		<Company>Lithnet</Company>
+		<Copyright>Copyright 2022 Lithnet Pty Ltd</Copyright>
+		<ProductName>Lithnet Resource Management Client</ProductName>
+		<VersionPrefix>2.0.19</VersionPrefix>
+		<VersionSuffix>beta1</VersionSuffix>
+		<Authors>Lithnet</Authors>
+		<RepositoryUrl>https://github.com/lithnet/resourcemanagement-client</RepositoryUrl>
+		<SupportUrl>https://github.com/lithnet/resourcemanagement-client</SupportUrl>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<Reference Include="System.ServiceModel" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="StreamJsonRpc" Version="2.13.33" />
+	</ItemGroup>
+
+	<Target Name="AfterResolveReferences2" AfterTargets="ResolveAssemblyReferences">
+		<ItemGroup>
+			<EmbeddedResource Include="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.Extension)' == '.dll'">
+				<LogicalName>%(ReferenceCopyLocalPaths.DestinationSubDirectory)%(ReferenceCopyLocalPaths.Filename)%(ReferenceCopyLocalPaths.Extension)</LogicalName>
+			</EmbeddedResource>
+			<ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" />
+		</ItemGroup>
+	</Target>
 </Project>

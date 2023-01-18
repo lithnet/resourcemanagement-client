@@ -25,11 +25,11 @@ namespace Lithnet.ResourceManagement.Client
 
         ISearchClient SearchClient { get; }
 
+        IApprovalClient ApprovalClient { get; } 
+
         int SendTimeout { get; set; }
 
         string Spn { get; set; }
-
-        IResourceFactoryClient CreateApprovalClient(string endpoint);
 
         Task InitializeClientsAsync(ResourceManagementClient rmc);
     }
