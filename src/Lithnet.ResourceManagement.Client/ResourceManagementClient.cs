@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -21,6 +20,8 @@ namespace Lithnet.ResourceManagement.Client
     /// </example>
     public class ResourceManagementClient
     {
+        internal IClientFactory ClientFactory { get; private set; }
+
         /// <summary>
         /// The explicit credentials for this client
         /// </summary>
@@ -56,7 +57,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// Gets the username of the current user
         /// </summary>
-        private string UserName
+        public string UserName
         {
             get
             {
@@ -86,7 +87,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// Gets the domain of the current user
         /// </summary>
-        private string Domain
+        public string Domain
         {
             get
             {
@@ -169,7 +170,7 @@ namespace Lithnet.ResourceManagement.Client
         public ResourceManagementClient(string baseAddress, NetworkCredential credentials, string servicePrincipalName)
         {
             this.creds = credentials;
-            AsyncContext.Run(async () => await this.InitializeClientsAsync(baseAddress, servicePrincipalName).ConfigureAwait(false));
+            this.InitializeClients(baseAddress, servicePrincipalName);
         }
 
         /// <summary>
@@ -589,7 +590,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </example>
         public ResourceObject CreateResource(string objectType)
         {
-            return new ResourceObject(objectType, this);
+            return new ResourceObject(objectType, this.ClientFactory);
         }
 
         /// <summary>
@@ -606,7 +607,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </example>
         public ResourceObject CreateResourceTemplateForUpdate(string objectType, UniqueIdentifier id)
         {
-            return new ResourceObject(objectType, id, this);
+            return new ResourceObject(objectType, id, this.ClientFactory);
         }
 
         /// <summary>
@@ -2355,49 +2356,34 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// Initializes the WCF bindings, endpoints, and proxy objects
         /// </summary>
-        private async Task InitializeClientsAsync(string baseUri, string spn)
+        private void InitializeClients(string baseUri, string spn)
         {
-            IClientFactory factory;
-
-#if NETFRAMEWORK
-            Trace.WriteLine("Initializing native .NET framework factory (netfx)");
-            factory = new NativeClientFactory();
-#else
-            if (typeof(object).Assembly.FullName.StartsWith("mscorlib", StringComparison.OrdinalIgnoreCase))
-            {
-                Trace.WriteLine("Initializing native .NET framework factory (netstandard2.0)");
-                factory = new NativeClientFactory();
-            }
-            else
-            {
-                Trace.WriteLine("Initializing RPC factory");
-                factory = new RpcClientFactory();
-            }
-#endif
-
             if (this.creds == null)
             {
-                if (Configuration.Username != null)
+                if (!string.IsNullOrWhiteSpace(Configuration.Username))
                 {
                     this.creds = new NetworkCredential(Configuration.Username, Configuration.Password);
                 }
             }
 
-            factory.BaseUri = baseUri ?? Configuration.ResourceManagementServiceBaseAddress.ToString();
-            factory.Credentials = this.creds;
-            factory.Spn = spn ?? Configuration.ServicePrincipalName;
-            factory.ConcurrentConnections = Configuration.ConcurrentConnectionLimit;
-            factory.ConnectTimeout = TimeSpan.FromSeconds(Configuration.ReceiveTimeoutSeconds);
-            factory.RecieveTimeout = Configuration.ReceiveTimeoutSeconds;
-            factory.SendTimeout = Configuration.SendTimeoutSeconds;
+            FactoryInitializationParameters p = new FactoryInitializationParameters
+            {
+                BaseUri = baseUri ?? Configuration.ResourceManagementServiceBaseAddress.ToString(),
+                Credentials = this.creds,
+                Spn = spn ?? Configuration.ServicePrincipalName,
+                ConcurrentConnections = Configuration.ConcurrentConnectionLimit,
+                ConnectTimeout = TimeSpan.FromSeconds(Configuration.ReceiveTimeoutSeconds),
+                RecieveTimeout = Configuration.ReceiveTimeoutSeconds,
+                SendTimeout = Configuration.SendTimeoutSeconds
+            };
 
-            await factory.InitializeClientsAsync(this).ConfigureAwait(false);
+            this.ClientFactory = Client.ClientFactory.GetOrCreateFactory(p);
 
-            this.ResourceClient = factory.ResourceClient;
-            this.ResourceFactoryClient = factory.ResourceFactoryClient;
-            this.SearchClient = factory.SearchClient;
-            this.SchemaClient = factory.SchemaClient;
-            this.ApprovalClient = factory.ApprovalClient;
+            this.ResourceClient = this.ClientFactory.ResourceClient;
+            this.ResourceFactoryClient = this.ClientFactory.ResourceFactoryClient;
+            this.SearchClient = this.ClientFactory.SearchClient;
+            this.SchemaClient = this.ClientFactory.SchemaClient;
+            this.ApprovalClient = this.ClientFactory.ApprovalClient;
 
 #pragma warning disable CS0618 // Type or member is obsolete
             ResourceManagementSchema.schemaClient = this.SchemaClient;

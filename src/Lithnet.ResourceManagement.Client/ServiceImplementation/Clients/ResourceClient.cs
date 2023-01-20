@@ -10,10 +10,10 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 {
     internal class ResourceClient : IResourceClient
     {
-        private ResourceManagementClient client;
+        private IClientFactory client;
         private IResource channel;
 
-        public ResourceClient(ResourceManagementClient client, IResource channel)
+        public ResourceClient(IClientFactory client, IResource channel)
         {
             this.client = client;
             this.channel = channel;

@@ -2,8 +2,7 @@
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0</TargetFrameworks>
 		<LangVersion>8</LangVersion>
-		<Platforms>x64</Platforms>
-		<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+		<Platforms>AnyCPU</Platforms>
 		<Deterministic>true</Deterministic>
 	</PropertyGroup>
 
@@ -12,7 +11,7 @@
 		<Company>Lithnet</Company>
 		<Copyright>Copyright 2022 Lithnet Pty Ltd</Copyright>
 		<ProductName>Lithnet Resource Management Client</ProductName>
-		<VersionPrefix>2.0.29</VersionPrefix>
+		<VersionPrefix>2.0.33</VersionPrefix>
 		<VersionSuffix>beta1</VersionSuffix>
 		<Authors>Lithnet</Authors>
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

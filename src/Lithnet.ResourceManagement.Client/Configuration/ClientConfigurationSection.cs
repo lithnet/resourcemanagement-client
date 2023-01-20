@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 
 namespace Lithnet.ResourceManagement.Client
@@ -12,8 +15,78 @@ namespace Lithnet.ResourceManagement.Client
 
         internal static ClientConfigurationSection GetConfiguration()
         {
-            object section = ConfigurationManager.GetSection("lithnetResourceManagementClient");
-            var myConfig = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).FilePath;
+            try
+            {
+                HashSet<string> paths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                var entryAssembly = Assembly.GetEntryAssembly(); // If null netstandard breaks
+                var entryAssemblyPath = Assembly.GetEntryAssembly()?.Location;
+                var executingAssemblyPath = Assembly.GetExecutingAssembly()?.Location;
+                var processPath = Process.GetCurrentProcess()?.MainModule?.FileName;
+
+                if (!string.IsNullOrWhiteSpace(entryAssemblyPath))
+                {
+                    paths.Add(entryAssemblyPath + ".config");
+                    paths.Add(Path.Combine(Path.GetDirectoryName(entryAssemblyPath), "lithnet.resourcemanagement.client.dll.config"));
+                }
+
+                if (!string.IsNullOrWhiteSpace(executingAssemblyPath))
+                {
+                    paths.Add(executingAssemblyPath + ".config");
+                    paths.Add(Path.Combine(Path.GetDirectoryName(executingAssemblyPath), "lithnet.resourcemanagement.client.dll.config"));
+                }
+
+                if (!string.IsNullOrWhiteSpace(processPath))
+                {
+                    paths.Add(processPath + ".config");
+                    paths.Add(Path.Combine(Path.GetDirectoryName(processPath), "lithnet.resourcemanagement.client.dll.config"));
+                }
+
+                var config = LoadConfigFile(paths, entryAssembly != null);
+                return GetConfigSection(config);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError($"Unable to load config file\r\n{ex}");
+                return new ClientConfigurationSection();
+            }
+        }
+
+        private static Configuration LoadConfigFile(IEnumerable<string> paths, bool canAskForDefaultExeConfig)
+        {
+            Trace.WriteLine("Searching for config in the following paths");
+            Trace.WriteLine(string.Join("\r\n", paths));
+
+            foreach (var path in paths)
+            {
+                if (File.Exists(path))
+                {
+                    ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap()
+                    {
+                        ExeConfigFilename = path
+                    };
+
+                    Trace.WriteLine($"Loading config file from {path}");
+                    return ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
+                }
+            }
+
+            if (canAskForDefaultExeConfig)
+            {
+                Trace.WriteLine($"Falling back to default config lookup");
+                return ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            }
+
+            return null;
+        }
+
+        private static ClientConfigurationSection GetConfigSection(Configuration myConfig)
+        {
+            if (myConfig == null)
+            {
+                return new ClientConfigurationSection();
+            }
+
+            object section = myConfig.GetSection("lithnetResourceManagementClient");
 
             if (section != null)
             {
@@ -25,7 +98,7 @@ namespace Lithnet.ResourceManagement.Client
                 return new ClientConfigurationSection(section);
             }
 
-            object s2 = ConfigurationManager.GetSection("resourceManagementClient");
+            object s2 = myConfig.GetSection("resourceManagementClient");
 
             if (s2 != null)
             {

@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using System.Security.Principal;
-using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Threading.Tasks;
 using Lithnet.ResourceManagement.Client.ResourceManagementService;
@@ -20,11 +19,11 @@ namespace Lithnet.ResourceManagement.Client.Host
 
         public async Task<Message> ApproveAsync(string endpoint, Message message)
         {
-            ResourceFactoryClient client = new ResourceFactoryClient(this.binding, new EndpointAddress(endpoint));
+            ResourceFactoryClient client = new ResourceFactoryClient(this.binding, EndpointManager.EndpointFromAddress(endpoint));
 
-            if (credentials != null)
+            if (this.credentials != null)
             {
-                client.ClientCredentials.Windows.ClientCredential = credentials;
+                client.ClientCredentials.Windows.ClientCredential = this.credentials;
             }
 
             client.ClientCredentials.Windows.AllowedImpersonationLevel = TokenImpersonationLevel.Delegation;

@@ -82,7 +82,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             try
             {
-                resource = new ResourceObject(UnitTestHelper.ObjectTypeUnitTestObjectName, client);
+                resource = new ResourceObject(UnitTestHelper.ObjectTypeUnitTestObjectName, client.ClientFactory);
                 Assert.AreEqual(OperationType.Create, resource.ModificationType);
                 Assert.AreEqual(true, resource.IsPlaceHolder);
                 UnitTestHelper.PopulateTestUserData(resource);
@@ -114,7 +114,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             try
             {
-                resource = new ResourceObject(UnitTestHelper.ObjectTypeUnitTestObjectName, client);
+                resource = new ResourceObject(UnitTestHelper.ObjectTypeUnitTestObjectName, client.ClientFactory);
                 Assert.AreEqual(OperationType.Create, resource.ModificationType);
                 Assert.AreEqual(true, resource.IsPlaceHolder);
                 UnitTestHelper.PopulateTestUserData(resource);
@@ -147,7 +147,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             for (int i = 0; i < 5; i++)
             {
-                ResourceObject resource = new ResourceObject(UnitTestHelper.ObjectTypeUnitTestObjectName, client);
+                ResourceObject resource = new ResourceObject(UnitTestHelper.ObjectTypeUnitTestObjectName, client.ClientFactory);
                 Assert.AreEqual(OperationType.Create, resource.ModificationType);
                 Assert.AreEqual(true, resource.IsPlaceHolder);
                 UnitTestHelper.PopulateTestUserData(resource);

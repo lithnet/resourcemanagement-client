@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO.Pipes;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Lithnet.ResourceManagement.Client.Hosts;
@@ -15,6 +14,7 @@ namespace Lithnet.ResourceManagement.Client
         private NamedPipeClientStream clientPipe;
         private string pipeName;
         private IPipeHost pipeHost;
+        private readonly FactoryInitializationParameters parameters;
 
         public IResourceClient ResourceClient { get; private set; }
 
@@ -26,23 +26,16 @@ namespace Lithnet.ResourceManagement.Client
 
         public IApprovalClient ApprovalClient { get; private set; }
 
-        public string BaseUri { get; set; }
+        public bool IsFaulted => !this.clientPipe.IsConnected;
 
-        public string Spn { get; set; }
-
-        public int ConcurrentConnections { get; set; }
-
-        public TimeSpan ConnectTimeout { get; set; }
-
-        public int SendTimeout { get; set; }
-
-        public int RecieveTimeout { get; set; }
-
-        public NetworkCredential Credentials { get; set; }
-
-        public async Task InitializeClientsAsync(ResourceManagementClient rmc)
+        public RpcClientFactory(FactoryInitializationParameters p)
         {
-            var pipe = await this.GetOrCreateClientPipeAsync(this.ConnectTimeout, CancellationToken.None).ConfigureAwait(false);
+            this.parameters = p;
+        }
+
+        public async Task InitializeClientsAsync()
+        {
+            var pipe = await this.GetOrCreateClientPipeAsync(parameters.ConnectTimeout, CancellationToken.None).ConfigureAwait(false);
             var jsonClient = new JsonRpc(RpcCore.GetMessageHandler(pipe));
 
             jsonClient.TraceSource.Switch.Level = SourceLevels.Warning;
@@ -53,7 +46,7 @@ namespace Lithnet.ResourceManagement.Client
 
             var server = jsonClient.Attach<IRpcServer>(new JsonRpcProxyOptions { MethodNameTransform = x => $"Control_{x}" });
 
-            await server.InitializeClientsAsync(this.BaseUri, this.Spn, this.ConcurrentConnections, this.SendTimeout, this.RecieveTimeout, this.Credentials?.UserName, this.Credentials?.Password).ConfigureAwait(false);
+            await server.InitializeClientsAsync(parameters.BaseUri, parameters.Spn, parameters.ConcurrentConnections, parameters.SendTimeout, parameters.RecieveTimeout, parameters.Credentials?.UserName, parameters.Credentials?.Password).ConfigureAwait(false);
 
             var resourceChannel = jsonClient.Attach<IResource>(JsonOptionsFactory.GetProxyOptions(JsonOptionsFactory.ResourceService));
             var resourceFactoryChannel = jsonClient.Attach<IResourceFactory>(JsonOptionsFactory.GetProxyOptions(JsonOptionsFactory.ResourceFactoryService));
@@ -61,9 +54,9 @@ namespace Lithnet.ResourceManagement.Client
             var schemaChannel = jsonClient.Attach<IMetadataExchange>(JsonOptionsFactory.GetProxyOptions(JsonOptionsFactory.MetadataService));
             var approvalChannel = jsonClient.Attach<IApprovalService>(JsonOptionsFactory.GetProxyOptions(JsonOptionsFactory.ApprovalService));
 
-            this.ResourceClient = new ResourceClient(rmc, resourceChannel);
+            this.ResourceClient = new ResourceClient(this, resourceChannel);
             this.ResourceFactoryClient = new ResourceFactoryClient(resourceFactoryChannel);
-            this.SearchClient = new SearchClient(rmc, searchChannel);
+            this.SearchClient = new SearchClient(this, searchChannel);
             this.SchemaClient = new SchemaClient(schemaChannel);
             this.ApprovalClient = new ApprovalClient(approvalChannel);
         }

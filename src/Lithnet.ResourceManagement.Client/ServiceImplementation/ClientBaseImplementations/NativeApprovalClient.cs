@@ -18,7 +18,8 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
         public async Task<Message> ApproveAsync(string endpoint, Message message)
         {
-            var client = new NativeResourceFactoryClient(this.binding, new EndpointAddress(endpoint));
+            var client = new NativeResourceFactoryClient(this.binding, EndpointManager.EndpointFromAddress(endpoint));
+
             if (this.credentials != null)
             {
                 client.ClientCredentials.Windows.ClientCredential = this.credentials;

@@ -12,10 +12,10 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
     {
         private const int DefaultPageSize = 200;
 
-        private ResourceManagementClient client;
+        private IClientFactory client;
         private ISearch channel;
 
-        public SearchClient(ResourceManagementClient client, ISearch channel)
+        public SearchClient(IClientFactory client, ISearch channel)
         {
             this.client = client;
             this.channel = channel;

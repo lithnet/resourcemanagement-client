@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Net;
 using System.ServiceModel;
-using System.ServiceModel.Channels;
 using System.Threading.Tasks;
 using Lithnet.ResourceManagement.Client.ResourceManagementService;
 
@@ -9,9 +7,7 @@ namespace Lithnet.ResourceManagement.Client
 {
     internal class NativeClientFactory : IClientFactory
     {
-        private EndpointManager endpointManager;
-        private Binding wsHttpContextBinding;
-        private Binding wsHttpBinding;
+        private FactoryInitializationParameters parameters;
 
         public IResourceClient ResourceClient { get; private set; }
 
@@ -23,44 +19,38 @@ namespace Lithnet.ResourceManagement.Client
 
         public IApprovalClient ApprovalClient { get; private set; }
 
-        public string BaseUri { get; set; }
+        public bool IsFaulted => false;
 
-        public string Spn { get; set; }
+        public NativeClientFactory(FactoryInitializationParameters p)
+        {
+            this.parameters = p;
+        }
 
-        public int ConcurrentConnections { get; set; }
-
-        public TimeSpan ConnectTimeout { get; set; }
-
-        public int SendTimeout { get; set; }
-
-        public int RecieveTimeout { get; set; }
-
-        public NetworkCredential Credentials { get; set; }
-
-        public Task InitializeClientsAsync(ResourceManagementClient rmc)
+        public Task InitializeClientsAsync()
         {
 #if NETFRAMEWORK
-            this.endpointManager = new EndpointManager(new Uri(this.BaseUri), EndpointIdentity.CreateSpnIdentity(this.Spn));
+            var endpointManager = new EndpointManager(new Uri(parameters.BaseUri), EndpointIdentity.CreateSpnIdentity(parameters.Spn));
 #else
-            this.endpointManager = new EndpointManager(new Uri(this.BaseUri), new SpnEndpointIdentity(this.Spn));
+            var endpointManager = new EndpointManager(new Uri(this.parameters.BaseUri), new SpnEndpointIdentity(this.parameters.Spn));
 #endif
 
-            this.wsHttpContextBinding = BindingManager.GetWsAuthenticatedBinding(this.RecieveTimeout, this.SendTimeout);
-            this.wsHttpBinding = BindingManager.GetWsHttpBinding(this.RecieveTimeout, this.SendTimeout);
+            var wsHttpAuthenticatedContextBinding = BindingManager.GetWsHttpContextBinding(this.parameters.RecieveTimeout, this.parameters.SendTimeout);
+            var wsHttpAuthenticatedBinding = BindingManager.GetWsAuthenticatedBinding(this.parameters.RecieveTimeout, this.parameters.SendTimeout);
+            var wsHttpBinding = BindingManager.GetWsHttpBinding(this.parameters.RecieveTimeout, this.parameters.SendTimeout);
 
-            var nativeResourceClient = new NativeResourceClient(this.wsHttpContextBinding, this.endpointManager.ResourceEndpoint);
-            var nativeResourceFactoryClient = new NativeResourceFactoryClient(this.wsHttpContextBinding, this.endpointManager.ResourceFactoryEndpoint);
-            var nativeSearchClient = new NativeSearchClient(this.wsHttpContextBinding, this.endpointManager.SearchEndpoint);
-            var nativeSchemaClient = new NativeSchemaClient(this.wsHttpBinding, this.endpointManager.MetadataEndpoint);
-            var nativeApprovalClient = new NativeApprovalClient(this.wsHttpContextBinding, this.Credentials);
+            var nativeResourceClient = new NativeResourceClient(wsHttpAuthenticatedBinding, endpointManager.ResourceEndpoint);
+            var nativeResourceFactoryClient = new NativeResourceFactoryClient(wsHttpAuthenticatedBinding, endpointManager.ResourceFactoryEndpoint);
+            var nativeSearchClient = new NativeSearchClient(wsHttpAuthenticatedBinding, endpointManager.SearchEndpoint);
+            var nativeSchemaClient = new NativeSchemaClient(wsHttpBinding, endpointManager.MetadataEndpoint);
+            var nativeApprovalClient = new NativeApprovalClient(wsHttpAuthenticatedContextBinding, this.parameters.Credentials);
 
             this.ConfigureChannelCredentials(nativeResourceClient);
             this.ConfigureChannelCredentials(nativeResourceFactoryClient);
             this.ConfigureChannelCredentials(nativeSearchClient);
 
-            this.ResourceClient = new ResourceClient(rmc, nativeResourceClient);
+            this.ResourceClient = new ResourceClient(this, nativeResourceClient);
             this.ResourceFactoryClient = new ResourceFactoryClient(nativeResourceFactoryClient);
-            this.SearchClient = new SearchClient(rmc, nativeSearchClient);
+            this.SearchClient = new SearchClient(this, nativeSearchClient);
             this.SchemaClient = new SchemaClient(nativeSchemaClient);
             this.ApprovalClient = new ApprovalClient(nativeApprovalClient);
 
@@ -69,9 +59,9 @@ namespace Lithnet.ResourceManagement.Client
 
         private void ConfigureChannelCredentials<T>(ClientBase<T> channel) where T : class
         {
-            if (this.Credentials != null)
+            if (this.parameters.Credentials != null)
             {
-                channel.ClientCredentials.Windows.ClientCredential = this.Credentials;
+                channel.ClientCredentials.Windows.ClientCredential = this.parameters.Credentials;
             }
 
             channel.ClientCredentials.Windows.AllowedImpersonationLevel = System.Security.Principal.TokenImpersonationLevel.Delegation;

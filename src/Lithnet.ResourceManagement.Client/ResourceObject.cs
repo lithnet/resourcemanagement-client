@@ -18,26 +18,7 @@ namespace Lithnet.ResourceManagement.Client
     [KnownType(typeof(List<object>))]
     public class ResourceObject : ISerializable
     {
-        /// <summary>
-        /// The client object used to pass save, update, and create operations to
-        /// </summary>
-        private ResourceManagementClient client;
-
-        /// <summary>
-        /// Gets the client object used for create, update, and delete operations of this object
-        /// </summary>
-        private ResourceManagementClient Client
-        {
-            get
-            {
-                if (this.client == null)
-                {
-                    this.client = new ResourceManagementClient();
-                }
-
-                return this.client;
-            }
-        }
+        private IClientFactory clientFactory;
 
         /// <summary>
         /// Gets the object type name of this object
@@ -101,6 +82,11 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
+        /// Gets a value indicating if this object is in a read only state
+        /// </summary>
+        public bool IsReadOnly => this.clientFactory == null;
+
+        /// <summary>
         /// Gets the object ID for this object
         /// </summary>
         public UniqueIdentifier ObjectID
@@ -152,13 +138,13 @@ namespace Lithnet.ResourceManagement.Client
         /// Initializes a new instance of the ResourceObject class
         /// </summary>
         /// <param name="opType">The type of modification to set on the object</param>
-        /// <param name="client">The client used for further operations on this object</param>
+        /// <param name="clientFactory">The client used for further operations on this object</param>
         /// <param name="locale">The localization culture that this object is represented as</param>
-        private ResourceObject(OperationType opType, ResourceManagementClient client, CultureInfo locale)
+        private ResourceObject(OperationType opType, IClientFactory clientFactory, CultureInfo locale)
         {
             this.ModificationType = opType;
             this.Attributes = new AttributeValueCollection();
-            this.client = client;
+            this.clientFactory = clientFactory;
             this.Locale = locale;
         }
 
@@ -169,19 +155,19 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="context">The serialization context</param>
         protected ResourceObject(SerializationInfo info, StreamingContext context)
         {
-            this.DeserializeObject(info);
+            this.DeserializeObject(info, context);
         }
 
         /// <summary>
         /// Initializes a new instance of the ResourceObject class
         /// </summary>
         /// <param name="type">The object type that this object will represent</param>
-        /// <param name="client">The client used for further operations on this object</param>
-        internal ResourceObject(string type, ResourceManagementClient client)
-            : this(OperationType.Create, client, null)
+        /// <param name="clientFactory">The client used for further operations on this object</param>
+        internal ResourceObject(string type, IClientFactory clientFactory)
+            : this(OperationType.Create, clientFactory, null)
         {
             this.IsPlaceHolder = true;
-            this.ObjectType = client.GetObjectType(type);
+            this.SetObjectType(type);
             this.AddRemainingAttributesFromSchema();
             this.Attributes[AttributeNames.ObjectType].SetValue(type);
         }
@@ -191,11 +177,11 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <param name="type">The object type that this object will represent</param>
         /// <param name="id">The ID of the object</param>
-        /// <param name="client">The client used for further operations on this object</param>
-        internal ResourceObject(string type, UniqueIdentifier id, ResourceManagementClient client)
-            : this(OperationType.Update, client, null)
+        /// <param name="clientFactory">The client used for further operations on this object</param>
+        internal ResourceObject(string type, UniqueIdentifier id, IClientFactory clientFactory)
+            : this(OperationType.Update, clientFactory, null)
         {
-            this.ObjectType = client.GetObjectType(type);
+            this.SetObjectType(type);
             this.AddRemainingAttributesFromSchema();
             this.IsPlaceHolder = true;
 
@@ -207,10 +193,9 @@ namespace Lithnet.ResourceManagement.Client
         /// Initializes a new instance of the ResourceObject class
         /// </summary>
         /// <param name="objectElements">An enumeration of XmlElements that make up a partial response</param>
-        /// <param name="client">The client used for further operations on this object</param>
+        /// <param name="clientFactory">The client used for further operations on this object</param>
         /// <param name="locale">The localization culture that this object is represented as</param>
-        internal ResourceObject(IEnumerable<XmlElement> objectElements, ResourceManagementClient client, CultureInfo locale)
-            : this(OperationType.Update, client, locale)
+        internal ResourceObject(IEnumerable<XmlElement> objectElements, IClientFactory clientFactory, CultureInfo locale) : this(OperationType.Update, clientFactory, locale)
         {
             this.PopulateResourceFromPartialResponse(objectElements);
         }
@@ -219,10 +204,9 @@ namespace Lithnet.ResourceManagement.Client
         /// Initializes a new instance of the ResourceObject class
         /// </summary>
         /// <param name="reader">An XmlDictionaryReader containing the full object definition</param>
-        /// <param name="client">The client used for further operations on this object</param>
+        /// <param name="clientFactory">The client used for further operations on this object</param>
         /// <param name="locale">The localization culture that this object is represented as</param>
-        internal ResourceObject(XmlDictionaryReader reader, ResourceManagementClient client, CultureInfo locale)
-            : this(OperationType.Update, client, locale)
+        internal ResourceObject(XmlDictionaryReader reader, IClientFactory clientFactory, CultureInfo locale) : this(OperationType.Update, clientFactory, locale)
         {
             this.PopulateResourceFromFullObject(reader);
         }
@@ -231,10 +215,10 @@ namespace Lithnet.ResourceManagement.Client
         /// Initializes a new instance of the ResourceObject class
         /// </summary>
         /// <param name="element">An XmlElement containing definition of the object from a set of fragments obtained from an enumeration response</param>
-        /// <param name="client">The client used for further operations on this object</param>
+        /// <param name="clientFactory">The client used for further operations on this object</param>
         /// <param name="locale">The localization culture that this object is represented as</param>
-        internal ResourceObject(XmlElement element, ResourceManagementClient client, CultureInfo locale)
-            : this(OperationType.Update, client, locale)
+        internal ResourceObject(XmlElement element, IClientFactory clientFactory, CultureInfo locale)
+            : this(OperationType.Update, clientFactory, locale)
         {
             this.PopulateResourceFromFragment(element);
         }
@@ -314,14 +298,19 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         public async Task SaveAsync()
         {
+            if (this.IsReadOnly)
+            {
+                throw new InvalidOperationException("The object is a read-only copy");
+            }
+
             switch (this.ModificationType)
             {
                 case OperationType.Create:
-                    await this.Client.CreateResourceAsync(this).ConfigureAwait(false);
+                    await this.clientFactory.ResourceFactoryClient.CreateAsync(this).ConfigureAwait(false);
                     break;
 
                 case OperationType.Update:
-                    await this.Client.PutResourceAsync(this, this.Locale).ConfigureAwait(false);
+                    await this.clientFactory.ResourceClient.PutAsync(this, this.Locale).ConfigureAwait(false);
                     break;
 
                 case OperationType.Delete:
@@ -330,7 +319,7 @@ namespace Lithnet.ResourceManagement.Client
                         throw new InvalidOperationException("The object has already been deleted");
                     }
 
-                    await this.Client.DeleteResourceAsync(this).ConfigureAwait(false);
+                    await this.clientFactory.ResourceClient.DeleteAsync(this).ConfigureAwait(false);
                     break;
 
                 case OperationType.None:
@@ -392,7 +381,12 @@ namespace Lithnet.ResourceManagement.Client
                 throw new InvalidOperationException("Cannot refresh the object as it has been deleted");
             }
 
-            XmlDictionaryReader reader = await this.Client.RefreshResourceAsync(this).ConfigureAwait(false);
+            if (this.IsReadOnly)
+            {
+                throw new InvalidOperationException("The object is a read-only copy");
+            }
+
+            XmlDictionaryReader reader = await this.clientFactory.ResourceClient.GetFullObjectForUpdateAsync(this).ConfigureAwait(false);
 
             this.PopulateResourceFromFullObject(reader);
             this.IsPlaceHolder = false;
@@ -629,7 +623,7 @@ namespace Lithnet.ResourceManagement.Client
             reader.MoveToStartElement();
 
             string objectTypeName = reader.LocalName;
-            this.ObjectType = this.client.GetObjectType(objectTypeName);
+            this.SetObjectType(objectTypeName);
 
             while (reader.Read())
             {
@@ -675,7 +669,7 @@ namespace Lithnet.ResourceManagement.Client
             Dictionary<string, List<string>> values = new Dictionary<string, List<string>>();
 
             string objectTypeName = element.LocalName;
-            this.ObjectType = this.client.GetObjectType(objectTypeName);
+            this.SetObjectType(objectTypeName);
 
             foreach (XmlElement child in element.ChildNodes.OfType<XmlElement>())
             {
@@ -738,8 +732,7 @@ namespace Lithnet.ResourceManagement.Client
             if (values.ContainsKey(AttributeNames.ObjectType))
             {
                 string objectTypeName = values[AttributeNames.ObjectType].First();
-                ObjectTypeDefinition objectType = this.client.GetObjectType(objectTypeName);
-                this.ObjectType = objectType;
+                this.SetObjectType(objectTypeName);
             }
             else
             {
@@ -800,15 +793,18 @@ namespace Lithnet.ResourceManagement.Client
         /// Deserializes an object from a serialization data set
         /// </summary>
         /// <param name="info">The serialization data</param>
-        private void DeserializeObject(SerializationInfo info)
+        private void DeserializeObject(SerializationInfo info, StreamingContext context)
         {
+            if (context.Context is ResourceManagementClient c)
+            {
+                this.clientFactory = c.ClientFactory;
+            }
+
             Dictionary<string, List<string>> values = new Dictionary<string, List<string>>();
 
             foreach (SerializationEntry entry in info)
             {
-                IEnumerable<string> entryValues = entry.Value as IEnumerable<string>;
-
-                if (entryValues != null)
+                if (entry.Value is IEnumerable<string> entryValues)
                 {
                     values.Add(entry.Name, entryValues.ToList());
                 }
@@ -829,9 +825,15 @@ namespace Lithnet.ResourceManagement.Client
             }
 
             string objectTypeName = values[AttributeNames.ObjectType].First();
-            this.ObjectType = this.client.GetObjectType(objectTypeName);
+            this.SetObjectType(objectTypeName);
             this.SetInitialAttributeValues(values, null);
             this.AddRemainingAttributesFromSchema();
         }
+
+        private void SetObjectType(string type)
+        {
+            this.ObjectType = AsyncContext.Run(async () => await this.clientFactory.SchemaClient.GetObjectTypeAsync(type).ConfigureAwait(false));
+        }
+
     }
 }

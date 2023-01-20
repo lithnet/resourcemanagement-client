@@ -117,22 +117,23 @@ namespace Lithnet.ResourceManagement.Client.Host
             sendTimeout = Math.Max(10, sendTimeout);
             recieveTimeout = Math.Max(10, recieveTimeout);
 
-            var wsAuthenticatedBinding = BindingManager.GetWsAuthenticatedBinding(recieveTimeout, sendTimeout);
+            var wsHttpAuthenticatedBinding = BindingManager.GetWsAuthenticatedBinding(recieveTimeout, sendTimeout);
             var wsHttpBinding = BindingManager.GetWsHttpBinding(recieveTimeout, sendTimeout);
+            var wsHttpAuthenticatedContextBinding = BindingManager.GetWsHttpContextBinding(recieveTimeout, sendTimeout);
 
-            ResourceClient resourceClient = new ResourceClient(wsAuthenticatedBinding, endpoints.ResourceEndpoint);
+            ResourceClient resourceClient = new ResourceClient(wsHttpAuthenticatedBinding, endpoints.ResourceEndpoint);
             this.InitializeClient(resourceClient, credentials);
 
-            ResourceFactoryClient resourceFactoryClient = new ResourceFactoryClient(wsAuthenticatedBinding, endpoints.ResourceFactoryEndpoint);
+            ResourceFactoryClient resourceFactoryClient = new ResourceFactoryClient(wsHttpAuthenticatedBinding, endpoints.ResourceFactoryEndpoint);
             this.InitializeClient(resourceFactoryClient, credentials);
 
             MetadataExchangeClient metadataClient = new MetadataExchangeClient(wsHttpBinding, endpoints.MetadataEndpoint);
             this.InitializeClient(metadataClient, credentials);
 
-            SearchClient searchClient = new SearchClient(wsAuthenticatedBinding, endpoints.SearchEndpoint);
+            SearchClient searchClient = new SearchClient(wsHttpAuthenticatedBinding, endpoints.SearchEndpoint);
             this.InitializeClient(searchClient, credentials);
 
-            ApprovalService approvalService = new ApprovalService(wsAuthenticatedBinding, credentials);
+            ApprovalService approvalService = new ApprovalService(wsHttpAuthenticatedContextBinding, credentials);
 
             this.jsonRpcServer.AddLocalRpcTarget(metadataClient, JsonOptionsFactory.GetTargetOptions(JsonOptionsFactory.MetadataService));
             this.jsonRpcServer.AddLocalRpcTarget(resourceClient, JsonOptionsFactory.GetTargetOptions(JsonOptionsFactory.ResourceService));
