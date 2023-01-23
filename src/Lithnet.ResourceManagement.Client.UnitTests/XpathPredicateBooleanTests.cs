@@ -1,16 +1,17 @@
 ﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
     [TestClass]
     public class XpathPredicateBooleanTests
     {
-        private ResourceManagementClient client = new ResourceManagementClient();
+        private ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
 
         public XpathPredicateBooleanTests()
         {
-            client.DeleteResources(client.GetResources("/" + UnitTestHelper.ObjectTypeUnitTestObjectName));
+            client.DeleteResources(client.GetResources("/" + Constants.UnitTestObjectTypeName));
         }
 
         // Single-value tests
@@ -22,13 +23,13 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = false;
             object matchValue = true;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeBooleanSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeBooleanSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[({1} = {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeBooleanSV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeBooleanSV, ComparisonOperator.Equals, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[({1} = {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeBooleanSV, queryValue);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeBooleanSV, ComparisonOperator.Equals, GroupOperator.And, matchResource);
             }
             finally
             {
@@ -43,13 +44,13 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = true;
             object matchValue = false;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeBooleanSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeBooleanSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[(not({1} = {2}))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeBooleanSV, queryValue, matchResource);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeBooleanSV, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[(not({1} = {2}))]", Constants.UnitTestObjectTypeName, Constants.AttributeBooleanSV, queryValue, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeBooleanSV, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
             }
             finally
             {
@@ -64,13 +65,13 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = null;
             object matchValue = true;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeBooleanSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeBooleanSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[(({1} = true) or ({1} = false))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeBooleanSV, XPathQuery.MaxDate);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeBooleanSV, ComparisonOperator.IsPresent, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[(({1} = true) or ({1} = false))]", Constants.UnitTestObjectTypeName, Constants.AttributeBooleanSV, XPathQuery.MaxDate);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeBooleanSV, ComparisonOperator.IsPresent, GroupOperator.And, matchResource);
             }
             finally
             {
@@ -85,17 +86,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = true;
             object matchValue = null;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeBooleanSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeBooleanSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, nonMatchValue);
 
             matchResource.Refresh();
-            matchResource.Attributes[UnitTestHelper.AttributeBooleanSV].Value =  null;
+            matchResource.Attributes[Constants.AttributeBooleanSV].Value =  null;
             matchResource.Save();
 
             try
             {
-                string expected = string.Format("/{0}[(not(({1} = true) or ({1} = false)))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeBooleanSV);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeBooleanSV, ComparisonOperator.IsNotPresent, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[(not(({1} = true) or ({1} = false)))]", Constants.UnitTestObjectTypeName, Constants.AttributeBooleanSV);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeBooleanSV, ComparisonOperator.IsNotPresent, GroupOperator.And, matchResource);
             }
             finally
             {
@@ -110,7 +111,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeBooleanSV, ComparisonOperator.GreaterThan);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeBooleanSV, ComparisonOperator.GreaterThan);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
@@ -121,7 +122,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeBooleanSV, ComparisonOperator.GreaterThanOrEquals);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeBooleanSV, ComparisonOperator.GreaterThanOrEquals);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
@@ -132,7 +133,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeBooleanSV, ComparisonOperator.LessThan);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeBooleanSV, ComparisonOperator.LessThan);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
@@ -143,7 +144,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeBooleanSV, ComparisonOperator.LessThanOrEquals);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeBooleanSV, ComparisonOperator.LessThanOrEquals);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
@@ -154,7 +155,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeBooleanSV, ComparisonOperator.Contains);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeBooleanSV, ComparisonOperator.Contains);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
@@ -165,7 +166,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeBooleanSV, ComparisonOperator.EndsWith);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeBooleanSV, ComparisonOperator.EndsWith);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
@@ -176,7 +177,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeBooleanSV, ComparisonOperator.StartsWith);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeBooleanSV, ComparisonOperator.StartsWith);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
@@ -186,7 +187,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         private void SubmitXpath(object value, string expected, string attributeName, ComparisonOperator xpathOp, GroupOperator queryOp, params ResourceObject[] matchResources)
         {
             XPathQuery predicate = new XPathQuery(attributeName, xpathOp, value);
-            string xpath = XPathFilterBuilder.CreateFilter(UnitTestHelper.ObjectTypeUnitTestObjectName, queryOp, predicate);
+            string xpath = XPathFilterBuilder.CreateFilter(Constants.UnitTestObjectTypeName, queryOp, predicate);
             Assert.AreEqual(expected, xpath);
 
             ISearchResultCollection results = client.GetResources(xpath);

@@ -61,16 +61,18 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         static AttributeTypeDefinition()
         {
-            ReadOnlyAttributeNames = new List<string>();
-            ReadOnlyAttributeNames.Add(AttributeNames.ObjectID);
-            ReadOnlyAttributeNames.Add("Creator");
-            ReadOnlyAttributeNames.Add("CreatedTime");
-            ReadOnlyAttributeNames.Add("ExpectedRulesList");
-            ReadOnlyAttributeNames.Add("DetectedRulesList");
-            ReadOnlyAttributeNames.Add("DeletedTime");
-            ReadOnlyAttributeNames.Add("ResourceTime");
-            ReadOnlyAttributeNames.Add("ComputedMember");
-            ReadOnlyAttributeNames.Add("ComputedActor");
+            ReadOnlyAttributeNames = new List<string>
+            {
+                AttributeNames.ObjectID,
+                "Creator",
+                "CreatedTime",
+                "ExpectedRulesList",
+                "DetectedRulesList",
+                "DeletedTime",
+                "ResourceTime",
+                "ComputedMember",
+                "ComputedActor"
+            };
         }
 
         /// <summary>

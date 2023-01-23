@@ -15,7 +15,35 @@ namespace Lithnet.ResourceManagement.Client
 
         public EndpointAddress MetadataEndpoint { get; private set; }
 
+        public EndpointManager(string baseAddress, string spn)
+        {
+            this.Configure(baseAddress, spn);
+        }
+
+        private void Configure(string baseAddress, string spn)
+        {
+            if (string.IsNullOrWhiteSpace(baseAddress))
+            {
+                throw new ArgumentNullException("A MIM serivce URI was not provided");
+            }
+
+            Uri uri = Uri.IsWellFormedUriString(baseAddress, UriKind.Absolute) ?
+                new Uri(baseAddress) :
+                new Uri($"http://{baseAddress}:5725");
+
+            EndpointIdentity spnIdentity = string.IsNullOrWhiteSpace(spn) ?
+                EndpointManager.SpnIdentityFromUri(uri) :
+                EndpointManager.SpnIdentityFromSpn(spn);
+
+            this.Configure(uri, spnIdentity);
+        }
+
         public EndpointManager(Uri baseUri, EndpointIdentity spn)
+        {
+            this.Configure(baseUri, spn);
+        }
+
+        private void Configure(Uri baseUri, EndpointIdentity spn)
         {
             if (!baseUri.IsAbsoluteUri)
             {
@@ -47,8 +75,8 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         public EndpointManager(string baseUri)
-            : this(new Uri(baseUri), null)
         {
+            this.Configure(baseUri, null);
         }
 
         public static EndpointIdentity SpnIdentityFromUri(Uri uri)
@@ -57,6 +85,15 @@ namespace Lithnet.ResourceManagement.Client
             return EndpointIdentity.CreateSpnIdentity($"FIMService/{uri.Host}");
 #else
             return new SpnEndpointIdentity($"FIMService/{uri.Host}");
+#endif
+        }
+
+        public static EndpointIdentity SpnIdentityFromSpn(string spn)
+        {
+#if NETFRAMEWORK
+            return EndpointIdentity.CreateSpnIdentity(spn);
+#else
+            return new SpnEndpointIdentity(spn);
 #endif
         }
 

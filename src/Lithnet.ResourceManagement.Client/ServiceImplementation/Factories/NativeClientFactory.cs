@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Net;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using Lithnet.ResourceManagement.Client.ResourceManagementService;
@@ -7,7 +7,7 @@ namespace Lithnet.ResourceManagement.Client
 {
     internal class NativeClientFactory : IClientFactory
     {
-        private FactoryInitializationParameters parameters;
+        private ResourceManagementClientOptions parameters;
 
         public IResourceClient ResourceClient { get; private set; }
 
@@ -21,32 +21,35 @@ namespace Lithnet.ResourceManagement.Client
 
         public bool IsFaulted => false;
 
-        public NativeClientFactory(FactoryInitializationParameters p)
+        public NativeClientFactory(ResourceManagementClientOptions p)
         {
             this.parameters = p;
         }
 
         public Task InitializeClientsAsync()
         {
-#if NETFRAMEWORK
-            var endpointManager = new EndpointManager(new Uri(parameters.BaseUri), EndpointIdentity.CreateSpnIdentity(parameters.Spn));
-#else
-            var endpointManager = new EndpointManager(new Uri(this.parameters.BaseUri), new SpnEndpointIdentity(this.parameters.Spn));
-#endif
+            var endpointManager = new EndpointManager(this.parameters.BaseUri, this.parameters.Spn);
 
-            var wsHttpAuthenticatedContextBinding = BindingManager.GetWsHttpContextBinding(this.parameters.RecieveTimeout, this.parameters.SendTimeout);
-            var wsHttpAuthenticatedBinding = BindingManager.GetWsAuthenticatedBinding(this.parameters.RecieveTimeout, this.parameters.SendTimeout);
-            var wsHttpBinding = BindingManager.GetWsHttpBinding(this.parameters.RecieveTimeout, this.parameters.SendTimeout);
+            NetworkCredential creds = null;
+
+            if (!string.IsNullOrWhiteSpace(this.parameters.Username))
+            {
+                creds = new NetworkCredential(this.parameters.Username, this.parameters.Password);
+            }
+
+            var wsHttpAuthenticatedContextBinding = BindingManager.GetWsHttpContextBinding(this.parameters.RecieveTimeoutSeconds, this.parameters.SendTimeoutSeconds);
+            var wsHttpAuthenticatedBinding = BindingManager.GetWsAuthenticatedBinding(this.parameters.RecieveTimeoutSeconds, this.parameters.SendTimeoutSeconds);
+            var wsHttpBinding = BindingManager.GetWsHttpBinding(this.parameters.RecieveTimeoutSeconds, this.parameters.SendTimeoutSeconds);
 
             var nativeResourceClient = new NativeResourceClient(wsHttpAuthenticatedBinding, endpointManager.ResourceEndpoint);
             var nativeResourceFactoryClient = new NativeResourceFactoryClient(wsHttpAuthenticatedBinding, endpointManager.ResourceFactoryEndpoint);
             var nativeSearchClient = new NativeSearchClient(wsHttpAuthenticatedBinding, endpointManager.SearchEndpoint);
             var nativeSchemaClient = new NativeSchemaClient(wsHttpBinding, endpointManager.MetadataEndpoint);
-            var nativeApprovalClient = new NativeApprovalClient(wsHttpAuthenticatedContextBinding, this.parameters.Credentials);
+            var nativeApprovalClient = new NativeApprovalClient(wsHttpAuthenticatedContextBinding, creds);
 
-            this.ConfigureChannelCredentials(nativeResourceClient);
-            this.ConfigureChannelCredentials(nativeResourceFactoryClient);
-            this.ConfigureChannelCredentials(nativeSearchClient);
+            this.ConfigureChannelCredentials(nativeResourceClient, creds);
+            this.ConfigureChannelCredentials(nativeResourceFactoryClient, creds);
+            this.ConfigureChannelCredentials(nativeSearchClient, creds);
 
             this.ResourceClient = new ResourceClient(this, nativeResourceClient);
             this.ResourceFactoryClient = new ResourceFactoryClient(nativeResourceFactoryClient);
@@ -57,11 +60,11 @@ namespace Lithnet.ResourceManagement.Client
             return Task.CompletedTask;
         }
 
-        private void ConfigureChannelCredentials<T>(ClientBase<T> channel) where T : class
+        private void ConfigureChannelCredentials<T>(ClientBase<T> channel, NetworkCredential creds) where T : class
         {
-            if (this.parameters.Credentials != null)
+            if (creds != null)
             {
-                channel.ClientCredentials.Windows.ClientCredential = this.parameters.Credentials;
+                channel.ClientCredentials.Windows.ClientCredential = creds;
             }
 
             channel.ClientCredentials.Windows.AllowedImpersonationLevel = System.Security.Principal.TokenImpersonationLevel.Delegation;

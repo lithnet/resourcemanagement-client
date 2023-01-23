@@ -14,7 +14,7 @@ namespace Lithnet.ResourceManagement.Client
         private NamedPipeClientStream clientPipe;
         private string pipeName;
         private IPipeHost pipeHost;
-        private readonly FactoryInitializationParameters parameters;
+        private readonly ResourceManagementClientOptions parameters;
 
         public IResourceClient ResourceClient { get; private set; }
 
@@ -28,14 +28,14 @@ namespace Lithnet.ResourceManagement.Client
 
         public bool IsFaulted => !this.clientPipe.IsConnected;
 
-        public RpcClientFactory(FactoryInitializationParameters p)
+        public RpcClientFactory(ResourceManagementClientOptions p)
         {
             this.parameters = p;
         }
 
         public async Task InitializeClientsAsync()
         {
-            var pipe = await this.GetOrCreateClientPipeAsync(parameters.ConnectTimeout, CancellationToken.None).ConfigureAwait(false);
+            var pipe = await this.GetOrCreateClientPipeAsync(TimeSpan.FromSeconds(parameters.ConnectTimeoutSeconds), CancellationToken.None).ConfigureAwait(false);
             var jsonClient = new JsonRpc(RpcCore.GetMessageHandler(pipe));
 
             jsonClient.TraceSource.Switch.Level = SourceLevels.Warning;
@@ -46,7 +46,7 @@ namespace Lithnet.ResourceManagement.Client
 
             var server = jsonClient.Attach<IRpcServer>(new JsonRpcProxyOptions { MethodNameTransform = x => $"Control_{x}" });
 
-            await server.InitializeClientsAsync(parameters.BaseUri, parameters.Spn, parameters.ConcurrentConnections, parameters.SendTimeout, parameters.RecieveTimeout, parameters.Credentials?.UserName, parameters.Credentials?.Password).ConfigureAwait(false);
+            await server.InitializeClientsAsync(parameters.BaseUri, parameters.Spn, parameters.ConcurrentConnectionLimit, parameters.SendTimeoutSeconds, parameters.RecieveTimeoutSeconds, parameters.Username, parameters.Password).ConfigureAwait(false);
 
             var resourceChannel = jsonClient.Attach<IResource>(JsonOptionsFactory.GetProxyOptions(JsonOptionsFactory.ResourceService));
             var resourceFactoryChannel = jsonClient.Attach<IResourceFactory>(JsonOptionsFactory.GetProxyOptions(JsonOptionsFactory.ResourceFactoryService));

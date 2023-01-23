@@ -11,6 +11,11 @@ namespace Lithnet.ResourceManagement.Client.Host
 
         public static void Initialize()
         {
+            SetupEventSource();
+        }
+
+        public static void SetupEventSource()
+        {
             bool eventLogExists = false;
 
             try
@@ -38,6 +43,32 @@ namespace Lithnet.ResourceManagement.Client.Host
             else
             {
                 canLogEventLog = true;
+            }
+        }
+
+        public static void DeleteEventSource()
+        {
+            bool eventLogExists = false;
+
+            try
+            {
+                eventLogExists = EventLog.SourceExists(SourceName);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Unable to search for event source {0}\r\n{1}", SourceName, ex.ToString());
+            }
+
+            if (eventLogExists)
+            {
+                try
+                {
+                    EventLog.DeleteEventSource(SourceName);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("Unable to delete event source {0}\r\n{1}", SourceName, ex.ToString());
+                }
             }
         }
 

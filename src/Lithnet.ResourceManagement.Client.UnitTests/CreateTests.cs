@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
@@ -11,13 +12,12 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void CreateFromClientSaveWithClient()
         {
-            UnitTestHelper.PrepareRMSForUnitTests();
-            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
             ResourceObject resource = null;
 
             try
             {
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
                 Assert.AreEqual(OperationType.Create, resource.ModificationType);
                 Assert.AreEqual(true, resource.IsPlaceHolder);
                 UnitTestHelper.PopulateTestUserData(resource);
@@ -45,12 +45,12 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void CreateFromClientSaveOnObject()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
             ResourceObject resource = null;
 
             try
             {
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
                 Assert.AreEqual(OperationType.Create, resource.ModificationType);
                 Assert.AreEqual(true, resource.IsPlaceHolder);
                 UnitTestHelper.PopulateTestUserData(resource);
@@ -77,12 +77,12 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void CreateByConstructorSaveOnObject()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
             ResourceObject resource = null;
 
             try
             {
-                resource = new ResourceObject(UnitTestHelper.ObjectTypeUnitTestObjectName, client.ClientFactory);
+                resource = new ResourceObject(Constants.UnitTestObjectTypeName, client.ClientFactory);
                 Assert.AreEqual(OperationType.Create, resource.ModificationType);
                 Assert.AreEqual(true, resource.IsPlaceHolder);
                 UnitTestHelper.PopulateTestUserData(resource);
@@ -109,12 +109,12 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void CreateByConstructorSaveWithClient()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
             ResourceObject resource = null;
 
             try
             {
-                resource = new ResourceObject(UnitTestHelper.ObjectTypeUnitTestObjectName, client.ClientFactory);
+                resource = new ResourceObject(Constants.UnitTestObjectTypeName, client.ClientFactory);
                 Assert.AreEqual(OperationType.Create, resource.ModificationType);
                 Assert.AreEqual(true, resource.IsPlaceHolder);
                 UnitTestHelper.PopulateTestUserData(resource);
@@ -141,13 +141,13 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void CreateByConstructorSaveWithClientComposite()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
 
             List<ResourceObject> resources = new List<ResourceObject>();
 
             for (int i = 0; i < 5; i++)
             {
-                ResourceObject resource = new ResourceObject(UnitTestHelper.ObjectTypeUnitTestObjectName, client.ClientFactory);
+                ResourceObject resource = new ResourceObject(Constants.UnitTestObjectTypeName, client.ClientFactory);
                 Assert.AreEqual(OperationType.Create, resource.ModificationType);
                 Assert.AreEqual(true, resource.IsPlaceHolder);
                 UnitTestHelper.PopulateTestUserData(resource);

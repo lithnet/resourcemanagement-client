@@ -93,7 +93,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="attributeName">The name of the attribute to validate</param>
         public static void ValidateAttributeName(string attributeName)
         {
-            schemaClient.ValidateAttributeName(attributeName);
+            AsyncContext.Run(async () => await schemaClient.ValidateAttributeNameAsync(attributeName).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="objectTypeName">The name of the object type to validate</param>
         public static void ValidateObjectTypeName(string objectTypeName)
         {
-            schemaClient.ValidateObjectTypeName(objectTypeName);
+            AsyncContext.Run(async () => await schemaClient.ValidateObjectTypeNameAsync(objectTypeName).ConfigureAwait(false));
         }
     }
 }

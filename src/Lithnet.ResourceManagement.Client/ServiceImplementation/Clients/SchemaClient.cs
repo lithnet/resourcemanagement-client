@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Schema;
 using Lithnet.ResourceManagement.Client.ResourceManagementService;
+using Nito.AsyncEx;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -16,30 +17,28 @@ namespace Lithnet.ResourceManagement.Client
     {
         private ManualResetEvent schemaLock;
         private IMetadataExchange channel;
+        private readonly AsyncReaderWriterLock readWriteLock = new AsyncReaderWriterLock();
 
         /// <summary>
         /// The internal dictionary containing the object type name to object type definition mapping
         /// </summary>
-        private ConcurrentDictionary<string, ObjectTypeDefinition> ObjectTypes
-        {
-            get; set;
-        }
+        private ConcurrentDictionary<string, ObjectTypeDefinition> ObjectTypes { get; }
+
+        private ConcurrentDictionary<string, AttributeTypeDefinition> AttributeTypes { get; }
+
+        private ConcurrentDictionary<string, AttributeTypeDefinition> AttributeTypesCaseInsenstive { get; } = new ConcurrentDictionary<string, AttributeTypeDefinition>(StringComparer.OrdinalIgnoreCase);
+
+        private ConcurrentDictionary<string, ObjectTypeDefinition> ObjectTypesCaseInsenstive { get; } = new ConcurrentDictionary<string, ObjectTypeDefinition>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// A regular expression that validates an attribute name according to the resource management service's rules
         /// </summary>
-        public Regex AttributeNameValidationRegex
-        {
-            get; private set;
-        }
+        public Regex AttributeNameValidationRegex { get; private set; }
 
         /// <summary>
         /// A regular expression that validates an attribute name according to the resource management service's rules
         /// </summary>
-        public Regex ObjectTypeNameValidationRegex
-        {
-            get; private set;
-        }
+        public Regex ObjectTypeNameValidationRegex { get; private set; }
 
         /// <summary>
         /// A value that indicates if the schema has been loaded from the Resource Management Service
@@ -50,6 +49,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             this.schemaLock = new ManualResetEvent(true);
             this.ObjectTypes = new ConcurrentDictionary<string, ObjectTypeDefinition>();
+            this.AttributeTypes = new ConcurrentDictionary<string, AttributeTypeDefinition>();
         }
 
         public SchemaClient(IMetadataExchange channel) : this()
@@ -59,10 +59,17 @@ namespace Lithnet.ResourceManagement.Client
 
         public async Task LoadSchemaAsync()
         {
-            if (!this.isLoaded)
+            await this.EnsureSchemaLoadedAsync();
+        }
+
+        private async Task EnsureSchemaLoadedAsync()
+        {
+            if (this.isLoaded)
             {
-                await this.RefreshSchemaAsync().ConfigureAwait(false);
+                return;
             }
+
+            await this.RefreshSchemaAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -73,18 +80,12 @@ namespace Lithnet.ResourceManagement.Client
         /// </remarks>
         public async Task RefreshSchemaAsync()
         {
-            try
+            using (await this.readWriteLock.WriterLockAsync())
             {
-                this.schemaLock.WaitOne();
-                this.schemaLock.Reset();
                 MetadataSet set = await this.GetMetadataSetAsync().ConfigureAwait(false);
                 this.PopulateSchemaFromMetadata(set);
                 this.LoadNameValidationRegularExpressions();
                 this.isLoaded = true;
-            }
-            finally
-            {
-                this.schemaLock.Set();
             }
         }
 
@@ -95,21 +96,42 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>An <c>AttributeType</c> value</returns>
         public async Task<AttributeType> GetAttributeTypeAsync(string attributeName)
         {
-            this.schemaLock.WaitOne();
+            await this.EnsureSchemaLoadedAsync().ConfigureAwait(false);
 
-            await this.LoadSchemaAsync().ConfigureAwait(false);
-
-            foreach (ObjectTypeDefinition objectType in this.ObjectTypes.Values)
+            using (await this.readWriteLock.ReaderLockAsync())
             {
-                AttributeTypeDefinition attributeType = objectType.Attributes.FirstOrDefault(t => t.SystemName == attributeName);
-
-                if (attributeType != null)
+                foreach (ObjectTypeDefinition objectType in this.ObjectTypes.Values)
                 {
-                    return attributeType.Type;
-                }
-            }
+                    AttributeTypeDefinition attributeType = objectType.Attributes.FirstOrDefault(t => t.SystemName == attributeName);
 
-            throw new NoSuchAttributeException(attributeName);
+                    if (attributeType != null)
+                    {
+                        return attributeType.Type;
+                    }
+                }
+
+                throw new NoSuchAttributeException(attributeName);
+            }
+        }
+
+        public async Task<AttributeTypeDefinition> GetAttributeAsync(string attributeName)
+        {
+            await this.EnsureSchemaLoadedAsync().ConfigureAwait(false);
+
+            using (await this.readWriteLock.ReaderLockAsync())
+            {
+                if (this.AttributeTypes.TryGetValue(attributeName, out var definition))
+                {
+                    return definition;
+                }
+
+                if (this.AttributeTypesCaseInsenstive.TryGetValue(attributeName, out definition))
+                {
+                    return definition;
+                }
+
+                throw new NoSuchAttributeException(attributeName);
+            }
         }
 
         /// <summary>
@@ -120,16 +142,20 @@ namespace Lithnet.ResourceManagement.Client
         /// <exception cref="NoSuchObjectTypeException">Throw when an object type could not be found in the schema with a matching name</exception>
         public async Task<ObjectTypeDefinition> GetObjectTypeAsync(string name)
         {
-            this.schemaLock.WaitOne();
+            await this.EnsureSchemaLoadedAsync().ConfigureAwait(false);
 
-            await this.LoadSchemaAsync().ConfigureAwait(false);
+            using (await this.readWriteLock.ReaderLockAsync())
+            {
+                if (this.ObjectTypes.TryGetValue(name, out var definition))
+                {
+                    return definition;
+                }
 
-            if (this.ObjectTypes.ContainsKey(name))
-            {
-                return this.ObjectTypes[name];
-            }
-            else
-            {
+                if (this.ObjectTypesCaseInsenstive.TryGetValue(name, out definition))
+                {
+                    return definition;
+                }
+
                 throw new NoSuchObjectTypeException(name);
             }
         }
@@ -141,11 +167,12 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>True if the object type exists in the schema, false if it does not</returns>
         public async Task<bool> ContainsObjectTypeAsync(string name)
         {
-            this.schemaLock.WaitOne();
+            await this.EnsureSchemaLoadedAsync().ConfigureAwait(false);
 
-            await this.LoadSchemaAsync().ConfigureAwait(false);
-
-            return this.ObjectTypes.ContainsKey(name);
+            using (await this.readWriteLock.ReaderLockAsync())
+            {
+                return this.ObjectTypes.ContainsKey(name);
+            }
         }
 
         /// <summary>
@@ -154,13 +181,14 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>An enumeration of ObjectTypeDefinitions</returns>
         public async IAsyncEnumerable<ObjectTypeDefinition> GetObjectTypesAsync()
         {
-            this.schemaLock.WaitOne();
+            await this.EnsureSchemaLoadedAsync().ConfigureAwait(false);
 
-            await this.LoadSchemaAsync().ConfigureAwait(false);
-
-            foreach (var item in this.ObjectTypes.Values)
+            using (await this.readWriteLock.ReaderLockAsync())
             {
-                yield return item;
+                foreach (var item in this.ObjectTypes.Values)
+                {
+                    yield return item;
+                }
             }
         }
 
@@ -171,21 +199,55 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>A value indicating whether the specific attribute is multivalued</returns>
         public async Task<bool> IsAttributeMultivaluedAsync(string attributeName)
         {
-            this.schemaLock.WaitOne();
+            var attribute = await this.GetAttributeAsync(attributeName).ConfigureAwait(false);
+            return attribute.IsMultivalued;
+        }
 
-            await this.LoadSchemaAsync().ConfigureAwait(false);
 
-            foreach (ObjectTypeDefinition objectType in this.ObjectTypes.Values)
+        /// <summary>
+        /// Validates that an attribute name contains only valid characters
+        /// </summary>
+        /// <param name="attributeName">The name of the attribute to validate</param>
+        public async Task ValidateAttributeNameAsync(string attributeName)
+        {
+            await this.EnsureSchemaLoadedAsync().ConfigureAwait(false);
+
+            using (await this.readWriteLock.ReaderLockAsync())
             {
-                AttributeTypeDefinition attributeType = objectType.Attributes.FirstOrDefault(t => t.SystemName == attributeName);
-
-                if (attributeType != null)
+                if (!this.AttributeNameValidationRegex.IsMatch(attributeName))
                 {
-                    return attributeType.IsMultivalued;
+                    throw new ArgumentException("The attribute name contains invalid characters", nameof(attributeName));
                 }
             }
+        }
 
-            throw new NoSuchAttributeException(attributeName);
+        /// <summary>
+        /// Validates that an object type name contains only valid characters
+        /// </summary>
+        /// <param name="objectTypeName">The name of the object type to validate</param>
+        public async Task ValidateObjectTypeNameAsync(string objectTypeName)
+        {
+            await this.EnsureSchemaLoadedAsync().ConfigureAwait(false);
+
+            using (await this.readWriteLock.ReaderLockAsync())
+            {
+                if (!this.ObjectTypeNameValidationRegex.IsMatch(objectTypeName))
+                {
+                    throw new ArgumentException("The object type name contains invalid characters", nameof(objectTypeName));
+                }
+            }
+        }
+
+        public async Task<string> GetCorrectObjectTypeNameCaseAsync(string name)
+        {
+            var definition = await this.GetObjectTypeAsync(name).ConfigureAwait(false);
+            return definition.SystemName;
+        }
+
+        public async Task<string> GetCorrectAttributeNameCaseAsync(string name)
+        {
+            var definition = await this.GetAttributeAsync(name).ConfigureAwait(false);
+            return definition.SystemName;
         }
 
         /// <summary>
@@ -240,6 +302,9 @@ namespace Lithnet.ResourceManagement.Client
             }
 
             this.ObjectTypes.Clear();
+            this.ObjectTypesCaseInsenstive.Clear();
+            this.AttributeTypes.Clear();
+            this.AttributeTypesCaseInsenstive.Clear();
 
             foreach (XmlSchemaComplexType complexType in metadata.Items.OfType<XmlSchemaComplexType>())
             {
@@ -247,31 +312,33 @@ namespace Lithnet.ResourceManagement.Client
                 {
                     ObjectTypeDefinition definition = new ObjectTypeDefinition(complexType);
                     this.ObjectTypes.TryAdd(definition.SystemName, definition);
+
+                    if (this.ObjectTypesCaseInsenstive.ContainsKey(definition.SystemName))
+                    {
+                        this.ObjectTypesCaseInsenstive.TryRemove(definition.SystemName, out _);
+                    }
+                    else
+                    {
+                        this.ObjectTypesCaseInsenstive.TryAdd(definition.SystemName, definition);
+                    }
+
+                    foreach (var attribute in definition.Attributes)
+                    {
+                        if (!this.AttributeTypes.ContainsKey(attribute.SystemName))
+                        {
+                            this.AttributeTypes.TryAdd(attribute.SystemName, attribute);
+
+                            if (this.AttributeTypesCaseInsenstive.ContainsKey(attribute.SystemName))
+                            {
+                                this.AttributeTypesCaseInsenstive.TryRemove(attribute.SystemName, out _);
+                            }
+                            else
+                            {
+                                this.AttributeTypesCaseInsenstive.TryAdd(attribute.SystemName, attribute);
+                            }
+                        }
+                    }
                 }
-            }
-        }
-
-        /// <summary>
-        /// Validates that an attribute name contains only valid characters
-        /// </summary>
-        /// <param name="attributeName">The name of the attribute to validate</param>
-        public void ValidateAttributeName(string attributeName)
-        {
-            if (!this.AttributeNameValidationRegex.IsMatch(attributeName))
-            {
-                throw new ArgumentException("The attribute name contains invalid characters", nameof(attributeName));
-            }
-        }
-
-        /// <summary>
-        /// Validates that an object type name contains only valid characters
-        /// </summary>
-        /// <param name="objectTypeName">The name of the object type to validate</param>
-        public void ValidateObjectTypeName(string objectTypeName)
-        {
-            if (!this.ObjectTypeNameValidationRegex.IsMatch(objectTypeName))
-            {
-                throw new ArgumentException("The object type name contains invalid characters", nameof(objectTypeName));
             }
         }
 

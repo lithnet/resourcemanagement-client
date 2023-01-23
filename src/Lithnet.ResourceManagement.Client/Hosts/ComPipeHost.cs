@@ -31,7 +31,7 @@ namespace Lithnet.ResourceManagement.Client.Hosts
             }
             catch (Exception ex) when (ex is FileNotFoundException fex || (ex is COMException cex && cex.HResult == -2147221164))
             {
-                var expectedPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "native\\Lithnet.ResourceManagement.Client.Host.exe");
+                var expectedPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "fxhost\\Lithnet.ResourceManagement.Client.Host.exe");
                 if (!File.Exists(expectedPath))
                 {
                     expectedPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Lithnet.ResourceManagement.Client.Host.exe");

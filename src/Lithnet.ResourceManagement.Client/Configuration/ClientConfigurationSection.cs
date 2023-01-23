@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
-using System.IO;
 using System.Reflection;
 
 namespace Lithnet.ResourceManagement.Client
@@ -13,99 +11,59 @@ namespace Lithnet.ResourceManagement.Client
 
         private Type resourceConfigSectionType;
 
+        internal static ResourceManagementClientOptions GetOptionsFromConfiguration()
+        {
+            if (!FrameworkUtilities.IsFramework)
+            {
+                return new ResourceManagementClientOptions();
+            }
+
+            var section = GetConfiguration();
+
+            if (section == null)
+            {
+                return new ResourceManagementClientOptions();
+            }
+
+            return new ResourceManagementClientOptions
+            {
+                BaseUri = section.ResourceManagementServiceBaseAddress?.ToString(),
+                ConcurrentConnectionLimit = section.ConcurrentConnectionLimit,
+                ConnectTimeoutSeconds = section.ReceiveTimeoutSeconds,
+                RecieveTimeoutSeconds = section.ReceiveTimeoutSeconds,
+                SendTimeoutSeconds = section.SendTimeoutSeconds,
+                Password = section.Password,
+                Spn = section.ServicePrincipalName,
+                Username = section.Username
+            };
+        }
+
         internal static ClientConfigurationSection GetConfiguration()
         {
             try
             {
-                HashSet<string> paths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                var entryAssembly = Assembly.GetEntryAssembly(); // If null netstandard breaks
-                var entryAssemblyPath = Assembly.GetEntryAssembly()?.Location;
-                var executingAssemblyPath = Assembly.GetExecutingAssembly()?.Location;
-                var processPath = Process.GetCurrentProcess()?.MainModule?.FileName;
-
-                if (!string.IsNullOrWhiteSpace(entryAssemblyPath))
+                if (ConfigurationManager.GetSection("lithnetResourceManagementClient") is ClientConfigurationSection section)
                 {
-                    paths.Add(entryAssemblyPath + ".config");
-                    paths.Add(Path.Combine(Path.GetDirectoryName(entryAssemblyPath), "lithnet.resourcemanagement.client.dll.config"));
+                    if (section.ElementInformation.IsPresent)
+                    {
+                        return section;
+                    }
                 }
 
-                if (!string.IsNullOrWhiteSpace(executingAssemblyPath))
+                if (ConfigurationManager.GetSection("resourceManagementClient") is ConfigurationSection s2)
                 {
-                    paths.Add(executingAssemblyPath + ".config");
-                    paths.Add(Path.Combine(Path.GetDirectoryName(executingAssemblyPath), "lithnet.resourcemanagement.client.dll.config"));
+                    if (s2.ElementInformation.IsPresent)
+                    {
+                        return new ClientConfigurationSection(s2);
+                    }
                 }
-
-                if (!string.IsNullOrWhiteSpace(processPath))
-                {
-                    paths.Add(processPath + ".config");
-                    paths.Add(Path.Combine(Path.GetDirectoryName(processPath), "lithnet.resourcemanagement.client.dll.config"));
-                }
-
-                var config = LoadConfigFile(paths, entryAssembly != null);
-                return GetConfigSection(config);
             }
             catch (Exception ex)
             {
                 Trace.TraceError($"Unable to load config file\r\n{ex}");
-                return new ClientConfigurationSection();
-            }
-        }
-
-        private static Configuration LoadConfigFile(IEnumerable<string> paths, bool canAskForDefaultExeConfig)
-        {
-            Trace.WriteLine("Searching for config in the following paths");
-            Trace.WriteLine(string.Join("\r\n", paths));
-
-            foreach (var path in paths)
-            {
-                if (File.Exists(path))
-                {
-                    ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap()
-                    {
-                        ExeConfigFilename = path
-                    };
-
-                    Trace.WriteLine($"Loading config file from {path}");
-                    return ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
-                }
-            }
-
-            if (canAskForDefaultExeConfig)
-            {
-                Trace.WriteLine($"Falling back to default config lookup");
-                return ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             }
 
             return null;
-        }
-
-        private static ClientConfigurationSection GetConfigSection(Configuration myConfig)
-        {
-            if (myConfig == null)
-            {
-                return new ClientConfigurationSection();
-            }
-
-            object section = myConfig.GetSection("lithnetResourceManagementClient");
-
-            if (section != null)
-            {
-                if (section is ClientConfigurationSection configurationSection)
-                {
-                    return configurationSection;
-                }
-
-                return new ClientConfigurationSection(section);
-            }
-
-            object s2 = myConfig.GetSection("resourceManagementClient");
-
-            if (s2 != null)
-            {
-                return new ClientConfigurationSection(s2);
-            }
-
-            return new ClientConfigurationSection();
         }
 
         internal ClientConfigurationSection()
@@ -118,7 +76,7 @@ namespace Lithnet.ResourceManagement.Client
             this.resourceConfigSectionType = resourceConfigSection.GetType();
         }
 
-        [ConfigurationProperty("resourceManagementServiceBaseAddress", IsRequired = true, DefaultValue = "http://localhost:5725")]
+        [ConfigurationProperty("resourceManagementServiceBaseAddress", IsRequired = true)]
         public Uri ResourceManagementServiceBaseAddress
         {
             get

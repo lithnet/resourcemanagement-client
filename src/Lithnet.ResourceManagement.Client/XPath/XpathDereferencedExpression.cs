@@ -31,8 +31,8 @@
         public XPathDereferencedExpression(string objectType, string dereferenceAttribute, IXPathQueryObject query, bool wrapFilterXml)
             : base(objectType, query, wrapFilterXml)
         {
+            ResourceManagementSchema.ValidateObjectTypeName(dereferenceAttribute);
             this.DereferenceAttribute = dereferenceAttribute;
-            ResourceManagementSchema.ValidateObjectTypeName(this.DereferenceAttribute);
         }
 
         /// <summary>

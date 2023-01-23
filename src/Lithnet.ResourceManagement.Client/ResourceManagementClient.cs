@@ -7,6 +7,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Xml;
 using Lithnet.ResourceManagement.Client.ResourceManagementService;
+using Microsoft.Extensions.Options;
 using Nito.AsyncEx;
 
 namespace Lithnet.ResourceManagement.Client
@@ -21,16 +22,6 @@ namespace Lithnet.ResourceManagement.Client
     public class ResourceManagementClient
     {
         internal IClientFactory ClientFactory { get; private set; }
-
-        /// <summary>
-        /// The explicit credentials for this client
-        /// </summary>
-        private NetworkCredential creds;
-
-        /// <summary>
-        /// Gets the instance of the lithnetResourceManagementClient section from the configuration file
-        /// </summary>
-        internal static ClientConfigurationSection Configuration { get; }
 
         internal ISchemaClient SchemaClient { get; private set; }
 
@@ -57,70 +48,12 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// Gets the username of the current user
         /// </summary>
-        public string UserName
-        {
-            get
-            {
-                string value;
-
-                if (this.creds != null)
-                {
-                    value = this.creds.UserName;
-                }
-                else
-                {
-                    value = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
-                }
-
-                if (value.IndexOf("\\", StringComparison.Ordinal) >= 0)
-                {
-                    string[] split = value.Split('\\');
-                    return split[1];
-                }
-                else
-                {
-                    return value;
-                }
-            }
-        }
+        public string Username { get; private set; }
 
         /// <summary>
         /// Gets the domain of the current user
         /// </summary>
-        public string Domain
-        {
-            get
-            {
-                string value;
-
-                if (this.creds != null)
-                {
-                    value = this.creds.Domain ?? this.creds.UserName;
-                }
-                else
-                {
-                    value = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
-                }
-
-                if (value.IndexOf("\\", StringComparison.Ordinal) >= 0)
-                {
-                    string[] split = value.Split('\\');
-                    return split[0];
-                }
-                else
-                {
-                    return value;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Initializes the static members of the ResourceManagementClient class
-        /// </summary>
-        static ResourceManagementClient()
-        {
-            Configuration = ClientConfigurationSection.GetConfiguration();
-        }
+        public string Domain { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the ResourceManagementClient class
@@ -128,8 +61,29 @@ namespace Lithnet.ResourceManagement.Client
         /// <example>
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClientCtorExamples.cs" region="ResourceManagementClient()"/>
         /// </example>
-        public ResourceManagementClient() : this(null, null, null)
+        public ResourceManagementClient()
         {
+            ResourceManagementClientOptions options;
+
+            if (FrameworkUtilities.IsFramework)
+            {
+                options = ClientConfigurationSection.GetOptionsFromConfiguration() ?? new ResourceManagementClientOptions();
+            }
+            else
+            {
+                options = new ResourceManagementClientOptions();
+            }
+
+            this.InitializeClients(options);
+        }
+
+        public ResourceManagementClient(IOptions<ResourceManagementClientOptions> options) : this(options.Value)
+        {
+        }
+
+        public ResourceManagementClient(ResourceManagementClientOptions options)
+        {
+            this.InitializeClients(options);
         }
 
         /// <summary>
@@ -142,6 +96,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </example>
         public ResourceManagementClient(NetworkCredential credentials) : this(null, credentials, null)
         {
+
         }
 
         /// <summary>
@@ -169,8 +124,15 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="servicePrincipalName">The service principal name of the Resource Management Service</param>
         public ResourceManagementClient(string baseAddress, NetworkCredential credentials, string servicePrincipalName)
         {
-            this.creds = credentials;
-            this.InitializeClients(baseAddress, servicePrincipalName);
+            ResourceManagementClientOptions options = new ResourceManagementClientOptions()
+            {
+                BaseUri = baseAddress,
+                Spn = servicePrincipalName,
+                Username = string.IsNullOrWhiteSpace(credentials?.Domain) ? credentials?.UserName : $"{credentials.Domain}\\{credentials.UserName}",
+                Password = credentials?.Password
+            };
+
+            this.InitializeClients(options);
         }
 
         /// <summary>
@@ -1425,6 +1387,19 @@ namespace Lithnet.ResourceManagement.Client
         /// </example>
         public async Task<ResourceObject> GetResourceByKeyAsync(string objectType, Dictionary<string, object> attributeValuePairs, IEnumerable<string> attributesToGet, CultureInfo locale)
         {
+            objectType = await this.SchemaClient.GetCorrectObjectTypeNameCaseAsync(objectType);
+
+            if (attributeValuePairs != null)
+            {
+                var fixedKvps = new Dictionary<string, object>();
+                foreach (var kvp in attributeValuePairs)
+                {
+                    fixedKvps.Add(await this.SchemaClient.GetCorrectAttributeNameCaseAsync(kvp.Key), kvp.Value);
+                }
+
+                attributeValuePairs = fixedKvps;
+            }
+
             string filter = XPathFilterBuilder.CreateFilter(objectType, attributeValuePairs, ComparisonOperator.Equals, GroupOperator.And);
 
             attributesToGet ??= (await this.SchemaClient.GetObjectTypeAsync(objectType)).Attributes.Select(t => t.SystemName);
@@ -1876,12 +1851,12 @@ namespace Lithnet.ResourceManagement.Client
                 approvalStatusString = $"ApprovalStatus = '{status}' and ";
             }
 
-            if (this.UserName == null || this.Domain == null)
+            if (this.Username == null || this.Domain == null)
             {
                 throw new InvalidOperationException("The username or domain parameters were unknown");
             }
 
-            string xpath = $"/Approval[{approvalStatusString}Approver=/Person[AccountName = '{this.UserName}' and Domain = '{this.Domain}']]";
+            string xpath = $"/Approval[{approvalStatusString}Approver=/Person[AccountName = '{this.Username}' and Domain = '{this.Domain}']]";
             return await this.GetResourcesAsync(xpath, this.GetObjectType(ObjectTypeNames.Approval).Attributes.Select(t => t.SystemName)).ConfigureAwait(false);
         }
 
@@ -2341,7 +2316,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="attributeName">The name of the attribute to validate</param>
         public void ValidateAttributeName(string attributeName)
         {
-            this.SchemaClient.ValidateAttributeName(attributeName);
+            AsyncContext.Run(async () => await this.SchemaClient.ValidateAttributeNameAsync(attributeName).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -2350,34 +2325,58 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="objectTypeName">The name of the object type to validate</param>
         public void ValidateObjectTypeName(string objectTypeName)
         {
-            this.SchemaClient.ValidateObjectTypeName(objectTypeName);
+            AsyncContext.Run(async () => await this.SchemaClient.ValidateObjectTypeNameAsync(objectTypeName).ConfigureAwait(false));
+        }
+
+        /// <summary>
+        /// Gets the correct casing of the specified object type name
+        /// </summary>
+        /// <param name="name">The name of the object type that may or may not be in the correct case</param>
+        /// <returns>The correct name of the object type</returns>
+        public async Task<string> GetCorrectObjectTypeNameCaseAsync(string name)
+        {
+            return await this.SchemaClient.GetCorrectObjectTypeNameCaseAsync(name);
+        }
+
+        /// <summary>
+        /// Gets the correct casing of the specified object type name
+        /// </summary>
+        /// <param name="name">The name of the object type that may or may not be in the correct case</param>
+        /// <returns>The correct name of the object type</returns>
+        public string GetCorrectObjectTypeName(string name)
+        {
+            return AsyncContext.Run(async () => await this.GetCorrectObjectTypeNameCaseAsync(name).ConfigureAwait(false));
+        }
+
+
+        /// <summary>
+        /// Gets the correct casing of the specified attribute name
+        /// </summary>
+        /// <param name="name">The name of the attribute that may or may not be in the correct case</param>
+        /// <returns>The correct name of the attribute</returns>
+        public async Task<string> GetCorrectAttributeNameCaseAsync(string name)
+        {
+            return await this.SchemaClient.GetCorrectAttributeNameCaseAsync(name);
+        }
+
+        /// <summary>
+        /// Gets the correct casing of the specified attribute name
+        /// </summary>
+        /// <param name="name">The name of the attribute that may or may not be in the correct case</param>
+        /// <returns>The correct name of the attribute</returns>
+        public string GetCorrectAttributeName(string name)
+        {
+            return AsyncContext.Run(async () => await this.GetCorrectAttributeNameCaseAsync(name).ConfigureAwait(false));
         }
 
         /// <summary>
         /// Initializes the WCF bindings, endpoints, and proxy objects
         /// </summary>
-        private void InitializeClients(string baseUri, string spn)
+        private void InitializeClients(ResourceManagementClientOptions options)
         {
-            if (this.creds == null)
-            {
-                if (!string.IsNullOrWhiteSpace(Configuration.Username))
-                {
-                    this.creds = new NetworkCredential(Configuration.Username, Configuration.Password);
-                }
-            }
+            this.SetUsername(options);
 
-            FactoryInitializationParameters p = new FactoryInitializationParameters
-            {
-                BaseUri = baseUri ?? Configuration.ResourceManagementServiceBaseAddress.ToString(),
-                Credentials = this.creds,
-                Spn = spn ?? Configuration.ServicePrincipalName,
-                ConcurrentConnections = Configuration.ConcurrentConnectionLimit,
-                ConnectTimeout = TimeSpan.FromSeconds(Configuration.ReceiveTimeoutSeconds),
-                RecieveTimeout = Configuration.ReceiveTimeoutSeconds,
-                SendTimeout = Configuration.SendTimeoutSeconds
-            };
-
-            this.ClientFactory = Client.ClientFactory.GetOrCreateFactory(p);
+            this.ClientFactory = Client.ClientFactory.GetOrCreateFactory(options);
 
             this.ResourceClient = this.ClientFactory.ResourceClient;
             this.ResourceFactoryClient = this.ClientFactory.ResourceFactoryClient;
@@ -2388,6 +2387,27 @@ namespace Lithnet.ResourceManagement.Client
 #pragma warning disable CS0618 // Type or member is obsolete
             ResourceManagementSchema.schemaClient = this.SchemaClient;
 #pragma warning restore CS0618 // Type or member is obsolete
+        }
+
+        private void SetUsername(ResourceManagementClientOptions options)
+        {
+            string value = options.Username;
+
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                value = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+            }
+
+            if (value.IndexOf("\\", StringComparison.Ordinal) >= 0)
+            {
+                string[] split = value.Split('\\');
+                this.Username = split[1];
+                this.Domain = split[0];
+            }
+            else
+            {
+                this.Username = value;
+            }
         }
     }
 }

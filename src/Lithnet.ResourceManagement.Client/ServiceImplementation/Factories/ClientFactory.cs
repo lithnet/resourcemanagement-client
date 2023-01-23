@@ -12,7 +12,7 @@ namespace Lithnet.ResourceManagement.Client
     {
         private static ConcurrentDictionary<string, IClientFactory> existingFactories = new ConcurrentDictionary<string, IClientFactory>();
 
-        public static IClientFactory GetOrCreateFactory(FactoryInitializationParameters p)
+        public static IClientFactory GetOrCreateFactory(ResourceManagementClientOptions p)
         {
             var factoryId = GetFactoryId(p);
             Trace.WriteLine($"Getting client with id {factoryId}");
@@ -30,12 +30,12 @@ namespace Lithnet.ResourceManagement.Client
                 (id, _) => CreateClientFactory(id, p));
         }
 
-        private static IClientFactory CreateClientFactory(string id, FactoryInitializationParameters p)
+        private static IClientFactory CreateClientFactory(string id, ResourceManagementClientOptions p)
         {
             return AsyncContext.Run(async () => await CreateClientFactoryAsync(id, p).ConfigureAwait(false));
         }
 
-        private static async Task<IClientFactory> CreateClientFactoryAsync(string id, FactoryInitializationParameters p)
+        private static async Task<IClientFactory> CreateClientFactoryAsync(string id, ResourceManagementClientOptions p)
         {
             IClientFactory factory;
             Trace.WriteLine($"New client required for {id}");
@@ -59,18 +59,17 @@ namespace Lithnet.ResourceManagement.Client
             return factory;
         }
 
-        private static string GetFactoryId(FactoryInitializationParameters p)
+        private static string GetFactoryId(ResourceManagementClientOptions p)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(p.BaseUri);
             sb.Append(p.Spn);
-            sb.Append(p.ConcurrentConnections.ToString());
-            sb.Append(p.ConnectTimeout.ToString());
-            sb.Append(p.Credentials?.UserName);
-            sb.Append(p.Credentials?.Password);
-            sb.Append(p.Credentials?.Domain);
-            sb.Append(p.RecieveTimeout.ToString());
-            sb.Append(p.SendTimeout.ToString());
+            sb.Append(p.ConcurrentConnectionLimit.ToString());
+            sb.Append(p.ConnectTimeoutSeconds.ToString());
+            sb.Append(p.Username);
+            sb.Append(p.Password);
+            sb.Append(p.RecieveTimeoutSeconds.ToString());
+            sb.Append(p.RecieveTimeoutSeconds.ToString());
 
             byte[] rawBytes = Encoding.UTF8.GetBytes(sb.ToString());
             var hasher = SHA256.Create();

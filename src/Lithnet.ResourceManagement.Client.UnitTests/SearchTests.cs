@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
@@ -18,7 +20,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public async Task SearchTestAsync()
         {
-            ResourceManagementClient c = new ResourceManagementClient();
+            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
 
             ISearchResultCollection results = await c.GetResourcesAsync("/Set", 200).ConfigureAwait(false);
             Debug.WriteLine("Getting {0} results", results.Count);
@@ -37,7 +39,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void SearchTestSync()
         {
-            ResourceManagementClient c = new ResourceManagementClient();
+            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
 
             ISearchResultCollection results = c.GetResources("/Set", 200);
             Debug.WriteLine("Getting {0} results", results.Count);
@@ -56,7 +58,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void SearchBadFilter()
         {
-            ResourceManagementClient c = new ResourceManagementClient();
+            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
             try
             {
                 ISearchResultCollection results = c.GetResources("!not a filter!", 200);
@@ -78,10 +80,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void SearchTestSyncSortedAsc()
         {
-            ResourceManagementClient c = new ResourceManagementClient();
+            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
             List<SortingAttribute> sortAttributes = new List<SortingAttribute>();
             sortAttributes.Add(new SortingAttribute("AccountName", true));
-            string query = String.Format("/{0}[starts-with('{1}', 'reftest')]", UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName);
+            string query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
 
             ISearchResultCollection results = c.GetResources(query, -1, new string[] { "AccountName" }, sortAttributes);
             ResourceObject[] arrayResults = results.ToArray();
@@ -98,10 +100,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void SearchTestSyncSortedDesc()
         {
-            ResourceManagementClient c = new ResourceManagementClient();
+            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
             List<SortingAttribute> sortAttributes = new List<SortingAttribute>();
             sortAttributes.Add(new SortingAttribute("AccountName", false));
-            string query = String.Format("/{0}[starts-with('{1}', 'reftest')]", UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName);
+            string query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
 
             ISearchResultCollection results = c.GetResources(query, -1, new string[] { "AccountName" }, sortAttributes);
             ResourceObject[] arrayResults = results.ToArray();
@@ -118,10 +120,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public async Task SearchTestAsyncSortedAscAsync()
         {
-            ResourceManagementClient c = new ResourceManagementClient();
+            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
             List<SortingAttribute> sortAttributes = new List<SortingAttribute>();
             sortAttributes.Add(new SortingAttribute("AccountName", true));
-            string query = String.Format("/{0}[starts-with('{1}', 'reftest')]", UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName);
+            string query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
 
             ISearchResultCollection results = await c.GetResourcesAsync(query, -1, new string[] { "AccountName" }, sortAttributes).ConfigureAwait(false);
             ResourceObject[] arrayResults = results.ToArray();
@@ -138,10 +140,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public async Task SearchTestAsyncSortedDescAsync()
         {
-            ResourceManagementClient c = new ResourceManagementClient();
+            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
             List<SortingAttribute> sortAttributes = new List<SortingAttribute>();
             sortAttributes.Add(new SortingAttribute("AccountName", false));
-            string query = String.Format("/{0}[starts-with('{1}', 'reftest')]", UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName);
+            string query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
 
             ISearchResultCollection results = await c.GetResourcesAsync(query, -1, new string[] { "AccountName" }, sortAttributes).ConfigureAwait(false);
             ResourceObject[] arrayResults = results.ToArray();
@@ -158,7 +160,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public async Task SearchTestAsyncNoResultsAsync()
         {
-            ResourceManagementClient c = new ResourceManagementClient();
+            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
 
             ISearchResultCollection results = await c.GetResourcesAsync("Set[DisplayName='...!!!...']", 200).ConfigureAwait(false);
             Debug.WriteLine("Getting {0} results", results.Count);
@@ -178,7 +180,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void SearchTestSyncNoResults()
         {
-            ResourceManagementClient c = new ResourceManagementClient();
+            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
 
             ISearchResultCollection results = c.GetResources("/Set[DisplayName='...!!!...']", 200);
             Debug.WriteLine("Getting {0} results", results.Count);
@@ -198,7 +200,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void SearchTestSyncRestrictedAttributeList()
         {
-            ResourceManagementClient c = new ResourceManagementClient();
+            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
 
             List<string> attributesToGet = new List<string>();
 
@@ -222,8 +224,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public async Task SearchTestPagedResultsSortAscAsync()
         {
-            ResourceManagementClient c = new ResourceManagementClient();
-            string query = String.Format("/{0}[starts-with('{1}', 'reftest')]", UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName);
+            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            string query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
             List<string> attributesToGet = new List<string>() { AttributeNames.AccountName };
             List<SortingAttribute> sortAttributes = new List<SortingAttribute>();
             sortAttributes.Add(new SortingAttribute("AccountName", true));
@@ -267,8 +269,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public async Task SearchTestPagedResultsSortDescAsync()
         {
-            ResourceManagementClient c = new ResourceManagementClient();
-            string query = String.Format("/{0}[starts-with('{1}', 'reftest')]", UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName);
+            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            string query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
             List<string> attributesToGet = new List<string>() { AttributeNames.AccountName };
             List<SortingAttribute> sortAttributes = new List<SortingAttribute>();
             sortAttributes.Add(new SortingAttribute("AccountName", false));
@@ -312,9 +314,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public async Task SearchTestPagedDefaultPageAndSizeSortedDescendingAsync()
         {
-            ResourceManagementClient c = new ResourceManagementClient();
+            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
 
-            var query = String.Format("/{0}[starts-with('{1}', 'reftest')]", UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName);
+            var query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
             var attributesToGet = new List<string>();
             attributesToGet.Add(AttributeNames.AccountName);
 
@@ -335,9 +337,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public async Task SearchTestPagedSortedAscendingAsync()
         {
-            ResourceManagementClient c = new ResourceManagementClient();
+            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
 
-            var query = String.Format("/{0}[starts-with('{1}', 'reftest')]", UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName);
+            var query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
             var attributesToGet = new List<string>();
             attributesToGet.Add(AttributeNames.AccountName);
 
@@ -354,9 +356,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public async Task SearchTestPagedSortedDescendingAsync()
         {
-            ResourceManagementClient c = new ResourceManagementClient();
+            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
 
-            var query = String.Format("/{0}[starts-with('{1}', 'reftest')]", UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName);
+            var query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
             var attributesToGet = new List<string>();
             attributesToGet.Add(AttributeNames.AccountName);
 
@@ -373,8 +375,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void SearchTestResultCount()
         {
-            ResourceManagementClient c = new ResourceManagementClient();
-            var query = String.Format("/{0}[starts-with('{1}', 'reftest')]", UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName);
+            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
 
             Assert.AreEqual(6, c.GetResourceCount(query));
         }

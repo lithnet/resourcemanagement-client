@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
@@ -8,22 +9,22 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void AddBooleanSV()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
             ResourceObject resource = null;
 
             try
             {
                 // Create the empty object
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
                 client.SaveResource(resource);
 
                 // Re-get the object 
                 resource = client.GetResource(resource.ObjectID);
 
                 // Make the changes
-                resource.Attributes[UnitTestHelper.AttributeBooleanSV].SetValue(UnitTestHelper.TestDataBooleanTrue);
+                resource.Attributes[Constants.AttributeBooleanSV].SetValue(Constants.TestDataBooleanTrue);
                 Assert.AreEqual(1, resource.PendingChanges.Count);
-                Assert.AreEqual(UnitTestHelper.TestDataBooleanTrue, resource.Attributes[UnitTestHelper.AttributeBooleanSV].BooleanValue);
+                Assert.AreEqual(Constants.TestDataBooleanTrue, resource.Attributes[Constants.AttributeBooleanSV].BooleanValue);
 
                 // Submit the changes
                 client.SaveResource(resource);
@@ -33,7 +34,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
                 resource = client.GetResource(resource.ObjectID);
 
-                Assert.AreEqual(UnitTestHelper.TestDataBooleanTrue, resource.Attributes[UnitTestHelper.AttributeBooleanSV].BooleanValue);
+                Assert.AreEqual(Constants.TestDataBooleanTrue, resource.Attributes[Constants.AttributeBooleanSV].BooleanValue);
             }
             finally
             {
@@ -47,23 +48,23 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void ModifyBooleanSV()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
             ResourceObject resource = null;
 
             try
             {
                 // Create the empty object
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
-                resource.Attributes[UnitTestHelper.AttributeBooleanSV].SetValue(UnitTestHelper.TestDataBooleanTrue);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+                resource.Attributes[Constants.AttributeBooleanSV].SetValue(Constants.TestDataBooleanTrue);
                 client.SaveResource(resource);
 
                 // Re-get the object 
                 resource = client.GetResource(resource.ObjectID);
 
                 // Make the changes
-                resource.Attributes[UnitTestHelper.AttributeBooleanSV].SetValue(UnitTestHelper.TestDataBooleanFalse);
+                resource.Attributes[Constants.AttributeBooleanSV].SetValue(Constants.TestDataBooleanFalse);
                 Assert.AreEqual(1, resource.PendingChanges.Count);
-                Assert.AreEqual(UnitTestHelper.TestDataBooleanFalse, resource.Attributes[UnitTestHelper.AttributeBooleanSV].BooleanValue);
+                Assert.AreEqual(Constants.TestDataBooleanFalse, resource.Attributes[Constants.AttributeBooleanSV].BooleanValue);
 
                 // Submit the changes
                 client.SaveResource(resource);
@@ -73,7 +74,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
                 resource = client.GetResource(resource.ObjectID);
 
-                Assert.AreEqual(UnitTestHelper.TestDataBooleanFalse, resource.Attributes[UnitTestHelper.AttributeBooleanSV].BooleanValue);
+                Assert.AreEqual(Constants.TestDataBooleanFalse, resource.Attributes[Constants.AttributeBooleanSV].BooleanValue);
             }
             finally
             {
@@ -87,23 +88,23 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void DeleteBooleanSV()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
             ResourceObject resource = null;
 
             try
             {
                 // Create the empty object
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
-                resource.Attributes[UnitTestHelper.AttributeBooleanSV].SetValue(UnitTestHelper.TestDataBooleanTrue);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+                resource.Attributes[Constants.AttributeBooleanSV].SetValue(Constants.TestDataBooleanTrue);
                 client.SaveResource(resource);
 
                 // Re-get the object 
                 resource = client.GetResource(resource.ObjectID);
 
                 // Make the changes
-                resource.Attributes[UnitTestHelper.AttributeBooleanSV].RemoveValue(UnitTestHelper.TestDataBooleanTrue);
+                resource.Attributes[Constants.AttributeBooleanSV].RemoveValue(Constants.TestDataBooleanTrue);
                 Assert.AreEqual(1, resource.PendingChanges.Count);
-                Assert.IsTrue(resource.Attributes[UnitTestHelper.AttributeBooleanSV].IsNull);
+                Assert.IsTrue(resource.Attributes[Constants.AttributeBooleanSV].IsNull);
 
                 // Submit the changes
                 client.SaveResource(resource);
@@ -113,7 +114,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
                 resource = client.GetResource(resource.ObjectID);
 
-                Assert.IsTrue(resource.Attributes[UnitTestHelper.AttributeBooleanSV].IsNull);
+                Assert.IsTrue(resource.Attributes[Constants.AttributeBooleanSV].IsNull);
             }
             finally
             {
@@ -127,13 +128,13 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void DeleteAllValueBooleanSV()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
             ResourceObject resource = null;
 
             try
             {
                 // Create the empty object
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
                 UnitTestHelper.PopulateTestUserData(resource);
                 client.SaveResource(resource);
 
@@ -141,9 +142,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 resource = client.GetResource(resource.ObjectID);
 
                 // Make the changes
-                resource.Attributes[UnitTestHelper.AttributeBooleanSV].RemoveValues();
+                resource.Attributes[Constants.AttributeBooleanSV].RemoveValues();
                 Assert.AreEqual(1, resource.PendingChanges.Count);
-                Assert.IsTrue(resource.Attributes[UnitTestHelper.AttributeBooleanSV].IsNull);
+                Assert.IsTrue(resource.Attributes[Constants.AttributeBooleanSV].IsNull);
 
                 // Submit the changes
                 client.SaveResource(resource);
@@ -152,7 +153,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 Assert.AreEqual(0, resource.PendingChanges.Count);
 
                 resource = client.GetResource(resource.ObjectID);
-                Assert.IsTrue(resource.Attributes[UnitTestHelper.AttributeBooleanSV].IsNull);
+                Assert.IsTrue(resource.Attributes[Constants.AttributeBooleanSV].IsNull);
             }
             finally
             {

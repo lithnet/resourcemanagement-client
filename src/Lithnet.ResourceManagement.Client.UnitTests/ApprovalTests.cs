@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Configuration;
-using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
-using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Threading;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
@@ -42,7 +42,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void TestApprovalForCurrentUser()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
             ResourceObject group = null;
             ResourceObject owner = null;
             ResourceObject member = null;
@@ -116,7 +116,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         private void AddTestUserToGroup(ResourceObject group, ResourceObject member)
         {
-            var newClient = new ResourceManagementClient(this.standardUserCredentials);
+            var options = UnitTestHelper.ServiceProvider.GetService<IOptions<ResourceManagementClientOptions>>();
+            var newClient = new ResourceManagementClient(options.Value.BaseUri, this.standardUserCredentials, options.Value.Spn);
+
             ResourceObject group2 = newClient.GetResource(group.ObjectID);
             group2.AddValue("ExplicitMember", member);
             group2.Save();
@@ -125,7 +127,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void TestRejectionForCurrentUser()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
             ResourceObject group = null;
             ResourceObject owner = null;
             ResourceObject member = null;

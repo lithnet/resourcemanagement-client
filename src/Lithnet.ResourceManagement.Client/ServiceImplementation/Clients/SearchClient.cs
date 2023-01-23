@@ -54,7 +54,24 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                 throw new ArgumentNullException(nameof(filter));
             }
 
-            using (Message requestMessage = MessageComposer.CreateEnumerateMessage(filter, pageSize, attributesToReturn?.ToArray(), sortingAttributes?.ToArray(), locale))
+            List<string> fixedAttributesToReturn = new List<string>();
+            if (attributesToReturn != null)
+            {
+                foreach (var attribute in attributesToReturn)
+                {
+                    fixedAttributesToReturn.Add(await this.client.SchemaClient.GetCorrectAttributeNameCaseAsync(attribute));
+                }
+            }
+
+            if (sortingAttributes != null)
+            {
+                foreach (var attribute in sortingAttributes)
+                {
+                    attribute.AttributeName = await this.client.SchemaClient.GetCorrectAttributeNameCaseAsync(attribute.AttributeName);
+                }
+            }
+
+            using (Message requestMessage = MessageComposer.CreateEnumerateMessage(filter, pageSize, fixedAttributesToReturn?.ToArray(), sortingAttributes?.ToArray(), locale))
             {
                 using (Message responseMessage = await this.channel.EnumerateAsync(requestMessage).ConfigureAwait(false))
                 {

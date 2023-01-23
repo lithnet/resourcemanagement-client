@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
@@ -10,8 +11,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void GetObjectByIDWithAllAttributes()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
-            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
 
             try
             {
@@ -33,8 +34,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void GetObjectByIDStringWithAllAttributes()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
-            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
 
             try
             {
@@ -57,8 +58,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void GetObjectByIDGuidWithAllAttributes()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
-            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
 
             try
             {
@@ -81,9 +82,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void GetObjectByIDWithSelectedAttributes()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
-            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
-            List<string> attributesToGet = new List<string>() { UnitTestHelper.AttributeBooleanSV, UnitTestHelper.AttributeStringSV, UnitTestHelper.AttributeReferenceMV };
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+            List<string> attributesToGet = new List<string>() { Constants.AttributeBooleanSV, Constants.AttributeStringSV, Constants.AttributeReferenceMV };
 
             try
             {
@@ -106,9 +107,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void GetObjectByIDStringWithSelectedAttributes()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
-            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
-            List<string> attributesToGet = new List<string>() { UnitTestHelper.AttributeBooleanSV, UnitTestHelper.AttributeStringSV, UnitTestHelper.AttributeReferenceMV };
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+            List<string> attributesToGet = new List<string>() { Constants.AttributeBooleanSV, Constants.AttributeStringSV, Constants.AttributeReferenceMV };
 
             try
             {
@@ -131,9 +132,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void GetObjectByIDGuidWithSelectedAttributes()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
-            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
-            List<string> attributesToGet = new List<string>() { UnitTestHelper.AttributeBooleanSV, UnitTestHelper.AttributeStringSV, UnitTestHelper.AttributeReferenceMV };
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+            List<string> attributesToGet = new List<string>() { Constants.AttributeBooleanSV, Constants.AttributeStringSV, Constants.AttributeReferenceMV };
 
             try
             {
@@ -156,17 +157,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void GetObjectByKeyWithSelectedAttributes()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
-            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             string newID = Guid.NewGuid().ToString();
-            List<string> attributesToGet = new List<string>() { AttributeNames.AccountName, UnitTestHelper.AttributeBooleanSV, UnitTestHelper.AttributeStringSV, UnitTestHelper.AttributeReferenceMV };
+            List<string> attributesToGet = new List<string>() { AttributeNames.AccountName, Constants.AttributeBooleanSV, Constants.AttributeStringSV, Constants.AttributeReferenceMV };
 
             try
             {
                 UnitTestHelper.PopulateTestUserData(resource, newID);
                 resource.Save();
 
-                resource = client.GetResourceByKey(UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName, newID, attributesToGet);
+                resource = client.GetResourceByKey(Constants.UnitTestObjectTypeName, AttributeNames.AccountName, newID, attributesToGet);
                 UnitTestHelper.ValidateSelectedAttributePresence(resource, attributesToGet);
                 UnitTestHelper.ValidateTestUserData(resource, attributesToGet);
             }
@@ -182,8 +183,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void GetObjectByKeyWithAllAttributes()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
-            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             string newID = Guid.NewGuid().ToString();
 
             try
@@ -191,7 +192,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 UnitTestHelper.PopulateTestUserData(resource, newID);
                 resource.Save();
 
-                resource = client.GetResourceByKey(UnitTestHelper.ObjectTypeUnitTestObjectName, AttributeNames.AccountName, newID);
+                resource = client.GetResourceByKey(Constants.UnitTestObjectTypeName, AttributeNames.AccountName, newID);
 
                 UnitTestHelper.ValidateTestUserData(resource);
             }
@@ -207,21 +208,21 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void GetObjectByMultipleKeysWithSelectedAttributes()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
-            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             string newID = Guid.NewGuid().ToString();
-            List<string> attributesToGet = new List<string>() { AttributeNames.AccountName, UnitTestHelper.AttributeBooleanSV, UnitTestHelper.AttributeStringSV, UnitTestHelper.AttributeReferenceMV };
+            List<string> attributesToGet = new List<string>() { AttributeNames.AccountName, Constants.AttributeBooleanSV, Constants.AttributeStringSV, Constants.AttributeReferenceMV };
 
             Dictionary<string, object> keys = new Dictionary<string, object>();
             keys.Add(AttributeNames.AccountName, newID);
-            keys.Add(UnitTestHelper.AttributeStringSV, UnitTestHelper.TestDataString1);
+            keys.Add(Constants.AttributeStringSV, Constants.TestDataString1);
 
             try
             {
                 UnitTestHelper.PopulateTestUserData(resource, newID);
                 resource.Save();
 
-                resource = client.GetResourceByKey(UnitTestHelper.ObjectTypeUnitTestObjectName, keys, attributesToGet);
+                resource = client.GetResourceByKey(Constants.UnitTestObjectTypeName, keys, attributesToGet);
                 UnitTestHelper.ValidateSelectedAttributePresence(resource, attributesToGet);
                 UnitTestHelper.ValidateTestUserData(resource, attributesToGet);
             }
@@ -237,19 +238,19 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void GetObjectByMultipleKeysWithAllAttributes()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
-            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             string newID = Guid.NewGuid().ToString();
             Dictionary<string, object> keys = new Dictionary<string, object>();
             keys.Add(AttributeNames.AccountName, newID);
-            keys.Add(UnitTestHelper.AttributeStringSV, UnitTestHelper.TestDataString1);
+            keys.Add(Constants.AttributeStringSV, Constants.TestDataString1);
 
             try
             {
                 UnitTestHelper.PopulateTestUserData(resource, newID);
                 resource.Save();
 
-                resource = client.GetResourceByKey(UnitTestHelper.ObjectTypeUnitTestObjectName, keys);
+                resource = client.GetResourceByKey(Constants.UnitTestObjectTypeName, keys);
                 UnitTestHelper.ValidateTestUserData(resource);
             }
             finally
@@ -264,9 +265,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void GetObjectByKeyFailsOnMultipleResults()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
-            ResourceObject resource1 = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
-            ResourceObject resource2 = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            ResourceObject resource1 = client.CreateResource(Constants.UnitTestObjectTypeName);
+            ResourceObject resource2 = client.CreateResource(Constants.UnitTestObjectTypeName);
             string newID = Guid.NewGuid().ToString();
 
             try
@@ -279,7 +280,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
                 try
                 {
-                    resource1 = client.GetResourceByKey(UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringSV, UnitTestHelper.TestDataString1);
+                    resource1 = client.GetResourceByKey(Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, Constants.TestDataString1);
                     Assert.Fail("The expectedXpath exception was not thrown");
                 }
                 catch (TooManyResultsException)
@@ -303,9 +304,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void GetObjectByKeyReturnsNullOnNoResults()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
 
-            ResourceObject resource1 = client.GetResourceByKey(UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringSV, Guid.NewGuid().ToString());
+            ResourceObject resource1 = client.GetResourceByKey(Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, Guid.NewGuid().ToString());
             Assert.IsNull(resource1);
         }
     }

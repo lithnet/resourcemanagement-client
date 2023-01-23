@@ -107,7 +107,7 @@ namespace Lithnet.ResourceManagement.Client.Hosts
 
         private string ProbePath(string path)
         {
-            var expectedPath = Path.Combine(path, "native\\Lithnet.ResourceManagement.Client.Host.exe");
+            var expectedPath = Path.Combine(path, "fxhost\\Lithnet.ResourceManagement.Client.Host.exe");
 
             if (File.Exists(expectedPath))
             {

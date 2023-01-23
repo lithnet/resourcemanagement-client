@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
@@ -9,7 +10,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void DeleteEmptyListResource()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
 
             client.DeleteResources(new List<ResourceObject>());
         }
@@ -17,7 +18,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void DeleteEmptyListUniqueIdentifier()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
 
             client.DeleteResources(new List<UniqueIdentifier>());
         }
@@ -25,9 +26,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void DeleteByID()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
 
-            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource.Save();
 
             client.DeleteResource(resource.ObjectID);
@@ -45,9 +46,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void DeleteByGuid()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
 
-            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource.Save();
 
             client.DeleteResource(resource.ObjectID.GetGuid());
@@ -65,9 +66,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void DeleteByString()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
 
-            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource.Save();
 
             client.DeleteResource(resource.ObjectID.Value);
@@ -85,9 +86,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void DeleteByObject()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
 
-            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource.Save();
 
             client.DeleteResource(resource);
@@ -105,7 +106,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void DeleteByStringNonExistant()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
 
             try
             {
@@ -120,17 +121,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void CompositeDeleteByObjectTest()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
 
-            ResourceObject resource1 = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceObject resource1 = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource1.Save();
             resource1 = client.GetResource(resource1.ObjectID);
 
-            ResourceObject resource2 = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceObject resource2 = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource2.Save();
             resource2 = client.GetResource(resource2.ObjectID);
 
-            ResourceObject resource3 = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceObject resource3 = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource3.Save();
             resource3 = client.GetResource(resource3.ObjectID);
 
@@ -167,17 +168,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestMethod]
         public void CompositeDeleteByIDTest()
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
 
-            ResourceObject resource1 = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceObject resource1 = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource1.Save();
             resource1 = client.GetResource(resource1.ObjectID);
 
-            ResourceObject resource2 = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceObject resource2 = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource2.Save();
             resource2 = client.GetResource(resource2.ObjectID);
 
-            ResourceObject resource3 = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceObject resource3 = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource3.Save();
             resource3 = client.GetResource(resource3.ObjectID);
 

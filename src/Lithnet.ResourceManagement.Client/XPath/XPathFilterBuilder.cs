@@ -6,7 +6,7 @@ namespace Lithnet.ResourceManagement.Client
     /// <summary>
     /// A utility class that provides the ability to build XPath queries
     /// </summary>
-    public class XPathFilterBuilder
+    public static class XPathFilterBuilder
     {
         /// <summary>
         /// Creates an XPath filter for the specified object type and attribute value pair

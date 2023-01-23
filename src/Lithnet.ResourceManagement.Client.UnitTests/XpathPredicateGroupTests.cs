@@ -1,16 +1,17 @@
 ﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
     [TestClass]
     public class XpathPredicateGroupTests
     {
-        private ResourceManagementClient client = new ResourceManagementClient();
+        private ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
 
         public XpathPredicateGroupTests()
         {
-            client.DeleteResources(client.GetResources("/" + UnitTestHelper.ObjectTypeUnitTestObjectName));
+            client.DeleteResources(client.GetResources("/" + Constants.UnitTestObjectTypeName));
         }
 
         [TestMethod]
@@ -18,13 +19,13 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             string testValue1 = "test1";
             string nonMatchValue = "test3";
-            XPathQuery predicate1 = new XPathQuery(UnitTestHelper.AttributeStringSV, ComparisonOperator.Equals, testValue1);
+            XPathQuery predicate1 = new XPathQuery(Constants.AttributeStringSV, ComparisonOperator.Equals, testValue1);
             XPathQueryGroup group = new XPathQueryGroup(GroupOperator.And, predicate1);
 
-            string expected = string.Format("({0} = '{1}')", UnitTestHelper.AttributeStringSV, testValue1);
+            string expected = string.Format("({0} = '{1}')", Constants.AttributeStringSV, testValue1);
 
-            ResourceObject matchObject = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, testValue1);
-            ResourceObject nonMatchObject = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, nonMatchValue);
+            ResourceObject matchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, testValue1);
+            ResourceObject nonMatchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, nonMatchValue);
 
             try
             {
@@ -42,15 +43,15 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             string testValue1 = "test1";
             string testValue2 = "test2";
             string nonMatchValue = "test3";
-            XPathQuery predicate1 = new XPathQuery(UnitTestHelper.AttributeStringSV, ComparisonOperator.Equals, testValue1);
-            XPathQuery predicate2 = new XPathQuery(UnitTestHelper.AttributeStringMV, ComparisonOperator.Equals, testValue2);
+            XPathQuery predicate1 = new XPathQuery(Constants.AttributeStringSV, ComparisonOperator.Equals, testValue1);
+            XPathQuery predicate2 = new XPathQuery(Constants.AttributeStringMV, ComparisonOperator.Equals, testValue2);
             XPathQueryGroup group = new XPathQueryGroup(GroupOperator.And, predicate1, predicate2);
 
-            string expected = string.Format("(({0} = '{1}') and ({2} = '{3}'))", UnitTestHelper.AttributeStringSV, testValue1, UnitTestHelper.AttributeStringMV, testValue2);
+            string expected = string.Format("(({0} = '{1}') and ({2} = '{3}'))", Constants.AttributeStringSV, testValue1, Constants.AttributeStringMV, testValue2);
 
-            ResourceObject matchObject = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, testValue1);
-            ResourceObject nonMatchObject = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, nonMatchValue);
-            matchObject.Attributes[UnitTestHelper.AttributeStringMV].SetValue(testValue2);
+            ResourceObject matchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, testValue1);
+            ResourceObject nonMatchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, nonMatchValue);
+            matchObject.Attributes[Constants.AttributeStringMV].SetValue(testValue2);
             matchObject.Save();
 
             try
@@ -69,14 +70,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             string testValue1 = "test1";
             string testValue2 = "test2";
             string nonMatchValue = "test3";
-            XPathQuery predicate1 = new XPathQuery(UnitTestHelper.AttributeStringSV, ComparisonOperator.Equals, testValue1);
-            XPathQuery predicate2 = new XPathQuery(UnitTestHelper.AttributeStringMV, ComparisonOperator.Equals, testValue2);
+            XPathQuery predicate1 = new XPathQuery(Constants.AttributeStringSV, ComparisonOperator.Equals, testValue1);
+            XPathQuery predicate2 = new XPathQuery(Constants.AttributeStringMV, ComparisonOperator.Equals, testValue2);
             XPathQueryGroup group = new XPathQueryGroup(GroupOperator.Or, predicate1, predicate2);
 
-            string expected = string.Format("(({0} = '{1}') or ({2} = '{3}'))", UnitTestHelper.AttributeStringSV, testValue1, UnitTestHelper.AttributeStringMV, testValue2);
+            string expected = string.Format("(({0} = '{1}') or ({2} = '{3}'))", Constants.AttributeStringSV, testValue1, Constants.AttributeStringMV, testValue2);
 
-            ResourceObject matchObject = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, testValue1);
-            ResourceObject nonMatchObject = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, nonMatchValue);
+            ResourceObject matchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, testValue1);
+            ResourceObject nonMatchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, nonMatchValue);
 
             try
             {
@@ -95,17 +96,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             string testValue2 = "test2";
             long testValue3 = 55L;
             string nonMatchValue = "test3";
-            XPathQuery predicate1 = new XPathQuery(UnitTestHelper.AttributeStringSV, ComparisonOperator.Equals, testValue1);
-            XPathQuery predicate2 = new XPathQuery(UnitTestHelper.AttributeStringMV, ComparisonOperator.Equals, testValue2);
-            XPathQuery predicate3 = new XPathQuery(UnitTestHelper.AttributeIntegerSV, ComparisonOperator.Equals, testValue3);
+            XPathQuery predicate1 = new XPathQuery(Constants.AttributeStringSV, ComparisonOperator.Equals, testValue1);
+            XPathQuery predicate2 = new XPathQuery(Constants.AttributeStringMV, ComparisonOperator.Equals, testValue2);
+            XPathQuery predicate3 = new XPathQuery(Constants.AttributeIntegerSV, ComparisonOperator.Equals, testValue3);
             XPathQueryGroup childGroup = new XPathQueryGroup(GroupOperator.Or, predicate1, predicate2);
             XPathQueryGroup group = new XPathQueryGroup(GroupOperator.And, predicate3, childGroup);
 
-            string expected = string.Format("(({4} = {5}) and (({0} = '{1}') or ({2} = '{3}')))", UnitTestHelper.AttributeStringSV, testValue1, UnitTestHelper.AttributeStringMV, testValue2, UnitTestHelper.AttributeIntegerSV, testValue3);
+            string expected = string.Format("(({4} = {5}) and (({0} = '{1}') or ({2} = '{3}')))", Constants.AttributeStringSV, testValue1, Constants.AttributeStringMV, testValue2, Constants.AttributeIntegerSV, testValue3);
 
-            ResourceObject matchObject = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, testValue1);
-            ResourceObject nonMatchObject = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, nonMatchValue);
-            matchObject.Attributes[UnitTestHelper.AttributeIntegerSV].SetValue(testValue3);
+            ResourceObject matchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, testValue1);
+            ResourceObject nonMatchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, nonMatchValue);
+            matchObject.Attributes[Constants.AttributeIntegerSV].SetValue(testValue3);
             matchObject.Save();
 
             try
@@ -122,7 +123,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             Assert.AreEqual(expectedXpath, group.ToString());
 
-            XPathExpression expression = new XPathExpression(UnitTestHelper.ObjectTypeUnitTestObjectName, group);
+            XPathExpression expression = new XPathExpression(Constants.UnitTestObjectTypeName, group);
 
             ISearchResultCollection results = client.GetResources(expression.ToString());
 

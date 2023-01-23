@@ -6,19 +6,15 @@ namespace Lithnet.ResourceManagement.Client
 {
     internal interface ISchemaClient
     {
-        Regex AttributeNameValidationRegex
-        {
-            get;
-        }
+        Regex AttributeNameValidationRegex { get; }
 
-        Regex ObjectTypeNameValidationRegex
-        {
-            get;
-        }
+        Regex ObjectTypeNameValidationRegex { get; }
 
         Task<bool> ContainsObjectTypeAsync(string name);
 
         Task<AttributeType> GetAttributeTypeAsync(string attributeName);
+        Task<string> GetCorrectAttributeNameCaseAsync(string name);
+        Task<string> GetCorrectObjectTypeNameCaseAsync(string name);
 
         Task<ObjectTypeDefinition> GetObjectTypeAsync(string name);
 
@@ -30,8 +26,8 @@ namespace Lithnet.ResourceManagement.Client
 
         Task RefreshSchemaAsync();
 
-        void ValidateAttributeName(string attributeName);
+        Task ValidateAttributeNameAsync(string attributeName);
 
-        void ValidateObjectTypeName(string objectTypeName);
+        Task ValidateObjectTypeNameAsync(string objectTypeName);
     }
 }

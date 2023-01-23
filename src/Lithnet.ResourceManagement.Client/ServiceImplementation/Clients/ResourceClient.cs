@@ -68,9 +68,18 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                 throw new ArgumentNullException(nameof(id));
             }
 
+            List<string> fixedAttributes = new List<string>();
+            if (attributes != null)
+            {
+                foreach (var attribute in attributes)
+                {
+                    fixedAttributes.Add(await this.client.SchemaClient.GetCorrectAttributeNameCaseAsync(attribute));
+                }
+            }
+
             bool partialResponse = attributes != null;
 
-            using (Message message = MessageComposer.CreateGetMessage(id, attributes?.ToArray(), locale, getPermissions))
+            using (Message message = MessageComposer.CreateGetMessage(id, fixedAttributes.ToArray(), locale, getPermissions))
             {
                 using (Message responseMessage = await this.channel.GetAsync(message).ConfigureAwait(false))
                 {
