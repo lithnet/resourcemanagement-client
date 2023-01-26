@@ -1,4 +1,7 @@
-﻿namespace Lithnet.ResourceManagement.Client
+﻿using System;
+using Nito.AsyncEx;
+
+namespace Lithnet.ResourceManagement.Client
 {
     /// <summary>
     /// An XPath expression that involves dereferencing an attribute
@@ -9,6 +12,8 @@
         /// Gets or sets the name of the attribute to dereference
         /// </summary>
         public string DereferenceAttribute { get; set; }
+
+        public XPathDereferencedExpression() { }
 
         /// <summary>
         /// Initializes a new instance of the XPathDereferencedExpression class
@@ -31,7 +36,6 @@
         public XPathDereferencedExpression(string objectType, string dereferenceAttribute, IXPathQueryObject query, bool wrapFilterXml)
             : base(objectType, query, wrapFilterXml)
         {
-            ResourceManagementSchema.ValidateObjectTypeName(dereferenceAttribute);
             this.DereferenceAttribute = dereferenceAttribute;
         }
 
@@ -39,11 +43,23 @@
         /// Builds the expression using the classes parameters
         /// </summary>
         /// <returns>A string representation of the dereferencing XPath expression</returns>
-        protected override string BuildExpression()
+        private protected override string BuildExpression(IClientFactory clientFactory)
         {
-            string baseFilter = base.BuildExpression();
+            string baseFilter = base.BuildExpression(clientFactory);
 
-            return string.Format("{0}/{1}", baseFilter, this.DereferenceAttribute);
+            if (this.DereferenceAttribute == null)
+            {
+                return baseFilter;
+            }
+
+            var attribute = AsyncContext.Run(async () => await clientFactory.SchemaClient.GetAttributeDefinitionAsync(this.DereferenceAttribute));
+
+            if (attribute.Type != AttributeType.Reference)
+            {
+                throw new InvalidOperationException("The dereference attribute must be a reference type");
+            }
+
+            return string.Format("{0}/{1}", baseFilter, attribute.SystemName);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Nito.AsyncEx;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -26,9 +27,18 @@ namespace Lithnet.ResourceManagement.Client
         /// Initializes a new instance of the XPathExpression class
         /// </summary>
         public XPathExpression()
-            : this(null, null, false)
         {
         }
+
+        /// <summary>
+        /// Initializes a new instance of the XPathExpression class
+        /// </summary>
+        /// <param name="objectType">The type of object to query for</param>
+        public XPathExpression(ObjectTypeDefinition objectType)
+            : this(objectType.SystemName, null, false)
+        {
+        }
+
         /// <summary>
         /// Initializes a new instance of the XPathExpression class
         /// </summary>
@@ -43,8 +53,29 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <param name="objectType">The type of object to query for</param>
         /// <param name="query">The query component for this expression</param>
+        public XPathExpression(ObjectTypeDefinition objectType, IXPathQueryObject query)
+            : this(objectType.SystemName, query, false)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the XPathExpression class
+        /// </summary>
+        /// <param name="objectType">The type of object to query for</param>
+        /// <param name="query">The query component for this expression</param>
         public XPathExpression(string objectType, IXPathQueryObject query)
             : this(objectType, query, false)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the XPathExpression class
+        /// </summary>
+        /// <param name="objectType">The type of object to query for</param>
+        /// <param name="query">The query component for this expression</param>
+        /// <param name="wrapFilterXml">Indicates if the resulting expression should be wrapped in a filter XML element</param>
+        public XPathExpression(ObjectTypeDefinition objectType, IXPathQueryObject query, bool wrapFilterXml)
+            : this(objectType.SystemName, query, false)
         {
         }
 
@@ -65,16 +96,24 @@ namespace Lithnet.ResourceManagement.Client
         /// Builds the XPath expression
         /// </summary>
         /// <returns>The string representation of the expression</returns>
-        protected virtual string BuildExpression()
+        private protected virtual string BuildExpression(IClientFactory clientFactory)
         {
             StringBuilder sb = new StringBuilder();
 
-            if (this.ObjectType != "*")
+            string ot;
+
+            if (string.IsNullOrWhiteSpace(this.ObjectType) || this.ObjectType == "*")
             {
-                ResourceManagementSchema.ValidateObjectTypeName(this.ObjectType);
+                ot = "*";
+            }
+            else
+            {
+                ot = clientFactory == null
+                    ? this.ObjectType
+                    : AsyncContext.Run(async () => await clientFactory.SchemaClient.GetCorrectObjectTypeNameCaseAsync(this.ObjectType));
             }
 
-            sb.AppendFormat("/{0}", this.ObjectType);
+            sb.AppendFormat("/{0}", ot);
 
             if (this.Query != null)
             {
@@ -84,13 +123,30 @@ namespace Lithnet.ResourceManagement.Client
             return sb.ToString();
         }
 
+        public override string ToString()
+        {
+            return this.ToString(null, this.WrapFilterXml);
+        }
+
+        internal string BuildExpression(IClientFactory factory, bool wrapFilterXml)
+        {
+            if (wrapFilterXml)
+            {
+                return this.BuildExpression(factory).ToResourceManagementFilterXml();
+            }
+            else
+            {
+                return this.BuildExpression(factory);
+            }
+        }
+
         /// <summary>
         /// Gets the string representation of the expression
         /// </summary>
         /// <returns>The string representation of the expression</returns>
-        public override string ToString()
+        public string ToString(ResourceManagementClient client)
         {
-            return this.ToString(this.WrapFilterXml);
+            return this.BuildExpression(client?.ClientFactory, this.WrapFilterXml);
         }
 
         /// <summary>
@@ -98,16 +154,9 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <param name="wrapFilterXml">A value that indicates if the expression should be wrapped in an XML filter element</param>
         /// <returns>The string representation of the expression</returns>
-        public string ToString(bool wrapFilterXml)
+        public string ToString(ResourceManagementClient client, bool wrapFilterXml)
         {
-            if (wrapFilterXml)
-            {
-                return this.BuildExpression().ToResourceManagementFilterXml();
-            }
-            else
-            {
-                return this.BuildExpression();
-            }
+            return this.BuildExpression(client?.ClientFactory, wrapFilterXml);
         }
     }
 }

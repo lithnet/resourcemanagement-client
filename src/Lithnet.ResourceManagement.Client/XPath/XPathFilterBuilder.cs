@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Nito.AsyncEx;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -15,11 +16,13 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="attributeName">The name of the attribute to query</param>
         /// <param name="attributeValue">The value of the attribute to query</param>
         /// <returns>An XPath query string</returns>
-        public static string CreateFilter(string objectType, string attributeName, object attributeValue)
+        public static string CreateFilter(ResourceManagementClient client, string objectType, string attributeName, object attributeValue)
         {
+            AttributeTypeDefinition d = AsyncContext.Run(async () => await client.SchemaClient.GetAttributeDefinitionAsync(attributeName));
             AttributeValuePairCollection dictionary = new AttributeValuePairCollection();
-            dictionary.Add(attributeName, attributeValue);
+            dictionary.Add(d, attributeValue);
             return CreateFilter(objectType, dictionary, ComparisonOperator.Equals, GroupOperator.And);
+            ;
         }
 
         /// <summary>
@@ -30,11 +33,12 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="comparisonOperator">The operator used to compare the attribute and value</param>
         /// <param name="attributeValue">The value of the attribute to query</param>
         /// <returns>An XPath query string</returns>
-        public static string CreateFilter(string objectType, string attributeName, ComparisonOperator comparisonOperator, object attributeValue)
+        public static string CreateFilter(ResourceManagementClient client, string objectType, string attributeName, ComparisonOperator comparisonOperator, object attributeValue)
         {
             AttributeValuePairCollection dictionary = new AttributeValuePairCollection();
-            
-            dictionary.Add(attributeName, attributeValue);
+            AttributeTypeDefinition d = AsyncContext.Run(async () => await client.SchemaClient.GetAttributeDefinitionAsync(attributeName));
+
+            dictionary.Add(d, attributeValue);
             return CreateFilter(objectType, dictionary, comparisonOperator, GroupOperator.And);
         }
 
@@ -46,9 +50,10 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="valueComparisonOperator">The operator used to compare the attribute and value pairs</param>
         /// <param name="groupOperator">The operator to use to join the attribute value pair comparisons together</param>
         /// <returns>An XPath query string</returns>
-        public static string CreateFilter(string objectType, Dictionary<string, object> keyValuePairs, ComparisonOperator valueComparisonOperator, GroupOperator groupOperator)
+        public static string CreateFilter(ResourceManagementClient client, string objectType, Dictionary<string, object> keyValuePairs, ComparisonOperator valueComparisonOperator, GroupOperator groupOperator)
         {
-            return CreateFilter(objectType, new XPathQueryGroup(groupOperator, keyValuePairs, valueComparisonOperator));
+            var items = GetAvpFromDictionary(client.ClientFactory, keyValuePairs);
+            return CreateFilter(objectType, new XPathQueryGroup(groupOperator, items, valueComparisonOperator));
         }
 
         /// <summary>
@@ -93,9 +98,11 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="searchAttributeValue">The value of the attribute to query</param>
         /// <param name="referenceAttributeName">The name of the attribute to dereference</param>
         /// <returns>An XPath query string</returns>
-        public static string CreateDereferenceFilter(string searchObjectType, string searchAttributeName, object searchAttributeValue, string referenceAttributeName)
+        public static string CreateDereferenceFilter(ResourceManagementClient client, string searchObjectType, string searchAttributeName, object searchAttributeValue, string referenceAttributeName)
         {
-            XPathQuery predicate = new XPathQuery(searchAttributeName, ComparisonOperator.Equals, searchAttributeValue);
+            AttributeTypeDefinition d = AsyncContext.Run(async () => await client.SchemaClient.GetAttributeDefinitionAsync(searchAttributeName));
+
+            XPathQuery predicate = new XPathQuery(d, ComparisonOperator.Equals, searchAttributeValue);
             return CreateDereferenceFilter(searchObjectType, predicate, referenceAttributeName);
         }
 
@@ -123,9 +130,10 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="groupOperator">The operator to use to join the attribute value pair comparisons together</param>
         /// <param name="referenceAttributeName">The name of the attribute used to dereference the expression</param>
         /// <returns>An XPath query string</returns>
-        public static string CreateDereferenceFilter(string searchObjectType, Dictionary<string, object> keyValuePairs, ComparisonOperator valueComparisonOperator, GroupOperator groupOperator, string referenceAttributeName)
+        public static string CreateDereferenceFilter(ResourceManagementClient client, string searchObjectType, Dictionary<string, object> keyValuePairs, ComparisonOperator valueComparisonOperator, GroupOperator groupOperator, string referenceAttributeName)
         {
-            XPathQueryGroup predicate = new XPathQueryGroup(groupOperator, keyValuePairs, valueComparisonOperator);
+            var items = GetAvpFromDictionary(client.ClientFactory, keyValuePairs);
+            XPathQueryGroup predicate = new XPathQueryGroup(groupOperator, items, valueComparisonOperator);
             return CreateDereferenceFilter(searchObjectType, predicate, referenceAttributeName);
         }
 
@@ -166,6 +174,20 @@ namespace Lithnet.ResourceManagement.Client
             XPathQueryGroup group = new XPathQueryGroup(queryOperator, queries);
             group.GroupOperator = queryOperator;
             return CreateFilter(objectType, group);
+        }
+
+        private static AttributeValuePairCollection GetAvpFromDictionary(IClientFactory clientFactory, Dictionary<string, object> source)
+        {
+            AttributeValuePairCollection items = new AttributeValuePairCollection();
+
+            foreach (var kvp in source)
+            {
+                AttributeTypeDefinition d = AsyncContext.Run(async () => await clientFactory.SchemaClient.GetAttributeDefinitionAsync(kvp.Key));
+
+                items.Add(d, kvp.Value);
+            }
+
+            return items;
         }
     }
 }

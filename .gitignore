@@ -190,3 +190,4 @@ ModelManifest.xml
 /lib
 /src/Lithnet.ResourceManagement.Client.Help/Help
 .vs/
+/src/packages

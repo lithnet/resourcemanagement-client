@@ -24,7 +24,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <param name="attribute">The name of the attribute</param>
         /// <param name="value">The value of the attribute</param>
-        public AttributeValuePairCollection(string attribute, object value)
+        public AttributeValuePairCollection(AttributeTypeDefinition attribute, object value)
         {
             this.Add(attribute, value);
         }
@@ -36,7 +36,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="value1">The value of the attribute in the first pair</param>
         /// <param name="attribute2">The name of the attribute in the second pair</param>
         /// <param name="value2">The value of the attribute in the second pair</param>
-        public AttributeValuePairCollection(string attribute1, object value1, string attribute2, object value2)
+        public AttributeValuePairCollection(AttributeTypeDefinition attribute1, object value1, AttributeTypeDefinition attribute2, object value2)
         {
             this.internalList.Add(new AttributeValuePair(attribute1, value1));
             this.internalList.Add(new AttributeValuePair(attribute2, value2));
@@ -51,7 +51,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="value2">The value of the attribute in the second pair</param>
         /// <param name="attribute3">The name of the attribute in the third pair</param>
         /// <param name="value3">The value of the attribute in the third pair</param>
-        public AttributeValuePairCollection(string attribute1, object value1, string attribute2, object value2, string attribute3, object value3)
+        public AttributeValuePairCollection(AttributeTypeDefinition attribute1, object value1, AttributeTypeDefinition attribute2, object value2, AttributeTypeDefinition attribute3, object value3)
         {
             this.internalList.Add(new AttributeValuePair(attribute1, value1));
             this.internalList.Add(new AttributeValuePair(attribute2, value2));
@@ -69,7 +69,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="value3">The value of the attribute in the third pair</param>
         /// <param name="attribute4">The name of the attribute in the fourth pair</param>
         /// <param name="value4">The value of the attribute in the fourth pair</param>
-        public AttributeValuePairCollection(string attribute1, object value1, string attribute2, object value2, string attribute3, object value3, string attribute4, object value4)
+        public AttributeValuePairCollection(AttributeTypeDefinition attribute1, object value1, AttributeTypeDefinition attribute2, object value2, AttributeTypeDefinition attribute3, object value3, AttributeTypeDefinition attribute4, object value4)
         {
             this.internalList.Add(new AttributeValuePair(attribute1, value1));
             this.internalList.Add(new AttributeValuePair(attribute2, value2));
@@ -82,7 +82,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <param name="attribute">The name of the attribute</param>
         /// <param name="value">The value of the attribute</param>
-        public void Add(string attribute, object value)
+        public void Add(AttributeTypeDefinition attribute, object value)
         {
             this.internalList.Add(new AttributeValuePair(attribute, value));
         }
@@ -91,9 +91,9 @@ namespace Lithnet.ResourceManagement.Client
         /// Removes all instances of the attribute in the collection
         /// </summary>
         /// <param name="attribute">The name of the attribute to remove</param>
-        public void Remove(string attribute)
+        public void Remove(AttributeTypeDefinition attribute)
         {
-            this.internalList.RemoveAll(t => t.AttributeName == attribute);
+            this.internalList.RemoveAll(t => t.Attribute.SystemName == attribute.SystemName);
         }
 
         /// <summary>

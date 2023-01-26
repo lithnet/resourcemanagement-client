@@ -97,18 +97,44 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             ResourceObject objectClass = CreateUnitTestObjectTypeIfDoesntExist();
 
             ResourceObject svStringAttribute = CreateAttributeTypeIfDoesntExist(Constants.AttributeStringSV, null, false, AttributeType.String);
+            Constants.AttributeStringSVDef = client.GetAttributeDefinition(Constants.AttributeStringSV);
+
             ResourceObject mvStringAttribute = CreateAttributeTypeIfDoesntExist(Constants.AttributeStringMV, null, true, AttributeType.String);
+            Constants.AttributeStringMVDef = client.GetAttributeDefinition(Constants.AttributeStringMV);
+
             ResourceObject svIntegerAttribute = CreateAttributeTypeIfDoesntExist(Constants.AttributeIntegerSV, null, false, AttributeType.Integer);
+            Constants.AttributeIntegerSVDef = client.GetAttributeDefinition(Constants.AttributeIntegerSV);
+
             ResourceObject mvIntegerAttribute = CreateAttributeTypeIfDoesntExist(Constants.AttributeIntegerMV, null, true, AttributeType.Integer);
+            Constants.AttributeIntegerMVDef = client.GetAttributeDefinition(Constants.AttributeIntegerMV);
+
             ResourceObject svReferenceAttribute = CreateAttributeTypeIfDoesntExist(Constants.AttributeReferenceSV, null, false, AttributeType.Reference);
+            Constants.AttributeReferenceSVDef = client.GetAttributeDefinition(Constants.AttributeReferenceSV);
+
             ResourceObject mvReferenceAttribute = CreateAttributeTypeIfDoesntExist(Constants.AttributeReferenceMV, null, true, AttributeType.Reference);
+            Constants.AttributeReferenceMVDef = client.GetAttributeDefinition(Constants.AttributeReferenceMV);
+
             ResourceObject svTextAttribute = CreateAttributeTypeIfDoesntExist(Constants.AttributeTextSV, null, false, AttributeType.Text);
+            Constants.AttributeTextSVDef = client.GetAttributeDefinition(Constants.AttributeTextSV);
+
             ResourceObject mvTextAttribute = CreateAttributeTypeIfDoesntExist(Constants.AttributeTextMV, null, true, AttributeType.Text);
+            Constants.AttributeTextMVDef = client.GetAttributeDefinition(Constants.AttributeTextMV);
+
             ResourceObject svDateTimeAttribute = CreateAttributeTypeIfDoesntExist(Constants.AttributeDateTimeSV, null, false, AttributeType.DateTime);
+            Constants.AttributeDateTimeSVDef = client.GetAttributeDefinition(Constants.AttributeDateTimeSV);
+
             ResourceObject mvDateTimeAttribute = CreateAttributeTypeIfDoesntExist(Constants.AttributeDateTimeMV, null, true, AttributeType.DateTime);
+            Constants.AttributeDateTimeMVDef = client.GetAttributeDefinition(Constants.AttributeDateTimeMV);
+
             ResourceObject svBinaryAttribute = CreateAttributeTypeIfDoesntExist(Constants.AttributeBinarySV, null, false, AttributeType.Binary);
+            Constants.AttributeBinarySVDef = client.GetAttributeDefinition(Constants.AttributeBinarySV);
+
             ResourceObject mvBinaryAttribute = CreateAttributeTypeIfDoesntExist(Constants.AttributeBinaryMV, null, true, AttributeType.Binary);
+            Constants.AttributeBinaryMVDef = client.GetAttributeDefinition(Constants.AttributeBinaryMV);
+
             ResourceObject svBooleanAttribute = CreateAttributeTypeIfDoesntExist(Constants.AttributeBooleanSV, null, false, AttributeType.Boolean);
+            Constants.AttributeBooleanSVDef = client.GetAttributeDefinition(Constants.AttributeBooleanSV);
+
             ResourceObject accountNameAttribute = CreateAttributeTypeIfDoesntExist(AttributeNames.AccountName, null, false, AttributeType.String);
 
             CreateBindingIfDoesntExist(objectClass, svStringAttribute);

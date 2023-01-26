@@ -80,5 +80,19 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public static UniqueIdentifier TestDataReference4;
         public static UniqueIdentifier TestDataReference5;
         public static UniqueIdentifier TestDataReference6;
+
+        public static AttributeTypeDefinition AttributeStringSVDef;
+        public static AttributeTypeDefinition AttributeStringMVDef;
+        public static AttributeTypeDefinition AttributeIntegerSVDef;
+        public static AttributeTypeDefinition AttributeIntegerMVDef;
+        public static AttributeTypeDefinition AttributeReferenceSVDef;
+        public static AttributeTypeDefinition AttributeReferenceMVDef;
+        public static AttributeTypeDefinition AttributeTextSVDef;
+        public static AttributeTypeDefinition AttributeTextMVDef;
+        public static AttributeTypeDefinition AttributeDateTimeSVDef;
+        public static AttributeTypeDefinition AttributeDateTimeMVDef;
+        public static AttributeTypeDefinition AttributeBinarySVDef;
+        public static AttributeTypeDefinition AttributeBinaryMVDef;
+        public static AttributeTypeDefinition AttributeBooleanSVDef;
     }
 }

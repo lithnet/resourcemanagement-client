@@ -24,11 +24,6 @@ namespace Lithnet.ResourceManagement.Client
         private AttributeType attributeType;
 
         /// <summary>
-        /// The mutivalued status of the attribute used in the query
-        /// </summary>
-        private bool isMultivalued;
-
-        /// <summary>
         /// The maximum value of an integer that the Resource Management Service web service seems to be able to parse
         /// Technically this should be long.MaxValue, but that throws a parsing error in the web service
         /// </summary>
@@ -59,6 +54,21 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         public object Value { get; private set; }
 
+        public XPathQuery(AttributeTypeDefinition attribute, ComparisonOperator comparisonOperator)
+        {
+            this.SetupBuilder(attribute, comparisonOperator, null, false);
+        }
+
+        public XPathQuery(AttributeTypeDefinition attribute, ComparisonOperator comparisonOperator, object value)
+        {
+            this.SetupBuilder(attribute, comparisonOperator, value, false);
+        }
+
+        public XPathQuery(AttributeTypeDefinition attribute, ComparisonOperator comparisonOperator, object value, bool negate)
+        {
+            this.SetupBuilder(attribute, comparisonOperator, value, negate);
+        }
+
         /// <summary>
         /// Initializes a new instance of the XPathQuery class
         /// </summary>
@@ -67,9 +77,10 @@ namespace Lithnet.ResourceManagement.Client
         /// <remarks>
         /// This constructor only supports the use of the <c>ComparisonOperator.IsPresent</c> and <c>ComparisonOperator.NotPresent</c> values
         /// </remarks>
-        public XPathQuery(string attributeName, ComparisonOperator comparisonOperator)
-            : this(attributeName, comparisonOperator, null, false)
+        public XPathQuery(string attributeName, AttributeType attributeType, ComparisonOperator comparisonOperator)
         {
+            this.SetupBuilder(attributeName, attributeType, comparisonOperator, null, false);
+
         }
 
         /// <summary>
@@ -78,24 +89,9 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="attributeName">The name of the attribute to compare against</param>
         /// <param name="comparisonOperator">The value comparison operator to use</param>
         /// <param name="value">The value to compare against</param>
-        public XPathQuery(string attributeName, ComparisonOperator comparisonOperator, object value)
-            : this(attributeName, comparisonOperator, value, false)
+        public XPathQuery(string attributeName, AttributeType attributeType, ComparisonOperator comparisonOperator, object value)
         {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the XPathQuery class
-        /// </summary>
-        /// <param name="attributeName">The name of the attribute to compare against</param>
-        /// <param name="comparisonOperator">The value comparison operator to use</param>
-        /// <param name="value">The value to compare against</param>
-        /// <param name="negate">Indicates if this query should be negated with the not() operator</param>
-        public XPathQuery(string attributeName, ComparisonOperator comparisonOperator, object value, bool negate)
-        {
-            AttributeType attributeType = ResourceManagementSchema.GetAttributeType(attributeName);
-            bool isMultivalued = ResourceManagementSchema.IsAttributeMultivalued(attributeName);
-
-            this.SetupBuilder(attributeName, comparisonOperator, value, negate, attributeType, isMultivalued);
+            this.SetupBuilder(attributeName, attributeType, comparisonOperator, value, false);
         }
 
         /// <summary>
@@ -105,14 +101,14 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="comparisonOperator">The value comparison operator to use</param>
         /// <param name="value">The value to compare against</param>
         /// <param name="negate">Indicates if this query should be negated with the not() operator</param>
-        /// <param name="attributeType">The data type of the attribute being queried</param>
-        /// <param name="isMultivalued">The multivalued status of the attribute being queried</param>
-        /// <remarks>
-        /// This constructor can be used when a connection to the resource management service not available. The attribute type and multivalued status are not validated against the schema
-        /// </remarks>
-        public XPathQuery(string attributeName, ComparisonOperator comparisonOperator, object value, bool negate, AttributeType attributeType, bool isMultivalued)
+        public XPathQuery(string attributeName, AttributeType attributeType, ComparisonOperator comparisonOperator, object value, bool negate)
         {
-            this.SetupBuilder(attributeName, comparisonOperator, value, negate, attributeType, isMultivalued);
+            this.SetupBuilder(attributeName, attributeType, comparisonOperator, value, negate);
+        }
+
+        private void SetupBuilder(AttributeTypeDefinition attribute, ComparisonOperator comparisonOperator, object value, bool negate)
+        {
+            this.SetupBuilder(attribute.SystemName, attribute.Type, comparisonOperator, value, negate);
         }
 
         /// <summary>
@@ -122,16 +118,12 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="comparisonOperator">THe value comparison operator to use</param>
         /// <param name="value">The value to use in the query</param>
         /// <param name="negate">Indicates if the query should be negated with the not() operator</param>
-        /// <param name="attributeType">The type of the target attribute</param>
-        /// <param name="isMultivalued">The multivalued status of the attribute being queried</param>
-        private void SetupBuilder(string attributeName, ComparisonOperator comparisonOperator, object value, bool negate, AttributeType attributeType, bool isMultivalued)
+        private void SetupBuilder(string attributeName, AttributeType attributeType, ComparisonOperator comparisonOperator, object value, bool negate)
         {
             if (string.IsNullOrWhiteSpace(attributeName))
             {
                 throw new ArgumentNullException(attributeName);
             }
-
-            ResourceManagementSchema.ValidateAttributeName(attributeName);
 
             if (value == null)
             {
@@ -147,7 +139,6 @@ namespace Lithnet.ResourceManagement.Client
             this.Negate = negate;
 
             this.attributeType = attributeType;
-            this.isMultivalued = isMultivalued;
 
             this.ThrowOnInvalidTypeOperatorCombination();
             this.ThrowOnInvalidNegateCombination();

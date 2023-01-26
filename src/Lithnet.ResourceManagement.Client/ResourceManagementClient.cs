@@ -7,6 +7,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Xml;
 using Lithnet.ResourceManagement.Client.ResourceManagementService;
+using Lithnet.ResourceManagement.Client.XPath;
 using Microsoft.Extensions.Options;
 using Nito.AsyncEx;
 
@@ -1389,18 +1390,17 @@ namespace Lithnet.ResourceManagement.Client
         {
             objectType = await this.SchemaClient.GetCorrectObjectTypeNameCaseAsync(objectType);
 
+            var items = new AttributeValuePairCollection();
+
             if (attributeValuePairs != null)
             {
-                var fixedKvps = new Dictionary<string, object>();
                 foreach (var kvp in attributeValuePairs)
                 {
-                    fixedKvps.Add(await this.SchemaClient.GetCorrectAttributeNameCaseAsync(kvp.Key), kvp.Value);
+                    items.Add(await this.SchemaClient.GetAttributeDefinitionAsync(kvp.Key), kvp.Value);
                 }
-
-                attributeValuePairs = fixedKvps;
             }
 
-            string filter = XPathFilterBuilder.CreateFilter(objectType, attributeValuePairs, ComparisonOperator.Equals, GroupOperator.And);
+            string filter = XPathFilterBuilder.CreateFilter(objectType, items, ComparisonOperator.Equals, GroupOperator.And);
 
             attributesToGet ??= (await this.SchemaClient.GetObjectTypeAsync(objectType)).Attributes.Select(t => t.SystemName);
 
@@ -2282,6 +2282,17 @@ namespace Lithnet.ResourceManagement.Client
         }
 
         /// <summary>
+        /// Gets an object type definition from the schema by name
+        /// </summary>
+        /// <param name="name">The system name of the object type</param>
+        /// <returns>A ObjectTypeDefinition with a system name that matches the 'name' parameter</returns>
+        /// <exception cref="NoSuchObjectTypeException">Throw when an object type could not be found in the schema with a matching name</exception>
+        public AttributeTypeDefinition GetAttributeDefinition(string name)
+        {
+            return AsyncContext.Run(async () => await this.SchemaClient.GetAttributeDefinitionAsync(name).ConfigureAwait(false));
+        }
+
+        /// <summary>
         /// Gets a value indicating if the object type exists in the schema
         /// </summary>
         /// <param name="name">The system name of the object type</param>
@@ -2367,6 +2378,11 @@ namespace Lithnet.ResourceManagement.Client
         public string GetCorrectAttributeName(string name)
         {
             return AsyncContext.Run(async () => await this.GetCorrectAttributeNameCaseAsync(name).ConfigureAwait(false));
+        }
+
+        public IExpressionRoot CreateXPathBuilder()
+        {
+            return new XPathFluentBuilder(this.ClientFactory);
         }
 
         /// <summary>

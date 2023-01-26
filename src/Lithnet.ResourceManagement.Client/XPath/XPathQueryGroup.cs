@@ -28,9 +28,10 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// Initializes a new instance of the XpathQueryGroup class
         /// </summary>
-        public XPathQueryGroup()
-            : this(GroupOperator.And, new List<IXPathQueryObject>())
+        internal XPathQueryGroup()
         {
+            this.GroupOperator = GroupOperator.And;
+            this.Queries = new List<IXPathQueryObject>();
         }
 
         /// <summary>
@@ -69,31 +70,13 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="groupOperator">The logical operator to apply to queries within this group</param>
         /// <param name="attributeValuePairs">The attribute and value pairs to query</param>
         /// <param name="valueComparisonOperator">The operator to apply to the individual attribute and value pairs</param>
-        public XPathQueryGroup(GroupOperator groupOperator, AttributeValuePairCollection attributeValuePairs, ComparisonOperator valueComparisonOperator)
+        public XPathQueryGroup(GroupOperator groupOperator, AttributeValuePairCollection attributeValuePairs, ComparisonOperator valueComparisonOperator) 
         {
             this.Queries = new List<IXPathQueryObject>();
 
             foreach (AttributeValuePair value in attributeValuePairs)
             {
-                this.Queries.Add(new XPathQuery(value.AttributeName, valueComparisonOperator, value.Value));
-            }
-
-            this.GroupOperator = groupOperator;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the XpathQueryGroup class
-        /// </summary>
-        /// <param name="groupOperator">The logical operator to apply to queries within this group</param>
-        /// <param name="attributeValuePairs">The attribute and value pairs to query</param>
-        /// <param name="valueComparisonOperator">The operator to apply to the individual attribute and value pairs</param>
-        public XPathQueryGroup(GroupOperator groupOperator, Dictionary<string, object> attributeValuePairs, ComparisonOperator valueComparisonOperator)
-        {
-            this.Queries = new List<IXPathQueryObject>();
-
-            foreach (KeyValuePair<string, object> value in attributeValuePairs)
-            {
-                this.Queries.Add(new XPathQuery(value.Key, valueComparisonOperator, value.Value));
+                this.Queries.Add(new XPathQuery(value.Attribute, valueComparisonOperator, value.Value));
             }
 
             this.GroupOperator = groupOperator;

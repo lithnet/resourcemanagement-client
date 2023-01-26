@@ -19,7 +19,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             string testValue1 = "test1";
             string nonMatchValue = "test3";
-            XPathQuery predicate1 = new XPathQuery(Constants.AttributeStringSV, ComparisonOperator.Equals, testValue1);
+            XPathQuery predicate1 = new XPathQuery(Constants.AttributeStringSVDef, ComparisonOperator.Equals, testValue1);
             XPathQueryGroup group = new XPathQueryGroup(GroupOperator.And, predicate1);
 
             string expected = string.Format("({0} = '{1}')", Constants.AttributeStringSV, testValue1);
@@ -43,8 +43,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             string testValue1 = "test1";
             string testValue2 = "test2";
             string nonMatchValue = "test3";
-            XPathQuery predicate1 = new XPathQuery(Constants.AttributeStringSV, ComparisonOperator.Equals, testValue1);
-            XPathQuery predicate2 = new XPathQuery(Constants.AttributeStringMV, ComparisonOperator.Equals, testValue2);
+            XPathQuery predicate1 = new XPathQuery(Constants.AttributeStringSVDef, ComparisonOperator.Equals, testValue1);
+            XPathQuery predicate2 = new XPathQuery(Constants.AttributeStringMVDef, ComparisonOperator.Equals, testValue2);
             XPathQueryGroup group = new XPathQueryGroup(GroupOperator.And, predicate1, predicate2);
 
             string expected = string.Format("(({0} = '{1}') and ({2} = '{3}'))", Constants.AttributeStringSV, testValue1, Constants.AttributeStringMV, testValue2);
@@ -70,8 +70,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             string testValue1 = "test1";
             string testValue2 = "test2";
             string nonMatchValue = "test3";
-            XPathQuery predicate1 = new XPathQuery(Constants.AttributeStringSV, ComparisonOperator.Equals, testValue1);
-            XPathQuery predicate2 = new XPathQuery(Constants.AttributeStringMV, ComparisonOperator.Equals, testValue2);
+            XPathQuery predicate1 = new XPathQuery(Constants.AttributeStringSVDef, ComparisonOperator.Equals, testValue1);
+            XPathQuery predicate2 = new XPathQuery(Constants.AttributeStringMVDef, ComparisonOperator.Equals, testValue2);
             XPathQueryGroup group = new XPathQueryGroup(GroupOperator.Or, predicate1, predicate2);
 
             string expected = string.Format("(({0} = '{1}') or ({2} = '{3}'))", Constants.AttributeStringSV, testValue1, Constants.AttributeStringMV, testValue2);
@@ -96,9 +96,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             string testValue2 = "test2";
             long testValue3 = 55L;
             string nonMatchValue = "test3";
-            XPathQuery predicate1 = new XPathQuery(Constants.AttributeStringSV, ComparisonOperator.Equals, testValue1);
-            XPathQuery predicate2 = new XPathQuery(Constants.AttributeStringMV, ComparisonOperator.Equals, testValue2);
-            XPathQuery predicate3 = new XPathQuery(Constants.AttributeIntegerSV, ComparisonOperator.Equals, testValue3);
+            XPathQuery predicate1 = new XPathQuery(Constants.AttributeStringSVDef, ComparisonOperator.Equals, testValue1);
+            XPathQuery predicate2 = new XPathQuery(Constants.AttributeStringMVDef, ComparisonOperator.Equals, testValue2);
+            XPathQuery predicate3 = new XPathQuery(Constants.AttributeIntegerSVDef, ComparisonOperator.Equals, testValue3);
             XPathQueryGroup childGroup = new XPathQueryGroup(GroupOperator.Or, predicate1, predicate2);
             XPathQueryGroup group = new XPathQueryGroup(GroupOperator.And, predicate3, childGroup);
 

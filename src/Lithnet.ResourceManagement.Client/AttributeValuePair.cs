@@ -8,7 +8,12 @@
         /// <summary>
         /// The name of the attribute
         /// </summary>
-        public string AttributeName { get; set; }
+        public AttributeTypeDefinition Attribute { get; set; }
+
+        /// <summary>
+        /// The name of the attribute
+        /// </summary>
+        public string AttributeName => this.Attribute?.SystemName;
 
         /// <summary>
         /// The value of the attribute
@@ -27,9 +32,9 @@
         /// </summary>
         /// <param name="attributeName">The name of the attribute</param>
         /// <param name="value">The value of the attribute</param>
-        public AttributeValuePair(string attributeName, object value)
+        public AttributeValuePair(AttributeTypeDefinition attribute, object value)
         {
-            this.AttributeName = attributeName;
+            this.Attribute = attribute;
             this.Value = value;
         }
     }

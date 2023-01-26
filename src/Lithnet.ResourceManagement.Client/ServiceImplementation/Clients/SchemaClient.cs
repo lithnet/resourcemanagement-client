@@ -204,6 +204,11 @@ namespace Lithnet.ResourceManagement.Client
         }
 
 
+        public async Task<AttributeTypeDefinition> GetAttributeDefinitionAsync(string attributeName)
+        {
+            return await this.GetAttributeAsync(attributeName).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Validates that an attribute name contains only valid characters
         /// </summary>

@@ -1,10 +1,11 @@
 ﻿using System;
+using Nito.AsyncEx;
 
 namespace Lithnet.ResourceManagement.Client
 {
     internal static class LdapFilterConverter
     {
-        public static XPathExpression ConvertLdapFilter(string filter)
+        public static XPathExpression ConvertLdapFilter(this ResourceManagementClient client, string filter)
         {
             Uri uri = new Uri(filter, UriKind.RelativeOrAbsolute);
             string query = Uri.UnescapeDataString(uri.Query.Replace("??sub?", string.Empty));
@@ -22,7 +23,7 @@ namespace Lithnet.ResourceManagement.Client
 
             if (t.Kind == TokenKind.Word)
             {
-                expression.Query = ReadQuery(tokenizer, false);
+                expression.Query = ReadQuery(client, tokenizer, false);
             }
             else
             {
@@ -30,11 +31,11 @@ namespace Lithnet.ResourceManagement.Client
                 {
                     case TokenKind.Pipe:
                     case TokenKind.Ampersand:
-                        expression.Query = ReadQueryGroup(tokenizer, false);
+                        expression.Query = ReadQueryGroup(client, tokenizer, false);
                         break;
 
                     case TokenKind.Exclamation:
-                        expression.Query = ReadQuery(tokenizer, true);
+                        expression.Query = ReadQuery(client , tokenizer, true);
                         break;
 
                     default:
@@ -45,7 +46,7 @@ namespace Lithnet.ResourceManagement.Client
             return expression;
         }
 
-        private static XPathQuery ReadQuery(StringTokenizer tokenizer, bool negate)
+        private static XPathQuery ReadQuery(ResourceManagementClient client, StringTokenizer tokenizer, bool negate)
         {
             Token t = tokenizer.CurrentToken;
 
@@ -125,10 +126,11 @@ namespace Lithnet.ResourceManagement.Client
                 }
             }
 
-            return new XPathQuery(attributeName, op, expectedValue, false, AttributeType.String, false);
+            AttributeTypeDefinition d = AsyncContext.Run(async () => await client.SchemaClient.GetAttributeDefinitionAsync(attributeName));
+            return new XPathQuery(d, op, expectedValue, false);
         }
 
-        private static XPathQueryGroup ReadQueryGroup(StringTokenizer tokenizer, bool negate)
+        private static XPathQueryGroup ReadQueryGroup(ResourceManagementClient client, StringTokenizer tokenizer, bool negate)
         {
             XPathQueryGroup group = new XPathQueryGroup();
 
@@ -171,12 +173,12 @@ namespace Lithnet.ResourceManagement.Client
 
                 if (t.Kind == TokenKind.Word)
                 {
-                    group.Queries.Add(ReadQuery(tokenizer, false));
+                    group.Queries.Add(ReadQuery(client, tokenizer, false));
                     //t = tokenizer.Next();
                 }
                 else
                 {
-                    group.Queries.Add(ReadQueryGroup(tokenizer, false));
+                    group.Queries.Add(ReadQueryGroup(client, tokenizer, false));
                     //t = tokenizer.Next();
                 }
             }

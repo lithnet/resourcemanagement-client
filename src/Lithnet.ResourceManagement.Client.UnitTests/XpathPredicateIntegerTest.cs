@@ -30,7 +30,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} = {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSV, ComparisonOperator.Equals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.Equals, GroupOperator.And, matchResource);
             }
             finally
             {
@@ -51,7 +51,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(not({1} = {2}))]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerSV, queryValue, matchResource);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSV, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
             }
             finally
             {
@@ -72,7 +72,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} <= {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerSV, XPathQuery.MaxLong);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSV, ComparisonOperator.IsPresent, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.IsPresent, GroupOperator.And, matchResource);
             }
             finally
             {
@@ -93,7 +93,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(not({1} <= {2}))]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerSV, XPathQuery.MaxLong);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSV, ComparisonOperator.IsNotPresent, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.IsNotPresent, GroupOperator.And, matchResource);
             }
             finally
             {
@@ -114,7 +114,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} > {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSV, ComparisonOperator.GreaterThan, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.GreaterThan, GroupOperator.And, matchResource);
             }
             finally
             {
@@ -135,7 +135,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} >= {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSV, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, matchResource);
             }
             finally
             {
@@ -156,7 +156,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} < {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSV, ComparisonOperator.LessThan, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.LessThan, GroupOperator.And, matchResource);
             }
             finally
             {
@@ -177,7 +177,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} <= {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSV, ComparisonOperator.LessThanOrEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.LessThanOrEquals, GroupOperator.And, matchResource);
             }
             finally
             {
@@ -200,7 +200,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} = {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMV, ComparisonOperator.Equals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.Equals, GroupOperator.And, matchResource);
             }
             finally
             {
@@ -221,7 +221,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(not({1} = {2}))]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerMV, queryValue, matchResource);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMV, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
             }
             finally
             {
@@ -242,7 +242,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} <= {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerMV, XPathQuery.MaxLong);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMV, ComparisonOperator.IsPresent, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.IsPresent, GroupOperator.And, matchResource);
             }
             finally
             {
@@ -263,7 +263,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(not({1} <= {2}))]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerMV, XPathQuery.MaxLong);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMV, ComparisonOperator.IsNotPresent, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.IsNotPresent, GroupOperator.And, matchResource);
             }
             finally
             {
@@ -284,7 +284,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} > {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMV, ComparisonOperator.GreaterThan, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.GreaterThan, GroupOperator.And, matchResource);
             }
             finally
             {
@@ -305,7 +305,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} >= {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMV, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, matchResource);
             }
             finally
             {
@@ -326,7 +326,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} < {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMV, ComparisonOperator.LessThan, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.LessThan, GroupOperator.And, matchResource);
             }
             finally
             {
@@ -347,7 +347,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} <= {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMV, ComparisonOperator.LessThanOrEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.LessThanOrEquals, GroupOperator.And, matchResource);
             }
             finally
             {
@@ -362,7 +362,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeIntegerMV, ComparisonOperator.Contains);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeIntegerMVDef, ComparisonOperator.Contains);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
@@ -373,7 +373,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeIntegerMV, ComparisonOperator.EndsWith);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeIntegerMVDef, ComparisonOperator.EndsWith);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
@@ -384,7 +384,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeIntegerMV, ComparisonOperator.StartsWith);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeIntegerMVDef, ComparisonOperator.StartsWith);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
@@ -395,7 +395,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeIntegerSV, ComparisonOperator.Contains);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeIntegerSVDef, ComparisonOperator.Contains);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
@@ -406,7 +406,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeIntegerSV, ComparisonOperator.EndsWith);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeIntegerSVDef, ComparisonOperator.EndsWith);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
@@ -417,15 +417,15 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeIntegerSV, ComparisonOperator.StartsWith);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeIntegerSVDef, ComparisonOperator.StartsWith);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
 
-        private void SubmitXpath(object value, string expected, string attributeName, ComparisonOperator xpathOp, GroupOperator queryOp, params ResourceObject[] matchResources)
+        private void SubmitXpath(object value, string expected, AttributeTypeDefinition attribute, ComparisonOperator xpathOp, GroupOperator queryOp, params ResourceObject[] matchResources)
         {
-            XPathQuery predicate = new XPathQuery(attributeName, xpathOp, value);
+            XPathQuery predicate = new XPathQuery(attribute, xpathOp, value);
             string xpath = XPathFilterBuilder.CreateFilter(Constants.UnitTestObjectTypeName, queryOp, predicate);
             Assert.AreEqual(expected, xpath);
 

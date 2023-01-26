@@ -13,10 +13,14 @@ namespace Lithnet.ResourceManagement.Client
         Task<bool> ContainsObjectTypeAsync(string name);
 
         Task<AttributeType> GetAttributeTypeAsync(string attributeName);
+
         Task<string> GetCorrectAttributeNameCaseAsync(string name);
+
         Task<string> GetCorrectObjectTypeNameCaseAsync(string name);
 
         Task<ObjectTypeDefinition> GetObjectTypeAsync(string name);
+
+        Task<AttributeTypeDefinition> GetAttributeDefinitionAsync(string name);
 
         IAsyncEnumerable<ObjectTypeDefinition> GetObjectTypesAsync();
 

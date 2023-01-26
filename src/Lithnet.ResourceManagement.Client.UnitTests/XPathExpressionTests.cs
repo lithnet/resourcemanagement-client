@@ -14,18 +14,18 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             client.DeleteResources(client.GetResources("/" + Constants.UnitTestObjectTypeName));
         }
 
-        [TestMethod]
-        public void ThrowOnInvalidAttribute()
-        {
-            try
-            {
-                XPathQuery predicate1 = new XPathQuery("legalName", ComparisonOperator.Equals, "test");
-                XPathQuery predicate2 = new XPathQuery("also:validName", ComparisonOperator.Equals, "test");
-                XPathQuery predicate3 = new XPathQuery("%%%%%", ComparisonOperator.Equals, "test");
-                Assert.Fail("The expected exception was not thrown");
-            }
-            catch { }
-        }
+        //[TestMethod]
+        //public void ThrowOnInvalidAttribute()
+        //{
+        //    try
+        //    {
+        //        XPathQuery predicate1 = new XPathQuery("legalName", ComparisonOperator.Equals, "test");
+        //        XPathQuery predicate2 = new XPathQuery("also:validName", ComparisonOperator.Equals, "test");
+        //        XPathQuery predicate3 = new XPathQuery("%%%%%", ComparisonOperator.Equals, "test");
+        //        Assert.Fail("The expected exception was not thrown");
+        //    }
+        //    catch { }
+        //}
 
         [TestMethod]
         public void ThrowOnInvalidObjectTypeName()
@@ -33,7 +33,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string testValue1 = "test1";
-                XPathQuery predicate1 = new XPathQuery(Constants.AttributeStringSV, ComparisonOperator.Equals, testValue1);
+                XPathQuery predicate1 = new XPathQuery(Constants.AttributeStringSVDef, ComparisonOperator.Equals, testValue1);
                 XPathExpression childExpression = new XPathExpression("legalName", predicate1);
                 childExpression = new XPathExpression("also:legalName", predicate1);
                 childExpression = new XPathExpression("%%%%%", predicate1);
@@ -47,9 +47,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void XpathExpressionNestedTest()
         {
             string testValue1 = "test1";
-            XPathQuery predicate1 = new XPathQuery(Constants.AttributeStringSV, ComparisonOperator.Equals, testValue1);
+            XPathQuery predicate1 = new XPathQuery(Constants.AttributeStringSVDef, ComparisonOperator.Equals, testValue1);
             XPathExpression childExpression = new XPathExpression(Constants.UnitTestObjectTypeName, predicate1);
-            XPathQuery predicate2 = new XPathQuery(Constants.AttributeReferenceSV, ComparisonOperator.Equals, childExpression);
+            XPathQuery predicate2 = new XPathQuery(Constants.AttributeReferenceSVDef, ComparisonOperator.Equals, childExpression);
             XPathExpression expression = new XPathExpression(Constants.UnitTestObjectTypeName, predicate2);
 
             string expected = string.Format("/{0}[({1} = /{0}[({2} = '{3}')])]", Constants.UnitTestObjectTypeName, Constants.AttributeReferenceSV, Constants.AttributeStringSV, testValue1);
@@ -73,7 +73,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void XpathExpressionDereferencedTest()
         {
             string testValue1 = "test1";
-            XPathQuery predicate1 = new XPathQuery(Constants.AttributeStringSV, ComparisonOperator.Equals, testValue1);
+            XPathQuery predicate1 = new XPathQuery(Constants.AttributeStringSVDef, ComparisonOperator.Equals, testValue1);
             XPathDereferencedExpression expression = new XPathDereferencedExpression(Constants.UnitTestObjectTypeName, Constants.AttributeReferenceSV, predicate1);
 
             string expected = string.Format("/{0}[({1} = '{2}')]/{3}", Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, testValue1, Constants.AttributeReferenceSV);
