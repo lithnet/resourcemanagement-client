@@ -7,26 +7,44 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
     [TestClass]
     public class DeleteTests
     {
-        [TestMethod]
-        public void DeleteEmptyListResource()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void DeleteEmptyListResource(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
             client.DeleteResources(new List<ResourceObject>());
         }
 
-        [TestMethod]
-        public void DeleteEmptyListUniqueIdentifier()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void DeleteEmptyListUniqueIdentifier(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
             client.DeleteResources(new List<UniqueIdentifier>());
         }
 
-        [TestMethod]
-        public void DeleteByID()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void DeleteByID(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
             ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource.Save();
@@ -43,10 +61,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void DeleteByGuid()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void DeleteByGuid(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
             ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource.Save();
@@ -63,10 +87,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void DeleteByString()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void DeleteByString(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
             ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource.Save();
@@ -83,10 +113,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void DeleteByObject()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void DeleteByObject(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
             ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource.Save();
@@ -103,10 +139,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void DeleteByStringNonExistant()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void DeleteByStringNonExistant(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
             try
             {
@@ -118,10 +160,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void CompositeDeleteByObjectTest()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void CompositeDeleteByObjectTest(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
             ResourceObject resource1 = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource1.Save();
@@ -165,10 +213,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void CompositeDeleteByIDTest()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void CompositeDeleteByIDTest(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
             ResourceObject resource1 = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource1.Save();

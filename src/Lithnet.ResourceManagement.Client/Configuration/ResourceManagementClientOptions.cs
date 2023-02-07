@@ -41,5 +41,44 @@
         /// The maximum amount of time to wait for outgoing data
         /// </summary>
         public int SendTimeoutSeconds { get; set; } = 60 * 20;
+
+        /// <summary>
+        /// Gets or sets the type of connection to make to the MIM service
+        /// </summary>
+        public ConnectionMode ConnectionMode { get; set; }
+
+        /// <summary>
+        /// Gets or sets the hostname of the RMC proxy service, used for connection scenarios involving dotnet core hosts. If not specified, this defaults to the name of the MIM service
+        /// </summary>
+        public string RemoteProxyHost { get; set; }
+
+        /// <summary>
+        /// Gets or sets the port that the RMC proxy server is listening on. Defaults to 5735.
+        /// </summary>
+        public int RemoteProxyPort { get; set; } = 5735;
+
+        /// <summary>
+        /// Gets or sets the SPN used by the remote proxy service
+        /// </summary>
+        public string RemoteHostSpn { get; set; }
+        
+        public static ResourceManagementClientOptions Clone(ResourceManagementClientOptions original)
+        {
+            return new ResourceManagementClientOptions
+            {
+                BaseUri = original.BaseUri,
+                ConcurrentConnectionLimit = original.ConcurrentConnectionLimit,
+                ConnectionMode = original.ConnectionMode,
+                ConnectTimeoutSeconds = original.ConnectTimeoutSeconds,
+                Password = original.Password,
+                RecieveTimeoutSeconds = original.RecieveTimeoutSeconds,
+                RemoteHostSpn = original.RemoteHostSpn,
+                RemoteProxyHost = original.RemoteProxyHost,
+                RemoteProxyPort = original.RemoteProxyPort,
+                SendTimeoutSeconds = original.SendTimeoutSeconds,
+                Spn = original.Spn,
+                Username = original.Username
+            };
+        }
     }
 }

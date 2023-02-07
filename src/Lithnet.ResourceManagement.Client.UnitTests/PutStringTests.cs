@@ -6,10 +6,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
     [TestClass]
     public class PutStringTests
     {
-        [TestMethod]
-        public void AddStringSV()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void AddStringSV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
@@ -45,10 +51,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void ModifyStringSV()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void ModifyStringSV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
@@ -85,10 +97,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void ModifyStringSVNoUpdate()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void ModifyStringSVNoUpdate(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
@@ -115,10 +133,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void DeleteStringSV()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void DeleteStringSV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
@@ -155,10 +179,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void DeleteAllValueStringSV()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void DeleteAllValueStringSV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
@@ -194,10 +224,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void AddFirstStringMV()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void AddFirstStringMV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
@@ -233,10 +269,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void AddSecondStringMV()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void AddSecondStringMV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
@@ -273,10 +315,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void ReplaceStringMV()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void ReplaceStringMV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
@@ -313,10 +361,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void DeleteFirstValueStringMV()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void DeleteFirstValueStringMV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
@@ -353,10 +407,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void DeleteAllValueStringMV()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void DeleteAllValueStringMV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try

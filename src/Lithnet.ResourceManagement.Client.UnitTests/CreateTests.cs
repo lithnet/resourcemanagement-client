@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
@@ -9,10 +8,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
     [TestClass]
     public class CreateTests
     {
-        [TestMethod]
-        public void CreateFromClientSaveWithClient()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void CreateFromClientSaveWithClient(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
@@ -42,10 +47,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void CreateFromClientSaveOnObject()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void CreateFromClientSaveOnObject(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
@@ -74,10 +85,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void CreateByConstructorSaveOnObject()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void CreateByConstructorSaveOnObject(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
@@ -106,10 +123,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void CreateByConstructorSaveWithClient()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void CreateByConstructorSaveWithClient(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
@@ -138,10 +161,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void CreateByConstructorSaveWithClientComposite()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void CreateByConstructorSaveWithClientComposite(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
             List<ResourceObject> resources = new List<ResourceObject>();
 

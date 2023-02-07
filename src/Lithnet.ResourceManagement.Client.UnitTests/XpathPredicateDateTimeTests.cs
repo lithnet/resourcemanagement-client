@@ -1,24 +1,28 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
     [TestClass]
     public class XpathPredicateDateTimeTests
     {
-        private ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
-
-        public XpathPredicateDateTimeTests()
+        [TestInitialize]
+        public void TestInitialize()
         {
-            client.DeleteResources(client.GetResources("/" + Constants.UnitTestObjectTypeName));
+            UnitTestHelper.DeleteAllTestObjects();
         }
 
         // Single-value tests
 
-        [TestMethod]
-        public void TestSVDateTimeEquals()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVDateTimeEquals(ConnectionMode connectionMode)
         {
             object queryValue = "2000-01-01T00:00:00.000";
             object nonMatchValue = "3000-01-01T00:00:00.000";
@@ -30,7 +34,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} = '{2}')]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.Equals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.Equals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -38,8 +42,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVDateTimeNotEquals()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVDateTimeNotEquals(ConnectionMode connectionMode)
         {
             object queryValue = "2000-01-01T00:00:00.000";
             object nonMatchValue = "2000-01-01T00:00:00.000";
@@ -51,7 +61,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(not({1} = '{2}'))]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeSV, queryValue, matchResource);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.NotEquals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -59,8 +69,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVDateTimeIsPresent()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVDateTimeIsPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
             object nonMatchValue = null;
@@ -72,7 +88,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} <= '{2}')]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeSV, XPathQuery.MaxDate);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.IsPresent, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.IsPresent, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -80,8 +96,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVDateTimeIsNotPresent()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVDateTimeIsNotPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
             object nonMatchValue = "2000-01-01T00:00:00.000";
@@ -93,7 +115,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(not({1} <= '{2}'))]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeSV, XPathQuery.MaxDate);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.IsNotPresent, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.IsNotPresent, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -101,8 +123,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVDateTimeGreaterThan()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVDateTimeGreaterThan(ConnectionMode connectionMode)
         {
             object queryValue = "3000-01-01T00:00:00.000";
             object nonMatchValue = "2000-01-01T00:00:00.000";
@@ -114,7 +142,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} > '{2}')]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.GreaterThan, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.GreaterThan, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -122,8 +150,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVDateTimeGreaterThanFunction()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVDateTimeGreaterThanFunction(ConnectionMode connectionMode)
         {
             object queryValue = "current-dateTime()";
             object nonMatchValue = "2000-01-01T00:00:00.000";
@@ -135,7 +169,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} > {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.GreaterThan, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.GreaterThan, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -143,8 +177,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVDateTimeGreaterThanOrEquals()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVDateTimeGreaterThanOrEquals(ConnectionMode connectionMode)
         {
             object queryValue = "3000-01-01T00:00:00.000";
             object nonMatchValue = "2000-01-01T00:00:00.000";
@@ -156,7 +196,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} >= '{2}')]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -164,8 +204,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVDateTimeGreaterThanOrEqualsFunction()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVDateTimeGreaterThanOrEqualsFunction(ConnectionMode connectionMode)
         {
             object queryValue = "current-dateTime()";
             object nonMatchValue = "2000-01-01T00:00:00.000";
@@ -177,7 +223,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} >= {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -185,8 +231,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVDateTimeLessThan()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVDateTimeLessThan(ConnectionMode connectionMode)
         {
             object queryValue = "2000-01-01T00:00:00.000";
             object nonMatchValue = "2100-01-01T00:00:00.000";
@@ -198,7 +250,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} < '{2}')]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.LessThan, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.LessThan, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -206,8 +258,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVDateTimeLessThanFunction()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVDateTimeLessThanFunction(ConnectionMode connectionMode)
         {
             object queryValue = "current-dateTime()";
             object nonMatchValue = "3000-01-01T00:00:00.000";
@@ -219,7 +277,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} < {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.LessThan, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.LessThan, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -227,8 +285,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVDateTimeLessThanOrEquals()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVDateTimeLessThanOrEquals(ConnectionMode connectionMode)
         {
             object queryValue = "2000-01-01T00:00:00.000";
             object nonMatchValue = "2100-01-01T00:00:00.000";
@@ -240,7 +304,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} <= '{2}')]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.LessThanOrEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.LessThanOrEquals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -248,8 +312,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVDateTimeLessThanOrEqualsFunction()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVDateTimeLessThanOrEqualsFunction(ConnectionMode connectionMode)
         {
             object queryValue = "current-dateTime()";
             object nonMatchValue = "3000-01-01T00:00:00.000";
@@ -261,7 +331,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} <= {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.LessThanOrEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeSVDef, ComparisonOperator.LessThanOrEquals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -271,10 +341,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         // Multivalued tests
 
-        [TestMethod]
-        public void TestMVDateTimeEquals()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVDateTimeEquals(ConnectionMode connectionMode)
         {
-            object queryValue = "2000-01-01T00:00:00.000"; ;
+            object queryValue = "2000-01-01T00:00:00.000";
+            ;
             List<string> nonMatchValue = new List<string>() { "2100-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
             List<string> matchValue = new List<string>() { "2300-01-01T00:00:00.000", "2000-01-01T00:00:00.000" };
 
@@ -284,7 +361,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} = '{2}')]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.Equals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.Equals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -292,8 +369,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVDateTimeNotEquals()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVDateTimeNotEquals(ConnectionMode connectionMode)
         {
             object queryValue = "2000-01-01T00:00:00.000";
             List<string> nonMatchValue = new List<string>() { "2000-01-01T00:00:00.000", "2100-01-01T00:00:00.000" };
@@ -305,7 +388,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(not({1} = '{2}'))]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeMV, queryValue, matchResource);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.NotEquals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -313,8 +396,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVDateTimeIsPresent()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVDateTimeIsPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
             object nonMatchValue = null;
@@ -326,7 +415,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} <= '{2}')]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeMV, XPathQuery.MaxDate);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.IsPresent, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.IsPresent, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -334,8 +423,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVDateTimeIsNotPresent()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVDateTimeIsNotPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
             List<string> nonMatchValue = new List<string>() { "2000-01-01T00:00:00.000", "2100-01-01T00:00:00.000" };
@@ -347,7 +442,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(not({1} <= '{2}'))]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeMV, XPathQuery.MaxDate);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.IsNotPresent, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.IsNotPresent, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -355,8 +450,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVDateTimeGreaterThan()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVDateTimeGreaterThan(ConnectionMode connectionMode)
         {
             object queryValue = "2000-01-01T00:00:00.000";
             List<object> nonMatchValue = new List<object>() { "1900-01-01T00:00:00.000", "1800-01-01T00:00:00.000" };
@@ -368,7 +469,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} > '{2}')]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.GreaterThan, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.GreaterThan, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -376,8 +477,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVDateTimeGreaterThanFunction()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVDateTimeGreaterThanFunction(ConnectionMode connectionMode)
         {
             object queryValue = "current-dateTime()";
             List<object> nonMatchValue = new List<object>() { "1900-01-01T00:00:00.000", "1800-01-01T00:00:00.000" };
@@ -389,7 +496,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} > {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.GreaterThan, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.GreaterThan, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -397,8 +504,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVDateTimeGreaterThanOrEquals()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVDateTimeGreaterThanOrEquals(ConnectionMode connectionMode)
         {
             object queryValue = "2000-01-01T00:00:00.000";
             List<object> nonMatchValue = new List<object>() { "1900-01-01T00:00:00.000", "1800-01-01T00:00:00.000" };
@@ -410,7 +523,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} >= '{2}')]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -418,8 +531,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVDateTimeGreaterThanOrEqualsFunction()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVDateTimeGreaterThanOrEqualsFunction(ConnectionMode connectionMode)
         {
             object queryValue = "current-dateTime()";
             List<object> nonMatchValue = new List<object>() { "1900-01-01T00:00:00.000", "1800-01-01T00:00:00.000" };
@@ -431,7 +550,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} >= {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -439,8 +558,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVDateTimeLessThan()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVDateTimeLessThan(ConnectionMode connectionMode)
         {
             object queryValue = "2000-01-01T00:00:00.000";
             List<object> nonMatchValue = new List<object>() { "2100-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
@@ -452,7 +577,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} < '{2}')]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.LessThan, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.LessThan, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -460,8 +585,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVDateTimeLessThanFunction()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVDateTimeLessThanFunction(ConnectionMode connectionMode)
         {
             object queryValue = "current-dateTime()";
             List<object> nonMatchValue = new List<object>() { "2100-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
@@ -473,7 +604,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} < {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.LessThan, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.LessThan, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -481,8 +612,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVDateTimeLessThanOrEquals()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVDateTimeLessThanOrEquals(ConnectionMode connectionMode)
         {
             object queryValue = "2000-01-01T00:00:00.000";
             List<object> nonMatchValue = new List<object>() { "2100-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
@@ -494,7 +631,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} <= '{2}')]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.LessThanOrEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.LessThanOrEquals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -502,8 +639,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVDateTimeLessThanOrEqualsFunction()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVDateTimeLessThanOrEqualsFunction(ConnectionMode connectionMode)
         {
             object queryValue = "current-dateTime()";
             List<object> nonMatchValue = new List<object>() { "2100-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
@@ -515,7 +658,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} <= {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeDateTimeMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.LessThanOrEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeDateTimeMVDef, ComparisonOperator.LessThanOrEquals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -592,8 +735,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         }
 
 
-        private void SubmitXpath(object value, string expected, AttributeTypeDefinition attribute, ComparisonOperator xpathOp, GroupOperator queryOp, params ResourceObject[] matchResources)
+        private void SubmitXpath(object value, string expected, AttributeTypeDefinition attribute, ComparisonOperator xpathOp, GroupOperator queryOp, ConnectionMode connectionMode, params ResourceObject[] matchResources)
         {
+            var client = UnitTestHelper.GetClient(connectionMode);
+
             XPathQuery predicate = new XPathQuery(attribute, xpathOp, value);
             string xpath = XPathFilterBuilder.CreateFilter(Constants.UnitTestObjectTypeName, queryOp, predicate);
             Assert.AreEqual(expected, xpath);

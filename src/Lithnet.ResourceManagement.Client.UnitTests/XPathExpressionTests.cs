@@ -1,34 +1,26 @@
 ﻿using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
     [TestClass]
     public class XPathExpressionTests
     {
-        private ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
-
-        public XPathExpressionTests()
+        [TestInitialize]
+        public void TestInitialize()
         {
-            client.DeleteResources(client.GetResources("/" + Constants.UnitTestObjectTypeName));
+            UnitTestHelper.DeleteAllTestObjects();
         }
 
-        //[TestMethod]
-        //public void ThrowOnInvalidAttribute()
-        //{
-        //    try
-        //    {
-        //        XPathQuery predicate1 = new XPathQuery("legalName", ComparisonOperator.Equals, "test");
-        //        XPathQuery predicate2 = new XPathQuery("also:validName", ComparisonOperator.Equals, "test");
-        //        XPathQuery predicate3 = new XPathQuery("%%%%%", ComparisonOperator.Equals, "test");
-        //        Assert.Fail("The expected exception was not thrown");
-        //    }
-        //    catch { }
-        //}
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
 
-        [TestMethod]
-        public void ThrowOnInvalidObjectTypeName()
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void ThrowOnInvalidObjectTypeName(ConnectionMode connectionMode)
         {
             try
             {
@@ -43,8 +35,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
-        public void XpathExpressionNestedTest()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void XpathExpressionNestedTest(ConnectionMode connectionMode)
         {
             string testValue1 = "test1";
             XPathQuery predicate1 = new XPathQuery(Constants.AttributeStringSVDef, ComparisonOperator.Equals, testValue1);
@@ -61,7 +59,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             try
             {
-                this.SubmitXpath(expression, expected, childObject1, childObject2, childObject3);
+                this.SubmitXpath(expression, expected, connectionMode, childObject1, childObject2, childObject3);
             }
             finally
             {
@@ -69,8 +67,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void XpathExpressionDereferencedTest()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void XpathExpressionDereferencedTest(ConnectionMode connectionMode)
         {
             string testValue1 = "test1";
             XPathQuery predicate1 = new XPathQuery(Constants.AttributeStringSVDef, ComparisonOperator.Equals, testValue1);
@@ -83,7 +87,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             try
             {
-                this.SubmitXpath(expression, expected, parentObject1);
+                this.SubmitXpath(expression, expected, connectionMode, parentObject1);
             }
             finally
             {
@@ -91,8 +95,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        private void SubmitXpath(XPathExpression expression, string expectedXpath, params ResourceObject[] matchResources)
+        private void SubmitXpath(XPathExpression expression, string expectedXpath, ConnectionMode connectionMode, params ResourceObject[] matchResources)
         {
+            var client = UnitTestHelper.GetClient(connectionMode);
+
             Assert.AreEqual(expectedXpath, expression.ToString());
 
             ISearchResultCollection results = client.GetResources(expression.ToString());

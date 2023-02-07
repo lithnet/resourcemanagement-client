@@ -31,7 +31,7 @@ namespace Lithnet.ResourceManagement.Client.Host
 
                 Logger.LogTrace($"Creating new pipe instance: {pipeName}");
 
-                RpcServer rpc = new RpcServer(pipeName);
+                PipeRpcServer rpc = new PipeRpcServer(pipeName);
                 Logger.LogTrace($"RPC server constructed for pipe {pipeName}");
                 instance.Server = rpc;
                 instance.ServerTask = rpc.StartNamedPipeServerAsync(instance.CancellationTokenSource.Token);

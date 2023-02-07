@@ -1,24 +1,28 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
     [TestClass]
     public class XpathQueryBuilderIntegerTests
     {
-        private ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
-
-        public XpathQueryBuilderIntegerTests()
+        [TestInitialize]
+        public void TestInitialize()
         {
-            client.DeleteResources(client.GetResources("/" + Constants.UnitTestObjectTypeName));
+            UnitTestHelper.DeleteAllTestObjects();
         }
 
         // Single-value tests
 
-        [TestMethod]
-        public void TestSVIntegerEquals()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVIntegerEquals(ConnectionMode connectionMode)
         {
             object queryValue = 1;
             object nonMatchValue = 2;
@@ -30,7 +34,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} = {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.Equals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.Equals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -38,8 +42,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVIntegerNotEquals()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVIntegerNotEquals(ConnectionMode connectionMode)
         {
             object queryValue = 1;
             object nonMatchValue = 1;
@@ -51,7 +61,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(not({1} = {2}))]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerSV, queryValue, matchResource);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.NotEquals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -59,8 +69,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVIntegerIsPresent()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVIntegerIsPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
             object nonMatchValue = null;
@@ -72,7 +88,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} <= {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerSV, XPathQuery.MaxLong);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.IsPresent, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.IsPresent, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -80,8 +96,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVIntegerIsNotPresent()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVIntegerIsNotPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
             object nonMatchValue = 1;
@@ -93,7 +115,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(not({1} <= {2}))]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerSV, XPathQuery.MaxLong);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.IsNotPresent, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.IsNotPresent, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -101,8 +123,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVIntegerGreaterThan()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVIntegerGreaterThan(ConnectionMode connectionMode)
         {
             object queryValue = 10;
             object nonMatchValue = 5;
@@ -114,7 +142,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} > {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.GreaterThan, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.GreaterThan, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -122,8 +150,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVIntegerGreaterThanOrEquals()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVIntegerGreaterThanOrEquals(ConnectionMode connectionMode)
         {
             object queryValue = 10;
             object nonMatchValue = 5;
@@ -135,7 +169,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} >= {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -143,8 +177,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVIntegerLessThan()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVIntegerLessThan(ConnectionMode connectionMode)
         {
             object queryValue = 10;
             object nonMatchValue = 15;
@@ -156,7 +196,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} < {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.LessThan, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.LessThan, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -164,8 +204,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVIntegerLessThanOrEquals()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVIntegerLessThanOrEquals(ConnectionMode connectionMode)
         {
             object queryValue = 10;
             object nonMatchValue = 15;
@@ -177,7 +223,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} <= {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.LessThanOrEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerSVDef, ComparisonOperator.LessThanOrEquals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -187,8 +233,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         // Multivalued tests
 
-        [TestMethod]
-        public void TestMVIntegerEquals()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVIntegerEquals(ConnectionMode connectionMode)
         {
             object queryValue = 1;
             List<long> nonMatchValue = new List<long>() { 2, 3 };
@@ -200,7 +252,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} = {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.Equals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.Equals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -208,8 +260,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVIntegerNotEquals()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVIntegerNotEquals(ConnectionMode connectionMode)
         {
             object queryValue = 1;
             List<long> nonMatchValue = new List<long>() { 1, 3 };
@@ -221,7 +279,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(not({1} = {2}))]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerMV, queryValue, matchResource);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.NotEquals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -229,8 +287,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVIntegerIsPresent()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVIntegerIsPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
             object nonMatchValue = null;
@@ -242,7 +306,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} <= {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerMV, XPathQuery.MaxLong);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.IsPresent, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.IsPresent, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -250,8 +314,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVIntegerIsNotPresent()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVIntegerIsNotPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
             List<long> nonMatchValue = new List<long>() { 1, 2 };
@@ -263,7 +333,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(not({1} <= {2}))]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerMV, XPathQuery.MaxLong);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.IsNotPresent, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.IsNotPresent, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -271,8 +341,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVIntegerGreaterThan()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVIntegerGreaterThan(ConnectionMode connectionMode)
         {
             object queryValue = 10;
             List<object> nonMatchValue = new List<object>() { 9, 8 };
@@ -284,7 +360,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} > {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.GreaterThan, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.GreaterThan, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -292,8 +368,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVIntegerGreaterThanOrEquals()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVIntegerGreaterThanOrEquals(ConnectionMode connectionMode)
         {
             object queryValue = 10;
             List<object> nonMatchValue = new List<object>() { 9, 8 };
@@ -305,7 +387,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} >= {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.GreaterThanOrEquals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -313,8 +395,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVIntegerLessThan()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVIntegerLessThan(ConnectionMode connectionMode)
         {
             object queryValue = 10;
             List<object> nonMatchValue = new List<object>() { 15, 20 };
@@ -326,7 +414,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} < {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.LessThan, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.LessThan, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -334,8 +422,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVIntegerLessThanOrEquals()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVIntegerLessThanOrEquals(ConnectionMode connectionMode)
         {
             object queryValue = 10;
             List<object> nonMatchValue = new List<object>() { 15, 20 };
@@ -347,7 +441,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} <= {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeIntegerMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.LessThanOrEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeIntegerMVDef, ComparisonOperator.LessThanOrEquals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -423,8 +517,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        private void SubmitXpath(object value, string expected, AttributeTypeDefinition attribute, ComparisonOperator xpathOp, GroupOperator queryOp, params ResourceObject[] matchResources)
+        private void SubmitXpath(object value, string expected, AttributeTypeDefinition attribute, ComparisonOperator xpathOp, GroupOperator queryOp, ConnectionMode connectionMode, params ResourceObject[] matchResources)
         {
+            var client = UnitTestHelper.GetClient(connectionMode);
+
             XPathQuery predicate = new XPathQuery(attribute, xpathOp, value);
             string xpath = XPathFilterBuilder.CreateFilter(Constants.UnitTestObjectTypeName, queryOp, predicate);
             Assert.AreEqual(expected, xpath);

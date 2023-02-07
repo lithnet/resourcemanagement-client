@@ -1,23 +1,25 @@
 ﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
     [TestClass]
     public class XpathPredicateBooleanTests
     {
-        private ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
-
-        public XpathPredicateBooleanTests()
+        [TestInitialize]
+        public void TestInitialize()
         {
-            client.DeleteResources(client.GetResources("/" + Constants.UnitTestObjectTypeName));
+            UnitTestHelper.DeleteAllTestObjects();
         }
 
-        // Single-value tests
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
 
-        [TestMethod]
-        public void TestSVBooleanEquals()
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVBooleanEquals(ConnectionMode connectionMode)
         {
             object queryValue = true;
             object nonMatchValue = false;
@@ -29,7 +31,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} = {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeBooleanSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeBooleanSVDef, ComparisonOperator.Equals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeBooleanSVDef, ComparisonOperator.Equals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -37,8 +39,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVBooleanNotEquals()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVBooleanNotEquals(ConnectionMode connectionMode)
         {
             object queryValue = true;
             object nonMatchValue = true;
@@ -50,7 +58,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(not({1} = {2}))]", Constants.UnitTestObjectTypeName, Constants.AttributeBooleanSV, queryValue, matchResource);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeBooleanSVDef, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeBooleanSVDef, ComparisonOperator.NotEquals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -58,8 +66,15 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVBooleanIsPresent()
+
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVBooleanIsPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
             object nonMatchValue = null;
@@ -71,7 +86,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(({1} = true) or ({1} = false))]", Constants.UnitTestObjectTypeName, Constants.AttributeBooleanSV, XPathQuery.MaxDate);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeBooleanSVDef, ComparisonOperator.IsPresent, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeBooleanSVDef, ComparisonOperator.IsPresent, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -79,8 +94,15 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVBooleanIsNotPresent()
+
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVBooleanIsNotPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
             object nonMatchValue = true;
@@ -90,13 +112,13 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, nonMatchValue);
 
             matchResource.Refresh();
-            matchResource.Attributes[Constants.AttributeBooleanSV].Value =  null;
+            matchResource.Attributes[Constants.AttributeBooleanSV].Value = null;
             matchResource.Save();
 
             try
             {
                 string expected = string.Format("/{0}[(not(({1} = true) or ({1} = false)))]", Constants.UnitTestObjectTypeName, Constants.AttributeBooleanSV);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeBooleanSVDef, ComparisonOperator.IsNotPresent, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeBooleanSVDef, ComparisonOperator.IsNotPresent, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -184,8 +206,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         }
 
 
-        private void SubmitXpath(object value, string expected, AttributeTypeDefinition attribute, ComparisonOperator xpathOp, GroupOperator queryOp, params ResourceObject[] matchResources)
+        private void SubmitXpath(object value, string expected, AttributeTypeDefinition attribute, ComparisonOperator xpathOp, GroupOperator queryOp, ConnectionMode connectionMode, params ResourceObject[] matchResources)
         {
+            var client = UnitTestHelper.GetClient(connectionMode);
+
             XPathQuery predicate = new XPathQuery(attribute, xpathOp, value);
             string xpath = XPathFilterBuilder.CreateFilter(Constants.UnitTestObjectTypeName, queryOp, predicate);
             Assert.AreEqual(expected, xpath);
@@ -207,7 +231,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             if (results.Count != matchResources.Length)
             {
-               // Assert.Fail("The query returned an unexpected number of results");
+                // Assert.Fail("The query returned an unexpected number of results");
             }
 
             if (!matchResources.All(t => results.Any(u => u.ObjectID == t.ObjectID)))

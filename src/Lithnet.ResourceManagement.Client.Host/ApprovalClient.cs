@@ -10,11 +10,13 @@ namespace Lithnet.ResourceManagement.Client.Host
     {
         private readonly Binding binding;
         private readonly NetworkCredential credentials;
+        private readonly WindowsIdentity impersonationIdentity;
 
-        public ApprovalService(Binding binding, NetworkCredential credentials)
+        public ApprovalService(Binding binding, NetworkCredential credentials, WindowsIdentity impersonationIdentity)
         {
             this.binding = binding;
             this.credentials = credentials;
+            this.impersonationIdentity = impersonationIdentity;
         }
 
         public async Task<Message> ApproveAsync(string endpoint, Message message)
@@ -27,6 +29,14 @@ namespace Lithnet.ResourceManagement.Client.Host
             }
 
             client.ClientCredentials.Windows.AllowedImpersonationLevel = TokenImpersonationLevel.Delegation;
+
+            if (this.impersonationIdentity != null)
+            {
+                using (this.impersonationIdentity.Impersonate())
+                {
+                    client.Open();
+                }
+            }
 
             return await client.CreateAsync(message);
         }

@@ -44,11 +44,11 @@
 		<Copy SourceFiles="@(FilesToCopy)" DestinationFiles="$(OutputPath)testhost.dll.config" />
 	</Target>
 
-	<Target Name="CopyHost" AfterTargets="PostBuildEvent" Condition="$(TargetFrameworkIdentifier) != '.NETFramework'">
-		<CreateItem Include="..\Lithnet.ResourceManagement.Client\bin\$(Configuration)\netstandard2.0\fxhost\*.exe">
-			<Output TaskParameter="Include" ItemName="FilesToCopy" />
+	<Target Name="CopyHost" AfterTargets="PostBuildEvent" >
+		<CreateItem Include="..\Lithnet.ResourceManagement.Client.Host\bin\$(Configuration)\net472\*.exe">
+			<Output TaskParameter="Include" ItemName="FilesToCopy2" />
 		</CreateItem>
-		<Copy SourceFiles="@(FilesToCopy)" DestinationFolder="$(OutputPath)fxhost" />
+		<Copy SourceFiles="@(FilesToCopy2)" DestinationFolder="$(OutputPath)fxhost" />
 	</Target>
 
 </Project>

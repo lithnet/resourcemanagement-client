@@ -52,14 +52,21 @@ namespace Lithnet.ResourceManagement.Client
                 return baseFilter;
             }
 
-            var attribute = AsyncContext.Run(async () => await clientFactory.SchemaClient.GetAttributeDefinitionAsync(this.DereferenceAttribute));
+            var attributeName = this.DereferenceAttribute;
 
-            if (attribute.Type != AttributeType.Reference)
+            if (clientFactory != null)
             {
-                throw new InvalidOperationException("The dereference attribute must be a reference type");
+                var attribute = AsyncContext.Run(async () => await clientFactory.SchemaClient.GetAttributeDefinitionAsync(this.DereferenceAttribute));
+
+                if (attribute.Type != AttributeType.Reference)
+                {
+                    throw new InvalidOperationException("The dereference attribute must be a reference type");
+                }
+
+                attributeName = attribute.SystemName;
             }
 
-            return string.Format("{0}/{1}", baseFilter, attribute.SystemName);
+            return string.Format("{0}/{1}", baseFilter, attributeName);
         }
     }
 }

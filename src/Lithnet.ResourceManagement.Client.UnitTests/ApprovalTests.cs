@@ -39,10 +39,17 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.standardUserCredentials = new NetworkCredential(username, password, domain);
         }
 
-        [TestMethod]
-        public void TestApprovalForCurrentUser()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestApprovalForCurrentUser(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
+
             ResourceObject group = null;
             ResourceObject owner = null;
             ResourceObject member = null;
@@ -73,7 +80,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 {
                     try
                     {
-                        this.AddTestUserToGroup(group, member);
+                        this.AddTestUserToGroup(group, member, connectionMode);
                     }
                     catch (AuthorizationRequiredException ex)
                     {
@@ -114,20 +121,31 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        private void AddTestUserToGroup(ResourceObject group, ResourceObject member)
+        private void AddTestUserToGroup(ResourceObject group, ResourceObject member, ConnectionMode connectionMode)
         {
-            var options = UnitTestHelper.ServiceProvider.GetService<IOptions<ResourceManagementClientOptions>>();
-            var newClient = new ResourceManagementClient(options.Value.BaseUri, this.standardUserCredentials, options.Value.Spn);
+            var original = UnitTestHelper.ServiceProvider.GetService<IOptions<ResourceManagementClientOptions>>();
+            var options = ResourceManagementClientOptions.Clone(original.Value);
+            options.Username = $"{this.standardUserCredentials.Domain}\\{this.standardUserCredentials.UserName}";
+            options.Password = this.standardUserCredentials.Password;
+            options.ConnectionMode = connectionMode;
+
+            var newClient = new ResourceManagementClient(options);
 
             ResourceObject group2 = newClient.GetResource(group.ObjectID);
             group2.AddValue("ExplicitMember", member);
             group2.Save();
         }
 
-        [TestMethod]
-        public void TestRejectionForCurrentUser()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestRejectionForCurrentUser(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject group = null;
             ResourceObject owner = null;
             ResourceObject member = null;
@@ -158,7 +176,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 {
                     try
                     {
-                        this.AddTestUserToGroup(group, member);
+                        this.AddTestUserToGroup(group, member, connectionMode);
                     }
                     catch (AuthorizationRequiredException ex)
                     {

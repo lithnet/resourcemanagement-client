@@ -70,9 +70,9 @@ namespace Lithnet.ResourceManagement.Client.Hosts
                 RmcConfiguration.FxHostPath,
                 Registry.CurrentUser.GetValue("Software\\Lithnet\\ResourceManagementClient\\FxHostPath", null) as string,
                 Registry.LocalMachine.GetValue("Software\\Lithnet\\ResourceManagementClient\\FxHostPath", null) as string,
-                this.GetParentPath(Assembly.GetExecutingAssembly().Location),
-                this.GetParentPath(Assembly.GetCallingAssembly().Location),
-                this.GetParentPath(Assembly.GetEntryAssembly().Location)
+                this.GetParentPath(Assembly.GetExecutingAssembly()?.Location),
+                this.GetParentPath(Assembly.GetCallingAssembly()?.Location),
+                this.GetParentPath(Assembly.GetEntryAssembly()?.Location)
             };
 
             foreach (var probePath in probePaths)

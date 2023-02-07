@@ -23,7 +23,7 @@
 		<SupportUrl>https://github.com/lithnet/resourcemanagement-client</SupportUrl>
 	</PropertyGroup>
 
-	<ItemGroup Condition="$(TargetFramework)!='netstandard2.0'">
+	<ItemGroup Condition="$(TargetFrameworkIdentifier) == '.NETFramework'">
 		<Compile Remove="ServiceImplementation\Factories\RpcClientFactory.cs" />
 	</ItemGroup>
 
@@ -37,11 +37,11 @@
 		<Compile Include="..\Lithnet.ResourceManagement.Client.Host\Shared\Rpc\IApprovalService.cs" Link="Shared\Rpc\IApprovalService.cs" Condition="$(TargetFramework)=='netstandard2.0'" />
 	</ItemGroup>
 
-	<ItemGroup Condition="$(TargetFramework)!='netstandard2.0'">
+	<ItemGroup Condition="$(TargetFrameworkIdentifier) == '.NETFramework'">
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
 	</ItemGroup>
 
-	<ItemGroup Condition="$(TargetFramework)=='netstandard2.0'">
+	<ItemGroup Condition="$(TargetFrameworkIdentifier) != '.NETFramework'">
 		<PackageReference Include="StreamJsonRpc" Version="2.13.33" />
 		<PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
 		<PackageReference Include="System.Reflection.MetadataLoadContext" Version="7.0.0" />
@@ -54,7 +54,7 @@
 		<PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
 	</ItemGroup>
 
-	<ItemGroup Condition="$(TargetFramework)!='netstandard2.0'">
+	<ItemGroup  Condition="$(TargetFrameworkIdentifier) == '.NETFramework'">
 		<Reference Include="System.ServiceModel" />
 		<Reference Include="System.Configuration" />
 	</ItemGroup>
@@ -63,15 +63,6 @@
 		<WCFMetadata Include="Connected Services" />
 	</ItemGroup>
 
-	<PropertyGroup>
-		<TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);GetMyPackageFiles</TargetsForTfmSpecificBuildOutput>
-	</PropertyGroup>
-
-	<Target Name="GetMyPackageFiles">
-		<ItemGroup>
-			<BuildOutputInPackage Include="$(OutputPath)fxhost\Lithnet.ResourceManagement.Client.Host.exe" Condition="$(TargetFramework)=='netstandard2.0'" />
-		</ItemGroup>
-	</Target>
 	<!--<ItemGroup>
 		<Content Include="$(TargetDir)fxhost\*">
 			<Pack>true</Pack>
@@ -79,13 +70,4 @@
 			<PackagePath>content\fxhost</PackagePath>
 		</Content>
 	</ItemGroup>-->
-
-
-	<Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="$(TargetFramework)=='netstandard2.0'">
-		<ItemGroup>
-			<FilesToDelete Include="$(TargetDir)fxhost\*" />
-		</ItemGroup>
-		<Delete Files="@(FilesToDelete)" />
-		<Exec Command="dotnet publish &quot;$(SolutionDir)Lithnet.ResourceManagement.Client.Host\Lithnet.ResourceManagement.Client.Host.csproj&quot; --framework net472 --configuration=$(configuration) --no-self-contained --output  &quot;$(TargetDir)fxhost&quot;" />
-	</Target>
 </Project>

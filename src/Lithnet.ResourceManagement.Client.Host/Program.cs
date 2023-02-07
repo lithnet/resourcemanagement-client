@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Net;
+using System.ServiceProcess;
+using System.Threading;
 using System.Threading.Tasks;
+using Lithnet.ResourceManagement.Server;
 
 namespace Lithnet.ResourceManagement.Client.Host
 {
@@ -46,6 +50,23 @@ namespace Lithnet.ResourceManagement.Client.Host
                         Console.WriteLine(ex.ToString());
                         return 3;
                     }
+                }
+                else if (args[0] == "/servicei")
+                {
+                    var cts = new CancellationTokenSource();
+                    await StreamRpcServer.StartNegotiateStreamServerAsync(IPAddress.IPv6Any, 5735, cts.Token);
+                    return 0;
+                }
+                else if (args[0] == "/service")
+                {
+                    ServiceBase[] ServicesToRun;
+                    ServicesToRun = new ServiceBase[]
+                    {
+                        new ServiceCore()
+                    };
+                    ServiceBase.Run(ServicesToRun);
+
+                    return 0;
                 }
                 else
                 {

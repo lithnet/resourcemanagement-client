@@ -1,21 +1,25 @@
 ﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
     [TestClass]
     public class XpathPredicateGroupTests
     {
-        private ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
-
-        public XpathPredicateGroupTests()
+        [TestInitialize]
+        public void TestInitialize()
         {
-            client.DeleteResources(client.GetResources("/" + Constants.UnitTestObjectTypeName));
+            UnitTestHelper.DeleteAllTestObjects();
         }
 
-        [TestMethod]
-        public void XpathPredicateGroupSingleValueTest()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void XpathPredicateGroupSingleValueTest(ConnectionMode connectionMode)
         {
             string testValue1 = "test1";
             string nonMatchValue = "test3";
@@ -29,7 +33,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             try
             {
-                this.SubmitXpath(group, expected, matchObject);
+                this.SubmitXpath(group, expected, connectionMode, matchObject);
             }
             finally
             {
@@ -37,8 +41,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void XpathPredicateGroupAndTest()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void XpathPredicateGroupAndTest(ConnectionMode connectionMode)
         {
             string testValue1 = "test1";
             string testValue2 = "test2";
@@ -56,7 +66,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             try
             {
-                this.SubmitXpath(group, expected, matchObject);
+                this.SubmitXpath(group, expected, connectionMode, matchObject);
             }
             finally
             {
@@ -64,8 +74,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void XpathPredicateGroupOrTest()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void XpathPredicateGroupOrTest(ConnectionMode connectionMode)
         {
             string testValue1 = "test1";
             string testValue2 = "test2";
@@ -81,7 +97,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             try
             {
-                this.SubmitXpath(group, expected, matchObject);
+                this.SubmitXpath(group, expected, connectionMode, matchObject);
             }
             finally
             {
@@ -89,8 +105,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void XpathPredicateGroupNestedTest()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void XpathPredicateGroupNestedTest(ConnectionMode connectionMode)
         {
             string testValue1 = "test1";
             string testValue2 = "test2";
@@ -111,7 +133,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             try
             {
-                this.SubmitXpath(group, expected, matchObject);
+                this.SubmitXpath(group, expected, connectionMode, matchObject);
             }
             finally
             {
@@ -119,8 +141,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        private void SubmitXpath(XPathQueryGroup group, string expectedXpath, params ResourceObject[] matchResources)
+        private void SubmitXpath(XPathQueryGroup group, string expectedXpath, ConnectionMode connectionMode, params ResourceObject[] matchResources)
         {
+            var client = UnitTestHelper.GetClient(connectionMode);
+
             Assert.AreEqual(expectedXpath, group.ToString());
 
             XPathExpression expression = new XPathExpression(Constants.UnitTestObjectTypeName, group);

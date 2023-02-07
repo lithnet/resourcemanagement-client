@@ -8,10 +8,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
     [TestClass]
     public class GetTests
     {
-        [TestMethod]
-        public void GetObjectByIDWithAllAttributes()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void GetObjectByIDWithAllAttributes(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
 
             try
@@ -31,10 +37,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void GetObjectByIDStringWithAllAttributes()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void GetObjectByIDStringWithAllAttributes(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
 
             try
@@ -55,10 +67,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void GetObjectByIDGuidWithAllAttributes()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void GetObjectByIDGuidWithAllAttributes(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
 
             try
@@ -79,10 +97,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void GetObjectByIDWithSelectedAttributes()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void GetObjectByIDWithSelectedAttributes(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             List<string> attributesToGet = new List<string>() { Constants.AttributeBooleanSV, Constants.AttributeStringSV, Constants.AttributeReferenceMV };
 
@@ -104,10 +128,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void GetObjectByIDStringWithSelectedAttributes()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void GetObjectByIDStringWithSelectedAttributes(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             List<string> attributesToGet = new List<string>() { Constants.AttributeBooleanSV, Constants.AttributeStringSV, Constants.AttributeReferenceMV };
 
@@ -129,10 +159,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void GetObjectByIDGuidWithSelectedAttributes()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void GetObjectByIDGuidWithSelectedAttributes(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             List<string> attributesToGet = new List<string>() { Constants.AttributeBooleanSV, Constants.AttributeStringSV, Constants.AttributeReferenceMV };
 
@@ -154,10 +190,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void GetObjectByKeyWithSelectedAttributes()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void GetObjectByKeyWithSelectedAttributes(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             string newID = Guid.NewGuid().ToString();
             List<string> attributesToGet = new List<string>() { AttributeNames.AccountName, Constants.AttributeBooleanSV, Constants.AttributeStringSV, Constants.AttributeReferenceMV };
@@ -180,10 +222,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void GetObjectByKeyWithAllAttributes()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void GetObjectByKeyWithAllAttributes(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             string newID = Guid.NewGuid().ToString();
 
@@ -205,10 +253,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void GetObjectByMultipleKeysWithSelectedAttributes()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void GetObjectByMultipleKeysWithSelectedAttributes(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             string newID = Guid.NewGuid().ToString();
             List<string> attributesToGet = new List<string>() { AttributeNames.AccountName, Constants.AttributeBooleanSV, Constants.AttributeStringSV, Constants.AttributeReferenceMV };
@@ -235,10 +289,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void GetObjectByMultipleKeysWithAllAttributes()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void GetObjectByMultipleKeysWithAllAttributes(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             string newID = Guid.NewGuid().ToString();
             Dictionary<string, object> keys = new Dictionary<string, object>();
@@ -262,10 +322,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void GetObjectByKeyFailsOnMultipleResults()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void GetObjectByKeyFailsOnMultipleResults(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource1 = client.CreateResource(Constants.UnitTestObjectTypeName);
             ResourceObject resource2 = client.CreateResource(Constants.UnitTestObjectTypeName);
             string newID = Guid.NewGuid().ToString();
@@ -301,10 +367,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void GetObjectByKeyReturnsNullOnNoResults()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void GetObjectByKeyReturnsNullOnNoResults(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
             ResourceObject resource1 = client.GetResourceByKey(Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, Guid.NewGuid().ToString());
             Assert.IsNull(resource1);

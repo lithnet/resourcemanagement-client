@@ -12,17 +12,18 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
     [TestClass]
     public class SearchTests
     {
-        public SearchTests()
-        {
-        //    var x = UnitTestHelper.client;
-        }
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
 
-        [TestMethod]
-        public async Task SearchTestAsync()
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public async Task SearchTestAsync(ConnectionMode connectionMode)
         {
-            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
-            ISearchResultCollection results = await c.GetResourcesAsync("/Set", 200).ConfigureAwait(false);
+            ISearchResultCollection results = await client.GetResourcesAsync("/Set", 200).ConfigureAwait(false);
             Debug.WriteLine("Getting {0} results", results.Count);
 
             int count = 0;
@@ -36,12 +37,18 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual(results.Count, count);
         }
 
-        [TestMethod]
-        public void SearchTestSync()
-        {
-            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
 
-            ISearchResultCollection results = c.GetResources("/Set", 200);
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void SearchTestSync(ConnectionMode connectionMode)
+        {
+            var client = UnitTestHelper.GetClient(connectionMode);
+
+            ISearchResultCollection results = client.GetResources("/Set", 200);
             Debug.WriteLine("Getting {0} results", results.Count);
 
             int count = 0;
@@ -55,13 +62,19 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual(results.Count, count);
         }
 
-        [TestMethod]
-        public void SearchBadFilter()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void SearchBadFilter(ConnectionMode connectionMode)
         {
-            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             try
             {
-                ISearchResultCollection results = c.GetResources("!not a filter!", 200);
+                ISearchResultCollection results = client.GetResources("!not a filter!", 200);
                 Debug.WriteLine("Getting {0} results", results.Count);
 
                 foreach (ResourceObject o in results)
@@ -77,15 +90,21 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.Fail("The expected exception was not thrown");
         }
 
-        [TestMethod]
-        public void SearchTestSyncSortedAsc()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void SearchTestSyncSortedAsc(ConnectionMode connectionMode)
         {
-            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             List<SortingAttribute> sortAttributes = new List<SortingAttribute>();
             sortAttributes.Add(new SortingAttribute("AccountName", true));
             string query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
 
-            ISearchResultCollection results = c.GetResources(query, -1, new string[] { "AccountName" }, sortAttributes);
+            ISearchResultCollection results = client.GetResources(query, -1, new string[] { "AccountName" }, sortAttributes);
             ResourceObject[] arrayResults = results.ToArray();
 
             Assert.AreEqual(6, results.Count);
@@ -97,15 +116,21 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("reftest6", arrayResults[5].Attributes[AttributeNames.AccountName].StringValue);
         }
 
-        [TestMethod]
-        public void SearchTestSyncSortedDesc()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void SearchTestSyncSortedDesc(ConnectionMode connectionMode)
         {
-            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             List<SortingAttribute> sortAttributes = new List<SortingAttribute>();
             sortAttributes.Add(new SortingAttribute("AccountName", false));
             string query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
 
-            ISearchResultCollection results = c.GetResources(query, -1, new string[] { "AccountName" }, sortAttributes);
+            ISearchResultCollection results = client.GetResources(query, -1, new string[] { "AccountName" }, sortAttributes);
             ResourceObject[] arrayResults = results.ToArray();
 
             Assert.AreEqual(6, results.Count);
@@ -117,15 +142,21 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("reftest1", arrayResults[5].Attributes[AttributeNames.AccountName].StringValue);
         }
 
-        [TestMethod]
-        public async Task SearchTestAsyncSortedAscAsync()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public async Task SearchTestAsyncSortedAscAsync(ConnectionMode connectionMode)
         {
-            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             List<SortingAttribute> sortAttributes = new List<SortingAttribute>();
             sortAttributes.Add(new SortingAttribute("AccountName", true));
             string query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
 
-            ISearchResultCollection results = await c.GetResourcesAsync(query, -1, new string[] { "AccountName" }, sortAttributes).ConfigureAwait(false);
+            ISearchResultCollection results = await client.GetResourcesAsync(query, -1, new string[] { "AccountName" }, sortAttributes).ConfigureAwait(false);
             ResourceObject[] arrayResults = results.ToArray();
 
             Assert.AreEqual(6, results.Count);
@@ -137,15 +168,21 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("reftest6", arrayResults[5].Attributes[AttributeNames.AccountName].StringValue);
         }
 
-        [TestMethod]
-        public async Task SearchTestAsyncSortedDescAsync()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public async Task SearchTestAsyncSortedDescAsync(ConnectionMode connectionMode)
         {
-            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             List<SortingAttribute> sortAttributes = new List<SortingAttribute>();
             sortAttributes.Add(new SortingAttribute("AccountName", false));
             string query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
 
-            ISearchResultCollection results = await c.GetResourcesAsync(query, -1, new string[] { "AccountName" }, sortAttributes).ConfigureAwait(false);
+            ISearchResultCollection results = await client.GetResourcesAsync(query, -1, new string[] { "AccountName" }, sortAttributes).ConfigureAwait(false);
             ResourceObject[] arrayResults = results.ToArray();
 
             Assert.AreEqual(6, results.Count);
@@ -157,12 +194,18 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("reftest1", arrayResults[5].Attributes[AttributeNames.AccountName].StringValue);
         }
 
-        [TestMethod]
-        public async Task SearchTestAsyncNoResultsAsync()
-        {
-            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
 
-            ISearchResultCollection results = await c.GetResourcesAsync("Set[DisplayName='...!!!...']", 200).ConfigureAwait(false);
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public async Task SearchTestAsyncNoResultsAsync(ConnectionMode connectionMode)
+        {
+            var client = UnitTestHelper.GetClient(connectionMode);
+
+            ISearchResultCollection results = await client.GetResourcesAsync("Set[DisplayName='...!!!...']", 200).ConfigureAwait(false);
             Debug.WriteLine("Getting {0} results", results.Count);
 
             int count = 0;
@@ -177,12 +220,18 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual(0, count);
         }
 
-        [TestMethod]
-        public void SearchTestSyncNoResults()
-        {
-            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
 
-            ISearchResultCollection results = c.GetResources("/Set[DisplayName='...!!!...']", 200);
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void SearchTestSyncNoResults(ConnectionMode connectionMode)
+        {
+            var client = UnitTestHelper.GetClient(connectionMode);
+
+            ISearchResultCollection results = client.GetResources("/Set[DisplayName='...!!!...']", 200);
             Debug.WriteLine("Getting {0} results", results.Count);
 
             int count = 0;
@@ -197,10 +246,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual(0, count);
         }
 
-        [TestMethod]
-        public void SearchTestSyncRestrictedAttributeList()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void SearchTestSyncRestrictedAttributeList(ConnectionMode connectionMode)
         {
-            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
             List<string> attributesToGet = new List<string>();
 
@@ -208,7 +263,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             attributesToGet.Add("ObjectType");
             attributesToGet.Add("DisplayName");
 
-            ISearchResultCollection results = c.GetResources("/Group", 200, attributesToGet);
+            ISearchResultCollection results = client.GetResources("/Group", 200, attributesToGet);
             Debug.WriteLine("Getting {0} results", results.Count);
             int count = 0;
 
@@ -221,16 +276,22 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual(results.Count, count);
         }
 
-        [TestMethod]
-        public async Task SearchTestPagedResultsSortAscAsync()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public async Task SearchTestPagedResultsSortAscAsync(ConnectionMode connectionMode)
         {
-            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             string query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
             List<string> attributesToGet = new List<string>() { AttributeNames.AccountName };
             List<SortingAttribute> sortAttributes = new List<SortingAttribute>();
             sortAttributes.Add(new SortingAttribute("AccountName", true));
 
-            SearchResultPager pager = await c.GetResourcesPagedAsync(query, 2, attributesToGet, sortAttributes).ConfigureAwait(false);
+            SearchResultPager pager = await client.GetResourcesPagedAsync(query, 2, attributesToGet, sortAttributes).ConfigureAwait(false);
 
             Assert.AreEqual(pager.TotalCount, 6);
 
@@ -266,16 +327,22 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("reftest6", results[3].Attributes[AttributeNames.AccountName].StringValue);
         }
 
-        [TestMethod]
-        public async Task SearchTestPagedResultsSortDescAsync()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public async Task SearchTestPagedResultsSortDescAsync(ConnectionMode connectionMode)
         {
-            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             string query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
             List<string> attributesToGet = new List<string>() { AttributeNames.AccountName };
             List<SortingAttribute> sortAttributes = new List<SortingAttribute>();
             sortAttributes.Add(new SortingAttribute("AccountName", false));
 
-            SearchResultPager pager = await c.GetResourcesPagedAsync(query, 2, attributesToGet, sortAttributes).ConfigureAwait(false);
+            SearchResultPager pager = await client.GetResourcesPagedAsync(query, 2, attributesToGet, sortAttributes).ConfigureAwait(false);
 
             Assert.AreEqual(pager.TotalCount, 6);
 
@@ -311,16 +378,22 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("reftest1", results[3].Attributes[AttributeNames.AccountName].StringValue);
         }
 
-        [TestMethod]
-        public async Task SearchTestPagedDefaultPageAndSizeSortedDescendingAsync()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public async Task SearchTestPagedDefaultPageAndSizeSortedDescendingAsync(ConnectionMode connectionMode)
         {
-            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
             var query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
             var attributesToGet = new List<string>();
             attributesToGet.Add(AttributeNames.AccountName);
 
-            SearchResultPager results = await c.GetResourcesPagedAsync(query, 100, attributesToGet, AttributeNames.AccountName, false).ConfigureAwait(false);
+            SearchResultPager results = await client.GetResourcesPagedAsync(query, 100, attributesToGet, AttributeNames.AccountName, false).ConfigureAwait(false);
             Assert.AreEqual(results.TotalCount, 6);
 
             var arrayResults = await results.GetNextPageAsync().ToListAsync().ConfigureAwait(false);
@@ -334,16 +407,22 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("reftest1", arrayResults[5].Attributes[AttributeNames.AccountName].StringValue);
         }
 
-        [TestMethod]
-        public async Task SearchTestPagedSortedAscendingAsync()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public async Task SearchTestPagedSortedAscendingAsync(ConnectionMode connectionMode)
         {
-            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
             var query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
             var attributesToGet = new List<string>();
             attributesToGet.Add(AttributeNames.AccountName);
 
-            SearchResultPager results = await c.GetResourcesPagedAsync(query, 2, attributesToGet, AttributeNames.AccountName, true).ConfigureAwait(false);
+            SearchResultPager results = await client.GetResourcesPagedAsync(query, 2, attributesToGet, AttributeNames.AccountName, true).ConfigureAwait(false);
             Assert.AreEqual(6, results.TotalCount);
             results.CurrentIndex = 2;
             var arrayResults = await results.GetNextPageAsync().ToListAsync().ConfigureAwait(false);
@@ -353,16 +432,22 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("reftest4", arrayResults[1].Attributes[AttributeNames.AccountName].StringValue);
         }
 
-        [TestMethod]
-        public async Task SearchTestPagedSortedDescendingAsync()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public async Task SearchTestPagedSortedDescendingAsync(ConnectionMode connectionMode)
         {
-            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
             var query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
             var attributesToGet = new List<string>();
             attributesToGet.Add(AttributeNames.AccountName);
 
-            SearchResultPager results = await c.GetResourcesPagedAsync(query, 2, attributesToGet, AttributeNames.AccountName, false).ConfigureAwait(false);
+            SearchResultPager results = await client.GetResourcesPagedAsync(query, 2, attributesToGet, AttributeNames.AccountName, false).ConfigureAwait(false);
             Assert.AreEqual(6, results.TotalCount);
             results.CurrentIndex = 3;
             var arrayResults = await results.GetNextPageAsync().ToListAsync().ConfigureAwait(false);
@@ -372,13 +457,19 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("reftest2", arrayResults[1].Attributes[AttributeNames.AccountName].StringValue);
         }
 
-        [TestMethod]
-        public void SearchTestResultCount()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void SearchTestResultCount(ConnectionMode connectionMode)
         {
-            ResourceManagementClient c = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
+            var client = UnitTestHelper.GetClient(connectionMode);
             var query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
 
-            Assert.AreEqual(6, c.GetResourceCount(query));
+            Assert.AreEqual(6, client.GetResourceCount(query));
         }
     }
 }

@@ -3,24 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
     [TestClass]
     public class XpathPredicateStringTests
     {
-        private ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
-
-        public XpathPredicateStringTests()
+        [TestInitialize]
+        public void TestInitialize()
         {
-            client.DeleteResources(client.GetResources("/" + Constants.UnitTestObjectTypeName));
+            UnitTestHelper.DeleteAllTestObjects();
         }
 
         // Single-value tests
 
-        [TestMethod]
-        public void TestSVStringEquals()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVStringEquals(ConnectionMode connectionMode)
         {
             string queryValue = "user0001";
             string nonMatchValue = "user0002";
@@ -32,7 +36,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} = '{2}')]", Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.Equals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.Equals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -40,8 +44,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVStringEqualsWithSingleQuote()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVStringEqualsWithSingleQuote(ConnectionMode connectionMode)
         {
             string queryValue = "user'0001";
             string nonMatchValue = "user0002";
@@ -53,7 +63,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} = \"{2}\")]", Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.Equals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.Equals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -61,8 +71,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVStringEqualsWithDoubleQuote()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVStringEqualsWithDoubleQuote(ConnectionMode connectionMode)
         {
             string queryValue = "user\"0001";
             string nonMatchValue = "user0002";
@@ -74,7 +90,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} = '{2}')]", Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.Equals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.Equals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -82,8 +98,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVStringEqualsWithSingleAndDoubleQuote()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVStringEqualsWithSingleAndDoubleQuote(ConnectionMode connectionMode)
         {
             string queryValue = "user\"'0001";
             string nonMatchValue = "user0002";
@@ -95,7 +117,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} = '{2}')]", Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.Equals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.Equals, GroupOperator.And, connectionMode, matchResource);
             }
             catch (ArgumentException)
             {
@@ -109,8 +131,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.Fail("The expected exception was not thrown");
         }
 
-        [TestMethod]
-        public void TestSVStringNotEquals()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVStringNotEquals(ConnectionMode connectionMode)
         {
             string queryValue = "user0001";
             string nonMatchValue = "user0001";
@@ -122,7 +150,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(not({1} = '{2}'))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, queryValue, matchResource);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.NotEquals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -130,8 +158,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVStringContains()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVStringContains(ConnectionMode connectionMode)
         {
             /*
               FROM https://msdn.microsoft.com/en-us/library/windows/desktop/ee652287(v=vs.100).aspx
@@ -152,7 +186,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(contains({1}, '{2}'))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.Contains, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.Contains, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -160,8 +194,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVStringEndsWith()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVStringEndsWith(ConnectionMode connectionMode)
         {
             string queryValue = "0001";
             string nonMatchValue = "user0002";
@@ -173,7 +213,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(ends-with({1}, '{2}'))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.EndsWith, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.EndsWith, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -181,8 +221,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVStringStartsWith()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVStringStartsWith(ConnectionMode connectionMode)
         {
             string queryValue = "y";
             string nonMatchValue = "xuser0002";
@@ -194,7 +240,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(starts-with({1}, '{2}'))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.StartsWith, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.StartsWith, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -202,8 +248,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVStringIsPresent()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVStringIsPresent(ConnectionMode connectionMode)
         {
             string queryValue = null;
             string nonMatchValue = null;
@@ -215,7 +267,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(starts-with({1}, '%'))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.IsPresent, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.IsPresent, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -223,8 +275,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVStringIsNotPresent()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSVStringIsNotPresent(ConnectionMode connectionMode)
         {
             string queryValue = null;
             string nonMatchValue = "user0001";
@@ -236,7 +294,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(not(starts-with({1}, '%')))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.IsNotPresent, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.IsNotPresent, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -246,8 +304,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         // Multivalued tests
 
-        [TestMethod]
-        public void TestMVStringEquals()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVStringEquals(ConnectionMode connectionMode)
         {
             string queryValue = "user0001";
             List<string> nonMatchValue = new List<string>() { "user0003", "user0004" };
@@ -259,7 +323,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[({1} = '{2}')]", Constants.UnitTestObjectTypeName, Constants.AttributeStringMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeStringMVDef, ComparisonOperator.Equals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringMVDef, ComparisonOperator.Equals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -267,8 +331,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVStringNotEquals()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVStringNotEquals(ConnectionMode connectionMode)
         {
             string queryValue = "user0001";
             List<string> nonMatchValue = new List<string>() { "user0001", "user0002" };
@@ -280,7 +350,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(not({1} = '{2}'))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringMV, queryValue, matchResource);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeStringMVDef, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringMVDef, ComparisonOperator.NotEquals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -288,8 +358,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVStringContains()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVStringContains(ConnectionMode connectionMode)
         {
             /*
               FROM https://msdn.microsoft.com/en-us/library/windows/desktop/ee652287(v=vs.100).aspx
@@ -310,7 +386,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(contains({1}, '{2}'))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeStringMVDef, ComparisonOperator.Contains, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringMVDef, ComparisonOperator.Contains, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -318,8 +394,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVStringEndsWith()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVStringEndsWith(ConnectionMode connectionMode)
         {
             string queryValue = "0001";
             List<string> nonMatchValue = new List<string>() { "user0004", "user0003" };
@@ -331,7 +413,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(ends-with({1}, '{2}'))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeStringMVDef, ComparisonOperator.EndsWith, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringMVDef, ComparisonOperator.EndsWith, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -339,8 +421,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVStringStartsWith()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVStringStartsWith(ConnectionMode connectionMode)
         {
             string queryValue = "y";
             List<string> nonMatchValue = new List<string>() { "xuser0004", "xuser0003" };
@@ -352,7 +440,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(starts-with({1}, '{2}'))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeStringMVDef, ComparisonOperator.StartsWith, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringMVDef, ComparisonOperator.StartsWith, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -360,8 +448,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVStringIsPresent()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVStringIsPresent(ConnectionMode connectionMode)
         {
             string queryValue = null;
             string nonMatchValue = null;
@@ -373,7 +467,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(starts-with({1}, '%'))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeStringMVDef, ComparisonOperator.IsPresent, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringMVDef, ComparisonOperator.IsPresent, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -381,8 +475,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVStringIsNotPresent()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestMVStringIsNotPresent(ConnectionMode connectionMode)
         {
             string queryValue = null;
             List<string> nonMatchValue = new List<string>() { "user0001", "user0002" };
@@ -394,7 +494,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             try
             {
                 string expected = string.Format("/{0}[(not(starts-with({1}, '%')))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringMV, queryValue);
-                this.SubmitXpath(queryValue, expected, Constants.AttributeStringMVDef, ComparisonOperator.IsNotPresent, GroupOperator.And, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringMVDef, ComparisonOperator.IsNotPresent, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -448,12 +548,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        private void SubmitXpath(string value, string expected, AttributeTypeDefinition attribute, ComparisonOperator xpathOp, GroupOperator queryOp, params ResourceObject[] matchResources)
+        private void SubmitXpath(string value, string expected, AttributeTypeDefinition attribute, ComparisonOperator xpathOp, GroupOperator queryOp, ConnectionMode connectionMode, params ResourceObject[] matchResources)
         {
+            var client = UnitTestHelper.GetClient(connectionMode);
+
             XPathQuery predicate = new XPathQuery(attribute, xpathOp, value);
             string xpath = XPathFilterBuilder.CreateFilter(Constants.UnitTestObjectTypeName, queryOp, predicate);
             Assert.AreEqual(expected, xpath);
-            
+
             if (xpathOp == ComparisonOperator.Contains)
             {
                 Thread.Sleep(8000);

@@ -8,17 +8,24 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
     [TestClass]
     public class XPathExpressionBuilderTests
     {
-        private readonly ResourceManagementClient client = UnitTestHelper.ServiceProvider.GetRequiredService<ResourceManagementClient>();
-
-        public XPathExpressionBuilderTests()
+        [TestInitialize]
+        public void TestInitialize()
         {
-            this.client.DeleteResources(this.client.GetResources("/" + Constants.UnitTestObjectTypeName));
+            UnitTestHelper.DeleteAllTestObjects();
         }
 
-        [TestMethod]
-        public void TestSimpleDereference()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSimpleDereference(ConnectionMode connectionMode)
         {
-            var v = this.client.CreateXPathBuilder()
+            var client = UnitTestHelper.GetClient(connectionMode);
+
+            var v = client.CreateXPathBuilder()
             .FindObjectsOfType("person")
                 .WhereAttribute("accountname").ValueEquals("ryan")
             .Dereference("manager")
@@ -27,10 +34,18 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("/Person[(AccountName = 'ryan')]/Manager", v);
         }
 
-        [TestMethod]
-        public void TestSimpleExpression()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSimpleExpression(ConnectionMode connectionMode)
         {
-            var x = this.client.CreateXPathBuilder()
+            var client = UnitTestHelper.GetClient(connectionMode);
+
+            var x = client.CreateXPathBuilder()
                           .FindObjectsOfType("person")
                               .WhereAttribute("accountname").ValueEquals("ryan")
                           .BuildQuery();
@@ -38,10 +53,18 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("/Person[(AccountName = 'ryan')]", x);
         }
 
-        [TestMethod]
-        public void TestSimpleExpressionAsFilter()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestSimpleExpressionAsFilter(ConnectionMode connectionMode)
         {
-            var z = this.client.CreateXPathBuilder()
+            var client = UnitTestHelper.GetClient(connectionMode);
+
+            var z = client.CreateXPathBuilder()
                 .FindObjectsOfType("person")
                     .WhereAttribute("accountname").ValueEquals("ryan")
               .BuildFilter();
@@ -49,10 +72,18 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("<Filter xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" Dialect=\"http://schemas.microsoft.com/2006/11/XPathFilterDialect\" xmlns=\"http://schemas.xmlsoap.org/ws/2004/09/enumeration\">/Person[(AccountName = &apos;ryan&apos;)]</Filter>", z);
         }
 
-        [TestMethod]
-        public void TestComplexExpression()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestComplexExpression(ConnectionMode connectionMode)
         {
-            var y = this.client.CreateXPathBuilder()
+            var client = UnitTestHelper.GetClient(connectionMode);
+
+            var y = client.CreateXPathBuilder()
                 .FindObjectsOfAnyType()
                     .StartAndGroup()
                         .WhereAttribute("accountName").IsPresent()
@@ -68,10 +99,18 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("/*[((starts-with(AccountName, '%')) and (EmployeeEndDate > '2023-01-01T00:00:00.000') and ((starts-with(DisplayName, '%')) or (not(starts-with(LastName, '%'))) or (AccountName = 'ryan')))]", y);
         }
 
-        [TestMethod]
-        public void TestComplexExpressionWithDereferencing()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestComplexExpressionWithDereferencing(ConnectionMode connectionMode)
         {
-            var y2 = this.client.CreateXPathBuilder()
+            var client = UnitTestHelper.GetClient(connectionMode);
+
+            var y2 = client.CreateXPathBuilder()
              .FindObjectsOfAnyType()
                  .StartAndGroup()
                      .WhereAttribute("accountName").IsPresent()
@@ -87,10 +126,18 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("/*[((starts-with(AccountName, '%')) and ((starts-with(DisplayName, '%')) or (not(starts-with(LastName, '%'))) or (AccountName = 'ryan')))]/Manager", y2);
         }
 
-        [TestMethod]
-        public void TestUnionQuery()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestUnionQuery(ConnectionMode connectionMode)
         {
-            var y2 = this.client.CreateXPathBuilder()
+            var client = UnitTestHelper.GetClient(connectionMode);
+
+            var y2 = client.CreateXPathBuilder()
              .FindObjectsOfAnyType()
                     .WhereAttribute("accountName").IsPresent()
              .AlsoFindObjectsOfType("group")
@@ -100,10 +147,18 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("/*[(starts-with(AccountName, '%'))] | /Group[(DisplayedOwner = /*)]", y2);
         }
 
-        [TestMethod]
-        public void TestUnionQuery3()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestUnionQuery3(ConnectionMode connectionMode)
         {
-            var y2 = this.client.CreateXPathBuilder()
+            var client = UnitTestHelper.GetClient(connectionMode);
+
+            var y2 = client.CreateXPathBuilder()
              .FindObjectsOfAnyType()
                     .WhereAttribute("accountName").IsPresent()
              .AlsoFindObjectsOfType("group")
@@ -115,10 +170,18 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("/*[(starts-with(AccountName, '%'))] | /Group[(DisplayedOwner = /*)] | /Person[(Manager = /*)]", y2);
         }
 
-        [TestMethod]
-        public void TestNewQuery()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestNewQuery(ConnectionMode connectionMode)
         {
-            var x = this.client.CreateXPathBuilder()
+            var client = UnitTestHelper.GetClient(connectionMode);
+
+            var x = client.CreateXPathBuilder()
                           .FindObjectsOfType("person")
                               .WhereAttribute("accountname")
                                 .ValueEquals("ryan")
@@ -127,10 +190,18 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("/Person[(AccountName = 'ryan')]", x);
         }
 
-        [TestMethod]
-        public void TestReferenceEquals()
+        [DataTestMethod]
+        [DataRow(ConnectionMode.RemoteProxy)]
+        [DataRow(ConnectionMode.LocalProxy)]
+#if NETFRAMEWORK
+
+        [DataRow(ConnectionMode.Direct)]
+#endif
+        public void TestReferenceEquals(ConnectionMode connectionMode)
         {
-            var y2 = this.client.CreateXPathBuilder()
+            var client = UnitTestHelper.GetClient(connectionMode);
+
+            var y2 = client.CreateXPathBuilder()
              .FindObjectsOfAnyType()
                  .StartAndGroup()
                      .WhereAttribute("Manager")

@@ -11,6 +11,12 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         private static ResourceManagementClient client;
 
 
+        public static ResourceManagementClient GetClient(ConnectionMode connectionMode)
+        {
+            var mapper = UnitTestHelper.ServiceProvider.GetRequiredService<Setup.ResourceManagementClientMapper>();
+            return mapper(connectionMode);
+        }
+
         internal static void PopulateTestUserData(ResourceObject resource)
         {
             PopulateTestUserData(resource, null);
@@ -174,6 +180,11 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             resource.Attributes[attributeName1].SetValue(value1);
             resource.Save();
             return resource;
+        }
+
+        internal static void DeleteAllTestObjects()
+        {
+            client.DeleteResources(client.GetResources("/" + Constants.UnitTestObjectTypeName));
         }
 
         internal static void CleanupTestResources(params ResourceObject[] resources)

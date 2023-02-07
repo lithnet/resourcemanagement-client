@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
@@ -9,6 +10,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
     [TestClass]
     internal class Setup
     {
+        public delegate ResourceManagementClient ResourceManagementClientMapper(ConnectionMode mode);
+
         static ResourceManagementClient client;
 
         [AssemblyInitialize]
@@ -35,6 +38,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
                 services.Configure<ResourceManagementClientOptions>(context.Configuration.GetSection("LithnetResourceManagementClient"));
                 services.AddSingleton<ResourceManagementClient>();
+
+                services.AddSingleton<ResourceManagementClientMapper>(provider => (mode) =>
+                {
+                    var op = provider.GetRequiredService<IOptions<ResourceManagementClientOptions>>();
+                    var n = ResourceManagementClientOptions.Clone(op.Value);
+                    n.ConnectionMode = mode;
+
+                    return new ResourceManagementClient(n);
+                });
+
                 services.PostConfigure<ResourceManagementClientOptions>((op) =>
                 {
                     if (!FrameworkUtilities.IsFramework)

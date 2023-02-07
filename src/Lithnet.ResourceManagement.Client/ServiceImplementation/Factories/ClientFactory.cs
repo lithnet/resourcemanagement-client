@@ -44,7 +44,7 @@ namespace Lithnet.ResourceManagement.Client
             Trace.WriteLine("Initializing native .NET framework factory (netfx)");
             factory = new NativeClientFactory();
 #else
-            if (FrameworkUtilities.IsFramework)
+            if (FrameworkUtilities.IsFramework && (p.ConnectionMode == ConnectionMode.Auto || p.ConnectionMode == ConnectionMode.Direct))
             {
                 Trace.WriteLine("Initializing native .NET framework factory (netstandard2.0)");
                 factory = new NativeClientFactory(p);
@@ -69,7 +69,11 @@ namespace Lithnet.ResourceManagement.Client
             sb.Append(p.Username);
             sb.Append(p.Password);
             sb.Append(p.RecieveTimeoutSeconds.ToString());
-            sb.Append(p.RecieveTimeoutSeconds.ToString());
+            sb.Append(p.SendTimeoutSeconds.ToString());
+            sb.Append(p.RemoteHostSpn);
+            sb.Append(p.RemoteProxyHost);
+            sb.Append(p.RemoteProxyPort);
+            sb.Append(p.ConnectionMode);
 
             byte[] rawBytes = Encoding.UTF8.GetBytes(sb.ToString());
             var hasher = SHA256.Create();
