@@ -13,7 +13,7 @@ namespace Lithnet.ResourceManagement.Client.Hosts
 
         public void OpenPipe(string pipeName)
         {
-            var path = this.FindHostPath();
+            var path = FindHostPath();
 
             if (path == null)
             {
@@ -63,16 +63,16 @@ namespace Lithnet.ResourceManagement.Client.Hosts
             Console.WriteLine($"Output data recieved: {e.Data}");
         }
 
-        private string FindHostPath()
+        private static string FindHostPath()
         {
             List<string> probePaths = new List<string>()
             {
                 RmcConfiguration.FxHostPath,
                 Registry.CurrentUser.GetValue("Software\\Lithnet\\ResourceManagementClient\\FxHostPath", null) as string,
                 Registry.LocalMachine.GetValue("Software\\Lithnet\\ResourceManagementClient\\FxHostPath", null) as string,
-                this.GetParentPath(Assembly.GetExecutingAssembly()?.Location),
-                this.GetParentPath(Assembly.GetCallingAssembly()?.Location),
-                this.GetParentPath(Assembly.GetEntryAssembly()?.Location)
+                GetParentPath(Assembly.GetExecutingAssembly()?.Location),
+                GetParentPath(Assembly.GetCallingAssembly()?.Location),
+                GetParentPath(Assembly.GetEntryAssembly()?.Location)
             };
 
             foreach (var probePath in probePaths)
@@ -84,7 +84,7 @@ namespace Lithnet.ResourceManagement.Client.Hosts
 
                 Trace.WriteLine($"Looking in probe path {probePath}");
 
-                var result = this.ProbePath(probePath);
+                var result = ProbePath(probePath);
 
                 if (result != null)
                 {
@@ -95,7 +95,7 @@ namespace Lithnet.ResourceManagement.Client.Hosts
             return null;
         }
 
-        private string GetParentPath(string path)
+        private static string GetParentPath(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
             {
@@ -105,7 +105,7 @@ namespace Lithnet.ResourceManagement.Client.Hosts
             return Path.GetDirectoryName(path);
         }
 
-        private string ProbePath(string path)
+        private static string ProbePath(string path)
         {
             var expectedPath = Path.Combine(path, "fxhost\\Lithnet.ResourceManagement.Client.Host.exe");
 
@@ -125,6 +125,11 @@ namespace Lithnet.ResourceManagement.Client.Hosts
             Trace.WriteLine($"File was not found at {path}");
 
             return null;
+        }
+
+        public static bool HasHostExe()
+        {
+            return FindHostPath() != null;
         }
     }
 }

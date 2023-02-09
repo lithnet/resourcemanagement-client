@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Net;
 using System.Security.Principal;
 using System.ServiceModel;
-using System.Threading;
 using System.Threading.Tasks;
 using Lithnet.ResourceManagement.Client.ResourceManagementService;
 using StreamJsonRpc;
@@ -49,7 +48,7 @@ namespace Lithnet.ResourceManagement.Client.Host
                 client.ClientCredentials.Windows.ClientCredential = (NetworkCredential)CredentialCache.DefaultCredentials;
             }
 
-            client.ClientCredentials.Windows.AllowedImpersonationLevel = TokenImpersonationLevel.Delegation;
+            client.ClientCredentials.Windows.AllowedImpersonationLevel = TokenImpersonationLevel.Impersonation;
         }
 
         public Task InitializeClientsAsync(string baseUri, string spn, int concurrentConnectionLimit, int sendTimeout, int recieveTimeout, string username, string password)
@@ -71,6 +70,11 @@ namespace Lithnet.ResourceManagement.Client.Host
                 credentials = new NetworkCredential(username, password);
             }
 
+            if (credentials == null && (this.impersonationIdentity == null || this.impersonationIdentity.ImpersonationLevel != TokenImpersonationLevel.Impersonation))
+            {
+                throw new UnauthorizedAccessException("Credentials were not provided, and an valid impersonation identity was not available");
+            }
+
             var spnIdentity = string.IsNullOrEmpty(spn) ? null : EndpointIdentity.CreateSpnIdentity(spn);
 
             Uri uri = baseUri == null ? new Uri("http://localhost:5725") : new Uri(baseUri);
@@ -84,54 +88,32 @@ namespace Lithnet.ResourceManagement.Client.Host
             var wsHttpBinding = BindingManager.GetWsHttpBinding(recieveTimeout, sendTimeout);
             var wsHttpAuthenticatedContextBinding = BindingManager.GetWsHttpContextBinding(recieveTimeout, sendTimeout);
 
-            Trace.WriteLine($"Current user is now {System.Security.Principal.WindowsIdentity.GetCurrent().Name} on thread {Thread.CurrentThread.ManagedThreadId} with impersonal level {WindowsIdentity.GetCurrent().ImpersonationLevel}");
-
-            Trace.WriteLine($"Connecting to {uri} as {(credentials?.UserName ?? WindowsIdentity.GetCurrent().Name)}");
-
             ResourceClient resourceClient = new ResourceClient(wsHttpAuthenticatedBinding, endpoints.ResourceEndpoint);
             this.InitializeClient(resourceClient, credentials);
 
-            Trace.WriteLine($"Security context {ServiceSecurityContext.Current?.WindowsIdentity?.Name} {ServiceSecurityContext.Current?.WindowsIdentity?.ImpersonationLevel}");
+            ResourceFactoryClient resourceFactoryClient = new ResourceFactoryClient(wsHttpAuthenticatedBinding, endpoints.ResourceFactoryEndpoint);
+            this.InitializeClient(resourceFactoryClient, credentials);
 
-            Trace.WriteLine($"Cleint context {resourceClient.ClientCredentials.Windows?.ClientCredential?.UserName}");
+            MetadataExchangeClient metadataClient = new MetadataExchangeClient(wsHttpBinding, endpoints.MetadataEndpoint);
+            this.InitializeClient(metadataClient, credentials);
 
-            WindowsImpersonationContext impersonationContext = null;
+            SearchClient searchClient = new SearchClient(wsHttpAuthenticatedBinding, endpoints.SearchEndpoint);
+            this.InitializeClient(searchClient, credentials);
 
-            if (this.impersonationIdentity != null)
-            {
-                impersonationContext = WindowsIdentity.GetCurrent().Impersonate();
-            }
+            ApprovalService approvalService = new ApprovalService(wsHttpAuthenticatedContextBinding, credentials, this.impersonationIdentity);
 
-            try
-            {
-                ResourceFactoryClient resourceFactoryClient = new ResourceFactoryClient(wsHttpAuthenticatedBinding, endpoints.ResourceFactoryEndpoint);
-                this.InitializeClient(resourceFactoryClient, credentials);
+            metadataClient.Open();
+            resourceClient.Open();
+            resourceFactoryClient.Open();
+            searchClient.Open();
 
-                MetadataExchangeClient metadataClient = new MetadataExchangeClient(wsHttpBinding, endpoints.MetadataEndpoint);
-                this.InitializeClient(metadataClient, credentials);
+            this.jsonRpcServer.AddLocalRpcTarget(metadataClient, JsonOptionsFactory.GetTargetOptions(JsonOptionsFactory.MetadataService));
+            this.jsonRpcServer.AddLocalRpcTarget(resourceClient, JsonOptionsFactory.GetTargetOptions(JsonOptionsFactory.ResourceService));
+            this.jsonRpcServer.AddLocalRpcTarget(resourceFactoryClient, JsonOptionsFactory.GetTargetOptions(JsonOptionsFactory.ResourceFactoryService));
+            this.jsonRpcServer.AddLocalRpcTarget(searchClient, JsonOptionsFactory.GetTargetOptions(JsonOptionsFactory.SearchService));
+            this.jsonRpcServer.AddLocalRpcTarget(approvalService, JsonOptionsFactory.GetTargetOptions(JsonOptionsFactory.ApprovalService));
 
-                SearchClient searchClient = new SearchClient(wsHttpAuthenticatedBinding, endpoints.SearchEndpoint);
-                this.InitializeClient(searchClient, credentials);
-
-                ApprovalService approvalService = new ApprovalService(wsHttpAuthenticatedContextBinding, credentials, this.impersonationIdentity);
-
-                metadataClient.Open();
-                resourceClient.Open();
-                resourceFactoryClient.Open();
-                searchClient.Open();
-
-                this.jsonRpcServer.AddLocalRpcTarget(metadataClient, JsonOptionsFactory.GetTargetOptions(JsonOptionsFactory.MetadataService));
-                this.jsonRpcServer.AddLocalRpcTarget(resourceClient, JsonOptionsFactory.GetTargetOptions(JsonOptionsFactory.ResourceService));
-                this.jsonRpcServer.AddLocalRpcTarget(resourceFactoryClient, JsonOptionsFactory.GetTargetOptions(JsonOptionsFactory.ResourceFactoryService));
-                this.jsonRpcServer.AddLocalRpcTarget(searchClient, JsonOptionsFactory.GetTargetOptions(JsonOptionsFactory.SearchService));
-                this.jsonRpcServer.AddLocalRpcTarget(approvalService, JsonOptionsFactory.GetTargetOptions(JsonOptionsFactory.ApprovalService));
-
-                this.initialized = true;
-            }
-            finally
-            {
-                impersonationContext?.Undo();
-            }
+            this.initialized = true;
 
             return Task.CompletedTask;
         }

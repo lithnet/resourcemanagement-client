@@ -1,6 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Security;
+using System.Runtime.InteropServices;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using Lithnet.ResourceManagement.Client.Host;
 using MessagePack;
@@ -11,7 +14,7 @@ namespace Lithnet.ResourceManagement.Client
 {
     public static class RpcCore
     {
-        private static bool UseMessagePack = false;
+        private static bool UseMessagePack = true;
 
         public const string PipeNameFormatTemplate = @"\\.\pipe\lithnet\rmc\{0}";
 
@@ -33,11 +36,18 @@ namespace Lithnet.ResourceManagement.Client
 
             if (isServer)
             {
-                await authenticatedStream.AuthenticateAsServerAsync(credentials, ProtectionLevel.EncryptAndSign, System.Security.Principal.TokenImpersonationLevel.Delegation);
+                await authenticatedStream.AuthenticateAsServerAsync(credentials, ProtectionLevel.EncryptAndSign, System.Security.Principal.TokenImpersonationLevel.Identification);
             }
             else
             {
-                await authenticatedStream.AuthenticateAsClientAsync(credentials, serverSpn, ProtectionLevel.EncryptAndSign, System.Security.Principal.TokenImpersonationLevel.Delegation);
+                var impersonationLevel = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? TokenImpersonationLevel.Impersonation : TokenImpersonationLevel.Identification;
+
+                await authenticatedStream.AuthenticateAsClientAsync(credentials, serverSpn, ProtectionLevel.EncryptAndSign, impersonationLevel);
+            }
+
+            if (!authenticatedStream.IsAuthenticated)
+            {
+                throw new UnauthorizedAccessException("The negotiate stream was not authenticated");
             }
 
             return authenticatedStream;
@@ -55,7 +65,7 @@ namespace Lithnet.ResourceManagement.Client
             .WithResolver(
                 CompositeResolver.Create(new IFormatterResolver[] {
                     new MessageSerializer(),
-                    StandardResolver.Instance
+                    StandardResolver.Instance,
             }));
 
             messageFormatter.SetMessagePackSerializerOptions(options);

@@ -149,7 +149,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 throw new ArgumentNullException(nameof(attributeName));
             }
-            
+
             if (resource.HasValue(attributeName))
             {
                 return resource.Attributes[attributeName].Value;
@@ -158,6 +158,43 @@ namespace Lithnet.ResourceManagement.Client
             {
                 return defaultValue;
             }
+        }
+
+        internal static int GetProxyPort(this ResourceManagementClientOptions options)
+        {
+            if (options.RemoteProxyPort <= 0)
+            {
+                return 5375;
+            }
+
+            return options.RemoteProxyPort;
+        }
+
+        internal static string GetProxyHostName(this ResourceManagementClientOptions options)
+        {
+            if (!string.IsNullOrWhiteSpace(options.RemoteProxyHost))
+            {
+                return options.RemoteProxyHost;
+            }
+
+            return GetFimServiceHostName(options);
+        }
+
+        internal static string GetFimServiceHostName(this ResourceManagementClientOptions options)
+        {
+            return GetFimServiceUri(options).Host;
+        }
+
+        internal static Uri GetFimServiceUri(this ResourceManagementClientOptions options)
+        {
+            if (string.IsNullOrWhiteSpace(options.BaseUri))
+            {
+                return new Uri("http://localhost:5725");
+            }
+
+            return Uri.IsWellFormedUriString(options.BaseUri, UriKind.Absolute) ?
+            new Uri(options.BaseUri) :
+            new Uri($"http://{options.BaseUri}:5725");
         }
     }
 }

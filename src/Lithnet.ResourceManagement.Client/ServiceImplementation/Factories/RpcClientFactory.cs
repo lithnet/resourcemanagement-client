@@ -79,28 +79,13 @@ namespace Lithnet.ResourceManagement.Client
 
             if (selectedConnectionMode == ConnectionMode.Auto)
             {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    if (FrameworkUtilities.IsFramework)
-                    {
-                        selectedConnectionMode = ConnectionMode.Direct;
-                    }
-                    else
-                    {
-                        selectedConnectionMode = ConnectionMode.LocalProxy;
-                    }
-                }
-                else
-                {
-                    selectedConnectionMode = ConnectionMode.RemoteProxy;
-                }
+                selectedConnectionMode = await this.DetectConnectionModeAsync(selectedConnectionMode);
             }
 
             Trace.WriteLine($"Selected connection mode: {selectedConnectionMode}");
 
             switch (selectedConnectionMode)
             {
-                case ConnectionMode.Direct:
                 case ConnectionMode.LocalProxy:
                     return await this.GetOrCreateClientPipeAsync(TimeSpan.FromSeconds(this.parameters.ConnectTimeoutSeconds), CancellationToken.None).ConfigureAwait(false);
 
@@ -110,6 +95,50 @@ namespace Lithnet.ResourceManagement.Client
                 default:
                     throw new Exception("Unknown connection mode");
             }
+        }
+
+        private async Task<ConnectionMode> DetectConnectionModeAsync(ConnectionMode selectedConnectionMode)
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                if (ExePipeHost.HasHostExe())
+                {
+                    try
+                    {
+                        using var tcpClient = new TcpClient();
+                        var task = tcpClient.ConnectAsync(this.parameters.GetProxyHostName(), this.parameters.GetProxyPort());
+
+                        await Task.WhenAny(task, Task.Delay(2000));
+
+                        if (tcpClient.Connected)
+                        {
+                            Trace.WriteLine("Found remote proxy");
+                            selectedConnectionMode = ConnectionMode.RemoteProxy;
+                        }
+                        else
+                        {
+                            Trace.WriteLine("Remote proxy discovery timed out");
+                            selectedConnectionMode = ConnectionMode.LocalProxy;
+                        }
+                    }
+                    catch
+                    {
+                        Trace.WriteLine("Remote proxy discovery failed");
+                        selectedConnectionMode = ConnectionMode.LocalProxy;
+                    }
+                }
+                else
+                {
+                    Trace.WriteLine("The local proxy host EXE was not found");
+                    selectedConnectionMode = ConnectionMode.RemoteProxy;
+                }
+            }
+            else
+            {
+                selectedConnectionMode = ConnectionMode.RemoteProxy;
+            }
+
+            return selectedConnectionMode;
         }
 
         private async Task<NegotiateStream> CreateNegotiateStreamAsync()
