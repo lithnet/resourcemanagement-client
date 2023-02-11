@@ -12,13 +12,11 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
     {
         private const int DefaultPageSize = 200;
 
-        private IClientFactory client;
-        private ISearch channel;
+        private IClient client;
 
-        public SearchClient(IClientFactory client, ISearch channel)
+        public SearchClient(IClient client)
         {
             this.client = client;
-            this.channel = channel;
         }
 
         public async Task<ISearchResultCollection> EnumerateGreedyAsync(string filter, int pageSize, IEnumerable<string> attributesToReturn, IEnumerable<SortingAttribute> sortingAttributes, CultureInfo locale, CancellationTokenSource cancellationToken)
@@ -73,7 +71,9 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
             using (Message requestMessage = MessageComposer.CreateEnumerateMessage(filter, pageSize, fixedAttributesToReturn?.ToArray(), sortingAttributes?.ToArray(), locale))
             {
-                using (Message responseMessage = await this.channel.EnumerateAsync(requestMessage).ConfigureAwait(false))
+                var channel = await this.client.GetSearchChannelAsync();
+
+                using (Message responseMessage = await channel.EnumerateAsync(requestMessage).ConfigureAwait(false))
                 {
                     responseMessage.ThrowOnFault();
 
@@ -91,7 +91,9 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
             using (Message pullRequest = MessageComposer.GeneratePullMessage(context, pageSize))
             {
-                using (Message responseMessage = await this.channel.PullAsync(pullRequest).ConfigureAwait(false))
+                var channel = await this.client.GetSearchChannelAsync();
+
+                using (Message responseMessage = await channel.PullAsync(pullRequest).ConfigureAwait(false))
                 {
                     responseMessage.ThrowOnFault();
 
@@ -109,7 +111,9 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
             using (Message releaseRequest = MessageComposer.GenerateReleaseMessage(context))
             {
-                using (Message responseMessage = await this.channel.ReleaseAsync(releaseRequest).ConfigureAwait(false))
+                var channel = await this.client.GetSearchChannelAsync();
+
+                using (Message responseMessage = await channel.ReleaseAsync(releaseRequest).ConfigureAwait(false))
                 {
                     responseMessage.ThrowOnFault();
                 }

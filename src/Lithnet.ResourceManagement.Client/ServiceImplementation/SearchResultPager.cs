@@ -22,7 +22,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// The resource management client used for this search operation
         /// </summary>
-        private IClientFactory client;
+        private IClient client;
 
         /// <summary>
         /// The page size used for the search operation
@@ -78,7 +78,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="pageSize">The page size used in the search operation</param>
         /// <param name="client">The client used to convert response data into ResourceObjects</param>
         /// <param name="locale">The localization culture that the search results are represented as</param>
-        internal SearchResultPager(EnumerateResponse response, int pageSize, IClientFactory client, CultureInfo locale)
+        internal SearchResultPager(EnumerateResponse response, int pageSize, IClient client, CultureInfo locale)
         {
             if (response == null)
             {

@@ -10,15 +10,11 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 {
     internal class ResourceFactoryClient : IResourceFactoryClient
     {
-        private const string ApprovedText = "Approved";
+        private readonly IClient client;
 
-        private const string RejectedText = "Rejected";
-
-        private IResourceFactory channel;
-
-        public ResourceFactoryClient(IResourceFactory channel)
+        public ResourceFactoryClient(IClient client)
         {
-            this.channel = channel;
+            this.client = client;
         }
 
         public async Task CreateAsync(ResourceObject resource)
@@ -32,7 +28,9 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             {
                 using (Message message = MessageComposer.CreateCreateMessage(resource))
                 {
-                    using (Message responseMessage = await this.channel.CreateAsync(message).ConfigureAwait(false))
+                    var channel = await this.client.GetResourceFactoryChannelAsync();
+
+                    using (Message responseMessage = await channel.CreateAsync(message).ConfigureAwait(false))
                     {
                         responseMessage.ThrowOnFault();
 
@@ -61,7 +59,9 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             {
                 using (Message message = MessageComposer.CreateCreateMessage(resourceArray))
                 {
-                    using (Message responseMessage = await this.channel.CreateAsync(message).ConfigureAwait(false))
+                    var channel = await this.client.GetResourceFactoryChannelAsync();
+
+                    using (Message responseMessage = await channel.CreateAsync(message).ConfigureAwait(false))
                     {
                         responseMessage.ThrowOnFault();
 

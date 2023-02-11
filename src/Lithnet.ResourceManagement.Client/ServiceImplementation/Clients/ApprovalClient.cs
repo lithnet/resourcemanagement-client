@@ -6,16 +6,16 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 {
     internal class ApprovalClient : IApprovalClient
     {
+        private readonly IClient client;
+
         private const string ApprovedText = "Approved";
 
         private const string RejectedText = "Rejected";
 
-        public ApprovalClient(IApprovalService approvalService)
+        public ApprovalClient(IClient client)
         {
-            this.ApprovalService = approvalService;
+            this.client = client;
         }
-
-        public IApprovalService ApprovalService { get; }
 
         public async Task ApproveAsync(string endpoint, UniqueIdentifier workflowInstance, UniqueIdentifier approvalRequest, bool approve, string reason = null)
         {
@@ -38,7 +38,9 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
             using (Message message = MessageComposer.CreateApprovalMessage(workflowInstance, response))
             {
-                using (Message responseMessage = await this.ApprovalService.ApproveAsync(endpoint, message).ConfigureAwait(false))
+                var channel = await this.client.GetApprovalChannelAsync();
+
+                using (Message responseMessage = await channel.ApproveAsync(endpoint, message).ConfigureAwait(false))
                 {
                     responseMessage.ThrowOnFault();
                 }

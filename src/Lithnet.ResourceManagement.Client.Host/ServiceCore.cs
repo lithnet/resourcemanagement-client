@@ -33,7 +33,7 @@ namespace Lithnet.ResourceManagement.Server
         public void StartTcpService()
         {
             this.cts = new CancellationTokenSource();
-            this.serviceTask = StreamRpcServer.StartNegotiateStreamServerAsync(IPAddress.IPv6Any, 5735, this.cts.Token);
+            this.serviceTask = NegotiateStreamRpcServer.StartNegotiateStreamServerAsync(IPAddress.IPv6Any, 5735, this.cts.Token);
         }
 
         public void WaitForServiceStop()

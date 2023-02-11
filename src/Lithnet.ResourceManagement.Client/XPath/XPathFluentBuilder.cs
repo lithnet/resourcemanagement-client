@@ -12,14 +12,14 @@ namespace Lithnet.ResourceManagement.Client.XPath
 
     public class XPathFluentBuilder : IExpressionRoot, IObjectTypeQueryBase, IChainableQuery, IExpressionDereferenced, IAttributeConditionFinal, ICompletedExpression, IAttributeConditionChainable
     {
-        private readonly IClientFactory clientFactory;
+        private readonly IClient clientFactory;
         private XPathDereferencedExpression expression;
         private Stack<XPathQueryGroup> groupStack = new Stack<XPathQueryGroup>();
         private Stack<XPathDereferencedExpression> expressionStack = new Stack<XPathDereferencedExpression>();
         private XPathQueryGroup currentGroup;
         private List<XPathDereferencedExpression> expressionList = new List<XPathDereferencedExpression>();
 
-        internal XPathFluentBuilder(IClientFactory clientFactory)
+        internal XPathFluentBuilder(IClient clientFactory)
         {
             this.clientFactory = clientFactory;
             this.expression = new XPathDereferencedExpression();

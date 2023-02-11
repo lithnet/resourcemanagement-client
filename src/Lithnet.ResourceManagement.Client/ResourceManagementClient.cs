@@ -22,7 +22,7 @@ namespace Lithnet.ResourceManagement.Client
     /// </example>
     public class ResourceManagementClient
     {
-        internal IClientFactory ClientFactory { get; private set; }
+        internal IClient ClientFactory { get; private set; }
 
         internal ISchemaClient SchemaClient { get; private set; }
 

@@ -9,9 +9,11 @@ using System.Threading.Tasks;
 
 namespace Lithnet.ResourceManagement.Client.Host
 {
-    public class StreamRpcServer : RpcServer
+    public class NegotiateStreamRpcServer : RpcServer
     {
-        private StreamRpcServer()
+        protected override bool RequiresImpersonationOrExplicitCredentials => false;
+
+        private NegotiateStreamRpcServer()
         {
         }
 
@@ -32,10 +34,11 @@ namespace Lithnet.ResourceManagement.Client.Host
                     Logger.LogTrace("Waiting for client");
 
                     var client = await listener.AcceptTcpClientAsync();
-                    var server = new StreamRpcServer();
+                    var server = new NegotiateStreamRpcServer();
                     _ = Task.Run(async () => await server.HandleClientConnectionAsync(client), cancellationToken);
                 }
                 catch (OperationCanceledException) { }
+                catch (ObjectDisposedException) { }
                 catch (Exception ex)
                 {
                     Logger.LogError(ex, "An error occured setting up the client connection");
@@ -51,8 +54,22 @@ namespace Lithnet.ResourceManagement.Client.Host
 
                 using var stream = client.GetStream();
 
+                var firstByte = stream.ReadByte();
 
-                var authStream = await RpcCore.GetServerNegotiateStreamAsync(stream);
+                if (firstByte == RpcCore.ClientInitialization)
+                {
+                    Logger.LogTrace("Client requested initialization");
+                    stream.WriteByte(RpcCore.ServerAck);
+                }
+                else
+                {
+                    Logger.LogError("Unexpected data from client. Closing stream");
+                    stream.WriteByte(RpcCore.ServerError);
+                    client.Close();
+                    return;
+                }
+
+                var authStream = await RpcCore.GetServerNegotiateStreamAsync(stream, TokenImpersonationLevel.Identification);
                 this.impersonationIdentity = authStream.RemoteIdentity as WindowsIdentity;
 
                 StringBuilder sb = new StringBuilder();
@@ -69,19 +86,20 @@ namespace Lithnet.ResourceManagement.Client.Host
 
                 Logger.LogInfo(sb.ToString());
 
+                // GZipStream sendingStream = new GZipStream(authStream, CompressionMode.Compress);
+                // GZipStream receivingStream = new GZipStream(authStream, CompressionMode.Decompress);
+
                 if (this.impersonationIdentity != null && this.impersonationIdentity.ImpersonationLevel == TokenImpersonationLevel.Impersonation)
                 {
                     using (this.impersonationIdentity.Impersonate())
                     {
-                        await this.SetupRpcServerAsync(RpcCore.GetMessageHandler(authStream));
+                        await this.SetupRpcServerAsync(RpcCore.GetMessageHandler(authStream, authStream));
                     }
                 }
                 else
                 {
-                    await this.SetupRpcServerAsync(RpcCore.GetMessageHandler(authStream));
+                    await this.SetupRpcServerAsync(RpcCore.GetMessageHandler(authStream, authStream));
                 }
-
-                //}
             }
             catch (OperationCanceledException) { }
             catch (IOException e) when (e.InnerException is SocketException s)

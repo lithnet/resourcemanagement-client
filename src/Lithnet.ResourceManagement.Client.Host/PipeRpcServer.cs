@@ -14,6 +14,8 @@ namespace Lithnet.ResourceManagement.Client.Host
     {
         private readonly string pipeName;
 
+        protected override bool RequiresImpersonationOrExplicitCredentials => false;
+
         public PipeRpcServer(string pipeName)
         {
             this.pipeName = string.Format(RpcCore.PipeNameFormatTemplate, pipeName);
@@ -38,6 +40,7 @@ namespace Lithnet.ResourceManagement.Client.Host
                 await serverPipe.WaitForConnectionAsync(ct).ConfigureAwait(false);
                 ct.ThrowIfCancellationRequested();
 
+                this.impersonationIdentity = WindowsIdentity.GetCurrent();
                 await this.RespondToRpcRequestsAsync(serverPipe).ConfigureAwait(false);
             }
             catch (Exception ex)
@@ -50,14 +53,19 @@ namespace Lithnet.ResourceManagement.Client.Host
         {
             using (serverPipe)
             {
-                if (serverPipe.ReadByte() != 255)
+                if (serverPipe.ReadByte() != RpcCore.ClientInitialization)
                 {
                     throw new InvalidDataException("The client sent incorrect initialization data");
                 }
 
+                serverPipe.WriteByte(RpcCore.ServerAck);
+
                 Logger.LogTrace("Client has connected to the Pipe");
 
-                await this.SetupRpcServerAsync(RpcCore.GetMessageHandler(serverPipe));
+                // using GZipStream sendingStream = new GZipStream(serverPipe, CompressionMode.Compress);
+                //  using GZipStream receivingStream = new GZipStream(serverPipe, CompressionMode.Decompress);
+
+                await this.SetupRpcServerAsync(RpcCore.GetMessageHandler(serverPipe, serverPipe));
             }
         }
     }

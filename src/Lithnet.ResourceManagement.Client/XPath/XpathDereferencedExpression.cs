@@ -43,7 +43,7 @@ namespace Lithnet.ResourceManagement.Client
         /// Builds the expression using the classes parameters
         /// </summary>
         /// <returns>A string representation of the dereferencing XPath expression</returns>
-        private protected override string BuildExpression(IClientFactory clientFactory)
+        private protected override string BuildExpression(IClient clientFactory)
         {
             string baseFilter = base.BuildExpression(clientFactory);
 

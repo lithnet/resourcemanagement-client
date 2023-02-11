@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Security.Principal;
 using System.ServiceModel;
+using System.Threading;
 using System.Threading.Tasks;
 using Lithnet.ResourceManagement.Client.ResourceManagementService;
 using StreamJsonRpc;
@@ -14,7 +15,9 @@ namespace Lithnet.ResourceManagement.Client.Host
         private JsonRpc jsonRpcServer;
         private bool initialized;
 
-        private protected WindowsIdentity impersonationIdentity;
+        protected WindowsIdentity impersonationIdentity;
+
+        protected abstract bool RequiresImpersonationOrExplicitCredentials { get; }
 
         protected RpcServer()
         {
@@ -70,9 +73,12 @@ namespace Lithnet.ResourceManagement.Client.Host
                 credentials = new NetworkCredential(username, password);
             }
 
-            if (credentials == null && (this.impersonationIdentity == null || this.impersonationIdentity.ImpersonationLevel != TokenImpersonationLevel.Impersonation))
+            if (this.RequiresImpersonationOrExplicitCredentials)
             {
-                throw new UnauthorizedAccessException("Credentials were not provided, and an valid impersonation identity was not available");
+                if (credentials == null && this.impersonationIdentity?.ImpersonationLevel != TokenImpersonationLevel.Impersonation)
+                {
+                    throw new UnauthorizedAccessException($"Credentials were not provided, and an valid impersonation identity was not available. Impersonation level {this.impersonationIdentity?.ImpersonationLevel}");
+                }
             }
 
             var spnIdentity = string.IsNullOrEmpty(spn) ? null : EndpointIdentity.CreateSpnIdentity(spn);

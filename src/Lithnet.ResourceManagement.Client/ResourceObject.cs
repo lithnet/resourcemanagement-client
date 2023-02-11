@@ -18,7 +18,7 @@ namespace Lithnet.ResourceManagement.Client
     [KnownType(typeof(List<object>))]
     public class ResourceObject : ISerializable
     {
-        private IClientFactory clientFactory;
+        private IClient clientFactory;
 
         /// <summary>
         /// Gets the object type name of this object
@@ -140,7 +140,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="opType">The type of modification to set on the object</param>
         /// <param name="clientFactory">The client used for further operations on this object</param>
         /// <param name="locale">The localization culture that this object is represented as</param>
-        private ResourceObject(OperationType opType, IClientFactory clientFactory, CultureInfo locale)
+        private ResourceObject(OperationType opType, IClient clientFactory, CultureInfo locale)
         {
             this.ModificationType = opType;
             this.Attributes = new AttributeValueCollection();
@@ -163,7 +163,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <param name="type">The object type that this object will represent</param>
         /// <param name="clientFactory">The client used for further operations on this object</param>
-        internal ResourceObject(string type, IClientFactory clientFactory)
+        internal ResourceObject(string type, IClient clientFactory)
             : this(OperationType.Create, clientFactory, null)
         {
             this.IsPlaceHolder = true;
@@ -178,7 +178,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="type">The object type that this object will represent</param>
         /// <param name="id">The ID of the object</param>
         /// <param name="clientFactory">The client used for further operations on this object</param>
-        internal ResourceObject(string type, UniqueIdentifier id, IClientFactory clientFactory)
+        internal ResourceObject(string type, UniqueIdentifier id, IClient clientFactory)
             : this(OperationType.Update, clientFactory, null)
         {
             this.SetObjectType(type);
@@ -195,7 +195,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="objectElements">An enumeration of XmlElements that make up a partial response</param>
         /// <param name="clientFactory">The client used for further operations on this object</param>
         /// <param name="locale">The localization culture that this object is represented as</param>
-        internal ResourceObject(IEnumerable<XmlElement> objectElements, IClientFactory clientFactory, CultureInfo locale) : this(OperationType.Update, clientFactory, locale)
+        internal ResourceObject(IEnumerable<XmlElement> objectElements, IClient clientFactory, CultureInfo locale) : this(OperationType.Update, clientFactory, locale)
         {
             this.PopulateResourceFromPartialResponse(objectElements);
         }
@@ -206,7 +206,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="reader">An XmlDictionaryReader containing the full object definition</param>
         /// <param name="clientFactory">The client used for further operations on this object</param>
         /// <param name="locale">The localization culture that this object is represented as</param>
-        internal ResourceObject(XmlDictionaryReader reader, IClientFactory clientFactory, CultureInfo locale) : this(OperationType.Update, clientFactory, locale)
+        internal ResourceObject(XmlDictionaryReader reader, IClient clientFactory, CultureInfo locale) : this(OperationType.Update, clientFactory, locale)
         {
             this.PopulateResourceFromFullObject(reader);
         }
@@ -217,7 +217,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="element">An XmlElement containing definition of the object from a set of fragments obtained from an enumeration response</param>
         /// <param name="clientFactory">The client used for further operations on this object</param>
         /// <param name="locale">The localization culture that this object is represented as</param>
-        internal ResourceObject(XmlElement element, IClientFactory clientFactory, CultureInfo locale)
+        internal ResourceObject(XmlElement element, IClient clientFactory, CultureInfo locale)
             : this(OperationType.Update, clientFactory, locale)
         {
             this.PopulateResourceFromFragment(element);

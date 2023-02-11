@@ -10,13 +10,11 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 {
     internal class ResourceClient : IResourceClient
     {
-        private IClientFactory client;
-        private IResource channel;
+        private readonly IClient client;
 
-        public ResourceClient(IClientFactory client, IResource channel)
+        public ResourceClient(IClient client)
         {
             this.client = client;
-            this.channel = channel;
         }
 
         public async Task PutAsync(ResourceObject resource, CultureInfo locale)
@@ -33,7 +31,8 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                     return;
                 }
 
-                using (Message responseMessage = await this.channel.PutAsync(message).ConfigureAwait(false))
+                var channel = await this.client.GetResourceChannelAsync();
+                using (Message responseMessage = await channel.PutAsync(message).ConfigureAwait(false))
                 {
                     responseMessage.ThrowOnFault();
                 }
@@ -54,7 +53,8 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                     return;
                 }
 
-                using (Message responseMessage = await this.channel.PutAsync(message).ConfigureAwait(false))
+                var channel = await this.client.GetResourceChannelAsync();
+                using (Message responseMessage = await channel.PutAsync(message).ConfigureAwait(false))
                 {
                     responseMessage.ThrowOnFault();
                 }
@@ -81,7 +81,9 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
             using (Message message = MessageComposer.CreateGetMessage(id, fixedAttributes.ToArray(), locale, getPermissions))
             {
-                using (Message responseMessage = await this.channel.GetAsync(message).ConfigureAwait(false))
+                var channel = await this.client.GetResourceChannelAsync();
+
+                using (Message responseMessage = await channel.GetAsync(message).ConfigureAwait(false))
                 {
                     responseMessage.ThrowOnFault();
 
@@ -125,7 +127,9 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
             using (Message message = MessageComposer.CreateDeleteMessage(ids))
             {
-                using (Message responseMessage = await this.channel.DeleteAsync(message).ConfigureAwait(false))
+                var channel = await this.client.GetResourceChannelAsync();
+
+                using (Message responseMessage = await channel.DeleteAsync(message).ConfigureAwait(false))
                 {
                     responseMessage.ThrowOnFault();
                 }
@@ -151,7 +155,9 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
             using (Message message = MessageComposer.CreateDeleteMessage(id))
             {
-                using (Message responseMessage = await this.channel.DeleteAsync(message).ConfigureAwait(false))
+                var channel = await this.client.GetResourceChannelAsync();
+
+                using (Message responseMessage = await channel.DeleteAsync(message).ConfigureAwait(false))
                 {
                     responseMessage.ThrowOnFault();
                 }
@@ -167,7 +173,9 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
             using (Message message = MessageComposer.CreateGetMessage(resource.ObjectID, null, resource.Locale, resource.HasPermissionHints))
             {
-                using (Message responseMessage = await this.channel.GetAsync(message).ConfigureAwait(false))
+                var channel = await this.client.GetResourceChannelAsync();
+
+                using (Message responseMessage = await channel.GetAsync(message).ConfigureAwait(false))
                 {
                     responseMessage.ThrowOnFault();
 

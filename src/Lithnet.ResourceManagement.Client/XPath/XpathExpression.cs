@@ -96,7 +96,7 @@ namespace Lithnet.ResourceManagement.Client
         /// Builds the XPath expression
         /// </summary>
         /// <returns>The string representation of the expression</returns>
-        private protected virtual string BuildExpression(IClientFactory clientFactory)
+        private protected virtual string BuildExpression(IClient clientFactory)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -128,7 +128,7 @@ namespace Lithnet.ResourceManagement.Client
             return this.ToString(null, this.WrapFilterXml);
         }
 
-        internal string BuildExpression(IClientFactory factory, bool wrapFilterXml)
+        internal string BuildExpression(IClient factory, bool wrapFilterXml)
         {
             if (wrapFilterXml)
             {

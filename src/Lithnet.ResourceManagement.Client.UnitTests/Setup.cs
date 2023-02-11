@@ -8,7 +8,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
     [TestClass]
-    internal class Setup
+
+    public static class Setup
     {
         public delegate ResourceManagementClient ResourceManagementClientMapper(ConnectionMode mode);
 

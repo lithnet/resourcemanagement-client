@@ -1,65 +1,111 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Lithnet.ResourceManagement.Client.Hosts;
 using Nito.AsyncEx;
 
 namespace Lithnet.ResourceManagement.Client
 {
     internal static class ClientFactory
     {
-        private static ConcurrentDictionary<string, IClientFactory> existingFactories = new ConcurrentDictionary<string, IClientFactory>();
+        private static ConcurrentDictionary<string, IClient> existingFactories = new ConcurrentDictionary<string, IClient>();
 
-        public static IClientFactory GetOrCreateFactory(ResourceManagementClientOptions p)
+        public static IClient GetOrCreateFactory(ResourceManagementClientOptions p)
         {
-            var factoryId = GetFactoryId(p);
-            Trace.WriteLine($"Getting client with id {factoryId}");
-            var factory = existingFactories.GetOrAdd(factoryId, (id) => CreateClientFactory(id, p));
+            var clientId = GetClientId(p);
+            Trace.WriteLine($"Getting client with id {clientId}");
+            var factory = existingFactories.GetOrAdd(clientId, (id) => CreateClient(id, p));
 
             if (!factory.IsFaulted)
             {
                 return factory;
             }
+            else
+            {
+                factory.Dispose();
+            }
 
-            Trace.WriteLine($"Factory {factoryId} is in a faulted state and will be rebuilt");
+            Trace.WriteLine($"Client {clientId} is in a faulted state and will be rebuilt");
 
-            return existingFactories.AddOrUpdate(factoryId,
-                (id) => CreateClientFactory(id, p),
-                (id, _) => CreateClientFactory(id, p));
+            return existingFactories.AddOrUpdate(clientId,
+                (id) => CreateClient(id, p),
+                (id, _) => CreateClient(id, p));
         }
 
-        private static IClientFactory CreateClientFactory(string id, ResourceManagementClientOptions p)
+        private static IClient CreateClient(string id, ResourceManagementClientOptions p)
         {
-            return AsyncContext.Run(async () => await CreateClientFactoryAsync(id, p).ConfigureAwait(false));
+            return AsyncContext.Run(async () => await CreateClientAsync(id, p).ConfigureAwait(false));
         }
 
-        private static async Task<IClientFactory> CreateClientFactoryAsync(string id, ResourceManagementClientOptions p)
+        private static async Task<IClient> CreateClientAsync(string id, ResourceManagementClientOptions p)
         {
-            IClientFactory factory;
+            IClient factory;
             Trace.WriteLine($"New client required for {id}");
 
 #if NETFRAMEWORK
             Trace.WriteLine("Initializing native .NET framework factory (netfx)");
             factory = new NativeClientFactory();
 #else
-            if (FrameworkUtilities.IsFramework && (p.ConnectionMode == ConnectionMode.Auto || p.ConnectionMode == ConnectionMode.Direct))
-            {
-                Trace.WriteLine("Initializing native .NET framework factory (netstandard2.0)");
-                factory = new NativeClientFactory(p);
-            }
-            else
-            {
-                Trace.WriteLine("Initializing RPC factory");
-                factory = new RpcClientFactory(p);
-            }
+            factory = GetClient(p);
 #endif
             await factory.InitializeClientsAsync().ConfigureAwait(false);
             return factory;
         }
 
-        private static string GetFactoryId(ResourceManagementClientOptions p)
+        private static IClient GetClient(ResourceManagementClientOptions p)
+        {
+            var connectionModes = DetectConnectionModes(p.ConnectionMode).ToList();
+
+            if (connectionModes.Contains(ConnectionMode.Direct))
+            {
+                Trace.WriteLine("Using direct connection mode");
+                return new NativeClient(p);
+            }
+
+            if (connectionModes.Contains(ConnectionMode.LocalProxy))
+            {
+                Trace.WriteLine("Using local proxy");
+                return new PipeRpcClient(p);
+            }
+
+            Trace.WriteLine("Using remote proxy");
+            return new NegotitateStreamRpcClient(p);
+        }
+
+        private static IEnumerable<ConnectionMode> DetectConnectionModes(ConnectionMode connectionMode)
+        {
+            if (connectionMode != ConnectionMode.Auto &&
+                !(connectionMode == ConnectionMode.Direct && !RuntimeInformation.IsOSPlatform(OSPlatform.Windows)))
+            {
+                Trace.WriteLine($"Using connection mode from configuration: {connectionMode}");
+                yield return connectionMode;
+                yield break;
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                if (FrameworkUtilities.IsFramework)
+                {
+                    yield return ConnectionMode.Direct;
+                }
+
+                if (ExePipeHost.HasHostExe())
+                {
+                    yield return ConnectionMode.LocalProxy;
+                }
+            }
+
+            yield return ConnectionMode.RemoteProxy;
+        }
+
+        private static string GetClientId(ResourceManagementClientOptions p)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(p.BaseUri);

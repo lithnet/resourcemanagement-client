@@ -2,7 +2,6 @@
 using System.IO;
 using System.Net;
 using System.Net.Security;
-using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using Lithnet.ResourceManagement.Client.Host;
@@ -14,35 +13,37 @@ namespace Lithnet.ResourceManagement.Client
 {
     public static class RpcCore
     {
+        internal const byte ServerAck = 1;
+        internal const byte ServerError = 2;
+        internal const byte ClientInitialization = 100;
+
         private static bool UseMessagePack = true;
 
         public const string PipeNameFormatTemplate = @"\\.\pipe\lithnet\rmc\{0}";
 
         public static JsonRpcEnumerableSettings JsonRpcEnumerableSettings = new JsonRpcEnumerableSettings { MinBatchSize = 100, MaxReadAhead = 100, Prefetch = 100 };
 
-        public static async Task<NegotiateStream> GetServerNegotiateStreamAsync(Stream stream)
+        public static async Task<NegotiateStream> GetServerNegotiateStreamAsync(Stream stream, TokenImpersonationLevel requestedImpersonationLevel)
         {
-            return await GetNegotiateStreamAsync(stream, (NetworkCredential)CredentialCache.DefaultCredentials, true, null);
+            return await GetNegotiateStreamAsync(stream, (NetworkCredential)CredentialCache.DefaultCredentials, true, null, requestedImpersonationLevel);
         }
 
-        public static async Task<NegotiateStream> GetClientNegotiateStreamAsync(Stream stream, NetworkCredential credentials, string serverSpn)
+        public static async Task<NegotiateStream> GetClientNegotiateStreamAsync(Stream stream, NetworkCredential credentials, string serverSpn, TokenImpersonationLevel requestedImpersonationLevel)
         {
-            return await GetNegotiateStreamAsync(stream, credentials, false, serverSpn);
+            return await GetNegotiateStreamAsync(stream, credentials, false, serverSpn, requestedImpersonationLevel);
         }
 
-        private static async Task<NegotiateStream> GetNegotiateStreamAsync(Stream networkStream, NetworkCredential credentials, bool isServer, string serverSpn)
+        private static async Task<NegotiateStream> GetNegotiateStreamAsync(Stream networkStream, NetworkCredential credentials, bool isServer, string serverSpn, TokenImpersonationLevel requestedImpersonationLevel)
         {
             NegotiateStream authenticatedStream = new NegotiateStream(networkStream, true);
 
             if (isServer)
             {
-                await authenticatedStream.AuthenticateAsServerAsync(credentials, ProtectionLevel.EncryptAndSign, System.Security.Principal.TokenImpersonationLevel.Identification);
+                await authenticatedStream.AuthenticateAsServerAsync(credentials, ProtectionLevel.EncryptAndSign, requestedImpersonationLevel);
             }
             else
             {
-                var impersonationLevel = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? TokenImpersonationLevel.Impersonation : TokenImpersonationLevel.Identification;
-
-                await authenticatedStream.AuthenticateAsClientAsync(credentials, serverSpn, ProtectionLevel.EncryptAndSign, impersonationLevel);
+                  await authenticatedStream.AuthenticateAsClientAsync(credentials, serverSpn, ProtectionLevel.EncryptAndSign, requestedImpersonationLevel);
             }
 
             if (!authenticatedStream.IsAuthenticated)
@@ -53,12 +54,12 @@ namespace Lithnet.ResourceManagement.Client
             return authenticatedStream;
         }
 
-        public static IJsonRpcMessageHandler GetMessageHandler(Stream stream)
+        public static IJsonRpcMessageHandler GetMessageHandler(Stream sendingStream, Stream receivingStream)
         {
-            return UseMessagePack ? GetMessagePackMessageHandler(stream) : GetJsonMessageHandler(stream);
+            return UseMessagePack ? GetMessagePackMessageHandler(sendingStream, receivingStream) : GetJsonMessageHandler(sendingStream, receivingStream);
         }
 
-        private static IJsonRpcMessageHandler GetMessagePackMessageHandler(Stream stream)
+        private static IJsonRpcMessageHandler GetMessagePackMessageHandler(Stream sendingStream, Stream receivingStream)
         {
             var messageFormatter = new MessagePackFormatter();
             var options = MessagePackFormatter.DefaultUserDataSerializationOptions
@@ -69,15 +70,15 @@ namespace Lithnet.ResourceManagement.Client
             }));
 
             messageFormatter.SetMessagePackSerializerOptions(options);
-            return new LengthHeaderMessageHandler(stream, stream, messageFormatter);
+            return new LengthHeaderMessageHandler(sendingStream, receivingStream, messageFormatter);
         }
 
-        private static IJsonRpcMessageHandler GetJsonMessageHandler(Stream stream)
+        private static IJsonRpcMessageHandler GetJsonMessageHandler(Stream sendingStream, Stream receivingStream)
         {
             var messageFormatter = new JsonMessageFormatter();
             messageFormatter.JsonSerializer.Converters.Add(new MessageSerializer());
 
-            return new LengthHeaderMessageHandler(stream, stream, messageFormatter);
+            return new LengthHeaderMessageHandler(sendingStream, receivingStream, messageFormatter);
         }
     }
 }

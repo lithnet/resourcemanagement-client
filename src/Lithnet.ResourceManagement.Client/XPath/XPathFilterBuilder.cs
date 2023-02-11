@@ -176,7 +176,7 @@ namespace Lithnet.ResourceManagement.Client
             return CreateFilter(objectType, group);
         }
 
-        private static AttributeValuePairCollection GetAvpFromDictionary(IClientFactory clientFactory, Dictionary<string, object> source)
+        private static AttributeValuePairCollection GetAvpFromDictionary(IClient clientFactory, Dictionary<string, object> source)
         {
             AttributeValuePairCollection items = new AttributeValuePairCollection();
 

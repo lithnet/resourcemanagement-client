@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Lithnet.ResourceManagement.Client.ResourceManagementService;
 
 namespace Lithnet.ResourceManagement.Client
 {
-    internal interface IClientFactory
+    internal interface IClient : IDisposable
     {
         IResourceClient ResourceClient { get; }
 
@@ -18,5 +19,15 @@ namespace Lithnet.ResourceManagement.Client
         bool IsFaulted { get; }
 
         Task InitializeClientsAsync();
+
+        Task<IResource> GetResourceChannelAsync();
+
+        Task<IResourceFactory> GetResourceFactoryChannelAsync();
+
+        Task<ISearch> GetSearchChannelAsync();
+
+        Task<IMetadataExchange> GetSchemaChannelAsync();
+
+        Task<IApprovalService> GetApprovalChannelAsync();
     }
 }

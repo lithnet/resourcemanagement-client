@@ -15,8 +15,7 @@ namespace Lithnet.ResourceManagement.Client
 {
     internal class SchemaClient : ISchemaClient
     {
-        private ManualResetEvent schemaLock;
-        private IMetadataExchange channel;
+        private readonly IClient client;
         private readonly AsyncReaderWriterLock readWriteLock = new AsyncReaderWriterLock();
 
         /// <summary>
@@ -47,14 +46,13 @@ namespace Lithnet.ResourceManagement.Client
 
         private SchemaClient()
         {
-            this.schemaLock = new ManualResetEvent(true);
             this.ObjectTypes = new ConcurrentDictionary<string, ObjectTypeDefinition>();
             this.AttributeTypes = new ConcurrentDictionary<string, AttributeTypeDefinition>();
         }
 
-        public SchemaClient(IMetadataExchange channel) : this()
+        public SchemaClient(IClient client) : this()
         {
-            this.channel = channel;
+            this.client = client;
         }
 
         public async Task LoadSchemaAsync()
@@ -268,7 +266,9 @@ namespace Lithnet.ResourceManagement.Client
 
             Message requestMessage = Message.CreateMessage(MessageVersion.Default, Namespaces.Get, new SerializerBodyWriter(body));
 
-            using (Message responseMessage = await this.channel.GetAsync(requestMessage).ConfigureAwait(false))
+            var channel = await this.client.GetSchemaChannelAsync();
+
+            using (Message responseMessage = await channel.GetAsync(requestMessage).ConfigureAwait(false))
             {
                 if (responseMessage.IsFault)
                 {
