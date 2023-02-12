@@ -16,7 +16,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             this.credentials = credentials;
         }
 
-        public async Task<Message> ApproveAsync(string endpoint, Message message)
+        public Task<Message> ApproveAsync(string endpoint, Message message)
         {
             var client = new NativeResourceFactoryClient(this.binding, EndpointManager.EndpointFromAddress(endpoint));
 
@@ -27,7 +27,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
             client.ClientCredentials.Windows.AllowedImpersonationLevel = System.Security.Principal.TokenImpersonationLevel.Delegation;
 
-            return await client.CreateAsync(message);
+            return InternalExtensions.InvokeAsync(client, c => c.CreateAsync(message));
         }
     }
 }

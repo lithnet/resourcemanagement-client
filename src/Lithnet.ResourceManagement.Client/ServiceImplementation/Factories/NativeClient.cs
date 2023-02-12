@@ -73,7 +73,7 @@ namespace Lithnet.ResourceManagement.Client
                 channel.ClientCredentials.Windows.ClientCredential = creds;
             }
 
-            channel.ClientCredentials.Windows.AllowedImpersonationLevel = System.Security.Principal.TokenImpersonationLevel.Delegation;
+            channel.ClientCredentials.Windows.AllowedImpersonationLevel = System.Security.Principal.TokenImpersonationLevel.Identification;
         }
 
         private Task EnsureConnectedAsync()

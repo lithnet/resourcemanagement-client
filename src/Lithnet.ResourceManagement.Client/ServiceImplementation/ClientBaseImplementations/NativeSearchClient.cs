@@ -33,27 +33,27 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
         public Task<Message> EnumerateAsync(Message request)
         {
-            return base.Channel.EnumerateAsync(request);
+            return InternalExtensions.InvokeAsync(this, c => c.EnumerateAsync(request));
         }
 
         public Task<Message> PullAsync(Message request)
         {
-            return base.Channel.PullAsync(request);
+            return InternalExtensions.InvokeAsync(this, c => c.PullAsync(request));
         }
 
         public Task<Message> RenewAsync(Message request)
         {
-            return base.Channel.RenewAsync(request);
+            return InternalExtensions.InvokeAsync(this, c => c.RenewAsync(request));
         }
 
         public Task<Message> GetStatusAsync(Message request)
         {
-            return base.Channel.GetStatusAsync(request);
+            return InternalExtensions.InvokeAsync(this, c => c.GetStatusAsync(request));
         }
 
         public Task<Message> ReleaseAsync(Message request)
         {
-            return base.Channel.ReleaseAsync(request);
+            return InternalExtensions.InvokeAsync(this, c => c.ReleaseAsync(request));
         }
     }
 }

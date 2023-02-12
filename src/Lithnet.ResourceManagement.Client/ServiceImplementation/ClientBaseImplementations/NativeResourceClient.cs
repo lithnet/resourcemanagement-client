@@ -35,17 +35,17 @@ namespace Lithnet.ResourceManagement.Client
 
         public Task<Message> GetAsync(Message request)
         {
-            return this.Channel.GetAsync(request);
+            return InternalExtensions.InvokeAsync(this, c => c.GetAsync(request));
         }
-
+        
         public Task<Message> PutAsync(Message request)
         {
-            return this.Channel.PutAsync(request);
+            return InternalExtensions.InvokeAsync(this, c => c.PutAsync(request));
         }
 
         public Task<Message> DeleteAsync(Message request)
         {
-            return this.Channel.DeleteAsync(request);
+            return InternalExtensions.InvokeAsync(this, c => c.DeleteAsync(request));
         }
     }
 }

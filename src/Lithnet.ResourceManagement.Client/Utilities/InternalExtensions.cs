@@ -140,6 +140,24 @@ namespace Lithnet.ResourceManagement.Client
             }
         }
 
+
+        public async static Task<T> InvokeAsync<T, T1>(this ClientBase<T1> client, Func<T1, Task<T>> action) where T1 : class
+        {
+            T1 c = client.ChannelFactory.CreateChannel();
+
+            try
+            {
+                ((IClientChannel)c).Open();
+                T returnValue = await action(c);
+                ((IClientChannel)c).Close();
+                return returnValue;
+            }
+            catch
+            {
+                ((IClientChannel)c).Abort();
+                throw;
+            }
+        }
         public static List<string> ToList(this Enum p)
         {
             List<string> permissions = new List<string>();

@@ -35,7 +35,7 @@ namespace Lithnet.ResourceManagement.Client
 
         public Task<Message> CreateAsync(Message request)
         {
-            return this.Channel.CreateAsync(request);
+            return InternalExtensions.InvokeAsync(this, c => c.CreateAsync(request));
         }
     }
 }
