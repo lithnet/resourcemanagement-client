@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Lithnet.ResourceManagement.Client
 {
-    internal class NegotitateStreamRpcClient : RpcClient
+    internal class NegotiateStreamRpcClient : RpcClient
     {
         private TcpClient client;
 
-        public NegotitateStreamRpcClient(ResourceManagementClientOptions p) : base(p)
+        public NegotiateStreamRpcClient(ResourceManagementClientOptions p) : base(p)
         {
         }
 
@@ -37,8 +37,7 @@ namespace Lithnet.ResourceManagement.Client
 
             var stream = this.client.GetStream();
 
-            var impersonationLevel = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
-                TokenImpersonationLevel.Impersonation : TokenImpersonationLevel.Identification;
+            var impersonationLevel = TokenImpersonationLevel.Impersonation;
 
             stream.WriteByte(RpcCore.ClientInitialization);
             var response = stream.ReadByte();
@@ -48,7 +47,7 @@ namespace Lithnet.ResourceManagement.Client
                 throw new InvalidDataException("The server did not respond with the correct acknowledgement of the impersonation request");
             }
 
-            var spn = this.parameters.RemoteHostSpn ?? $"LithnetRMC/{host}";
+            var spn = this.parameters.RemoteHostSpn ?? $"FIMService/{host}";
 
             NetworkCredential credentials;
 
@@ -61,9 +60,40 @@ namespace Lithnet.ResourceManagement.Client
                 credentials = new NetworkCredential(this.parameters.Username, this.parameters.Password);
             }
 
+            PatchNegotiateStreamPal();
+
             Trace.WriteLine($"Attempting to connect to remote proxy {host}:{port}:{spn}");
 
             return await RpcCore.GetClientNegotiateStreamAsync(stream, credentials, spn, impersonationLevel);
+        }
+
+        private static void PatchNegotiateStreamPal()
+        {
+#if NET6_0_OR_GREATER
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return;
+            }
+
+            Trace.WriteLine("Attempting to patch NegotiateStream");
+
+            var harmony = new HarmonyLib.Harmony("nspatch");
+
+            var nsType = typeof(System.Net.Security.NegotiateStream);
+            var nspType = nsType.Assembly.GetType("System.Net.Security.NegotiateStreamPal");
+
+            var original = nspType.GetMethod("ValidateImpersonationLevel", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            var prefix = typeof(NegotiateStreamRpcClient).GetMethod(nameof(ValidateImpersonationLevel), System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+
+            harmony.Patch(original, new HarmonyLib.HarmonyMethod(prefix));
+#endif
+        }
+
+        private static bool ValidateImpersonationLevel(TokenImpersonationLevel impersonationLevel)
+        {
+            Trace.WriteLine("Patch was invoked");
+            Trace.WriteLine($"{impersonationLevel} was passed in for validation");
+            return false;
         }
 
         protected override void Dispose(bool disposing)

@@ -8,7 +8,6 @@
 		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<Nullable>disable</Nullable>
-		<ApplicationManifest>app.manifest</ApplicationManifest>
 	</PropertyGroup>
 
 	<PropertyGroup>
