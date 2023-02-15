@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Microsoft.Win32;
 
 namespace Lithnet.ResourceManagement.Client.Hosts
@@ -13,6 +14,11 @@ namespace Lithnet.ResourceManagement.Client.Hosts
 
         public void OpenPipe(string pipeName)
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                throw new PlatformNotSupportedException();
+            }
+
             var path = FindHostPath();
 
             if (path == null)
@@ -65,6 +71,11 @@ namespace Lithnet.ResourceManagement.Client.Hosts
 
         private static string FindHostPath()
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                throw new PlatformNotSupportedException();
+            }
+            
             List<string> probePaths = new List<string>()
             {
                 RmcConfiguration.FxHostPath,
@@ -129,6 +140,11 @@ namespace Lithnet.ResourceManagement.Client.Hosts
 
         public static bool HasHostExe()
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                throw new PlatformNotSupportedException();
+            }
+            
             return FindHostPath() != null;
         }
     }
