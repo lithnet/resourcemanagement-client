@@ -15,6 +15,13 @@ namespace Lithnet.ResourceManagement.Client
 
         public EndpointAddress MetadataEndpoint { get; private set; }
 
+        public EndpointAddress NetTcpResourceFactoryEndpoint { get; private set; }
+
+        public EndpointAddress NetTcpResourceEndpoint { get; private set; }
+
+        public EndpointAddress NetTcpSearchEndpoint { get; private set; }
+
+
         public EndpointManager(string baseAddress, string spn)
         {
             this.Configure(baseAddress, spn);
@@ -72,6 +79,17 @@ namespace Lithnet.ResourceManagement.Client
 
             builder.Path = "ResourceManagementService/MEX";
             this.MetadataEndpoint = new EndpointAddress(builder.Uri, this.EndpointSpn);
+
+            builder.Scheme = "net.tcp";
+            builder.Port = 5736;
+            builder.Path = "ResourceManagementService/Resource";
+            this.NetTcpResourceEndpoint = new EndpointAddress(builder.Uri, this.EndpointSpn);
+
+            builder.Path = "ResourceManagementService/ResourceFactory";
+            this.NetTcpResourceFactoryEndpoint = new EndpointAddress(builder.Uri, this.EndpointSpn);
+
+            builder.Path = "ResourceManagementService/Enumeration";
+            this.NetTcpSearchEndpoint = new EndpointAddress(builder.Uri, this.EndpointSpn);
         }
 
         public EndpointManager(string baseUri)

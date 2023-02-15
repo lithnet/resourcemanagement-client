@@ -3,12 +3,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Lithnet.ResourceManagement.Client.Hosts;
 using Nito.AsyncEx;
 
 namespace Lithnet.ResourceManagement.Client
@@ -51,22 +49,36 @@ namespace Lithnet.ResourceManagement.Client
 
 #if NETFRAMEWORK
             Trace.WriteLine("Initializing native .NET framework factory (netfx)");
-            factory = new NativeClientFactory();
+            factory = new NativeClient(p);
 #else
-            factory = GetClient(p);
+            if (FrameworkUtilities.IsFramework)
+            {
+                factory = new NativeClient(p);
+            }
+            else
+            {
+                factory = GetClient(p);
+            }
 #endif
             await factory.InitializeClientsAsync().ConfigureAwait(false);
             return factory;
         }
 
+#if !NETFRAMEWORK
         private static IClient GetClient(ResourceManagementClientOptions p)
         {
             var connectionModes = DetectConnectionModes(p.ConnectionMode).ToList();
 
-            if (connectionModes.Contains(ConnectionMode.Direct))
+            if (connectionModes.Contains(ConnectionMode.DirectWsHttp))
             {
-                Trace.WriteLine("Using direct connection mode");
+                Trace.WriteLine("Using direct wshttp mode");
                 return new NativeClient(p);
+            }
+
+            if (connectionModes.Contains(ConnectionMode.DirectNetTcp))
+            {
+                Trace.WriteLine("Using direct nettcp mode");
+                return new NetTcpClient(p);
             }
 
             if (connectionModes.Contains(ConnectionMode.LocalProxy))
@@ -76,13 +88,14 @@ namespace Lithnet.ResourceManagement.Client
             }
 
             Trace.WriteLine("Using remote proxy");
-            return new NegotitateStreamRpcClient(p);
+            return new NegotiateStreamRpcClient(p);
+
         }
 
         private static IEnumerable<ConnectionMode> DetectConnectionModes(ConnectionMode connectionMode)
         {
             if (connectionMode != ConnectionMode.Auto &&
-                !(connectionMode == ConnectionMode.Direct && !RuntimeInformation.IsOSPlatform(OSPlatform.Windows)))
+                !(connectionMode == ConnectionMode.DirectWsHttp && !RuntimeInformation.IsOSPlatform(OSPlatform.Windows)))
             {
                 Trace.WriteLine($"Using connection mode from configuration: {connectionMode}");
                 yield return connectionMode;
@@ -93,10 +106,10 @@ namespace Lithnet.ResourceManagement.Client
             {
                 if (FrameworkUtilities.IsFramework)
                 {
-                    yield return ConnectionMode.Direct;
+                    yield return ConnectionMode.DirectWsHttp;
                 }
 
-                if (ExePipeHost.HasHostExe())
+                if (Lithnet.ResourceManagement.Client.Hosts.ExePipeHost.HasHostExe())
                 {
                     yield return ConnectionMode.LocalProxy;
                 }
@@ -104,6 +117,8 @@ namespace Lithnet.ResourceManagement.Client
 
             yield return ConnectionMode.RemoteProxy;
         }
+
+#endif
 
         private static string GetClientId(ResourceManagementClientOptions p)
         {
