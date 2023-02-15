@@ -11,8 +11,10 @@ namespace Lithnet.ResourceManagement.Client.Host
 {
     public class NegotiateStreamRpcServer : RpcServer
     {
-        protected override bool RequiresImpersonationOrExplicitCredentials => false;
+        protected override bool RequiresImpersonationOrExplicitCredentials => true;
 
+        protected override bool IsLoopback => true;
+        
         private NegotiateStreamRpcServer()
         {
         }
@@ -69,7 +71,7 @@ namespace Lithnet.ResourceManagement.Client.Host
                     return;
                 }
 
-                var authStream = await RpcCore.GetServerNegotiateStreamAsync(stream, TokenImpersonationLevel.Identification);
+                var authStream = await RpcCore.GetServerNegotiateStreamAsync(stream, TokenImpersonationLevel.Impersonation);
                 this.impersonationIdentity = authStream.RemoteIdentity as WindowsIdentity;
 
                 StringBuilder sb = new StringBuilder();

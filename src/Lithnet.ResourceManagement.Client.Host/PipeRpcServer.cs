@@ -16,6 +16,8 @@ namespace Lithnet.ResourceManagement.Client.Host
 
         protected override bool RequiresImpersonationOrExplicitCredentials => false;
 
+        protected override bool IsLoopback => false;
+
         public PipeRpcServer(string pipeName)
         {
             this.pipeName = string.Format(RpcCore.PipeNameFormatTemplate, pipeName);

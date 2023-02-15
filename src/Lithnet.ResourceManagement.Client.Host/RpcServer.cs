@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Net;
 using System.Security.Principal;
 using System.ServiceModel;
-using System.Threading;
 using System.Threading.Tasks;
 using Lithnet.ResourceManagement.Client.ResourceManagementService;
 using StreamJsonRpc;
@@ -16,6 +15,8 @@ namespace Lithnet.ResourceManagement.Client.Host
         private bool initialized;
 
         protected WindowsIdentity impersonationIdentity;
+
+        protected abstract bool IsLoopback { get; }
 
         protected abstract bool RequiresImpersonationOrExplicitCredentials { get; }
 
@@ -85,6 +86,13 @@ namespace Lithnet.ResourceManagement.Client.Host
 
             Uri uri = baseUri == null ? new Uri("http://localhost:5725") : new Uri(baseUri);
 
+            if (this.IsLoopback)
+            {
+                UriBuilder builder = new UriBuilder(uri);
+                builder.Host = "127.0.0.1";
+                uri = builder.Uri;
+            }
+
             var endpoints = new EndpointManager(uri, spnIdentity);
 
             sendTimeout = Math.Max(10, sendTimeout);
@@ -106,7 +114,7 @@ namespace Lithnet.ResourceManagement.Client.Host
             SearchClient searchClient = new SearchClient(wsHttpAuthenticatedBinding, endpoints.SearchEndpoint);
             this.InitializeClient(searchClient, credentials);
 
-            ApprovalService approvalService = new ApprovalService(wsHttpAuthenticatedContextBinding, credentials, this.impersonationIdentity);
+            ApprovalService approvalService = new ApprovalService(wsHttpAuthenticatedContextBinding, credentials, this.impersonationIdentity, this.IsLoopback);
 
             metadataClient.Open();
             resourceClient.Open();
