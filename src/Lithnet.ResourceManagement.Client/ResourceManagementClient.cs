@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Xml;
 using Lithnet.ResourceManagement.Client.ResourceManagementService;
@@ -2409,12 +2410,12 @@ namespace Lithnet.ResourceManagement.Client
         {
             string value = options.Username;
 
-            if (string.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(value) && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 value = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
             }
 
-            if (value.IndexOf("\\", StringComparison.Ordinal) >= 0)
+            if (value?.IndexOf("\\", StringComparison.Ordinal) >= 0)
             {
                 string[] split = value.Split('\\');
                 this.Username = split[1];

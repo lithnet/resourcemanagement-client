@@ -62,7 +62,7 @@ namespace Lithnet.ResourceManagement.Client
             this.SchemaClient = new SchemaClient(this);
             this.ApprovalClient = new ApprovalClient(this);
         }
-        
+
         private async Task<JsonRpc> GetJsonRpcClientAsync()
         {
             var stream = await this.GetStreamAsync();
