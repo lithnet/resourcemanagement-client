@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Lithnet.ResourceManagement.Client.Host": {
+      "commandName": "Project",
+      "commandLineArgs": "/servicei"
+    }
+  }
+}

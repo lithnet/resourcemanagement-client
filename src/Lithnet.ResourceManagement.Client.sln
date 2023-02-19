@@ -7,10 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lithnet.ResourceManagement.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lithnet.ResourceManagement.Client.UnitTests", "Lithnet.ResourceManagement.Client.UnitTests\Lithnet.ResourceManagement.Client.UnitTests.csproj", "{0CD42F09-0F00-40D9-BF0C-79B4E749E697}"
 EndProject
-Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "Lithnet.ResourceManagement.Client.Help", "Lithnet.ResourceManagement.Client.Help\Lithnet.ResourceManagement.Client.Help.shfbproj", "{9E38FA7E-BD0B-4B3B-912C-83A8E3B1708B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lithnet.ResourceManagement.Client.Help.Examples", "Lithnet.ResourceManagement.Client.Help.Examples\Lithnet.ResourceManagement.Client.Help.Examples.csproj", "{78822806-7FE0-4648-B460-A7DB5452D597}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lithnet.ResourceManagement.Client.Host", "Lithnet.ResourceManagement.Client.Host\Lithnet.ResourceManagement.Client.Host.csproj", "{874E70C4-9CCF-445C-A494-90EEC514AFE7}"
 EndProject
 Global
@@ -37,12 +33,6 @@ Global
 		{0CD42F09-0F00-40D9-BF0C-79B4E749E697}.Release|Any CPU.Build.0 = Release|x64
 		{0CD42F09-0F00-40D9-BF0C-79B4E749E697}.Release|x64.ActiveCfg = Release|x64
 		{0CD42F09-0F00-40D9-BF0C-79B4E749E697}.Release|x64.Build.0 = Release|x64
-		{78822806-7FE0-4648-B460-A7DB5452D597}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{78822806-7FE0-4648-B460-A7DB5452D597}.Debug|x64.ActiveCfg = Debug|x64
-		{78822806-7FE0-4648-B460-A7DB5452D597}.Debug|x64.Build.0 = Debug|x64
-		{78822806-7FE0-4648-B460-A7DB5452D597}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{78822806-7FE0-4648-B460-A7DB5452D597}.Release|x64.ActiveCfg = Release|x64
-		{78822806-7FE0-4648-B460-A7DB5452D597}.Release|x64.Build.0 = Release|x64
 		{874E70C4-9CCF-445C-A494-90EEC514AFE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{874E70C4-9CCF-445C-A494-90EEC514AFE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{874E70C4-9CCF-445C-A494-90EEC514AFE7}.Debug|x64.ActiveCfg = Debug|x64

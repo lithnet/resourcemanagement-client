@@ -12,6 +12,7 @@ namespace Lithnet.ResourceManagement.Client
     internal class NegotiateStreamRpcClient : RpcClient
     {
         private TcpClient client;
+        private string displayName;
 
         public NegotiateStreamRpcClient(ResourceManagementClientOptions p) : base(p)
         {
@@ -19,10 +20,20 @@ namespace Lithnet.ResourceManagement.Client
 
         public override bool IsFaulted => !this.client?.Connected ?? false;
 
+        protected override string MapUri(string baseUri)
+        {
+            return null;
+        }
+
+        public override string DisplayName => this.displayName;
+
         protected override async Task<Stream> GetStreamAsync()
         {
-            var host = this.parameters.GetProxyHostName();
-            var port = this.parameters.GetProxyPort();
+            var proxyUri = this.parameters.GetProxyUri();
+            var host = proxyUri.Host;
+            var port = proxyUri.Port;
+            
+            this.displayName = $"RPC connection to {proxyUri}";
 
             this.client = new TcpClient();
 
@@ -44,11 +55,11 @@ namespace Lithnet.ResourceManagement.Client
 
             if (response != RpcCore.ServerAck)
             {
-                throw new InvalidDataException("The server did not respond with the correct acknowledgement of the impersonation request");
+                throw new InvalidDataException("The server did not respond with the correct acknowledgement of the initialization request");
             }
 
-            var spn = this.parameters.RemoteHostSpn ?? $"FIMService/{host}";
-
+            var spn = this.parameters.Spn ?? $"FIMService/{host}";
+            
             NetworkCredential credentials;
 
             if (string.IsNullOrWhiteSpace(this.parameters.Username))

@@ -6,6 +6,8 @@ namespace Lithnet.ResourceManagement.Client.Hosts
 {
     internal interface IPipeHost
     {
-        void OpenPipe(string pipeName);
+        string HostLocation { get; }
+
+        void OpenPipe(string pipeName, ResourceManagementClientOptions p);
     }
 }

@@ -15,19 +15,20 @@ namespace Lithnet.ResourceManagement.Client
     {
         private static ConcurrentDictionary<string, IClient> existingFactories = new ConcurrentDictionary<string, IClient>();
 
-        public static IClient GetOrCreateFactory(ResourceManagementClientOptions p)
+        public static IClient GetOrCreateClient(ResourceManagementClientOptions p)
         {
             var clientId = GetClientId(p);
             Trace.WriteLine($"Getting client with id {clientId}");
-            var factory = existingFactories.GetOrAdd(clientId, (id) => CreateClient(id, p));
+            var client = existingFactories.GetOrAdd(clientId, (id) => CreateClient(id, p));
 
-            if (!factory.IsFaulted)
+            if (!client.IsFaulted)
             {
-                return factory;
+                Trace.WriteLine($"Returning client {clientId} - {client.DisplayName}");
+                return client;
             }
             else
             {
-                factory.Dispose();
+                client.Dispose();
             }
 
             Trace.WriteLine($"Client {clientId} is in a faulted state and will be rebuilt");
@@ -44,35 +45,29 @@ namespace Lithnet.ResourceManagement.Client
 
         private static async Task<IClient> CreateClientAsync(string id, ResourceManagementClientOptions p)
         {
-            IClient factory;
-            Trace.WriteLine($"New client required for {id}");
+            IClient client;
 
 #if NETFRAMEWORK
             Trace.WriteLine("Initializing native .NET framework factory (netfx)");
-            factory = new NativeClient(p);
+            client = new WsHttpClient(p);
 #else
-            if (FrameworkUtilities.IsFramework)
-            {
-                factory = new NativeClient(p);
-            }
-            else
-            {
-                factory = GetClient(p);
-            }
+            client = GetClient(p);
 #endif
-            await factory.InitializeClientsAsync().ConfigureAwait(false);
-            return factory;
+            await client.InitializeClientsAsync().ConfigureAwait(false);
+
+            Trace.WriteLine($"Created new client of type {client.GetType().Name} with ID {id}");
+            return client;
         }
 
 #if !NETFRAMEWORK
         private static IClient GetClient(ResourceManagementClientOptions p)
         {
-            var connectionModes = DetectConnectionModes(p.ConnectionMode).ToList();
+            var connectionModes = DetectConnectionModes(p).ToList();
 
             if (connectionModes.Contains(ConnectionMode.DirectWsHttp))
             {
                 Trace.WriteLine("Using direct wshttp mode");
-                return new NativeClient(p);
+                return new WsHttpClient(p);
             }
 
             if (connectionModes.Contains(ConnectionMode.DirectNetTcp))
@@ -89,17 +84,37 @@ namespace Lithnet.ResourceManagement.Client
 
             Trace.WriteLine("Using remote proxy");
             return new NegotiateStreamRpcClient(p);
-
         }
 
-        private static IEnumerable<ConnectionMode> DetectConnectionModes(ConnectionMode connectionMode)
+        private static IEnumerable<ConnectionMode> DetectConnectionModes(ResourceManagementClientOptions p)
         {
-            if (connectionMode != ConnectionMode.Auto &&
-                !(connectionMode == ConnectionMode.DirectWsHttp && !RuntimeInformation.IsOSPlatform(OSPlatform.Windows)))
+            if (p.ConnectionMode != ConnectionMode.Auto &&
+                !(p.ConnectionMode == ConnectionMode.DirectWsHttp && !RuntimeInformation.IsOSPlatform(OSPlatform.Windows)))
             {
-                Trace.WriteLine($"Using connection mode from configuration: {connectionMode}");
-                yield return connectionMode;
+                Trace.WriteLine($"Using connection mode from configuration: {p.ConnectionMode}");
+                yield return p.ConnectionMode;
                 yield break;
+            }
+
+            if (p.BaseUri != null)
+            {
+                if (p.BaseUri.StartsWith("net.tcp://"))
+                {
+                    yield return ConnectionMode.DirectNetTcp;
+                    yield break;
+                }
+
+                if (p.BaseUri.StartsWith("rmc://"))
+                {
+                    yield return ConnectionMode.RemoteProxy;
+                    yield break;
+                }
+
+                if (p.BaseUri.StartsWith("pipe://"))
+                {
+                    yield return ConnectionMode.LocalProxy;
+                    yield break;
+                }
             }
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -131,9 +146,6 @@ namespace Lithnet.ResourceManagement.Client
             sb.Append(p.Password);
             sb.Append(p.RecieveTimeoutSeconds.ToString());
             sb.Append(p.SendTimeoutSeconds.ToString());
-            sb.Append(p.RemoteHostSpn);
-            sb.Append(p.RemoteProxyHost);
-            sb.Append(p.RemoteProxyPort);
             sb.Append(p.ConnectionMode);
 
             byte[] rawBytes = Encoding.UTF8.GetBytes(sb.ToString());

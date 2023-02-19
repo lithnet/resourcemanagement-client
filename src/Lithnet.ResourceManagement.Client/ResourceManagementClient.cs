@@ -2393,7 +2393,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             this.SetUsername(options);
 
-            this.ClientFactory = Client.ClientFactory.GetOrCreateFactory(options);
+            this.ClientFactory = Client.ClientFactory.GetOrCreateClient(options);
 
             this.ResourceClient = this.ClientFactory.ResourceClient;
             this.ResourceFactoryClient = this.ClientFactory.ResourceFactoryClient;

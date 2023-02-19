@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
@@ -10,9 +9,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void DeleteEmptyListResource(ConnectionMode connectionMode)
         {
@@ -24,9 +24,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void DeleteEmptyListUniqueIdentifier(ConnectionMode connectionMode)
         {
@@ -38,9 +39,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void DeleteByID(ConnectionMode connectionMode)
         {
@@ -64,9 +66,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void DeleteByGuid(ConnectionMode connectionMode)
         {
@@ -90,9 +93,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void DeleteByString(ConnectionMode connectionMode)
         {
@@ -116,9 +120,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void DeleteByObject(ConnectionMode connectionMode)
         {
@@ -142,9 +147,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void DeleteByStringNonExistant(ConnectionMode connectionMode)
         {
@@ -163,9 +169,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void CompositeDeleteByObjectTest(ConnectionMode connectionMode)
         {
@@ -216,9 +223,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void CompositeDeleteByIDTest(ConnectionMode connectionMode)
         {

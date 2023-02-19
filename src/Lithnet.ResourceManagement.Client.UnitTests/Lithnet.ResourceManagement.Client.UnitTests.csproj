@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net6.0-windows;net472;net462;net461;net48;netcoreapp3.1;net7.0-windows</TargetFrameworks>
+		<TargetFrameworks>net6.0;net472;net462;net461;net48;netcoreapp3.1;net7.0-windows</TargetFrameworks>
 		<IsPackable>false</IsPackable>
 		<Platforms>AnyCPU</Platforms>
 		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
@@ -42,13 +42,6 @@
 			<Output TaskParameter="Include" ItemName="FilesToCopy" />
 		</CreateItem>
 		<Copy SourceFiles="@(FilesToCopy)" DestinationFiles="$(OutputPath)testhost.dll.config" />
-	</Target>
-
-	<Target Name="CopyHost" AfterTargets="PostBuildEvent" >
-		<CreateItem Include="..\Lithnet.ResourceManagement.Client.Host\bin\$(Configuration)\net472\*.exe">
-			<Output TaskParameter="Include" ItemName="FilesToCopy2" />
-		</CreateItem>
-		<Copy SourceFiles="@(FilesToCopy2)" DestinationFolder="$(OutputPath)fxhost" />
 	</Target>
 
 </Project>

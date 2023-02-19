@@ -1,10 +1,9 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
@@ -15,9 +14,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public async Task SearchTestAsync(ConnectionMode connectionMode)
         {
@@ -40,9 +40,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void SearchTestSync(ConnectionMode connectionMode)
         {
@@ -65,9 +66,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void SearchBadFilter(ConnectionMode connectionMode)
         {
@@ -93,9 +95,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void SearchTestSyncSortedAsc(ConnectionMode connectionMode)
         {
@@ -119,9 +122,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void SearchTestSyncSortedDesc(ConnectionMode connectionMode)
         {
@@ -145,9 +149,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public async Task SearchTestAsyncSortedAscAsync(ConnectionMode connectionMode)
         {
@@ -171,9 +176,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public async Task SearchTestAsyncSortedDescAsync(ConnectionMode connectionMode)
         {
@@ -197,9 +203,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public async Task SearchTestAsyncNoResultsAsync(ConnectionMode connectionMode)
         {
@@ -223,9 +230,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void SearchTestSyncNoResults(ConnectionMode connectionMode)
         {
@@ -249,9 +257,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void SearchTestSyncRestrictedAttributeList(ConnectionMode connectionMode)
         {
@@ -279,9 +288,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public async Task SearchTestPagedResultsSortAscAsync(ConnectionMode connectionMode)
         {
@@ -330,9 +340,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public async Task SearchTestPagedResultsSortDescAsync(ConnectionMode connectionMode)
         {
@@ -369,7 +380,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             /// Jump back in the result set and change the page size
             pager.CurrentIndex = 2;
             pager.PageSize = 4;
-            results = await pager.GetNextPageAsync().ToListAsync    ().ConfigureAwait(false);
+            results = await pager.GetNextPageAsync().ToListAsync().ConfigureAwait(false);
             Assert.AreEqual(4, results.Count);
             Assert.AreEqual(false, pager.HasMoreItems);
             Assert.AreEqual("reftest4", results[0].Attributes[AttributeNames.AccountName].StringValue);
@@ -381,9 +392,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public async Task SearchTestPagedDefaultPageAndSizeSortedDescendingAsync(ConnectionMode connectionMode)
         {
@@ -410,9 +422,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public async Task SearchTestPagedSortedAscendingAsync(ConnectionMode connectionMode)
         {
@@ -435,9 +448,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public async Task SearchTestPagedSortedDescendingAsync(ConnectionMode connectionMode)
         {
@@ -460,9 +474,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void SearchTestResultCount(ConnectionMode connectionMode)
         {

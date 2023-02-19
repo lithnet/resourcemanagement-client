@@ -11,9 +11,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void CreateFromClientSaveWithClient(ConnectionMode connectionMode)
         {
@@ -50,9 +51,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void CreateFromClientSaveOnObject(ConnectionMode connectionMode)
         {
@@ -88,9 +90,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void CreateByConstructorSaveOnObject(ConnectionMode connectionMode)
         {
@@ -126,9 +129,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void CreateByConstructorSaveWithClient(ConnectionMode connectionMode)
         {
@@ -164,9 +168,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void CreateByConstructorSaveWithClientComposite(ConnectionMode connectionMode)
         {

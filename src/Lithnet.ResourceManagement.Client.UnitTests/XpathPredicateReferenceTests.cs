@@ -18,9 +18,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void TestSVReferenceEquals(ConnectionMode connectionMode)
         {
@@ -43,9 +44,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void TestSVReferenceNotEquals(ConnectionMode connectionMode)
         {
@@ -68,9 +70,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void TestSVReferenceIsPresent(ConnectionMode connectionMode)
         {
@@ -93,9 +96,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void TestSVReferenceIsNotPresent(ConnectionMode connectionMode)
         {
@@ -119,9 +123,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void TestMVReferenceEquals(ConnectionMode connectionMode)
         {
@@ -145,9 +150,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void TestMVReferenceNotEquals(ConnectionMode connectionMode)
         {
@@ -171,9 +177,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void TestMVReferenceIsPresent(ConnectionMode connectionMode)
         {
@@ -199,9 +206,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataTestMethod]
         [DataRow(ConnectionMode.RemoteProxy)]
         [DataRow(ConnectionMode.LocalProxy)]
+        [DataRow(ConnectionMode.DirectNetTcp)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void TestMVReferenceIsNotPresent(ConnectionMode connectionMode)
         {

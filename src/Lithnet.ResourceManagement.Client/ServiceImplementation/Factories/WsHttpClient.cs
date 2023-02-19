@@ -5,7 +5,7 @@ using Lithnet.ResourceManagement.Client.ResourceManagementService;
 
 namespace Lithnet.ResourceManagement.Client
 {
-    internal class NativeClient : IClient
+    internal class WsHttpClient : IClient
     {
         private readonly ResourceManagementClientOptions parameters;
         private bool disposedValue;
@@ -27,14 +27,18 @@ namespace Lithnet.ResourceManagement.Client
 
         public bool IsFaulted => false;
 
-        public NativeClient(ResourceManagementClientOptions p)
+        public string DisplayName { get; private set; }
+
+        public WsHttpClient(ResourceManagementClientOptions p)
         {
             this.parameters = p;
         }
 
         public Task InitializeClientsAsync()
         {
-            var endpointManager = new EndpointManager(this.parameters.BaseUri, this.parameters.Spn);
+            var uri = this.parameters.GetFimServiceUri();
+            this.DisplayName = $"Native WsHttpClient to {uri}";
+            var endpointManager = new EndpointManager(uri, this.parameters.Spn);
 
             NetworkCredential creds = null;
 
@@ -131,3 +135,4 @@ namespace Lithnet.ResourceManagement.Client
         }
     }
 }
+

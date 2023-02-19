@@ -2,10 +2,14 @@
 {
     public class ResourceManagementClientOptions
     {
+        public const int DefaultFimServicePort = 5725;
+        public const int DefaultRemoteProxyPort = 5735;
+        public const int DefaultNetTcpBindingPort = 5736;
+
         /// <summary>
         /// The URI or hostname of the MIM Service.
         /// </summary>
-        public string BaseUri { get; set; } = "http://localhost:5725";
+        public string BaseUri { get; set; } = $"http://localhost:{DefaultFimServicePort}";
 
         /// <summary>
         /// The name of the user to connect to the MIM service as. Leave blank to connect as the currently logged on user
@@ -48,20 +52,18 @@
         public ConnectionMode ConnectionMode { get; set; }
 
         /// <summary>
-        /// Gets or sets the hostname of the RMC proxy service, used for connection scenarios involving dotnet core hosts. If not specified, this defaults to the name of the MIM service
+        /// Gets or sets the location of the Resource Management Client Host executable
         /// </summary>
-        public string RemoteProxyHost { get; set; }
+        /// <remarks>
+        /// The host executable is a .NET Framework application that is used to connect to the MIM service when the client is running on .NET Core on Windows. It not needed when the client is running on .NET Framework, or when the client is configured to a <see cref="ConnectionMode.DirectNetTcp"/>, or <see cref="ConnectionMode.RemoteProxy"/> connection mode.
+        /// </remarks>
+        public string RmcHostExe { get; set; }
 
         /// <summary>
-        /// Gets or sets the port that the RMC proxy server is listening on. Defaults to 5735.
+        /// Creates a new instance, and copies the values from the original instance
         /// </summary>
-        public int RemoteProxyPort { get; set; } = 5735;
-
-        /// <summary>
-        /// Gets or sets the SPN used by the remote proxy service
-        /// </summary>
-        public string RemoteHostSpn { get; set; }
-        
+        /// <param name="original">The options instance to copy the values from</param>
+        /// <returns>A copy of the original instance</returns>
         public static ResourceManagementClientOptions Clone(ResourceManagementClientOptions original)
         {
             return new ResourceManagementClientOptions
@@ -72,9 +74,6 @@
                 ConnectTimeoutSeconds = original.ConnectTimeoutSeconds,
                 Password = original.Password,
                 RecieveTimeoutSeconds = original.RecieveTimeoutSeconds,
-                RemoteHostSpn = original.RemoteHostSpn,
-                RemoteProxyHost = original.RemoteProxyHost,
-                RemoteProxyPort = original.RemoteProxyPort,
                 SendTimeoutSeconds = original.SendTimeoutSeconds,
                 Spn = original.Spn,
                 Username = original.Username

@@ -16,11 +16,30 @@ namespace Lithnet.ResourceManagement.Client.Host
 
         protected override bool RequiresImpersonationOrExplicitCredentials => false;
 
-        protected override bool IsLoopback => false;
-
         public PipeRpcServer(string pipeName)
         {
             this.pipeName = string.Format(RpcCore.PipeNameFormatTemplate, pipeName);
+        }
+
+        private protected override Uri MapBaseUri(string uri)
+        {
+            UriBuilder builder = new UriBuilder(uri);
+            if (builder.Scheme != "http")
+            {
+                builder.Scheme = "http";
+            }
+
+            if (builder.Port <= 0 || builder.Port == 80)
+            {
+                builder.Port = 5725;
+            }
+
+            return builder.Uri;
+        }
+
+        private protected override Uri MapApprovalUri(string baseUri)
+        {
+            return new Uri(baseUri);
         }
 
         internal async Task StartNamedPipeServerAsync(CancellationToken ct)

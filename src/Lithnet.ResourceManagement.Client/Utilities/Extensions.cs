@@ -160,41 +160,19 @@ namespace Lithnet.ResourceManagement.Client
             }
         }
 
-        internal static int GetProxyPort(this ResourceManagementClientOptions options)
+        internal static Uri GetProxyUri(this ResourceManagementClientOptions options)
         {
-            if (options.RemoteProxyPort <= 0)
-            {
-                return 5375;
-            }
-
-            return options.RemoteProxyPort;
+            return UriParser.GetRmcProxyUri(options.BaseUri);
         }
 
-        internal static string GetProxyHostName(this ResourceManagementClientOptions options)
+        internal static Uri GetNetTcpUri(this ResourceManagementClientOptions options)
         {
-            if (!string.IsNullOrWhiteSpace(options.RemoteProxyHost))
-            {
-                return options.RemoteProxyHost;
-            }
-
-            return GetFimServiceHostName(options);
-        }
-
-        internal static string GetFimServiceHostName(this ResourceManagementClientOptions options)
-        {
-            return GetFimServiceUri(options).Host;
+            return UriParser.GetFimServiceNetTcpUri(options.BaseUri);
         }
 
         internal static Uri GetFimServiceUri(this ResourceManagementClientOptions options)
         {
-            if (string.IsNullOrWhiteSpace(options.BaseUri))
-            {
-                return new Uri("http://localhost:5725");
-            }
-
-            return Uri.IsWellFormedUriString(options.BaseUri, UriKind.Absolute) ?
-            new Uri(options.BaseUri) :
-            new Uri($"http://{options.BaseUri}:5725");
+            return UriParser.GetFimServiceHttpUri(options.BaseUri);
         }
     }
 }

@@ -16,8 +16,6 @@ namespace Lithnet.ResourceManagement.Client.Host
 
         protected WindowsIdentity impersonationIdentity;
 
-        protected abstract bool IsLoopback { get; }
-
         protected abstract bool RequiresImpersonationOrExplicitCredentials { get; }
 
         protected RpcServer()
@@ -52,8 +50,12 @@ namespace Lithnet.ResourceManagement.Client.Host
                 client.ClientCredentials.Windows.ClientCredential = (NetworkCredential)CredentialCache.DefaultCredentials;
             }
 
-            client.ClientCredentials.Windows.AllowedImpersonationLevel = TokenImpersonationLevel.Impersonation;
+            client.ClientCredentials.Windows.AllowedImpersonationLevel = TokenImpersonationLevel.Identification;
         }
+
+        private protected abstract Uri MapApprovalUri(string uri);
+
+        private protected abstract Uri MapBaseUri(string uri);
 
         public Task InitializeClientsAsync(string baseUri, string spn, int concurrentConnectionLimit, int sendTimeout, int recieveTimeout, string username, string password)
         {
@@ -82,18 +84,10 @@ namespace Lithnet.ResourceManagement.Client.Host
                 }
             }
 
-            var spnIdentity = string.IsNullOrEmpty(spn) ? null : EndpointIdentity.CreateSpnIdentity(spn);
+            var uri = this.MapBaseUri(baseUri);
+            Trace.WriteLine($"Mapped {baseUri} to {uri} with supplied SPN {spn}");
 
-            Uri uri = baseUri == null ? new Uri("http://localhost:5725") : new Uri(baseUri);
-
-            if (this.IsLoopback)
-            {
-                UriBuilder builder = new UriBuilder(uri);
-                builder.Host = "127.0.0.1";
-                uri = builder.Uri;
-            }
-
-            var endpoints = new EndpointManager(uri, spnIdentity);
+            var endpoints = new EndpointManager(uri, spn);
 
             sendTimeout = Math.Max(10, sendTimeout);
             recieveTimeout = Math.Max(10, recieveTimeout);
@@ -114,7 +108,7 @@ namespace Lithnet.ResourceManagement.Client.Host
             SearchClient searchClient = new SearchClient(wsHttpAuthenticatedBinding, endpoints.SearchEndpoint);
             this.InitializeClient(searchClient, credentials);
 
-            ApprovalService approvalService = new ApprovalService(wsHttpAuthenticatedContextBinding, credentials, this.impersonationIdentity, this.IsLoopback);
+            ApprovalService approvalService = new ApprovalService(wsHttpAuthenticatedContextBinding, credentials, this.impersonationIdentity, this.MapApprovalUri);
 
             metadataClient.Open();
             resourceClient.Open();

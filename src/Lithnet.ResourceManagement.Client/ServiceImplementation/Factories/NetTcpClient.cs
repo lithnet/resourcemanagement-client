@@ -14,7 +14,7 @@ namespace Lithnet.ResourceManagement.Client
         private NativeResourceFactoryClient resourceFactoryChannel;
         private NativeSearchClient searchChannel;
         private NativeSchemaClient schemaChannel;
-        private NativeApprovalClient approvalChannel;
+        private NotImplementedApprovalClient approvalChannel;
 
         public IResourceClient ResourceClient { get; private set; }
 
@@ -28,6 +28,8 @@ namespace Lithnet.ResourceManagement.Client
 
         public bool IsFaulted => false;
 
+        public string DisplayName { get; private set; }
+        
         public NetTcpClient(ResourceManagementClientOptions p)
         {
             this.parameters = p;
@@ -36,8 +38,9 @@ namespace Lithnet.ResourceManagement.Client
         public Task InitializeClientsAsync()
         {
             Trace.WriteLine("Building NetTcp client");
-            
-            var endpointManager = new EndpointManager(this.parameters.BaseUri, this.parameters.Spn);
+            var uri = this.parameters.GetNetTcpUri();
+            this.DisplayName = $"Native NetTcp client to {uri}";
+            var endpointManager = new EndpointManager(uri, this.parameters.Spn);
 
             NetworkCredential creds = null;
 
@@ -47,18 +50,14 @@ namespace Lithnet.ResourceManagement.Client
             }
 
             var wsHttpBinding = BindingManager.GetWsHttpBinding(this.parameters.RecieveTimeoutSeconds, this.parameters.SendTimeoutSeconds);
-
             var netTcpBinding = BindingManager.GetNetTcpBinding(this.parameters.RecieveTimeoutSeconds, this.parameters.SendTimeoutSeconds);
-
-           // var netTcpContextBinding = BindingManager.GetNetTcpContextBinding(this.parameters.RecieveTimeoutSeconds, this.parameters.SendTimeoutSeconds);
-
             var netTcpStreamedBinding = BindingManager.GetNetTcpStreamedBinding(this.parameters.RecieveTimeoutSeconds, this.parameters.SendTimeoutSeconds);
 
-            this.resourceChannel = new NativeResourceClient(netTcpBinding, endpointManager.NetTcpResourceEndpoint);
-            this.resourceFactoryChannel = new NativeResourceFactoryClient(netTcpBinding, endpointManager.NetTcpResourceFactoryEndpoint);
-            this.searchChannel = new NativeSearchClient(netTcpStreamedBinding, endpointManager.NetTcpSearchEndpoint);
+            this.resourceChannel = new NativeResourceClient(netTcpBinding, endpointManager.ResourceEndpoint);
+            this.resourceFactoryChannel = new NativeResourceFactoryClient(netTcpBinding, endpointManager.ResourceFactoryEndpoint);
+            this.searchChannel = new NativeSearchClient(netTcpStreamedBinding, endpointManager.SearchEndpoint);
             this.schemaChannel = new NativeSchemaClient(wsHttpBinding, endpointManager.MetadataEndpoint);
-            this.approvalChannel = new NativeApprovalClient(netTcpBinding, creds);
+            this.approvalChannel = new NotImplementedApprovalClient();
 
             this.ConfigureChannelCredentials(this.resourceChannel, creds);
             this.ConfigureChannelCredentials(this.resourceFactoryChannel, creds);

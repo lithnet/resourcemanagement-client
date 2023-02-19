@@ -44,7 +44,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataRow(ConnectionMode.LocalProxy)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void TestApprovalForCurrentUser(ConnectionMode connectionMode)
         {
@@ -141,7 +141,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [DataRow(ConnectionMode.LocalProxy)]
 #if NETFRAMEWORK
 
-        [DataRow(ConnectionMode.Direct)]
+        [DataRow(ConnectionMode.DirectWsHttp)]
 #endif
         public void TestRejectionForCurrentUser(ConnectionMode connectionMode)
         {

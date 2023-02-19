@@ -15,32 +15,11 @@ namespace Lithnet.ResourceManagement.Client
 
         public EndpointAddress MetadataEndpoint { get; private set; }
 
-        public EndpointAddress NetTcpResourceFactoryEndpoint { get; private set; }
-
-        public EndpointAddress NetTcpResourceEndpoint { get; private set; }
-
-        public EndpointAddress NetTcpSearchEndpoint { get; private set; }
-
-
-        public EndpointManager(string baseAddress, string spn)
+        public EndpointManager(Uri uri, string spn)
         {
-            this.Configure(baseAddress, spn);
-        }
-
-        private void Configure(string baseAddress, string spn)
-        {
-            if (string.IsNullOrWhiteSpace(baseAddress))
-            {
-                throw new ArgumentNullException("A MIM serivce URI was not provided");
-            }
-
-            Uri uri = Uri.IsWellFormedUriString(baseAddress, UriKind.Absolute) ?
-                new Uri(baseAddress) :
-                new Uri($"http://{baseAddress}:5725");
-
             EndpointIdentity spnIdentity = string.IsNullOrWhiteSpace(spn) ?
-                EndpointManager.SpnIdentityFromUri(uri) :
-                EndpointManager.SpnIdentityFromSpn(spn);
+             EndpointManager.SpnIdentityFromUri(uri) :
+             EndpointManager.SpnIdentityFromSpn(spn);
 
             this.Configure(uri, spnIdentity);
         }
@@ -54,7 +33,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             if (!baseUri.IsAbsoluteUri)
             {
-                baseUri = new Uri($"http://{baseUri}:5725");
+                throw new UriFormatException($"The URI provided was not in absolute form. {baseUri}");
             }
 
             UriBuilder builder = new UriBuilder(baseUri);
@@ -77,24 +56,14 @@ namespace Lithnet.ResourceManagement.Client
             builder.Path = "ResourceManagementService/Enumeration";
             this.SearchEndpoint = new EndpointAddress(builder.Uri, this.EndpointSpn);
 
+            if (builder.Scheme != "http")
+            {
+                builder.Scheme = "http";
+                builder.Port = 5725;
+            }
+
             builder.Path = "ResourceManagementService/MEX";
             this.MetadataEndpoint = new EndpointAddress(builder.Uri, this.EndpointSpn);
-
-            builder.Scheme = "net.tcp";
-            builder.Port = 5736;
-            builder.Path = "ResourceManagementService/Resource";
-            this.NetTcpResourceEndpoint = new EndpointAddress(builder.Uri, this.EndpointSpn);
-
-            builder.Path = "ResourceManagementService/ResourceFactory";
-            this.NetTcpResourceFactoryEndpoint = new EndpointAddress(builder.Uri, this.EndpointSpn);
-
-            builder.Path = "ResourceManagementService/Enumeration";
-            this.NetTcpSearchEndpoint = new EndpointAddress(builder.Uri, this.EndpointSpn);
-        }
-
-        public EndpointManager(string baseUri)
-        {
-            this.Configure(baseUri, null);
         }
 
         public static EndpointIdentity SpnIdentityFromUri(Uri uri)

@@ -43,7 +43,7 @@ namespace Lithnet.ResourceManagement.Client
             }
             else
             {
-                  await authenticatedStream.AuthenticateAsClientAsync(credentials, serverSpn, ProtectionLevel.EncryptAndSign, requestedImpersonationLevel);
+                await authenticatedStream.AuthenticateAsClientAsync(credentials, serverSpn, ProtectionLevel.EncryptAndSign, requestedImpersonationLevel);
             }
 
             if (!authenticatedStream.IsAuthenticated)
@@ -66,6 +66,9 @@ namespace Lithnet.ResourceManagement.Client
             .WithResolver(
                 CompositeResolver.Create(new IFormatterResolver[] {
                     new MessageSerializer(),
+                    NullFormatter.GetInstance(NullFormatter.FaultCodeDataType),
+                    NullFormatter.GetInstance(NullFormatter.RecievedFaultType),
+                    NullFormatter.GetInstance(NullFormatter.FaultReasonDataType),
                     StandardResolver.Instance,
             }));
 
@@ -77,6 +80,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             var messageFormatter = new JsonMessageFormatter();
             messageFormatter.JsonSerializer.Converters.Add(new MessageSerializer());
+            messageFormatter.JsonSerializer.Converters.Add(new JsonNullConverter());
 
             return new LengthHeaderMessageHandler(sendingStream, receivingStream, messageFormatter);
         }

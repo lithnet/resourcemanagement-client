@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using Microsoft.Win32;
 
 namespace Lithnet.ResourceManagement.Client.Hosts
@@ -12,19 +13,26 @@ namespace Lithnet.ResourceManagement.Client.Hosts
     {
         private Process hostProcess;
 
-        public void OpenPipe(string pipeName)
+        private static string embeddedHostHash;
+        private static byte[] embeddedBinary;
+
+        public string HostLocation { get; private set; }
+
+        public void OpenPipe(string pipeName, ResourceManagementClientOptions p)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 throw new PlatformNotSupportedException();
             }
 
-            var path = FindHostPath();
+            var path = GetOrExtractHost(p);
 
             if (path == null)
             {
                 throw new FileNotFoundException("Unable to locate framework host", "Lithnet.ResourceManagement.Client.Host.exe");
             }
+
+            this.HostLocation = path;
 
             Trace.WriteLine($"Attempting to invoke {path}");
 
@@ -69,13 +77,93 @@ namespace Lithnet.ResourceManagement.Client.Hosts
             Console.WriteLine($"Output data recieved: {e.Data}");
         }
 
+        private static string GetOrExtractHost(ResourceManagementClientOptions p)
+        {
+            if (!string.IsNullOrWhiteSpace(p.RmcHostExe))
+            {
+                return p.RmcHostExe;
+            }
+
+            var installedPath = GetInstalledHostPath();
+            if (!string.IsNullOrWhiteSpace(installedPath))
+            {
+                Trace.WriteLine("Found installed host");
+                return installedPath;
+            }
+
+            var temp = Path.GetTempPath();
+            var hostFile = Path.Combine(temp, "LithnetRmcProxy", "Lithnet.ResourceManagement.Client.Host.exe");
+            if (File.Exists(hostFile))
+            {
+                if (GetFileHash(hostFile) == GetEmbeddedBinaryHash())
+                {
+                    Trace.WriteLine("Found existing extracted binary");
+                    return hostFile;
+                }
+            }
+
+            Trace.WriteLine("Extracting embedded binary");
+            Directory.CreateDirectory(Path.GetDirectoryName(hostFile));
+            File.WriteAllBytes(hostFile, GetEmbeddedBinary());
+
+            return hostFile;
+        }
+
+        public static string GetInstalledHostPath()
+        {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return null;
+            }
+
+            return Registry.LocalMachine.GetValue(@"Software\Lithnet\Resource Management Client\HostPath", null) as string;
+        }
+
+        public static string GetFileHash(string filePath)
+        {
+            using SHA256 SHA256 = SHA256.Create();
+            using FileStream fileStream = File.OpenRead(filePath);
+            return Convert.ToBase64String(SHA256.ComputeHash(fileStream));
+        }
+
+        private static string GetEmbeddedBinaryHash()
+        {
+            if (embeddedHostHash == null)
+            {
+                using SHA256 hasher = SHA256.Create();
+                embeddedHostHash = Convert.ToBase64String(hasher.ComputeHash(GetEmbeddedBinary()));
+            }
+
+            return embeddedHostHash;
+        }
+
+        private static byte[] GetEmbeddedBinary()
+        {
+            if (embeddedBinary == null)
+            {
+                var assembly = typeof(ExePipeHost).Assembly;
+                var resourceName = "Host.exe";
+                var resource = assembly?.GetManifestResourceStream(resourceName);
+
+                if (resource == null)
+                {
+                    throw new ResourceNotFoundException($"The embedded resource {resourceName} was not found");
+                }
+
+                using var ms = new MemoryStream();
+                resource.CopyTo(ms);
+                embeddedBinary = ms.ToArray();
+            }
+
+            return embeddedBinary;
+        }
         private static string FindHostPath()
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 throw new PlatformNotSupportedException();
             }
-            
+
             List<string> probePaths = new List<string>()
             {
                 RmcConfiguration.FxHostPath,
@@ -144,7 +232,7 @@ namespace Lithnet.ResourceManagement.Client.Hosts
             {
                 throw new PlatformNotSupportedException();
             }
-            
+
             return FindHostPath() != null;
         }
     }

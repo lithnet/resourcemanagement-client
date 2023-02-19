@@ -30,6 +30,10 @@ namespace Lithnet.ResourceManagement.Client
         public IApprovalClient ApprovalClient { get; private set; }
 
         public abstract bool IsFaulted { get; }
+        
+        public abstract string DisplayName { get; }
+
+        protected abstract string MapUri(string baseUri);
 
         public RpcClient(ResourceManagementClientOptions p)
         {
@@ -40,13 +44,15 @@ namespace Lithnet.ResourceManagement.Client
         {
             this.jsonClient = await this.GetJsonRpcClientAsync();
 
-            this.jsonClient.TraceSource.Switch.Level = SourceLevels.Verbose;
+            this.jsonClient.TraceSource.Switch.Level = SourceLevels.Warning;
             this.jsonClient.Disconnected += this.JsonClient_Disconnected;
             this.jsonClient.ExceptionStrategy = ExceptionProcessing.ISerializable;
             this.jsonClient.AllowModificationWhileListening = true;
             this.jsonClient.StartListening();
 
             var server = this.jsonClient.Attach<IRpcServer>(new JsonRpcProxyOptions { MethodNameTransform = x => $"Control_{x}" });
+
+            var uri = this.MapUri(this.parameters.BaseUri);
 
             await server.InitializeClientsAsync(this.parameters.BaseUri, this.parameters.Spn, this.parameters.ConcurrentConnectionLimit, this.parameters.SendTimeoutSeconds, this.parameters.RecieveTimeoutSeconds, this.parameters.Username, this.parameters.Password).ConfigureAwait(false);
 

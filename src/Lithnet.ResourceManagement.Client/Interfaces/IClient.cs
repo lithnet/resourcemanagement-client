@@ -6,6 +6,8 @@ namespace Lithnet.ResourceManagement.Client
 {
     internal interface IClient : IDisposable
     {
+        string DisplayName { get; }
+        
         IResourceClient ResourceClient { get; }
 
         IResourceFactoryClient ResourceFactoryClient { get; }

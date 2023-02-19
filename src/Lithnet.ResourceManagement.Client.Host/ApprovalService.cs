@@ -12,23 +12,21 @@ namespace Lithnet.ResourceManagement.Client.Host
         private readonly Binding binding;
         private readonly NetworkCredential credentials;
         private readonly WindowsIdentity impersonationIdentity;
-        private readonly bool translateEndpointsToLocalHost;
+        private readonly Func<string, Uri> endpointerMapper;
 
-        public ApprovalService(Binding binding, NetworkCredential credentials, WindowsIdentity impersonationIdentity, bool translateEndpointsToLocalHost)
+        public ApprovalService(Binding binding, NetworkCredential credentials, WindowsIdentity impersonationIdentity, Func<string, Uri> endpointMapper)
         {
             this.binding = binding;
             this.credentials = credentials;
             this.impersonationIdentity = impersonationIdentity;
-            this.translateEndpointsToLocalHost = translateEndpointsToLocalHost;
+            this.endpointerMapper = endpointMapper;
         }
 
         public async Task<Message> ApproveAsync(string endpoint, Message message)
         {
-            if (this.translateEndpointsToLocalHost)
+            if (this.endpointerMapper != null)
             {
-                UriBuilder builder = new UriBuilder(endpoint);
-                builder.Host = "127.0.0.1";
-                endpoint = builder.ToString();
+                endpoint = this.endpointerMapper(endpoint).ToString();
             }
 
             ResourceFactoryClient client = new ResourceFactoryClient(this.binding, EndpointManager.EndpointFromAddress(endpoint));

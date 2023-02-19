@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net472</TargetFrameworks>
+		<TargetFrameworks>net461</TargetFrameworks>
 		<LangVersion>9</LangVersion>
 		<OutputType>Exe</OutputType>
 		<RestoreProjectStyle>PackageReference</RestoreProjectStyle>

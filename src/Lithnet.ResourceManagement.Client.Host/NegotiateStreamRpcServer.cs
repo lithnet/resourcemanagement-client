@@ -6,6 +6,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Win32;
 
 namespace Lithnet.ResourceManagement.Client.Host
 {
@@ -13,10 +14,25 @@ namespace Lithnet.ResourceManagement.Client.Host
     {
         protected override bool RequiresImpersonationOrExplicitCredentials => true;
 
-        protected override bool IsLoopback => true;
-        
         private NegotiateStreamRpcServer()
         {
+        }
+
+        private protected override Uri MapBaseUri(string uri)
+        {
+            if (!int.TryParse(Registry.LocalMachine.GetValue(@"SYSTEM\CurrentControlSet\Services\FIMService\ResourceManagementServicePort", "5725") as string, out int port))
+            {
+                port = 5725;
+            }
+
+            return new Uri($"http://127.0.0.1:{port}");
+        }
+
+        private protected override Uri MapApprovalUri(string uri)
+        {
+            UriBuilder builder = new UriBuilder(uri);
+            builder.Host = "127.0.0.1";
+            return builder.Uri;
         }
 
         public static async Task StartNegotiateStreamServerAsync(IPAddress address, int port, CancellationToken cancellationToken)
@@ -53,7 +69,7 @@ namespace Lithnet.ResourceManagement.Client.Host
             try
             {
                 Logger.LogTrace($"Client connected: {client.Client.RemoteEndPoint}");
-
+                
                 using var stream = client.GetStream();
 
                 var firstByte = stream.ReadByte();
@@ -88,17 +104,8 @@ namespace Lithnet.ResourceManagement.Client.Host
 
                 Logger.LogInfo(sb.ToString());
 
-                // GZipStream sendingStream = new GZipStream(authStream, CompressionMode.Compress);
-                // GZipStream receivingStream = new GZipStream(authStream, CompressionMode.Decompress);
 
-                if (this.impersonationIdentity != null && this.impersonationIdentity.ImpersonationLevel == TokenImpersonationLevel.Impersonation)
-                {
-                    using (this.impersonationIdentity.Impersonate())
-                    {
-                        await this.SetupRpcServerAsync(RpcCore.GetMessageHandler(authStream, authStream));
-                    }
-                }
-                else
+                using (this.impersonationIdentity.Impersonate())
                 {
                     await this.SetupRpcServerAsync(RpcCore.GetMessageHandler(authStream, authStream));
                 }

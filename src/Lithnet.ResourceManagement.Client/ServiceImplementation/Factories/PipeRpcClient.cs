@@ -12,6 +12,7 @@ namespace Lithnet.ResourceManagement.Client
         private NamedPipeClientStream clientPipe;
         private string pipeName;
         private IPipeHost pipeHost;
+        private string displayName;
 
         public override bool IsFaulted => !this.clientPipe?.IsConnected ?? false;
 
@@ -19,9 +20,21 @@ namespace Lithnet.ResourceManagement.Client
         {
         }
 
+        public override string DisplayName => this.displayName;
+
+        protected override string MapUri(string baseUri)
+        {
+            return UriParser.GetFimServiceHttpUri(baseUri).ToString();
+        }
+
         protected override async Task<Stream> GetStreamAsync()
         {
-            return await this.GetOrCreateClientPipeAsync(TimeSpan.FromSeconds(this.parameters.ConnectTimeoutSeconds), CancellationToken.None).ConfigureAwait(false);
+            var client = await this.GetOrCreateClientPipeAsync(TimeSpan.FromSeconds(this.parameters.ConnectTimeoutSeconds), CancellationToken.None).ConfigureAwait(false);
+
+            var uri = this.parameters.GetFimServiceUri();
+            this.displayName = $"Local proxy {this.pipeHost.HostLocation} connected to {uri}";
+
+            return client;
         }
 
         private async Task<NamedPipeClientStream> GetOrCreateClientPipeAsync(TimeSpan timeout, CancellationToken token)
@@ -44,8 +57,8 @@ namespace Lithnet.ResourceManagement.Client
         private async Task<NamedPipeClientStream> CreateClientPipeAsync(TimeSpan timeout, CancellationToken token)
         {
             this.pipeName = Guid.NewGuid().ToString();
-            this.pipeHost = RmcConfiguration.UseComHost ? new ComPipeHost() : (IPipeHost)new ExePipeHost();
-            this.pipeHost.OpenPipe(this.pipeName);
+            this.pipeHost = new ExePipeHost();
+            this.pipeHost.OpenPipe(this.pipeName, this.parameters);
 
             var pipe = new NamedPipeClientStream(".", string.Format(RpcCore.PipeNameFormatTemplate, this.pipeName), PipeDirection.InOut, PipeOptions.Asynchronous, System.Security.Principal.TokenImpersonationLevel.Delegation);
             await pipe.ConnectAsync((int)timeout.TotalMilliseconds, token).ConfigureAwait(false);
