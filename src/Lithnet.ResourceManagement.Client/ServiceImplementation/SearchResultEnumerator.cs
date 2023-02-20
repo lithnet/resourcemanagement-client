@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Nito.AsyncEx;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -18,7 +17,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             get
             {
-                return AsyncContext.Run(async () => await this.collection.GetObjectAtIndexAsync(this.index).ConfigureAwait(false));
+                return AsyncHelper.Run(async () => await this.collection.GetObjectAtIndexAsync(this.index).ConfigureAwait(false));
             }
         }
 

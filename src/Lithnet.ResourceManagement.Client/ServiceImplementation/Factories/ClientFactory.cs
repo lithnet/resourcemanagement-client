@@ -7,7 +7,6 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Nito.AsyncEx;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -40,7 +39,7 @@ namespace Lithnet.ResourceManagement.Client
 
         private static IClient CreateClient(string id, ResourceManagementClientOptions p)
         {
-            return AsyncContext.Run(async () => await CreateClientAsync(id, p).ConfigureAwait(false));
+            return AsyncHelper.Run(async () => await CreateClientAsync(id, p).ConfigureAwait(false));
         }
 
         private static async Task<IClient> CreateClientAsync(string id, ResourceManagementClientOptions p)

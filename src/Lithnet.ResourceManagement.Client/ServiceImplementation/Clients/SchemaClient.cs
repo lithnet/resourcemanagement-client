@@ -9,14 +9,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Schema;
 using Lithnet.ResourceManagement.Client.ResourceManagementService;
-using Nito.AsyncEx;
 
 namespace Lithnet.ResourceManagement.Client
 {
     internal class SchemaClient : ISchemaClient
     {
         private readonly IClient client;
-        private readonly AsyncReaderWriterLock readWriteLock = new AsyncReaderWriterLock();
+        private readonly ReaderWriterLockSlim readWriteLock = new ReaderWriterLockSlim();
 
         /// <summary>
         /// The internal dictionary containing the object type name to object type definition mapping
@@ -67,6 +66,8 @@ namespace Lithnet.ResourceManagement.Client
                 return;
             }
 
+
+
             await this.RefreshSchemaAsync().ConfigureAwait(false);
         }
 
@@ -78,12 +79,19 @@ namespace Lithnet.ResourceManagement.Client
         /// </remarks>
         public async Task RefreshSchemaAsync()
         {
-            using (await this.readWriteLock.WriterLockAsync())
+            MetadataSet set = await this.GetMetadataSetAsync().ConfigureAwait(false);
+            // The reader-writer lock must be released on the same thread it was entered, so we perform the async operation first.
+
+            try
             {
-                MetadataSet set = await this.GetMetadataSetAsync().ConfigureAwait(false);
+                this.readWriteLock.EnterWriteLock();
                 this.PopulateSchemaFromMetadata(set);
                 this.LoadNameValidationRegularExpressions();
                 this.isLoaded = true;
+            }
+            finally
+            {
+                this.readWriteLock.ExitWriteLock();
             }
         }
 
@@ -96,8 +104,10 @@ namespace Lithnet.ResourceManagement.Client
         {
             await this.EnsureSchemaLoadedAsync().ConfigureAwait(false);
 
-            using (await this.readWriteLock.ReaderLockAsync())
+            try
             {
+                this.readWriteLock.EnterReadLock();
+
                 foreach (ObjectTypeDefinition objectType in this.ObjectTypes.Values)
                 {
                     AttributeTypeDefinition attributeType = objectType.Attributes.FirstOrDefault(t => t.SystemName == attributeName);
@@ -110,14 +120,20 @@ namespace Lithnet.ResourceManagement.Client
 
                 throw new NoSuchAttributeException(attributeName);
             }
+            finally
+            {
+                this.readWriteLock.ExitReadLock();
+            }
         }
 
         public async Task<AttributeTypeDefinition> GetAttributeAsync(string attributeName)
         {
             await this.EnsureSchemaLoadedAsync().ConfigureAwait(false);
 
-            using (await this.readWriteLock.ReaderLockAsync())
+            try
             {
+                this.readWriteLock.EnterReadLock();
+
                 if (this.AttributeTypes.TryGetValue(attributeName, out var definition))
                 {
                     return definition;
@@ -129,6 +145,10 @@ namespace Lithnet.ResourceManagement.Client
                 }
 
                 throw new NoSuchAttributeException(attributeName);
+            }
+            finally
+            {
+                this.readWriteLock.ExitReadLock();
             }
         }
 
@@ -142,8 +162,10 @@ namespace Lithnet.ResourceManagement.Client
         {
             await this.EnsureSchemaLoadedAsync().ConfigureAwait(false);
 
-            using (await this.readWriteLock.ReaderLockAsync())
+            try
             {
+                this.readWriteLock.EnterReadLock();
+
                 if (this.ObjectTypes.TryGetValue(name, out var definition))
                 {
                     return definition;
@@ -156,6 +178,10 @@ namespace Lithnet.ResourceManagement.Client
 
                 throw new NoSuchObjectTypeException(name);
             }
+            finally
+            {
+                this.readWriteLock.ExitReadLock();
+            }
         }
 
         /// <summary>
@@ -167,11 +193,17 @@ namespace Lithnet.ResourceManagement.Client
         {
             await this.EnsureSchemaLoadedAsync().ConfigureAwait(false);
 
-            using (await this.readWriteLock.ReaderLockAsync())
+            try
             {
+                this.readWriteLock.EnterReadLock();
                 return this.ObjectTypes.ContainsKey(name);
             }
+            finally
+            {
+                this.readWriteLock.ExitReadLock();
+            }
         }
+
 
         /// <summary>
         /// Gets each object type definition from the schema 
@@ -181,12 +213,17 @@ namespace Lithnet.ResourceManagement.Client
         {
             await this.EnsureSchemaLoadedAsync().ConfigureAwait(false);
 
-            using (await this.readWriteLock.ReaderLockAsync())
+            try
             {
+                this.readWriteLock.EnterReadLock();
                 foreach (var item in this.ObjectTypes.Values)
                 {
                     yield return item;
                 }
+            }
+            finally
+            {
+                this.readWriteLock.ExitReadLock();
             }
         }
 
@@ -215,12 +252,17 @@ namespace Lithnet.ResourceManagement.Client
         {
             await this.EnsureSchemaLoadedAsync().ConfigureAwait(false);
 
-            using (await this.readWriteLock.ReaderLockAsync())
+            try
             {
+                this.readWriteLock.EnterReadLock();
                 if (!this.AttributeNameValidationRegex.IsMatch(attributeName))
                 {
                     throw new ArgumentException("The attribute name contains invalid characters", nameof(attributeName));
                 }
+            }
+            finally
+            {
+                this.readWriteLock.ExitReadLock();
             }
         }
 
@@ -232,12 +274,17 @@ namespace Lithnet.ResourceManagement.Client
         {
             await this.EnsureSchemaLoadedAsync().ConfigureAwait(false);
 
-            using (await this.readWriteLock.ReaderLockAsync())
+            try
             {
+                this.readWriteLock.EnterReadLock();
                 if (!this.ObjectTypeNameValidationRegex.IsMatch(objectTypeName))
                 {
                     throw new ArgumentException("The object type name contains invalid characters", nameof(objectTypeName));
                 }
+            }
+            finally
+            {
+                this.readWriteLock.ExitReadLock();
             }
         }
 

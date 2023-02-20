@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nito.AsyncEx;
 
 namespace Lithnet.ResourceManagement.Client.XPath
 {
@@ -173,7 +172,7 @@ namespace Lithnet.ResourceManagement.Client.XPath
                 throw new InvalidOperationException("Current query is incomplete");
             }
 
-            this.currentAttributeQuery = AsyncContext.Run(async () => await this.clientFactory.SchemaClient.GetAttributeDefinitionAsync(attributeName));
+            this.currentAttributeQuery = AsyncHelper.Run(async () => await this.clientFactory.SchemaClient.GetAttributeDefinitionAsync(attributeName));
         }
 
         internal void CompleteQuery(ComparisonOperator op, object value)
@@ -189,13 +188,13 @@ namespace Lithnet.ResourceManagement.Client.XPath
 
         internal void AddQuery(string attributeName, ComparisonOperator comparisonOperator, object value)
         {
-            var d = AsyncContext.Run(async () => await this.clientFactory.SchemaClient.GetAttributeDefinitionAsync(attributeName));
+            var d = AsyncHelper.Run(async () => await this.clientFactory.SchemaClient.GetAttributeDefinitionAsync(attributeName));
             this.AddQueryObject(new XPathQuery(d, comparisonOperator, value));
         }
 
         public void Dereference(string attributeName)
         {
-            var d = AsyncContext.Run(async () => await this.clientFactory.SchemaClient.GetAttributeDefinitionAsync(attributeName));
+            var d = AsyncHelper.Run(async () => await this.clientFactory.SchemaClient.GetAttributeDefinitionAsync(attributeName));
 
             if (d.Type != AttributeType.Reference)
             {

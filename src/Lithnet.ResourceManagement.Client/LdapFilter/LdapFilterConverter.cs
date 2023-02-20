@@ -1,5 +1,4 @@
 ﻿using System;
-using Nito.AsyncEx;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -126,7 +125,7 @@ namespace Lithnet.ResourceManagement.Client
                 }
             }
 
-            AttributeTypeDefinition d = AsyncContext.Run(async () => await client.SchemaClient.GetAttributeDefinitionAsync(attributeName));
+            AttributeTypeDefinition d = AsyncHelper.Run(async () => await client.SchemaClient.GetAttributeDefinitionAsync(attributeName));
             return new XPathQuery(d, op, expectedValue, false);
         }
 

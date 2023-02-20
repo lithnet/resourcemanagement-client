@@ -6,7 +6,6 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using Nito.AsyncEx;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -268,7 +267,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="refresh">A value indicating if the object should be refreshed from the Resource Management Service after the changes have been made</param>
         public void Save(bool refresh)
         {
-            AsyncContext.Run(async () => await this.SaveAsync(refresh).ConfigureAwait(false));
+            AsyncHelper.Run(async () => await this.SaveAsync(refresh).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -290,7 +289,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         public void Save()
         {
-            AsyncContext.Run(async () => await this.SaveAsync().ConfigureAwait(false));
+            AsyncHelper.Run(async () => await this.SaveAsync().ConfigureAwait(false));
         }
 
         /// <summary>
@@ -360,7 +359,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </remarks>
         public void Refresh()
         {
-            AsyncContext.Run(async () => await this.RefreshAsync().ConfigureAwait(false));
+            AsyncHelper.Run(async () => await this.RefreshAsync().ConfigureAwait(false));
         }
 
         /// <summary>
@@ -832,7 +831,7 @@ namespace Lithnet.ResourceManagement.Client
 
         private void SetObjectType(string type)
         {
-            this.ObjectType = AsyncContext.Run(async () => await this.clientFactory.SchemaClient.GetObjectTypeAsync(type).ConfigureAwait(false));
+            this.ObjectType = AsyncHelper.Run(async () => await this.clientFactory.SchemaClient.GetObjectTypeAsync(type).ConfigureAwait(false));
         }
 
     }

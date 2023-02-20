@@ -5,10 +5,11 @@
 		<Platforms>AnyCPU</Platforms>
 		<Deterministic>true</Deterministic>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Configurations>Debug;Release</Configurations>
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<Description>Lithnet Resource Management Client for Microsoft Identity Manager</Description>
+		<Description>Lithnet .NET library for interacting with the Microsoft Identity Manager service</Description>
 		<Company>Lithnet</Company>
 		<Copyright>Copyright 2022 Lithnet Pty Ltd</Copyright>
 		<ProductName>Lithnet Resource Management Client</ProductName>
@@ -28,7 +29,7 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	</PropertyGroup>
 
-	<PropertyGroup  Condition="$(TargetFrameworkIdentifier) != '.NETFramework'">
+	<PropertyGroup Condition="$(TargetFrameworkIdentifier) != '.NETFramework'">
 		<MSBuildWarningsAsMessages>NU1702</MSBuildWarningsAsMessages>
 	</PropertyGroup>
 
@@ -61,11 +62,9 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
 	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFrameworkIdentifier) == '.NETFramework'">
-		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0"/>
 		<Reference Include="System.ServiceModel" />
 		<Reference Include="System.Configuration" />
 	</ItemGroup>
@@ -76,10 +75,6 @@
 		<PackageReference Include="System.ServiceModel.NetTcp" Version="4.7.0" />
 		<PackageReference Include="System.ServiceModel.Security" Version="4.7.0" />
 		<PackageReference Include="StreamJsonRpc" Version="2.13.33" />
-	</ItemGroup>
-
-	<ItemGroup Condition="$(TargetFramework) == 'net6.0'">
-		<PackageReference Include="Lib.Harmony" Version="2.2.2" />
 	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFrameworkIdentifier) != '.NETFramework'">

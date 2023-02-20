@@ -37,7 +37,7 @@ namespace Lithnet.ResourceManagement.Client
         public Task InitializeClientsAsync()
         {
             var uri = this.parameters.GetFimServiceUri();
-            this.DisplayName = $"Native WsHttpClient to {uri}";
+            this.DisplayName = $"Native WsHttpClient {(FrameworkUtilities.IsFrameworkCompiled ? "framework" : "netstandard")} to {uri}";
             var endpointManager = new EndpointManager(uri, this.parameters.Spn);
 
             NetworkCredential creds = null;

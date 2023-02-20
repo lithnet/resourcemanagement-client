@@ -1,5 +1,4 @@
 ﻿using System;
-using Nito.AsyncEx;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -56,7 +55,7 @@ namespace Lithnet.ResourceManagement.Client
 
             if (clientFactory != null)
             {
-                var attribute = AsyncContext.Run(async () => await clientFactory.SchemaClient.GetAttributeDefinitionAsync(this.DereferenceAttribute));
+                var attribute = AsyncHelper.Run(async () => await clientFactory.SchemaClient.GetAttributeDefinitionAsync(this.DereferenceAttribute));
 
                 if (attribute.Type != AttributeType.Reference)
                 {

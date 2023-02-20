@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Nito.AsyncEx;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -18,7 +17,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>An XPath query string</returns>
         public static string CreateFilter(ResourceManagementClient client, string objectType, string attributeName, object attributeValue)
         {
-            AttributeTypeDefinition d = AsyncContext.Run(async () => await client.SchemaClient.GetAttributeDefinitionAsync(attributeName));
+            AttributeTypeDefinition d = AsyncHelper.Run(async () => await client.SchemaClient.GetAttributeDefinitionAsync(attributeName));
             AttributeValuePairCollection dictionary = new AttributeValuePairCollection();
             dictionary.Add(d, attributeValue);
             return CreateFilter(objectType, dictionary, ComparisonOperator.Equals, GroupOperator.And);
@@ -36,7 +35,7 @@ namespace Lithnet.ResourceManagement.Client
         public static string CreateFilter(ResourceManagementClient client, string objectType, string attributeName, ComparisonOperator comparisonOperator, object attributeValue)
         {
             AttributeValuePairCollection dictionary = new AttributeValuePairCollection();
-            AttributeTypeDefinition d = AsyncContext.Run(async () => await client.SchemaClient.GetAttributeDefinitionAsync(attributeName));
+            AttributeTypeDefinition d = AsyncHelper.Run(async () => await client.SchemaClient.GetAttributeDefinitionAsync(attributeName));
 
             dictionary.Add(d, attributeValue);
             return CreateFilter(objectType, dictionary, comparisonOperator, GroupOperator.And);
@@ -100,7 +99,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>An XPath query string</returns>
         public static string CreateDereferenceFilter(ResourceManagementClient client, string searchObjectType, string searchAttributeName, object searchAttributeValue, string referenceAttributeName)
         {
-            AttributeTypeDefinition d = AsyncContext.Run(async () => await client.SchemaClient.GetAttributeDefinitionAsync(searchAttributeName));
+            AttributeTypeDefinition d = AsyncHelper.Run(async () => await client.SchemaClient.GetAttributeDefinitionAsync(searchAttributeName));
 
             XPathQuery predicate = new XPathQuery(d, ComparisonOperator.Equals, searchAttributeValue);
             return CreateDereferenceFilter(searchObjectType, predicate, referenceAttributeName);
@@ -182,7 +181,7 @@ namespace Lithnet.ResourceManagement.Client
 
             foreach (var kvp in source)
             {
-                AttributeTypeDefinition d = AsyncContext.Run(async () => await clientFactory.SchemaClient.GetAttributeDefinitionAsync(kvp.Key));
+                AttributeTypeDefinition d = AsyncHelper.Run(async () => await clientFactory.SchemaClient.GetAttributeDefinitionAsync(kvp.Key));
 
                 items.Add(d, kvp.Value);
             }

@@ -10,7 +10,6 @@ using System.Xml;
 using Lithnet.ResourceManagement.Client.ResourceManagementService;
 using Lithnet.ResourceManagement.Client.XPath;
 using Microsoft.Extensions.Options;
-using Nito.AsyncEx;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -150,7 +149,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </example>
         public void DeleteResources(IEnumerable<Guid> resourceIDs)
         {
-            AsyncContext.Run(async () => await this.DeleteResourcesAsync(resourceIDs).ConfigureAwait(false));
+            AsyncHelper.Run(async () => await this.DeleteResourcesAsync(resourceIDs).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -182,7 +181,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </example>
         public void DeleteResources(IEnumerable<string> resourceIDs)
         {
-            AsyncContext.Run(async () => await this.DeleteResourcesAsync(resourceIDs).ConfigureAwait(false));
+            AsyncHelper.Run(async () => await this.DeleteResourcesAsync(resourceIDs).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -214,7 +213,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </example>
         public void DeleteResources(IEnumerable<UniqueIdentifier> resourceIDs)
         {
-            AsyncContext.Run(async () => await this.DeleteResourcesAsync(resourceIDs).ConfigureAwait(false));
+            AsyncHelper.Run(async () => await this.DeleteResourcesAsync(resourceIDs).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -246,7 +245,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </example>
         public void DeleteResources(IEnumerable<ResourceObject> resources)
         {
-            AsyncContext.Run(async () => await this.DeleteResourcesAsync(resources).ConfigureAwait(false));
+            AsyncHelper.Run(async () => await this.DeleteResourcesAsync(resources).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -280,7 +279,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </example>
         public void DeleteResource(ResourceObject resource)
         {
-            AsyncContext.Run(async () => await this.DeleteResourceAsync(resource.ObjectID).ConfigureAwait(false));
+            AsyncHelper.Run(async () => await this.DeleteResourceAsync(resource.ObjectID).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -307,7 +306,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </example>
         public void DeleteResource(UniqueIdentifier id)
         {
-            AsyncContext.Run(async () => await this.DeleteResourceAsync(id).ConfigureAwait(false));
+            AsyncHelper.Run(async () => await this.DeleteResourceAsync(id).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -395,7 +394,7 @@ namespace Lithnet.ResourceManagement.Client
 
         public void SaveResources(IEnumerable<ResourceObject> resources)
         {
-            AsyncContext.Run(async () => await this.SaveResourcesAsync(resources).ConfigureAwait(false));
+            AsyncHelper.Run(async () => await this.SaveResourcesAsync(resources).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -496,7 +495,7 @@ namespace Lithnet.ResourceManagement.Client
 
         public void SaveResource(ResourceObject resource)
         {
-            AsyncContext.Run(async () => await this.SaveResourceAsync(resource).ConfigureAwait(false));
+            AsyncHelper.Run(async () => await this.SaveResourceAsync(resource).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -510,7 +509,7 @@ namespace Lithnet.ResourceManagement.Client
 
         public void SaveResource(ResourceObject resource, CultureInfo locale)
         {
-            AsyncContext.Run(async () => await this.SaveResourceAsync(resource, locale).ConfigureAwait(false));
+            AsyncHelper.Run(async () => await this.SaveResourceAsync(resource, locale).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -1106,7 +1105,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </example>
         public ResourceObject GetResource(UniqueIdentifier id, IEnumerable<string> attributesToGet, CultureInfo locale, bool getPermissionHints)
         {
-            return AsyncContext.Run(async () => await this.GetResourceAsync(id, attributesToGet, locale, getPermissionHints).ConfigureAwait(false));
+            return AsyncHelper.Run(async () => await this.GetResourceAsync(id, attributesToGet, locale, getPermissionHints).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -1371,7 +1370,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </example>
         public ResourceObject GetResourceByKey(string objectType, Dictionary<string, object> attributeValuePairs, IEnumerable<string> attributesToGet, CultureInfo locale)
         {
-            return AsyncContext.Run(async () => await this.GetResourceByKeyAsync(objectType, attributeValuePairs, attributesToGet, locale).ConfigureAwait(false));
+            return AsyncHelper.Run(async () => await this.GetResourceByKeyAsync(objectType, attributeValuePairs, attributesToGet, locale).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -1820,7 +1819,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>A collection of matching resource objects</returns>
         private ISearchResultCollection GetResourcesInternal(string filter, int pageSize, IEnumerable<string> attributesToGet, IEnumerable<SortingAttribute> sortAttributes, CultureInfo locale)
         {
-            return AsyncContext.Run(async () => await this.GetResourcesInternalAsync(filter, pageSize, attributesToGet, sortAttributes, locale).ConfigureAwait(false));
+            return AsyncHelper.Run(async () => await this.GetResourcesInternalAsync(filter, pageSize, attributesToGet, sortAttributes, locale).ConfigureAwait(false));
         }
 
         private async Task<ISearchResultCollection> GetResourcesInternalAsync(string filter, int pageSize, IEnumerable<string> attributesToGet, IEnumerable<SortingAttribute> sortAttributes, CultureInfo locale)
@@ -1835,7 +1834,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>A collection of pending approvals</returns>
         public ISearchResultCollection GetApprovals(ApprovalStatus status)
         {
-            return AsyncContext.Run(async () => await this.GetApprovalsAsync(status).ConfigureAwait(false));
+            return AsyncHelper.Run(async () => await this.GetApprovalsAsync(status).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -1869,7 +1868,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>A collection of pending approvals</returns>
         public ISearchResultCollection GetApprovals(ApprovalStatus status, UniqueIdentifier userID)
         {
-            return AsyncContext.Run(async () => await this.GetApprovalsAsync(status, userID).ConfigureAwait(false));
+            return AsyncHelper.Run(async () => await this.GetApprovalsAsync(status, userID).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -1900,7 +1899,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="reason">An optional reason for the approval or rejection</param>
         public void Approve(ResourceObject approvalRequest, bool approve, string reason = null)
         {
-            AsyncContext.Run(async () => await this.ApproveAsync(approvalRequest, approve, reason).ConfigureAwait(false));
+            AsyncHelper.Run(async () => await this.ApproveAsync(approvalRequest, approve, reason).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -2170,7 +2169,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>An object that can be used to navigate through the search results</returns>
         private SearchResultPager GetResourcesPagedInternal(string filter, int pageSize, IEnumerable<string> attributesToGet, IEnumerable<SortingAttribute> sortAttributes, CultureInfo locale)
         {
-            return AsyncContext.Run(async () => await this.GetResourcesPagedInternalAsync(filter, pageSize, attributesToGet, sortAttributes, locale).ConfigureAwait(false));
+            return AsyncHelper.Run(async () => await this.GetResourcesPagedInternalAsync(filter, pageSize, attributesToGet, sortAttributes, locale).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -2193,7 +2192,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>The number of resources that match the specified criteria</returns>
         public int GetResourceCount(string filter)
         {
-            return AsyncContext.Run(async () => await this.GetResourceCountAsync(filter).ConfigureAwait(false));
+            return AsyncHelper.Run(async () => await this.GetResourceCountAsync(filter).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -2258,7 +2257,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         public void RefreshSchema()
         {
-            AsyncContext.Run(async () => await this.RefreshSchemaAsync().ConfigureAwait(false));
+            AsyncHelper.Run(async () => await this.RefreshSchemaAsync().ConfigureAwait(false));
         }
 
         /// <summary>
@@ -2268,7 +2267,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>An <c>AttributeType</c> value</returns>
         public AttributeType GetAttributeType(string attributeName)
         {
-            return AsyncContext.Run(async () => await this.SchemaClient.GetAttributeTypeAsync(attributeName).ConfigureAwait(false));
+            return AsyncHelper.Run(async () => await this.SchemaClient.GetAttributeTypeAsync(attributeName).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -2279,7 +2278,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <exception cref="NoSuchObjectTypeException">Throw when an object type could not be found in the schema with a matching name</exception>
         public ObjectTypeDefinition GetObjectType(string name)
         {
-            return AsyncContext.Run(async () => await this.SchemaClient.GetObjectTypeAsync(name).ConfigureAwait(false));
+            return AsyncHelper.Run(async () => await this.SchemaClient.GetObjectTypeAsync(name).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -2290,7 +2289,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <exception cref="NoSuchObjectTypeException">Throw when an object type could not be found in the schema with a matching name</exception>
         public AttributeTypeDefinition GetAttributeDefinition(string name)
         {
-            return AsyncContext.Run(async () => await this.SchemaClient.GetAttributeDefinitionAsync(name).ConfigureAwait(false));
+            return AsyncHelper.Run(async () => await this.SchemaClient.GetAttributeDefinitionAsync(name).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -2300,7 +2299,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>True if the object type exists in the schema, false if it does not</returns>
         public bool ContainsObjectType(string name)
         {
-            return AsyncContext.Run(async () => await this.SchemaClient.ContainsObjectTypeAsync(name).ConfigureAwait(false));
+            return AsyncHelper.Run(async () => await this.SchemaClient.ContainsObjectTypeAsync(name).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -2309,7 +2308,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>An enumeration of ObjectTypeDefinitions</returns>
         public IEnumerable<ObjectTypeDefinition> GetObjectTypes()
         {
-            return AsyncContext.Run(async () => await this.SchemaClient.GetObjectTypesAsync().ToListAsync().ConfigureAwait(false));
+            return AsyncHelper.Run(async () => await this.SchemaClient.GetObjectTypesAsync().ToListAsync().ConfigureAwait(false));
         }
 
         /// <summary>
@@ -2319,7 +2318,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>A value indicating whether the specific attribute is multivalued</returns>
         public bool IsAttributeMultivalued(string attributeName)
         {
-            return AsyncContext.Run(async () => await this.SchemaClient.IsAttributeMultivaluedAsync(attributeName).ConfigureAwait(false));
+            return AsyncHelper.Run(async () => await this.SchemaClient.IsAttributeMultivaluedAsync(attributeName).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -2328,7 +2327,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="attributeName">The name of the attribute to validate</param>
         public void ValidateAttributeName(string attributeName)
         {
-            AsyncContext.Run(async () => await this.SchemaClient.ValidateAttributeNameAsync(attributeName).ConfigureAwait(false));
+            AsyncHelper.Run(async () => await this.SchemaClient.ValidateAttributeNameAsync(attributeName).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -2337,7 +2336,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="objectTypeName">The name of the object type to validate</param>
         public void ValidateObjectTypeName(string objectTypeName)
         {
-            AsyncContext.Run(async () => await this.SchemaClient.ValidateObjectTypeNameAsync(objectTypeName).ConfigureAwait(false));
+            AsyncHelper.Run(async () => await this.SchemaClient.ValidateObjectTypeNameAsync(objectTypeName).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -2357,7 +2356,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>The correct name of the object type</returns>
         public string GetCorrectObjectTypeName(string name)
         {
-            return AsyncContext.Run(async () => await this.GetCorrectObjectTypeNameCaseAsync(name).ConfigureAwait(false));
+            return AsyncHelper.Run(async () => await this.GetCorrectObjectTypeNameCaseAsync(name).ConfigureAwait(false));
         }
 
 
@@ -2378,7 +2377,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>The correct name of the attribute</returns>
         public string GetCorrectAttributeName(string name)
         {
-            return AsyncContext.Run(async () => await this.GetCorrectAttributeNameCaseAsync(name).ConfigureAwait(false));
+            return AsyncHelper.Run(async () => await this.GetCorrectAttributeNameCaseAsync(name).ConfigureAwait(false));
         }
 
         public IExpressionRoot CreateXPathBuilder()

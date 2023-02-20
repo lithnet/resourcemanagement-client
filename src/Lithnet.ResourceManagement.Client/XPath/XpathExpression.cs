@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Nito.AsyncEx;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -110,7 +109,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 ot = clientFactory == null
                     ? this.ObjectType
-                    : AsyncContext.Run(async () => await clientFactory.SchemaClient.GetCorrectObjectTypeNameCaseAsync(this.ObjectType));
+                    : AsyncHelper.Run(async () => await clientFactory.SchemaClient.GetCorrectObjectTypeNameCaseAsync(this.ObjectType));
             }
 
             sb.AppendFormat("/{0}", ot);

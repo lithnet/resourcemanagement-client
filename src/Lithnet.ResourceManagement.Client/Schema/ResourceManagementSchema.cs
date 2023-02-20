@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Nito.AsyncEx;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -23,7 +21,7 @@ namespace Lithnet.ResourceManagement.Client
 
         internal static void LoadSchema()
         {
-            AsyncContext.Run(async () => await schemaClient.LoadSchemaAsync().ConfigureAwait(false));
+            AsyncHelper.Run(async () => await schemaClient.LoadSchemaAsync().ConfigureAwait(false));
         }
 
         /// <summary>
@@ -34,7 +32,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </remarks>
         internal static void RefreshSchema()
         {
-            AsyncContext.Run(async () => await schemaClient.RefreshSchemaAsync().ConfigureAwait(false));
+            AsyncHelper.Run(async () => await schemaClient.RefreshSchemaAsync().ConfigureAwait(false));
         }
 
         /// <summary>
@@ -44,7 +42,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>An <c>AttributeType</c> value</returns>
         public static AttributeType GetAttributeType(string attributeName)
         {
-            return AsyncContext.Run(async () => await schemaClient.GetAttributeTypeAsync(attributeName).ConfigureAwait(false));
+            return AsyncHelper.Run(async () => await schemaClient.GetAttributeTypeAsync(attributeName).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -55,7 +53,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <exception cref="NoSuchObjectTypeException">Throw when an object type could not be found in the schema with a matching name</exception>
         public static ObjectTypeDefinition GetObjectType(string name)
         {
-            return AsyncContext.Run(async () => await schemaClient.GetObjectTypeAsync(name).ConfigureAwait(false));
+            return AsyncHelper.Run(async () => await schemaClient.GetObjectTypeAsync(name).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -65,7 +63,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>True if the object type exists in the schema, false if it does not</returns>
         public static bool ContainsObjectType(string name)
         {
-            return AsyncContext.Run(async () => await schemaClient.ContainsObjectTypeAsync(name).ConfigureAwait(false));
+            return AsyncHelper.Run(async () => await schemaClient.ContainsObjectTypeAsync(name).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -74,7 +72,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>An enumeration of ObjectTypeDefinitions</returns>
         public static IEnumerable<ObjectTypeDefinition> GetObjectTypes()
         {
-            return AsyncContext.Run(async () => await schemaClient.GetObjectTypesAsync().ToListAsync().ConfigureAwait(false));
+            return AsyncHelper.Run(async () => await schemaClient.GetObjectTypesAsync().ToListAsync().ConfigureAwait(false));
         }
 
         /// <summary>
@@ -84,7 +82,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <returns>A value indicating whether the specific attribute is multivalued</returns>
         public static bool IsAttributeMultivalued(string attributeName)
         {
-            return AsyncContext.Run(async () => await schemaClient.IsAttributeMultivaluedAsync(attributeName).ConfigureAwait(false));
+            return AsyncHelper.Run(async () => await schemaClient.IsAttributeMultivaluedAsync(attributeName).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -93,7 +91,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="attributeName">The name of the attribute to validate</param>
         public static void ValidateAttributeName(string attributeName)
         {
-            AsyncContext.Run(async () => await schemaClient.ValidateAttributeNameAsync(attributeName).ConfigureAwait(false));
+            AsyncHelper.Run(async () => await schemaClient.ValidateAttributeNameAsync(attributeName).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -102,7 +100,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="objectTypeName">The name of the object type to validate</param>
         public static void ValidateObjectTypeName(string objectTypeName)
         {
-            AsyncContext.Run(async () => await schemaClient.ValidateObjectTypeNameAsync(objectTypeName).ConfigureAwait(false));
+            AsyncHelper.Run(async () => await schemaClient.ValidateObjectTypeNameAsync(objectTypeName).ConfigureAwait(false));
         }
     }
 }
