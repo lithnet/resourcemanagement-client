@@ -1,28 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
-    [TestClass]
+
     public class XpathQueryBuilderIntegerTests
     {
-        [TestInitialize]
+        [SetUp]
         public void TestInitialize()
         {
             UnitTestHelper.DeleteAllTestObjects();
         }
 
         // Single-value tests
-
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVIntegerEquals(ConnectionMode connectionMode)
         {
             object queryValue = 1;
@@ -43,14 +35,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVIntegerNotEquals(ConnectionMode connectionMode)
         {
             object queryValue = 1;
@@ -71,14 +56,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVIntegerIsPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
@@ -99,14 +77,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVIntegerIsNotPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
@@ -127,14 +98,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVIntegerGreaterThan(ConnectionMode connectionMode)
         {
             object queryValue = 10;
@@ -155,14 +119,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVIntegerGreaterThanOrEquals(ConnectionMode connectionMode)
         {
             object queryValue = 10;
@@ -183,14 +140,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVIntegerLessThan(ConnectionMode connectionMode)
         {
             object queryValue = 10;
@@ -211,14 +161,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVIntegerLessThanOrEquals(ConnectionMode connectionMode)
         {
             object queryValue = 10;
@@ -240,15 +183,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         }
 
         // Multivalued tests
-
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVIntegerEquals(ConnectionMode connectionMode)
         {
             object queryValue = 1;
@@ -269,14 +204,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVIntegerNotEquals(ConnectionMode connectionMode)
         {
             object queryValue = 1;
@@ -297,14 +225,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVIntegerIsPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
@@ -325,14 +246,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVIntegerIsNotPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
@@ -353,14 +267,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVIntegerGreaterThan(ConnectionMode connectionMode)
         {
             object queryValue = 10;
@@ -381,14 +288,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVIntegerGreaterThanOrEquals(ConnectionMode connectionMode)
         {
             object queryValue = 10;
@@ -409,14 +309,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVIntegerLessThan(ConnectionMode connectionMode)
         {
             object queryValue = 10;
@@ -437,14 +330,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVIntegerLessThanOrEquals(ConnectionMode connectionMode)
         {
             object queryValue = 10;
@@ -467,7 +353,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         // Exception tests
 
-        [TestMethod]
+        [Test]
         public void TestMVIntegerContains()
         {
             try
@@ -478,7 +364,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVIntegerEndsWith()
         {
             try
@@ -489,7 +375,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVIntegerStartsWith()
         {
             try
@@ -500,7 +386,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVIntegerContains()
         {
             try
@@ -511,7 +397,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVIntegerEndsWith()
         {
             try
@@ -522,7 +408,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVIntegerStartsWith()
         {
             try

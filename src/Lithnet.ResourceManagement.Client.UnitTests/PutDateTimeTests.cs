@@ -1,19 +1,12 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
-    [TestClass]
+
     public class PutDateTimeTests
     {
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void AddDateTimeSV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -52,14 +45,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void ModifyDateTimeSV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -99,14 +85,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void DeleteDateTimeSV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -146,14 +125,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void DeleteAllValueDateTimeSV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -192,14 +164,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void AddFirstDateTimeMV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -238,14 +203,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void AddSecondDateTimeMV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -285,14 +243,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void ReplaceDateTimeMV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -332,14 +283,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void DeleteFirstValueDateTimeMV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -379,14 +323,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void DeleteAllValueDateTimeMV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);

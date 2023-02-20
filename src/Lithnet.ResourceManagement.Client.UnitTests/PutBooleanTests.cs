@@ -1,18 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
-    [TestClass]
+
     public class PutBooleanTests
     {
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void AddBooleanSV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -51,14 +44,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void ModifyBooleanSV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -98,14 +84,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void DeleteBooleanSV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -145,14 +124,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void DeleteAllValueBooleanSV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);

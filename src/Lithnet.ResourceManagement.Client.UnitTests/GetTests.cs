@@ -1,21 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
-    [TestClass]
+
     public class GetTests
     {
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void GetObjectByIDWithAllAttributes(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -38,15 +30,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void GetObjectByIDStringWithAllAttributes(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -70,15 +54,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void GetObjectByIDGuidWithAllAttributes(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -102,14 +78,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void GetObjectByIDWithSelectedAttributes(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -134,14 +103,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void GetObjectByIDStringWithSelectedAttributes(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -166,14 +128,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void GetObjectByIDGuidWithSelectedAttributes(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -198,14 +153,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void GetObjectByKeyWithSelectedAttributes(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -231,14 +179,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void GetObjectByKeyWithAllAttributes(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -263,14 +204,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void GetObjectByMultipleKeysWithSelectedAttributes(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -300,14 +234,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void GetObjectByMultipleKeysWithAllAttributes(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -334,14 +261,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void GetObjectByKeyFailsOnMultipleResults(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -380,14 +300,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void GetObjectByKeyReturnsNullOnNoResults(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);

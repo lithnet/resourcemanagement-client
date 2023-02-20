@@ -1,28 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
-    [TestClass]
+
     public class XpathPredicateDateTimeTests
     {
-        [TestInitialize]
+        [SetUp]
         public void TestInitialize()
         {
             UnitTestHelper.DeleteAllTestObjects();
         }
 
         // Single-value tests
-
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVDateTimeEquals(ConnectionMode connectionMode)
         {
             object queryValue = "2000-01-01T00:00:00.000";
@@ -43,14 +35,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVDateTimeNotEquals(ConnectionMode connectionMode)
         {
             object queryValue = "2000-01-01T00:00:00.000";
@@ -71,14 +56,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVDateTimeIsPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
@@ -99,14 +77,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVDateTimeIsNotPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
@@ -127,14 +98,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVDateTimeGreaterThan(ConnectionMode connectionMode)
         {
             object queryValue = "3000-01-01T00:00:00.000";
@@ -155,14 +119,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVDateTimeGreaterThanFunction(ConnectionMode connectionMode)
         {
             object queryValue = "current-dateTime()";
@@ -183,14 +140,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVDateTimeGreaterThanOrEquals(ConnectionMode connectionMode)
         {
             object queryValue = "3000-01-01T00:00:00.000";
@@ -211,14 +161,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVDateTimeGreaterThanOrEqualsFunction(ConnectionMode connectionMode)
         {
             object queryValue = "current-dateTime()";
@@ -239,14 +182,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVDateTimeLessThan(ConnectionMode connectionMode)
         {
             object queryValue = "2000-01-01T00:00:00.000";
@@ -267,14 +203,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVDateTimeLessThanFunction(ConnectionMode connectionMode)
         {
             object queryValue = "current-dateTime()";
@@ -295,14 +224,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVDateTimeLessThanOrEquals(ConnectionMode connectionMode)
         {
             object queryValue = "2000-01-01T00:00:00.000";
@@ -323,14 +245,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVDateTimeLessThanOrEqualsFunction(ConnectionMode connectionMode)
         {
             object queryValue = "current-dateTime()";
@@ -352,15 +267,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         }
 
         // Multivalued tests
-
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVDateTimeEquals(ConnectionMode connectionMode)
         {
             object queryValue = "2000-01-01T00:00:00.000";
@@ -382,14 +289,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVDateTimeNotEquals(ConnectionMode connectionMode)
         {
             object queryValue = "2000-01-01T00:00:00.000";
@@ -410,14 +310,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVDateTimeIsPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
@@ -438,14 +331,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVDateTimeIsNotPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
@@ -466,14 +352,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVDateTimeGreaterThan(ConnectionMode connectionMode)
         {
             object queryValue = "2000-01-01T00:00:00.000";
@@ -494,14 +373,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVDateTimeGreaterThanFunction(ConnectionMode connectionMode)
         {
             object queryValue = "current-dateTime()";
@@ -522,14 +394,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVDateTimeGreaterThanOrEquals(ConnectionMode connectionMode)
         {
             object queryValue = "2000-01-01T00:00:00.000";
@@ -550,14 +415,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVDateTimeGreaterThanOrEqualsFunction(ConnectionMode connectionMode)
         {
             object queryValue = "current-dateTime()";
@@ -578,14 +436,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVDateTimeLessThan(ConnectionMode connectionMode)
         {
             object queryValue = "2000-01-01T00:00:00.000";
@@ -606,14 +457,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVDateTimeLessThanFunction(ConnectionMode connectionMode)
         {
             object queryValue = "current-dateTime()";
@@ -634,14 +478,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVDateTimeLessThanOrEquals(ConnectionMode connectionMode)
         {
             object queryValue = "2000-01-01T00:00:00.000";
@@ -662,14 +499,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVDateTimeLessThanOrEqualsFunction(ConnectionMode connectionMode)
         {
             object queryValue = "current-dateTime()";
@@ -692,7 +522,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         // Exception tests
 
-        [TestMethod]
+        [Test]
         public void TestMVDateTimeContains()
         {
             try
@@ -703,7 +533,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVDateTimeEndsWith()
         {
             try
@@ -714,7 +544,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVDateTimeStartsWith()
         {
             try
@@ -725,7 +555,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVDateTimeContains()
         {
             try
@@ -736,7 +566,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVDateTimeEndsWith()
         {
             try
@@ -747,7 +577,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVDateTimeStartsWith()
         {
             try

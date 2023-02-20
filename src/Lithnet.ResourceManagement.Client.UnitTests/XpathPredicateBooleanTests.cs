@@ -1,25 +1,18 @@
 ﻿using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
-    [TestClass]
+
     public class XpathPredicateBooleanTests
     {
-        [TestInitialize]
+        [SetUp]
         public void TestInitialize()
         {
             UnitTestHelper.DeleteAllTestObjects();
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVBooleanEquals(ConnectionMode connectionMode)
         {
             object queryValue = true;
@@ -40,14 +33,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVBooleanNotEquals(ConnectionMode connectionMode)
         {
             object queryValue = true;
@@ -68,15 +54,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVBooleanIsPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
@@ -97,15 +75,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVBooleanIsNotPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
@@ -132,7 +102,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         // Exception tests
 
-        [TestMethod]
+        [Test]
         public void TestSVBooleanGreaterThan()
         {
             try
@@ -143,7 +113,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVBooleanGreaterThanOrEquals()
         {
             try
@@ -154,7 +124,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVBooleanLessThan()
         {
             try
@@ -165,7 +135,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVBooleanLessThanOrEquals()
         {
             try
@@ -176,7 +146,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVBooleanContains()
         {
             try
@@ -187,7 +157,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVBooleanEndsWith()
         {
             try
@@ -198,7 +168,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVBooleanStartsWith()
         {
             try

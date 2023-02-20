@@ -1,26 +1,19 @@
 ﻿using System;
 using Lithnet.ResourceManagement.Client.XPath;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
-    [TestClass]
+
     public class XPathExpressionBuilderTests
     {
-        [TestInitialize]
+        [SetUp]
         public void TestInitialize()
         {
             UnitTestHelper.DeleteAllTestObjects();
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSimpleDereference(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -34,14 +27,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("/Person[(AccountName = 'ryan')]/Manager", v);
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSimpleExpression(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -54,14 +40,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("/Person[(AccountName = 'ryan')]", x);
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSimpleExpressionAsFilter(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -74,14 +53,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("<Filter xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" Dialect=\"http://schemas.microsoft.com/2006/11/XPathFilterDialect\" xmlns=\"http://schemas.xmlsoap.org/ws/2004/09/enumeration\">/Person[(AccountName = &apos;ryan&apos;)]</Filter>", z);
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestComplexExpression(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -102,14 +74,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("/*[((starts-with(AccountName, '%')) and (EmployeeEndDate > '2023-01-01T00:00:00.000') and ((starts-with(DisplayName, '%')) or (not(starts-with(LastName, '%'))) or (AccountName = 'ryan')))]", y);
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestComplexExpressionWithDereferencing(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -130,14 +95,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("/*[((starts-with(AccountName, '%')) and ((starts-with(DisplayName, '%')) or (not(starts-with(LastName, '%'))) or (AccountName = 'ryan')))]/Manager", y2);
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestUnionQuery(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -152,14 +110,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("/*[(starts-with(AccountName, '%'))] | /Group[(DisplayedOwner = /*)]", y2);
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestUnionQuery3(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -176,14 +127,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("/*[(starts-with(AccountName, '%'))] | /Group[(DisplayedOwner = /*)] | /Person[(Manager = /*)]", y2);
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestNewQuery(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -197,14 +141,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("/Person[(AccountName = 'ryan')]", x);
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestReferenceEquals(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);

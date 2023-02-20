@@ -1,23 +1,24 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
-    [TestClass]
-
+    [SetUpFixture]
     public static class Setup
     {
         public delegate ResourceManagementClient ResourceManagementClientMapper(ConnectionMode mode);
 
         static ResourceManagementClient client;
 
-        [AssemblyInitialize]
-        public static void InitializeTestEngine(TestContext testContext)
+        [OneTimeSetUp]
+        public static void InitializeTestEngine()
         {
+            Trace.Listeners.Add(new ConsoleTraceListener());
             Init();
             PrepareRMSForUnitTests();
             CreateReferenceTestObjects();

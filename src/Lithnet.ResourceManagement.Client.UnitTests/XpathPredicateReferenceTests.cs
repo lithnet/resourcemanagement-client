@@ -1,28 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
-    [TestClass]
+
     public class XpathQueryBuilderReferenceTests
     {
-        [TestInitialize]
+        [SetUp]
         public void TestInitialize()
         {
             UnitTestHelper.DeleteAllTestObjects();
         }
 
         // Single-value tests
-
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVReferenceEquals(ConnectionMode connectionMode)
         {
             ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, null);
@@ -41,14 +33,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVReferenceNotEquals(ConnectionMode connectionMode)
         {
             ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, null);
@@ -67,14 +52,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVReferenceIsPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
@@ -93,14 +71,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVReferenceIsNotPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
@@ -119,15 +90,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         }
 
         // Multivalued tests
-
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVReferenceEquals(ConnectionMode connectionMode)
         {
             ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, null);
@@ -147,14 +110,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVReferenceNotEquals(ConnectionMode connectionMode)
         {
             ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, null);
@@ -174,14 +130,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVReferenceIsPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
@@ -203,14 +152,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVReferenceIsNotPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
@@ -231,7 +173,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         // Exception tests
 
-        [TestMethod]
+        [Test]
         public void TestSVReferenceGreaterThan()
         {
             try
@@ -242,7 +184,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVReferenceGreaterThanOrEquals()
         {
             try
@@ -253,7 +195,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVReferenceLessThan()
         {
             try
@@ -264,7 +206,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVReferenceLessThanOrEquals()
         {
             try
@@ -275,7 +217,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVReferenceContains()
         {
             try
@@ -286,7 +228,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVReferenceEndsWith()
         {
             try
@@ -297,7 +239,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVReferenceStartsWith()
         {
             try
@@ -309,7 +251,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         }
 
 
-        [TestMethod]
+        [Test]
         public void TestMVReferenceGreaterThan()
         {
             try
@@ -320,7 +262,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVReferenceGreaterThanOrEquals()
         {
             try
@@ -331,7 +273,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVReferenceLessThan()
         {
             try
@@ -342,7 +284,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVReferenceLessThanOrEquals()
         {
             try
@@ -353,7 +295,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVReferenceContains()
         {
             try
@@ -364,7 +306,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVReferenceEndsWith()
         {
             try
@@ -375,7 +317,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVReferenceStartsWith()
         {
             try

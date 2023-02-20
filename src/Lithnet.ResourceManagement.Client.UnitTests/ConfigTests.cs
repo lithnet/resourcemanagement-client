@@ -3,11 +3,11 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
-    [TestClass]
+    
     public class ConfigTests
     {
         private readonly string hostname;
@@ -19,7 +19,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.hostname = builder.Host;
         }
 
-        [TestMethod]
+        [Test]
         public void TestNetTcpBindingWithPort()
         {
             ResourceManagementClientOptions options = new ResourceManagementClientOptions();
@@ -31,7 +31,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("DisplayName", client.GetCorrectAttributeName("displayname"));
         }
 
-        [TestMethod]
+        [Test]
         public void TestNetTcpBindingWithoutPort()
         {
             ResourceManagementClientOptions options = new ResourceManagementClientOptions();
@@ -43,7 +43,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("DisplayName", client.GetCorrectAttributeName("displayname"));
         }
 
-        [TestMethod]
+        [Test]
         public void TestRmcBindingWithPort()
         {
             ResourceManagementClientOptions options = new ResourceManagementClientOptions();
@@ -55,7 +55,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("DisplayName", client.GetCorrectAttributeName("displayname"));
         }
 
-        [TestMethod]
+        [Test]
         public void TestRmcBindingWithoutPort()
         {
             ResourceManagementClientOptions options = new ResourceManagementClientOptions();
@@ -67,7 +67,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("DisplayName", client.GetCorrectAttributeName("displayname"));
         }
 
-        [TestMethod]
+        [Test]
         public void TestPipeBindingWithPort()
         {
             ResourceManagementClientOptions options = new ResourceManagementClientOptions();
@@ -79,7 +79,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("DisplayName", client.GetCorrectAttributeName("displayname"));
         }
 
-        [TestMethod]
+        [Test]
         public void TestPipeBindingWithoutPort()
         {
             ResourceManagementClientOptions options = new ResourceManagementClientOptions();

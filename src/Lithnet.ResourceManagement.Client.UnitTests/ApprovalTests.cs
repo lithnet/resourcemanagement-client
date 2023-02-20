@@ -7,11 +7,11 @@ using System.Text;
 using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
-    [TestClass]
+
     public class ApprovalTests
     {
         NetworkCredential standardUserCredentials;
@@ -39,13 +39,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.standardUserCredentials = new NetworkCredential(username, password, domain);
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSourcesApprovals))]
         public void TestApprovalForCurrentUser(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -76,7 +70,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
                 UniqueIdentifier requestId = null;
 
-                Assert.ThrowsException<AuthorizationRequiredException>(() =>
+                Assert.Throws<AuthorizationRequiredException>(() =>
                 {
                     try
                     {
@@ -136,13 +130,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             group2.Save();
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSourcesApprovals))]
         public void TestRejectionForCurrentUser(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
@@ -172,7 +160,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
                 UniqueIdentifier requestId = null;
 
-                Assert.ThrowsException<AuthorizationRequiredException>(() =>
+
+                Assert.Throws<AuthorizationRequiredException>(() =>
                 {
                     try
                     {

@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
-    [TestClass]
+    
     public class AttributeValueSVTests
     {
         // Single-valued string 
 
-        [TestMethod]
+        [Test]
         public void TestSVAddStringWithNullInitialValue()
         {
             object testValue = "myvalue";
@@ -19,7 +19,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestAdd(AttributeType.String, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVSetStringWithNullInitialValue()
         {
             object testValue = "myvalue";
@@ -29,7 +29,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestSet(AttributeType.String, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVRemoveStringWithNullInitalValue()
         {
             object testValue = "myvalue";
@@ -39,7 +39,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestRemove(AttributeType.String, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVAddStringWithInitialValue()
         {
             object testValue = "myvalue";
@@ -49,7 +49,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestAdd(AttributeType.String, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVSetStringWithInitialValue()
         {
             object testValue = "myvalue";
@@ -59,7 +59,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestSet(AttributeType.String, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVRemoveStringWithInitialValue()
         {
             object testValue = "myvalue";
@@ -71,7 +71,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         // Single-valued long
 
-        [TestMethod]
+        [Test]
         public void TestSVAddLongWithNullInitialValue()
         {
             object testValue = 1L;
@@ -81,7 +81,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestAdd(AttributeType.Integer, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVSetLongWithNullInitialValue()
         {
             object testValue = 1L;
@@ -91,7 +91,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestSet(AttributeType.Integer, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVRemoveLongWithNullInitalValue()
         {
             object testValue = 1L;
@@ -101,7 +101,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestRemove(AttributeType.Integer, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVAddLongWithInitialValue()
         {
             object testValue = 1L;
@@ -111,7 +111,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestAdd(AttributeType.Integer, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVSetLongWithInitialValue()
         {
             object testValue = 1L;
@@ -121,7 +121,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestSet(AttributeType.Integer, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVRemoveLongWithInitialValue()
         {
             object testValue = 1L;
@@ -133,7 +133,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         // Single-valued bool
 
-        [TestMethod]
+        [Test]
         public void TestSVAddBooleanWithNullInitialValue()
         {
             object testValue = true;
@@ -143,7 +143,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestAdd(AttributeType.Boolean, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVSetBooleanWithNullInitialValue()
         {
             object testValue = true;
@@ -153,7 +153,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestSet(AttributeType.Boolean, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVRemoveBooleanWithNullInitalValue()
         {
             object testValue = true;
@@ -163,7 +163,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestRemove(AttributeType.Boolean, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVAddBooleanWithInitialValue()
         {
             object testValue = true;
@@ -173,7 +173,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestAdd(AttributeType.Boolean, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVSetBooleanWithInitialValue()
         {
             object testValue = true;
@@ -183,7 +183,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestSet(AttributeType.Boolean, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVRemoveBooleanWithInitialValue()
         {
             object testValue = true;
@@ -195,7 +195,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         // Single-valued DateTime
 
-        [TestMethod]
+        [Test]
         public void TestSVAddDateTimeWithNullInitialValue()
         {
             object testValue = DateTime.Now;
@@ -205,7 +205,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestAdd(AttributeType.DateTime, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVSetDateTimeWithNullInitialValue()
         {
             object testValue = DateTime.Now;
@@ -215,7 +215,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestSet(AttributeType.DateTime, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVRemoveDateTimeWithNullInitalValue()
         {
             object testValue = DateTime.Now;
@@ -225,7 +225,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestRemove(AttributeType.DateTime, initialValue, testValue, expectedValue, 0);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVAddDateTimeWithInitialValue()
         {
             object testValue = DateTime.Now;
@@ -235,7 +235,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestAdd(AttributeType.DateTime, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVSetDateTimeWithInitialValue()
         {
             object testValue = DateTime.Now;
@@ -245,7 +245,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestSet(AttributeType.DateTime, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVRemoveDateTimeWithInitialValue()
         {
             object testValue = DateTime.Now;
@@ -257,7 +257,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         // Single-valued Reference attributes
 
-        [TestMethod]
+        [Test]
         public void TestSVAddUniqueIdentifierWithNullInitialValue()
         {
             UniqueIdentifier testValue = new UniqueIdentifier("e945055f-96e7-431b-902f-e1ebd52d9253");
@@ -267,7 +267,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestAdd(AttributeType.Reference, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVSetUniqueIdentifierWithNullInitialValue()
         {
             UniqueIdentifier testValue = new UniqueIdentifier("e945055f-96e7-431b-902f-e1ebd52d9253");
@@ -277,7 +277,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestSet(AttributeType.Reference, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVRemoveUniqueIdentifierWithNullInitalValue()
         {
             UniqueIdentifier testValue = new UniqueIdentifier("e945055f-96e7-431b-902f-e1ebd52d9253");
@@ -287,7 +287,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestRemove(AttributeType.Reference, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVAddUniqueIdentifierWithInitialValue()
         {
             UniqueIdentifier testValue = new UniqueIdentifier("e945055f-96e7-431b-902f-e1ebd52d9253");
@@ -297,7 +297,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestAdd(AttributeType.Reference, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVSetUniqueIdentifierWithInitialValue()
         {
             UniqueIdentifier testValue = new UniqueIdentifier("e945055f-96e7-431b-902f-e1ebd52d9253");
@@ -307,7 +307,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestSet(AttributeType.Reference, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVRemoveUniqueIdentifierWithInitialValue()
         {
             UniqueIdentifier testValue = new UniqueIdentifier("e945055f-96e7-431b-902f-e1ebd52d9253");
@@ -319,7 +319,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         // Single-valued binary attributes
 
-        [TestMethod]
+        [Test]
         public void TestSVAddBinaryWithNullInitialValue()
         {
             byte[] testValue = new byte[4] { 0x00, 0x01, 0x03, 0x04 };
@@ -329,7 +329,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestAdd(AttributeType.Binary, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVSetBinaryWithNullInitialValue()
         {
             byte[] testValue = new byte[4] { 0x00, 0x01, 0x03, 0x04 };
@@ -339,7 +339,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestSet(AttributeType.Binary, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVRemoveBinaryWithNullInitalValue()
         {
             byte[] testValue = new byte[4] { 0x00, 0x01, 0x03, 0x04 };
@@ -349,7 +349,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestRemove(AttributeType.Binary, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVAddBinaryWithInitialValue()
         {
             byte[] testValue = new byte[4] { 0x00, 0x01, 0x03, 0x04 };
@@ -359,7 +359,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestAdd(AttributeType.Binary, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVSetBinaryWithInitialValue()
         {
             byte[] testValue = new byte[4] { 0x00, 0x01, 0x03, 0x04 };
@@ -369,7 +369,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteSVTestSet(AttributeType.Binary, initialValue, testValue, expectedValue, ModeType.Modify);
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVRemoveBinaryWithInitialValue()
         {
             byte[] testValue = new byte[4] { 0x00, 0x01, 0x03, 0x04 };

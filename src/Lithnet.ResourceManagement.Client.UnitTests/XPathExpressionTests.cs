@@ -1,48 +1,34 @@
 ﻿using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
-    [TestClass]
+
     public class XPathExpressionTests
     {
-        [TestInitialize]
+        [SetUp]
         public void TestInitialize()
         {
             UnitTestHelper.DeleteAllTestObjects();
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void ThrowOnInvalidObjectTypeName(ConnectionMode connectionMode)
         {
-            try
+            Assert.Throws<NoSuchObjectTypeException>(() =>
             {
+                var client = UnitTestHelper.GetClient(connectionMode);
+
                 string testValue1 = "test1";
                 XPathQuery predicate1 = new XPathQuery(Constants.AttributeStringSVDef, ComparisonOperator.Equals, testValue1);
                 XPathExpression childExpression = new XPathExpression("legalName", predicate1);
                 childExpression = new XPathExpression("also:legalName", predicate1);
                 childExpression = new XPathExpression("%%%%%", predicate1);
-
-                Assert.Fail("The expected exception was not thrown");
-            }
-            catch { }
+                childExpression.ToString(client);
+            });
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void XpathExpressionNestedTest(ConnectionMode connectionMode)
         {
             string testValue1 = "test1";
@@ -68,14 +54,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ConnectionMode.RemoteProxy)]
-        [DataRow(ConnectionMode.LocalProxy)]
-        [DataRow(ConnectionMode.DirectNetTcp)]
-#if NETFRAMEWORK
-
-        [DataRow(ConnectionMode.DirectWsHttp)]
-#endif
+        [TestCaseSource(typeof(ConnectionModeSources))]
         public void XpathExpressionDereferencedTest(ConnectionMode connectionMode)
         {
             string testValue1 = "test1";

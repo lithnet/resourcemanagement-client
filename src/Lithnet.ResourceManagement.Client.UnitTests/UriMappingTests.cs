@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
-    [TestClass]
+    
     public class UriMappingTests
     {
-        [TestMethod]
+        [Test]
         public void TestFimServiceUriParser1()
         {
             var uri = UriParser.GetFimServiceHttpUri("http://xxx");
@@ -21,7 +21,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("http", uri.Scheme);
         }
 
-        [TestMethod]
+        [Test]
         public void TestFimServiceUriParser2()
         {
             var uri = UriParser.GetFimServiceHttpUri("http://xxx:1234");
@@ -31,7 +31,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("http", uri.Scheme);
         }
 
-        [TestMethod]
+        [Test]
         public void TestFimServiceUriParser3()
         {
             var uri = UriParser.GetFimServiceHttpUri("zxfvasdf:1234");
@@ -41,7 +41,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("http", uri.Scheme);
         }
 
-        [TestMethod]
+        [Test]
         public void TestFimServiceUriParser4()
         {
             var uri = UriParser.GetFimServiceHttpUri("xxx");
@@ -51,7 +51,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("http", uri.Scheme);
         }
 
-        [TestMethod]
+        [Test]
         public void TestPipeUriParser1()
         {
             var uri = UriParser.GetPipeUri("pipe://xxx");
@@ -61,7 +61,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("pipe", uri.Scheme);
         }
 
-        [TestMethod]
+        [Test]
         public void TestPipeUriParser2()
         {
             var uri = UriParser.GetPipeUri("pipe://xxx:1234");
@@ -71,7 +71,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("pipe", uri.Scheme);
         }
 
-        [TestMethod]
+        [Test]
         public void TestPipeUriParser3()
         {
             var uri = UriParser.GetPipeUri("zxfvasdf:1234");
@@ -81,7 +81,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("pipe", uri.Scheme);
         }
 
-        [TestMethod]
+        [Test]
         public void TestPipeUriParser4()
         {
             var uri = UriParser.GetPipeUri("xxx");
@@ -91,7 +91,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("pipe", uri.Scheme);
         }
 
-        [TestMethod]
+        [Test]
         public void TestPipeUriParser5()
         {
             var uri = UriParser.GetPipeUri("http://xxx");
@@ -101,7 +101,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("pipe", uri.Scheme);
         }
 
-        [TestMethod]
+        [Test]
         public void TestPipeUriParser6()
         {
             var uri = UriParser.GetPipeUri("http://xxx:1234");
@@ -111,7 +111,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("pipe", uri.Scheme);
         }
 
-        [TestMethod]
+        [Test]
         public void TestNetTcpUriParser1()
         {
             var uri = UriParser.GetFimServiceNetTcpUri("net.tcp://xxx");
@@ -121,7 +121,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("net.tcp", uri.Scheme);
         }
 
-        [TestMethod]
+        [Test]
         public void TestNetTcpUriParser2()
         {
             var uri = UriParser.GetFimServiceNetTcpUri("net.tcp://xxx:1234");
@@ -131,7 +131,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("net.tcp", uri.Scheme);
         }
 
-        [TestMethod]
+        [Test]
         public void TestNetTcpUriParser3()
         {
             var uri = UriParser.GetFimServiceNetTcpUri("zxfvasdf:1234");
@@ -141,7 +141,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("net.tcp", uri.Scheme);
         }
 
-        [TestMethod]
+        [Test]
         public void TestNetTcpUriParser4()
         {
             var uri = UriParser.GetFimServiceNetTcpUri("xxx");
@@ -152,7 +152,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         }
 
 
-        [TestMethod]
+        [Test]
         public void TestNetTcpUriParser5()
         {
             var uri = UriParser.GetFimServiceNetTcpUri("http://xxx");
@@ -162,7 +162,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("net.tcp", uri.Scheme);
         }
 
-        [TestMethod]
+        [Test]
         public void TestNetTcpUriParser6()
         {
             var uri = UriParser.GetFimServiceNetTcpUri("http://xxx:1234");
@@ -172,7 +172,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("net.tcp", uri.Scheme);
         }
 
-        [TestMethod]
+        [Test]
         public void TestProxyUriParser1()
         {
             var uri = UriParser.GetRmcProxyUri("rmc://xxx");
@@ -182,7 +182,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("rmc", uri.Scheme);
         }
 
-        [TestMethod]
+        [Test]
         public void TestProxyUriParser2()
         {
             var uri = UriParser.GetRmcProxyUri("rmc://xxx:1234");
@@ -192,7 +192,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("rmc", uri.Scheme);
         }
 
-        [TestMethod]
+        [Test]
         public void TestProxyUriParser3()
         {
             var uri = UriParser.GetRmcProxyUri("zxfvasdf:1234");
@@ -202,7 +202,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("rmc", uri.Scheme);
         }
 
-        [TestMethod]
+        [Test]
         public void TestProxyUriParser4()
         {
             var uri = UriParser.GetRmcProxyUri("xxx");
@@ -212,7 +212,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("rmc", uri.Scheme);
         }
 
-        [TestMethod]
+        [Test]
         public void TestProxyUriParser5()
         {
             var uri = UriParser.GetRmcProxyUri("http://xxx");
@@ -222,7 +222,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.AreEqual("rmc", uri.Scheme);
         }
 
-        [TestMethod]
+        [Test]
         public void TestProxyUriParser6()
         {
             var uri = UriParser.GetRmcProxyUri("http://xxx:1234");
