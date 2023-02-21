@@ -66,14 +66,11 @@ namespace Lithnet.ResourceManagement.Client
         {
             ResourceManagementClientOptions options;
 
-            if (FrameworkUtilities.IsFramework)
-            {
-                options = ClientConfigurationSection.GetOptionsFromConfiguration() ?? new ResourceManagementClientOptions();
-            }
-            else
-            {
-                options = new ResourceManagementClientOptions();
-            }
+#if NETFRAMEWORK
+            options = ClientConfigurationSection.GetOptionsFromConfiguration() ?? new ResourceManagementClientOptions();
+#else
+            options = new ResourceManagementClientOptions();
+#endif
 
             this.InitializeClients(options);
         }

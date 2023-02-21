@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading.Tasks;
+using MonoMod.RuntimeDetour;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -32,7 +33,7 @@ namespace Lithnet.ResourceManagement.Client
             var proxyUri = this.parameters.GetProxyUri();
             var host = proxyUri.Host;
             var port = proxyUri.Port;
-            
+
             this.displayName = $"RPC connection to {proxyUri}";
 
             this.client = new TcpClient();
@@ -59,7 +60,7 @@ namespace Lithnet.ResourceManagement.Client
             }
 
             var spn = this.parameters.Spn ?? $"FIMService/{host}";
-            
+
             NetworkCredential credentials;
 
             if (string.IsNullOrWhiteSpace(this.parameters.Username))
@@ -80,23 +81,31 @@ namespace Lithnet.ResourceManagement.Client
 
         private static void PatchNegotiateStreamPal()
         {
-#if NET6_0_OR_GREATER
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+#if !NETFRAMEWORK
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || FrameworkUtilities.IsFramework)
             {
-                return;
+               //return;
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                throw new PlatformNotSupportedException($"Using '{nameof(ConnectionMode.RemoteProxy)}' is not currently supported on macOS");
+            }
+            
+            if (System.Environment.Version >= new Version(7,0))
+            {
+                //throw new PlatformNotSupportedException($"Using '{nameof(ConnectionMode.RemoteProxy)}' requires .NET 6 or earlier");
             }
 
             Trace.WriteLine("Attempting to patch NegotiateStream");
-
-            var harmony = new HarmonyLib.Harmony("nspatch");
 
             var nsType = typeof(System.Net.Security.NegotiateStream);
             var nspType = nsType.Assembly.GetType("System.Net.Security.NegotiateStreamPal");
 
             var original = nspType.GetMethod("ValidateImpersonationLevel", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
-            var prefix = typeof(NegotiateStreamRpcClient).GetMethod(nameof(ValidateImpersonationLevel), System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            var replacement = typeof(NegotiateStreamRpcClient).GetMethod(nameof(ValidateImpersonationLevel), System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
 
-            harmony.Patch(original, new HarmonyLib.HarmonyMethod(prefix));
+            Detour d = new Detour(original, replacement);
 #endif
         }
 

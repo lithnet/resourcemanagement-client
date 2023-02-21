@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;netstandard2.0;net48</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net48</TargetFrameworks>
 		<LangVersion>8</LangVersion>
 		<Platforms>AnyCPU</Platforms>
 		<Deterministic>true</Deterministic>
@@ -70,11 +70,11 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFrameworkIdentifier) != '.NETFramework'">
-		<PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
 		<PackageReference Include="System.ServiceModel.Http" Version="4.7.0" />
 		<PackageReference Include="System.ServiceModel.NetTcp" Version="4.7.0" />
 		<PackageReference Include="System.ServiceModel.Security" Version="4.7.0" />
 		<PackageReference Include="StreamJsonRpc" Version="2.13.33" />
+		<PackageReference Include="MonoMod.RuntimeDetour" Version="22.7.31.1" />
 	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFrameworkIdentifier) != '.NETFramework'">

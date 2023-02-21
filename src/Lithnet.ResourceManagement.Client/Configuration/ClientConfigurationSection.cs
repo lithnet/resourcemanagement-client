@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if NETFRAMEWORK
+
+using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.Reflection;
@@ -252,3 +254,5 @@ namespace Lithnet.ResourceManagement.Client
         }
     }
 }
+
+#endif
