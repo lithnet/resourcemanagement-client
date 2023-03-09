@@ -76,7 +76,25 @@ namespace Lithnet.ResourceManagement.Client
 
             Trace.WriteLine($"Attempting to connect to remote proxy {host}:{port}:{spn}");
 
-            return await RpcCore.GetClientNegotiateStreamAsync(stream, credentials, spn, impersonationLevel);
+            var protectedStream = await RpcCore.GetClientNegotiateStreamAsync(stream, credentials, spn, impersonationLevel);
+
+            protectedStream.WriteByte(RpcCore.ClientPostAuthInitialization);
+
+            response = protectedStream.ReadByte();
+
+            if (response != RpcCore.ServerAck)
+            {
+                if (response == RpcCore.AccessDenied)
+                {
+                    throw new UnauthorizedAccessException($"Access to the RMC proxy on {host}:{port} was denied.");
+                }
+                else
+                {
+                    throw new InvalidDataException("The server did not respond with the correct acknowledgement of the initialization request");
+                }
+            }
+
+            return protectedStream;
         }
 
         private static void PatchNegotiateStreamPal()
@@ -84,15 +102,15 @@ namespace Lithnet.ResourceManagement.Client
 #if !NETFRAMEWORK
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || FrameworkUtilities.IsFramework)
             {
-               //return;
+                return;
             }
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
                 throw new PlatformNotSupportedException($"Using '{nameof(ConnectionMode.RemoteProxy)}' is not currently supported on macOS");
             }
-            
-            if (System.Environment.Version >= new Version(7,0))
+
+            if (System.Environment.Version >= new Version(7, 0))
             {
                 //throw new PlatformNotSupportedException($"Using '{nameof(ConnectionMode.RemoteProxy)}' requires .NET 6 or earlier");
             }

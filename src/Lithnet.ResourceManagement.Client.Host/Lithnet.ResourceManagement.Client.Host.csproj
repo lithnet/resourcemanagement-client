@@ -22,6 +22,14 @@
 		<SupportUrl>https://github.com/lithnet/resourcemanagement-client</SupportUrl>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net461|AnyCPU'">
+	  <Prefer32Bit>False</Prefer32Bit>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net461|AnyCPU'">
+	  <Prefer32Bit>False</Prefer32Bit>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<Reference Include="System.Configuration.Install" />
 		<Reference Include="System.Management" />

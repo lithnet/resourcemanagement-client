@@ -54,7 +54,7 @@ namespace Lithnet.ResourceManagement.Client.Host
                 else if (args[0] == "/servicei")
                 {
                     var cts = new CancellationTokenSource();
-                    await NegotiateStreamRpcServer.StartNegotiateStreamServerAsync(IPAddress.IPv6Any, 5735, cts.Token);
+                    await NegotiateStreamRpcServer.StartNegotiateStreamServerAsync(IPAddress.IPv6Any, SettingsProvider.ProxyServicePort, cts.Token);
                     return 0;
                 }
                 else if (args[0] == "/service")

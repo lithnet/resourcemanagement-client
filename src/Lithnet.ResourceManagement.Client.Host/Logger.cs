@@ -113,7 +113,7 @@ namespace Lithnet.ResourceManagement.Client.Host
 
         public static void LogTrace(string message, params object[] args)
         {
-            Trace.WriteLine(string.Format(message, args));
+            Trace.TraceInformation(string.Format(message, args));
         }
 
         public static void LogWarning(string message, params object[] args)

@@ -6,7 +6,6 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Win32;
 
 namespace Lithnet.ResourceManagement.Client.Host
 {
@@ -20,11 +19,7 @@ namespace Lithnet.ResourceManagement.Client.Host
 
         private protected override Uri MapBaseUri(string uri)
         {
-            if (!int.TryParse(Registry.LocalMachine.GetValue(@"SYSTEM\CurrentControlSet\Services\FIMService\ResourceManagementServicePort", "5725") as string, out int port))
-            {
-                port = 5725;
-            }
-
+            var port = SettingsProvider.MimServicePort;
             return new Uri($"http://127.0.0.1:{port}");
         }
 
@@ -42,9 +37,10 @@ namespace Lithnet.ResourceManagement.Client.Host
             listener.Server.DualMode = true;
 
             listener.Start();
-            Logger.LogTrace("Started listener");
+            Logger.LogTrace($"Started listener on port: {port}");
             cancellationToken.Register(listener.Stop);
-
+            Logger.LogTrace($"Authorization group: {SettingsProvider.AuthorizedProxyUsersName}");
+            
             while (!cancellationToken.IsCancellationRequested)
             {
                 try
@@ -69,7 +65,7 @@ namespace Lithnet.ResourceManagement.Client.Host
             try
             {
                 Logger.LogTrace($"Client connected: {client.Client.RemoteEndPoint}");
-                
+
                 using var stream = client.GetStream();
 
                 var firstByte = stream.ReadByte();
@@ -91,7 +87,7 @@ namespace Lithnet.ResourceManagement.Client.Host
                 this.impersonationIdentity = authStream.RemoteIdentity as WindowsIdentity;
 
                 StringBuilder sb = new StringBuilder();
-                sb.AppendLine("A new client was connected");
+
                 sb.AppendLine($"Client IP: {client.Client.RemoteEndPoint}");
                 sb.AppendLine($"Authenticated: {authStream.IsAuthenticated}");
                 sb.AppendLine($"RemoteIdentity: {authStream.RemoteIdentity.Name}");
@@ -99,21 +95,45 @@ namespace Lithnet.ResourceManagement.Client.Host
                 sb.AppendLine($"IsEncrypted: {authStream.IsEncrypted}");
                 sb.AppendLine($"IsMutuallyAuthenticated: {authStream.IsMutuallyAuthenticated}");
                 sb.AppendLine($"IsSigned: {authStream.IsSigned}");
-                sb.AppendLine($"Stream ImpersonationLevel: {authStream.ImpersonationLevel}");
-                sb.AppendLine($"Identity ImpersonationLevel: {this.impersonationIdentity.ImpersonationLevel}");
+                sb.AppendLine($"ImpersonationLevel: {authStream.ImpersonationLevel}");
 
-                Logger.LogInfo(sb.ToString());
+                if (authStream.ReadByte() == RpcCore.ClientPostAuthInitialization)
+                {
+                    if (this.impersonationIdentity.Groups.Contains(SettingsProvider.AuthorizedProxyUsers))
+                    {
+                        sb.Insert(0, $"A new client was connected and authorized as a member of {SettingsProvider.AuthorizedProxyUsersName}\n");
+                        Logger.LogInfo(sb.ToString());
 
+                        authStream.WriteByte(RpcCore.ServerAck);
+                    }
+                    else
+                    {
+                        sb.Insert(0, $"A new client was connected but was not an authorized member of the {SettingsProvider.AuthorizedProxyUsersName} group so the connection was terminated\n");
+                        Logger.LogWarning(sb.ToString());
+                        authStream.WriteByte(RpcCore.AccessDenied);
+                        authStream.Close();
+                        throw new UnauthorizedAccessException($"The user {authStream.RemoteIdentity.Name} was not authorized to access this service");
+                    }
+                }
+                else
+                {
+                    sb.Insert(0, "A new client was connected but sent unexpected data so the connection was closed");
+                    Logger.LogError(sb.ToString());
+                    authStream.WriteByte(RpcCore.ServerError);
+                    client.Close();
+                    return;
+                }
 
                 using (this.impersonationIdentity.Impersonate())
                 {
                     await this.SetupRpcServerAsync(RpcCore.GetMessageHandler(authStream, authStream));
                 }
             }
+            catch (UnauthorizedAccessException) { }
             catch (OperationCanceledException) { }
             catch (IOException e) when (e.InnerException is SocketException s)
             {
-                Logger.LogError($"Socket was closed: {s.Message}");
+                Logger.LogTrace($"Socket was closed: {s.Message}");
             }
             catch (Exception ex)
             {

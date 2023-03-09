@@ -15,7 +15,9 @@ namespace Lithnet.ResourceManagement.Client
     {
         internal const byte ServerAck = 1;
         internal const byte ServerError = 2;
+        internal const byte AccessDenied = 5;
         internal const byte ClientInitialization = 100;
+        internal const byte ClientPostAuthInitialization = 101;
 
         private static bool UseMessagePack = true;
 
@@ -35,7 +37,7 @@ namespace Lithnet.ResourceManagement.Client
 
         private static async Task<NegotiateStream> GetNegotiateStreamAsync(Stream networkStream, NetworkCredential credentials, bool isServer, string serverSpn, TokenImpersonationLevel requestedImpersonationLevel)
         {
-            NegotiateStream authenticatedStream = new NegotiateStream(networkStream, true);
+            NegotiateStream authenticatedStream = new NegotiateStream(networkStream, false);
 
             if (isServer)
             {

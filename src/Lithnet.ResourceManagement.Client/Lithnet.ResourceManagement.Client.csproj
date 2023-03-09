@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net48</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0</TargetFrameworks>
 		<LangVersion>8</LangVersion>
 		<Platforms>AnyCPU</Platforms>
 		<Deterministic>true</Deterministic>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Configurations>Debug;Release</Configurations>
+		<EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -55,6 +56,13 @@
 			<Link>Shared\Rpc\%(FileName)%(Extension)</Link>
 		</Compile>
 	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Include="..\Lithnet.ResourceManagement.Client.Host\Shared\ServiceReference\*.cs">
+			<Link>Shared\ServiceReference\%(FileName)%(Extension)</Link>
+		</Compile>
+	</ItemGroup>
+
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />

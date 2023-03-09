@@ -29,7 +29,7 @@ namespace Lithnet.ResourceManagement.Client.Host
                 endpoint = this.endpointerMapper(endpoint).ToString();
             }
 
-            ResourceFactoryClient client = new ResourceFactoryClient(this.binding, EndpointManager.EndpointFromAddress(endpoint));
+            NativeResourceFactoryClient client = new NativeResourceFactoryClient(this.binding, EndpointManager.EndpointFromAddress(endpoint));
 
             if (this.credentials != null)
             {

@@ -7,7 +7,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public IEnumerator GetEnumerator()
         {
             yield return ConnectionMode.LocalProxy;
-            if (!FrameworkUtilities.IsFramework)
+            //if (!FrameworkUtilities.IsFramework)
             {
                 yield return ConnectionMode.RemoteProxy;
             }

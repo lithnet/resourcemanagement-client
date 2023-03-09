@@ -7,6 +7,7 @@
 		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
 		<RuntimeIdentifiers>win-x64;win-x86</RuntimeIdentifiers>
 		<Configurations>Debug;Release;netstandard</Configurations>
+		<EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
 	</PropertyGroup>
 
 	<ItemGroup>

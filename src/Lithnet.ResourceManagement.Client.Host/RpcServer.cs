@@ -24,7 +24,7 @@ namespace Lithnet.ResourceManagement.Client.Host
 
         public async Task SetupRpcServerAsync(IJsonRpcMessageHandler messageHandler)
         {
-            this.jsonRpcServer = new JsonRpc(messageHandler);
+            this.jsonRpcServer = new RmcJsonRpc(messageHandler);
             this.jsonRpcServer.TraceSource.Switch.Level = SourceLevels.Warning;
             this.jsonRpcServer.ExceptionStrategy = ExceptionProcessing.ISerializable;
             this.jsonRpcServer.AllowModificationWhileListening = true;
@@ -96,16 +96,16 @@ namespace Lithnet.ResourceManagement.Client.Host
             var wsHttpBinding = BindingManager.GetWsHttpBinding(recieveTimeout, sendTimeout);
             var wsHttpAuthenticatedContextBinding = BindingManager.GetWsHttpContextBinding(recieveTimeout, sendTimeout);
 
-            ResourceClient resourceClient = new ResourceClient(wsHttpAuthenticatedBinding, endpoints.ResourceEndpoint);
+            NativeResourceClient resourceClient = new NativeResourceClient(wsHttpAuthenticatedBinding, endpoints.ResourceEndpoint);
             this.InitializeClient(resourceClient, credentials);
 
-            ResourceFactoryClient resourceFactoryClient = new ResourceFactoryClient(wsHttpAuthenticatedBinding, endpoints.ResourceFactoryEndpoint);
+            NativeResourceFactoryClient resourceFactoryClient = new NativeResourceFactoryClient(wsHttpAuthenticatedBinding, endpoints.ResourceFactoryEndpoint);
             this.InitializeClient(resourceFactoryClient, credentials);
 
-            MetadataExchangeClient metadataClient = new MetadataExchangeClient(wsHttpBinding, endpoints.MetadataEndpoint);
+            NativeSchemaClient metadataClient = new NativeSchemaClient(wsHttpBinding, endpoints.MetadataEndpoint);
             this.InitializeClient(metadataClient, credentials);
 
-            SearchClient searchClient = new SearchClient(wsHttpAuthenticatedBinding, endpoints.SearchEndpoint);
+            NativeSearchClient searchClient = new NativeSearchClient(wsHttpAuthenticatedBinding, endpoints.SearchEndpoint);
             this.InitializeClient(searchClient, credentials);
 
             ApprovalService approvalService = new ApprovalService(wsHttpAuthenticatedContextBinding, credentials, this.impersonationIdentity, this.MapApprovalUri);

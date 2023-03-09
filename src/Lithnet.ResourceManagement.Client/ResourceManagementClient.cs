@@ -2406,11 +2406,14 @@ namespace Lithnet.ResourceManagement.Client
         {
             string value = options.Username;
 
+#if NETFRAMEWORK
+            value = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+#else
             if (string.IsNullOrWhiteSpace(value) && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 value = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
             }
-
+#endif
             if (value?.IndexOf("\\", StringComparison.Ordinal) >= 0)
             {
                 string[] split = value.Split('\\');
