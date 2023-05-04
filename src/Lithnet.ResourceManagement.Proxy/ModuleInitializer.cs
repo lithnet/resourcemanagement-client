@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace Lithnet.ResourceManagement.Client.Host
+namespace Lithnet.ResourceManagement.Proxy
 {
     internal static class ModuleInitializer
     {

@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Microsoft.Win32;
 
-namespace Lithnet.ResourceManagement.Client.Hosts
+namespace Lithnet.ResourceManagement.Client
 {
     internal class ExePipeHost : IPipeHost
     {
@@ -29,7 +29,7 @@ namespace Lithnet.ResourceManagement.Client.Hosts
 
             if (path == null)
             {
-                throw new FileNotFoundException("Unable to locate framework host", "Lithnet.ResourceManagement.Client.Host.exe");
+                throw new FileNotFoundException("Unable to locate framework host", "Lithnet.ResourceManagement.Proxy.exe");
             }
 
             this.HostLocation = path;
@@ -74,7 +74,7 @@ namespace Lithnet.ResourceManagement.Client.Hosts
 
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            Console.WriteLine($"Output data recieved: {e.Data}");
+            Console.WriteLine($"Output data received: {e.Data}");
         }
 
         private static string GetOrExtractHost(ResourceManagementClientOptions p)
@@ -92,7 +92,7 @@ namespace Lithnet.ResourceManagement.Client.Hosts
             }
 
             var temp = Path.GetTempPath();
-            var hostFile = Path.Combine(temp, "LithnetRmcProxy", "Lithnet.ResourceManagement.Client.Host.exe");
+            var hostFile = Path.Combine(temp, "LithnetRmcProxy", "Lithnet.ResourceManagement.Proxy.exe");
             if (File.Exists(hostFile))
             {
                 if (GetFileHash(hostFile) == GetEmbeddedBinaryHash())
@@ -206,7 +206,7 @@ namespace Lithnet.ResourceManagement.Client.Hosts
 
         private static string ProbePath(string path)
         {
-            var expectedPath = Path.Combine(path, "fxhost\\Lithnet.ResourceManagement.Client.Host.exe");
+            var expectedPath = Path.Combine(path, "fxhost\\Lithnet.ResourceManagement.Proxy.exe");
 
             if (File.Exists(expectedPath))
             {
@@ -214,7 +214,7 @@ namespace Lithnet.ResourceManagement.Client.Hosts
                 return expectedPath;
             }
 
-            expectedPath = Path.Combine(path, "Lithnet.ResourceManagement.Client.Host.exe");
+            expectedPath = Path.Combine(path, "Lithnet.ResourceManagement.Proxy.exe");
             if (File.Exists(expectedPath))
             {
                 Trace.WriteLine($"Found file at {expectedPath}");

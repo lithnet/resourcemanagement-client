@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace Lithnet.ResourceManagement.Client.Host
+namespace Lithnet.ResourceManagement.Proxy
 {
     internal static class Logger
     {

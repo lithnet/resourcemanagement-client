@@ -2,7 +2,7 @@
 using System.ServiceProcess;
 using System.Threading;
 using System.Threading.Tasks;
-using Lithnet.ResourceManagement.Client.Host;
+using Lithnet.ResourceManagement.Proxy;
 using StreamJsonRpc;
 
 namespace Lithnet.ResourceManagement.Server

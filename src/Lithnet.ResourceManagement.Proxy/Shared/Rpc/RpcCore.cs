@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Security;
 using System.Security.Principal;
 using System.Threading.Tasks;
-using Lithnet.ResourceManagement.Client.Host;
+using Lithnet.ResourceManagement.Proxy;
 using MessagePack;
 using MessagePack.Resolvers;
 using StreamJsonRpc;

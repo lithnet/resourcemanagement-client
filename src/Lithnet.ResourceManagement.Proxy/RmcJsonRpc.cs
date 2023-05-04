@@ -3,7 +3,7 @@ using System.IO;
 using StreamJsonRpc;
 using StreamJsonRpc.Protocol;
 
-namespace Lithnet.ResourceManagement.Client.Host
+namespace Lithnet.ResourceManagement.Proxy
 {
     public class RmcJsonRpc : JsonRpc
     {

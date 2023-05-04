@@ -123,7 +123,7 @@ namespace Lithnet.ResourceManagement.Client
                     yield return ConnectionMode.DirectWsHttp;
                 }
 
-                if (Lithnet.ResourceManagement.Client.Hosts.ExePipeHost.HasHostExe())
+                if (ExePipeHost.HasHostExe())
                 {
                     yield return ConnectionMode.LocalProxy;
                 }

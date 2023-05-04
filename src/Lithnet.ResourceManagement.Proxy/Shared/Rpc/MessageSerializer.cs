@@ -5,7 +5,7 @@ using MessagePack;
 using MessagePack.Formatters;
 using Newtonsoft.Json;
 
-namespace Lithnet.ResourceManagement.Client.Host
+namespace Lithnet.ResourceManagement.Proxy
 {
     public class MessageSerializer : JsonConverter, IMessagePackFormatter<Message>, IFormatterResolver
     {

@@ -6,8 +6,9 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Lithnet.ResourceManagement.Client;
 
-namespace Lithnet.ResourceManagement.Client.Host
+namespace Lithnet.ResourceManagement.Proxy
 {
     public class NegotiateStreamRpcServer : RpcServer
     {
@@ -55,7 +56,7 @@ namespace Lithnet.ResourceManagement.Client.Host
                 catch (ObjectDisposedException) { }
                 catch (Exception ex)
                 {
-                    Logger.LogError(ex, "An error occured setting up the client connection");
+                    Logger.LogError(ex, "An error occurred setting up the client connection");
                 }
             }
         }

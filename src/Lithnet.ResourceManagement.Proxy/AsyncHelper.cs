@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Lithnet.ResourceManagement.Client.Host
+namespace Lithnet.ResourceManagement.Proxy
 {
     [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits")]
     internal static class AsyncHelper

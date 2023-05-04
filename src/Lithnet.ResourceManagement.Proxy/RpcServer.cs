@@ -4,10 +4,11 @@ using System.Net;
 using System.Security.Principal;
 using System.ServiceModel;
 using System.Threading.Tasks;
+using Lithnet.ResourceManagement.Client;
 using Lithnet.ResourceManagement.Client.ResourceManagementService;
 using StreamJsonRpc;
 
-namespace Lithnet.ResourceManagement.Client.Host
+namespace Lithnet.ResourceManagement.Proxy
 {
     public abstract class RpcServer : IRpcServer
     {

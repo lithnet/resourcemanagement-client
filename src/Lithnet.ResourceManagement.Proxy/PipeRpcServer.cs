@@ -7,8 +7,9 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
+using Lithnet.ResourceManagement.Client;
 
-namespace Lithnet.ResourceManagement.Client.Host
+namespace Lithnet.ResourceManagement.Proxy
 {
     public class PipeRpcServer : RpcServer
     {

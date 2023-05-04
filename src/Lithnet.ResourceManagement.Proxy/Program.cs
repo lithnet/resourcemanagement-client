@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Lithnet.ResourceManagement.Server;
 
-namespace Lithnet.ResourceManagement.Client.Host
+namespace Lithnet.ResourceManagement.Proxy
 {
     internal static class Program
     {

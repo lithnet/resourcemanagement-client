@@ -12,7 +12,7 @@
 	<PropertyGroup>
 		<Description>Lithnet .NET library for interacting with the Microsoft Identity Manager service</Description>
 		<Company>Lithnet</Company>
-		<Copyright>Copyright 2022 Lithnet Pty Ltd</Copyright>
+		<Copyright>Copyright 2023 Lithnet Pty Ltd</Copyright>
 		<ProductName>Lithnet Resource Management Client</ProductName>
 		<VersionPrefix>2.0.0</VersionPrefix>
 		<VersionSuffix>beta.21</VersionSuffix>
@@ -46,19 +46,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Compile Include="..\Lithnet.ResourceManagement.Client.Host\Shared\BindingManager.cs" Link="Shared\BindingManager.cs" />
-		<Compile Include="..\Lithnet.ResourceManagement.Client.Host\Shared\EndpointManager.cs" Link="Shared\EndpointManager.cs" />
-		<Compile Include="..\Lithnet.ResourceManagement.Client.Host\Shared\IApprovalService.cs" Link="Shared\IApprovalService.cs" />
+		<Compile Include="..\Lithnet.ResourceManagement.Proxy\Shared\BindingManager.cs" Link="Shared\BindingManager.cs" />
+		<Compile Include="..\Lithnet.ResourceManagement.Proxy\Shared\EndpointManager.cs" Link="Shared\EndpointManager.cs" />
+		<Compile Include="..\Lithnet.ResourceManagement.Proxy\Shared\IApprovalService.cs" Link="Shared\IApprovalService.cs" />
 	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFrameworkIdentifier) != '.NETFramework'">
-		<Compile Include="..\Lithnet.ResourceManagement.Client.Host\Shared\Rpc\*.cs">
+		<Compile Include="..\Lithnet.ResourceManagement.Proxy\Shared\Rpc\*.cs">
 			<Link>Shared\Rpc\%(FileName)%(Extension)</Link>
 		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
-		<Compile Include="..\Lithnet.ResourceManagement.Client.Host\Shared\ServiceReference\*.cs">
+		<Compile Include="..\Lithnet.ResourceManagement.Proxy\Shared\ServiceReference\*.cs">
 			<Link>Shared\ServiceReference\%(FileName)%(Extension)</Link>
 		</Compile>
 	</ItemGroup>
@@ -86,8 +86,8 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFrameworkIdentifier) != '.NETFramework'">
-		<ProjectReference Include="..\Lithnet.ResourceManagement.Client.Host\Lithnet.ResourceManagement.Client.Host.csproj">
-			<Name>Lithnet.ResourceManagement.Client.Host</Name>
+		<ProjectReference Include="..\Lithnet.ResourceManagement.Proxy\Lithnet.ResourceManagement.Proxy.csproj">
+			<Name>Lithnet.ResourceManagement.Proxy</Name>
 			<LogicalName>Host.exe</LogicalName>
 			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
 			<OutputItemType>EmbeddedResource</OutputItemType>

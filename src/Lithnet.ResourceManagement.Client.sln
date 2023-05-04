@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lithnet.ResourceManagement.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lithnet.ResourceManagement.Client.UnitTests", "Lithnet.ResourceManagement.Client.UnitTests\Lithnet.ResourceManagement.Client.UnitTests.csproj", "{0CD42F09-0F00-40D9-BF0C-79B4E749E697}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lithnet.ResourceManagement.Client.Host", "Lithnet.ResourceManagement.Client.Host\Lithnet.ResourceManagement.Client.Host.csproj", "{874E70C4-9CCF-445C-A494-90EEC514AFE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lithnet.ResourceManagement.Proxy", "Lithnet.ResourceManagement.Proxy\Lithnet.ResourceManagement.Proxy.csproj", "{874E70C4-9CCF-445C-A494-90EEC514AFE7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

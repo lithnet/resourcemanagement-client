@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Lithnet.ResourceManagement.Client.Host": {
+    "Lithnet.ResourceManagement.Proxy": {
       "commandName": "Project",
       "commandLineArgs": "/servicei"
     }

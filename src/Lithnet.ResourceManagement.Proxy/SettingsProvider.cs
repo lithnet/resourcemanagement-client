@@ -2,7 +2,7 @@
 using System.Security.Principal;
 using Microsoft.Win32;
 
-namespace Lithnet.ResourceManagement.Client.Host
+namespace Lithnet.ResourceManagement.Proxy
 {
     internal static class SettingsProvider
     {

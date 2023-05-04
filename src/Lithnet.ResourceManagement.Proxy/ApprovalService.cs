@@ -3,9 +3,10 @@ using System.Net;
 using System.Security.Principal;
 using System.ServiceModel.Channels;
 using System.Threading.Tasks;
+using Lithnet.ResourceManagement.Client;
 using Lithnet.ResourceManagement.Client.ResourceManagementService;
 
-namespace Lithnet.ResourceManagement.Client.Host
+namespace Lithnet.ResourceManagement.Proxy
 {
     internal class ApprovalService
     {

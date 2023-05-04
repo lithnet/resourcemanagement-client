@@ -3,7 +3,6 @@ using System.IO;
 using System.IO.Pipes;
 using System.Threading;
 using System.Threading.Tasks;
-using Lithnet.ResourceManagement.Client.Hosts;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -47,7 +46,7 @@ namespace Lithnet.ResourceManagement.Client
 
                 if (firstByte != RpcCore.ServerAck)
                 {
-                    throw new InvalidDataException("The server did not provide the correct initialization repsonse");
+                    throw new InvalidDataException("The server did not provide the correct initialization response");
                 }
             }
 

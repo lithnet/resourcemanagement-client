@@ -191,3 +191,5 @@ ModelManifest.xml
 /src/Lithnet.ResourceManagement.Client.Help/Help
 .vs/
 /src/packages
+output/
+*-cache/

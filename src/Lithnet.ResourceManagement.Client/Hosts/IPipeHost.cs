@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Lithnet.ResourceManagement.Client.Hosts
+namespace Lithnet.ResourceManagement.Client
 {
     internal interface IPipeHost
     {

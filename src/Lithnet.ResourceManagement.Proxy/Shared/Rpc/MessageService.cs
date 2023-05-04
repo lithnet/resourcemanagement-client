@@ -2,7 +2,7 @@
 using System.ServiceModel.Channels;
 using System.Xml;
 
-namespace Lithnet.ResourceManagement.Client.Host
+namespace Lithnet.ResourceManagement.Proxy
 {
     public static class MessageService
     {
