@@ -6,7 +6,6 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading.Tasks;
-using MonoMod.RuntimeDetour;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -72,7 +71,7 @@ namespace Lithnet.ResourceManagement.Client
                 credentials = new NetworkCredential(this.parameters.Username, this.parameters.Password);
             }
 
-            PatchNegotiateStreamPal();
+            ValidateNegotiateStreamSupport();
 
             Trace.WriteLine($"Attempting to connect to remote proxy {host}:{port}:{spn}");
 
@@ -97,7 +96,7 @@ namespace Lithnet.ResourceManagement.Client
             return protectedStream;
         }
 
-        private static void PatchNegotiateStreamPal()
+        private static void ValidateNegotiateStreamSupport()
         {
 #if !NETFRAMEWORK
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || FrameworkUtilities.IsFramework)
@@ -105,33 +104,11 @@ namespace Lithnet.ResourceManagement.Client
                 return;
             }
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            if (System.Environment.Version < new Version(8, 0))
             {
-                throw new PlatformNotSupportedException($"Using '{nameof(ConnectionMode.RemoteProxy)}' is not currently supported on macOS");
+                throw new PlatformNotSupportedException($"Using '{nameof(ConnectionMode.RemoteProxy)}' requires .NET 8 or later");
             }
-
-            if (System.Environment.Version >= new Version(7, 0))
-            {
-                //throw new PlatformNotSupportedException($"Using '{nameof(ConnectionMode.RemoteProxy)}' requires .NET 6 or earlier");
-            }
-
-            Trace.WriteLine("Attempting to patch NegotiateStream");
-
-            var nsType = typeof(System.Net.Security.NegotiateStream);
-            var nspType = nsType.Assembly.GetType("System.Net.Security.NegotiateStreamPal");
-
-            var original = nspType.GetMethod("ValidateImpersonationLevel", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
-            var replacement = typeof(NegotiateStreamRpcClient).GetMethod(nameof(ValidateImpersonationLevel), System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
-
-            Detour d = new Detour(original, replacement);
 #endif
-        }
-
-        private static bool ValidateImpersonationLevel(TokenImpersonationLevel impersonationLevel)
-        {
-            Trace.WriteLine("Patch was invoked");
-            Trace.WriteLine($"{impersonationLevel} was passed in for validation");
-            return false;
         }
 
         protected override void Dispose(bool disposing)

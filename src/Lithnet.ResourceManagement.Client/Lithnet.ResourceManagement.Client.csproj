@@ -82,7 +82,6 @@
 		<PackageReference Include="System.ServiceModel.NetTcp" Version="4.7.0" />
 		<PackageReference Include="System.ServiceModel.Security" Version="4.7.0" />
 		<PackageReference Include="StreamJsonRpc" Version="2.13.33" />
-		<PackageReference Include="MonoMod.RuntimeDetour" Version="22.7.31.1" />
 	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFrameworkIdentifier) != '.NETFramework'">
