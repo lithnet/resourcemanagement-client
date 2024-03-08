@@ -13,13 +13,21 @@ namespace Lithnet.ResourceManagement.Client
 {
     public static class RpcCore
     {
-        internal const byte ServerAck = 1;
-        internal const byte ServerError = 2;
-        internal const byte AccessDenied = 5;
-        internal const byte ClientInitialization = 100;
-        internal const byte ClientPostAuthInitialization = 101;
+        internal const byte Ack = 0xFF;
 
-        private static bool UseMessagePack = true;
+        internal const byte ErrorServer = 0xEF;
+        internal const byte ErrorClient = 0xEE;
+        internal const byte ErrorVersionMismatch = 0xED;
+        internal const byte ErrorAccessDenied = 0xE5;
+
+        internal const byte MessageClientHello = 0xD0;
+        internal const byte MessageClientVersionExchange = 0xD1;
+        internal const byte MessageClientPostAuthInitialization = 0xD2;
+
+        internal const byte ClientVersion = 0x1;
+        internal const byte ServerVersion = 0x1;
+
+        private const bool UseMessagePack = true;
 
         public const string PipeNameFormatTemplate = @"\\.\pipe\lithnet\rmc\{0}";
 

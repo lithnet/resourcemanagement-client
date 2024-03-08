@@ -193,3 +193,4 @@ ModelManifest.xml
 /src/packages
 output/
 *-cache/
+*.aip

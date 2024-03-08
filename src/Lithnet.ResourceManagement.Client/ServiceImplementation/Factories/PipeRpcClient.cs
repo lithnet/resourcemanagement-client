@@ -41,10 +41,10 @@ namespace Lithnet.ResourceManagement.Client
             if (this.clientPipe?.IsConnected != true)
             {
                 this.clientPipe = await this.CreateClientPipeAsync(timeout, token).ConfigureAwait(false);
-                this.clientPipe.WriteByte(RpcCore.ClientInitialization);
+                this.clientPipe.WriteByte(RpcCore.MessageClientHello);
                 var firstByte = this.clientPipe.ReadByte();
 
-                if (firstByte != RpcCore.ServerAck)
+                if (firstByte != RpcCore.Ack)
                 {
                     throw new InvalidDataException("The server did not provide the correct initialization response");
                 }

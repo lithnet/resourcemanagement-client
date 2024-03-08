@@ -75,17 +75,14 @@ namespace Lithnet.ResourceManagement.Proxy
         {
             using (serverPipe)
             {
-                if (serverPipe.ReadByte() != RpcCore.ClientInitialization)
+                if (serverPipe.ReadByte() != RpcCore.MessageClientHello)
                 {
                     throw new InvalidDataException("The client sent incorrect initialization data");
                 }
 
-                serverPipe.WriteByte(RpcCore.ServerAck);
+                serverPipe.WriteByte(RpcCore.Ack);
 
                 Logger.LogTrace("Client has connected to the Pipe");
-
-                // using GZipStream sendingStream = new GZipStream(serverPipe, CompressionMode.Compress);
-                //  using GZipStream receivingStream = new GZipStream(serverPipe, CompressionMode.Decompress);
 
                 await this.SetupRpcServerAsync(RpcCore.GetMessageHandler(serverPipe, serverPipe));
             }

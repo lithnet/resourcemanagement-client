@@ -8,26 +8,19 @@
 		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<Nullable>disable</Nullable>
+	    <Prefer32Bit>False</Prefer32Bit>
 	</PropertyGroup>
 
 	<PropertyGroup>
 		<Description>Lithnet Resource Management Proxy allows .NET core processes to communicate with the Microsoft Identity Manager Service</Description>
 		<Company>Lithnet</Company>
-		<Copyright>Copyright 2023 Lithnet Pty Ltd</Copyright>
+		<Copyright>Copyright 2024 Lithnet Pty Ltd</Copyright>
 		<ProductName>Lithnet Resource Management Client</ProductName>
 		<VersionPrefix>2.0.19</VersionPrefix>
 		<VersionSuffix>beta1</VersionSuffix>
 		<Authors>Lithnet</Authors>
 		<RepositoryUrl>https://github.com/lithnet/resourcemanagement-client</RepositoryUrl>
 		<SupportUrl>https://github.com/lithnet/resourcemanagement-client</SupportUrl>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net461|AnyCPU'">
-	  <Prefer32Bit>False</Prefer32Bit>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net461|AnyCPU'">
-	  <Prefer32Bit>False</Prefer32Bit>
 	</PropertyGroup>
 
 	<ItemGroup>

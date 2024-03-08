@@ -41,7 +41,7 @@ namespace Lithnet.ResourceManagement.Proxy
             Logger.LogTrace($"Started listener on port: {port}");
             cancellationToken.Register(listener.Stop);
             Logger.LogTrace($"Authorization group: {SettingsProvider.AuthorizedProxyUsersName}");
-            
+
             while (!cancellationToken.IsCancellationRequested)
             {
                 try
@@ -69,17 +69,51 @@ namespace Lithnet.ResourceManagement.Proxy
 
                 using var stream = client.GetStream();
 
-                var firstByte = stream.ReadByte();
+                var message = stream.ReadByte();
 
-                if (firstByte == RpcCore.ClientInitialization)
-                {
-                    Logger.LogTrace("Client requested initialization");
-                    stream.WriteByte(RpcCore.ServerAck);
-                }
-                else
+                if (message != RpcCore.MessageClientHello)
                 {
                     Logger.LogError("Unexpected data from client. Closing stream");
-                    stream.WriteByte(RpcCore.ServerError);
+                    stream.WriteByte(RpcCore.ErrorClient);
+                    client.Close();
+                    return;
+                }
+
+                Logger.LogTrace("Client requested initialization");
+                stream.WriteByte(RpcCore.Ack);
+
+                message = stream.ReadByte();
+                if (message != RpcCore.MessageClientVersionExchange)
+                {
+                    Logger.LogError("Unexpected data from client. Closing stream");
+                    stream.WriteByte(RpcCore.ErrorClient);
+                    client.Close();
+                    return;
+                }
+
+                stream.WriteByte(RpcCore.Ack);
+                message = stream.ReadByte();
+                if (message != RpcCore.ClientVersion)
+                {
+                    Logger.LogError("Client version is not supported by this server");
+                    stream.WriteByte(RpcCore.ErrorVersionMismatch);
+                    client.Close();
+                    return;
+                }
+
+                stream.WriteByte(RpcCore.Ack);
+                stream.WriteByte(RpcCore.ServerVersion);
+                message = stream.ReadByte();
+                if (message != RpcCore.Ack)
+                {
+                    if (message == RpcCore.ErrorVersionMismatch)
+                    {
+                        Logger.LogError("Client does not support this server version");
+                        client.Close();
+                        return;
+                    }
+
+                    Logger.LogError("Unexpected data from client. Closing stream");
                     client.Close();
                     return;
                 }
@@ -98,20 +132,20 @@ namespace Lithnet.ResourceManagement.Proxy
                 sb.AppendLine($"IsSigned: {authStream.IsSigned}");
                 sb.AppendLine($"ImpersonationLevel: {authStream.ImpersonationLevel}");
 
-                if (authStream.ReadByte() == RpcCore.ClientPostAuthInitialization)
+                if (authStream.ReadByte() == RpcCore.MessageClientPostAuthInitialization)
                 {
                     if (this.impersonationIdentity.Groups.Contains(SettingsProvider.AuthorizedProxyUsers))
                     {
                         sb.Insert(0, $"A new client was connected and authorized as a member of {SettingsProvider.AuthorizedProxyUsersName}\n");
                         Logger.LogInfo(sb.ToString());
 
-                        authStream.WriteByte(RpcCore.ServerAck);
+                        authStream.WriteByte(RpcCore.Ack);
                     }
                     else
                     {
                         sb.Insert(0, $"A new client was connected but was not an authorized member of the {SettingsProvider.AuthorizedProxyUsersName} group so the connection was terminated\n");
                         Logger.LogWarning(sb.ToString());
-                        authStream.WriteByte(RpcCore.AccessDenied);
+                        authStream.WriteByte(RpcCore.ErrorAccessDenied);
                         authStream.Close();
                         throw new UnauthorizedAccessException($"The user {authStream.RemoteIdentity.Name} was not authorized to access this service");
                     }
@@ -120,7 +154,7 @@ namespace Lithnet.ResourceManagement.Proxy
                 {
                     sb.Insert(0, "A new client was connected but sent unexpected data so the connection was closed");
                     Logger.LogError(sb.ToString());
-                    authStream.WriteByte(RpcCore.ServerError);
+                    authStream.WriteByte(RpcCore.ErrorServer);
                     client.Close();
                     return;
                 }

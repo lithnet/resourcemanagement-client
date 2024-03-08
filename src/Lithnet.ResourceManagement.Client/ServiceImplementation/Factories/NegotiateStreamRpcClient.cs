@@ -50,13 +50,26 @@ namespace Lithnet.ResourceManagement.Client
 
             var impersonationLevel = TokenImpersonationLevel.Impersonation;
 
-            stream.WriteByte(RpcCore.ClientInitialization);
+            stream.WriteByte(RpcCore.MessageClientHello);
             var response = stream.ReadByte();
+            ThrowIfNotAck(response);
 
-            if (response != RpcCore.ServerAck)
+            stream.WriteByte(RpcCore.MessageClientVersionExchange);
+            response = stream.ReadByte();
+            ThrowIfNotAck(response);
+
+            stream.WriteByte(RpcCore.ClientVersion);
+            response = stream.ReadByte();
+            ThrowIfNotAck(response);
+
+            response = stream.ReadByte();
+            if (response != RpcCore.ServerVersion)
             {
-                throw new InvalidDataException("The server did not respond with the correct acknowledgement of the initialization request");
+                stream.WriteByte(RpcCore.ErrorVersionMismatch);
+                throw new InvalidDataException("The server version is not supported by this client");
             }
+
+            stream.WriteByte(RpcCore.Ack);
 
             var spn = this.parameters.Spn ?? $"FIMService/{host}";
 
@@ -77,13 +90,13 @@ namespace Lithnet.ResourceManagement.Client
 
             var protectedStream = await RpcCore.GetClientNegotiateStreamAsync(stream, credentials, spn, impersonationLevel);
 
-            protectedStream.WriteByte(RpcCore.ClientPostAuthInitialization);
+            protectedStream.WriteByte(RpcCore.MessageClientPostAuthInitialization);
 
             response = protectedStream.ReadByte();
 
-            if (response != RpcCore.ServerAck)
+            if (response != RpcCore.Ack)
             {
-                if (response == RpcCore.AccessDenied)
+                if (response == RpcCore.ErrorAccessDenied)
                 {
                     throw new UnauthorizedAccessException($"Access to the RMC proxy on {host}:{port} was denied.");
                 }
@@ -120,5 +133,34 @@ namespace Lithnet.ResourceManagement.Client
 
             base.Dispose(disposing);
         }
+
+
+        private static void ThrowIfNotAck(int message)
+        {
+            if (message != RpcCore.Ack)
+            {
+                if (message == RpcCore.ErrorServer)
+                {
+                    throw new InvalidOperationException("The other party encountered an error");
+                }
+                else if (message == RpcCore.ErrorClient)
+                {
+                    throw new InvalidOperationException("The other party did not process the request");
+                }
+                else if (message == RpcCore.ErrorVersionMismatch)
+                {
+                    throw new InvalidOperationException("The other party's version is not compatible with our version");
+                }
+                else if (message == RpcCore.ErrorAccessDenied)
+                {
+                    throw new UnauthorizedAccessException("Access was denied");
+                }
+                else
+                {
+                    throw new InvalidDataException("The other party did not respond with the correct acknowledgement");
+                }
+            }
+        }
+
     }
 }
