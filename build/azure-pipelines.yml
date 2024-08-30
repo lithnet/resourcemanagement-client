@@ -257,7 +257,6 @@ stages:
             - publish: 
             - checkout: none
             - download: current
-              artifact: installer
             - task: GitHubRelease@1
               inputs:
                 gitHubConnection: github.com_lithnet # string. Required. GitHub connection (OAuth or PAT). 
