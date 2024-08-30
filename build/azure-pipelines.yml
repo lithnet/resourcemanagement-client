@@ -41,6 +41,16 @@ stages:
           arguments: '-c $(buildConfiguration) -p:Version=$(build.version) -p:GeneratePackageOnBuild=false'
           projects: 'src/Lithnet.ResourceManagement.Client/Lithnet.ResourceManagement.Client.csproj'
 
+    - job: "build_proxy_job"
+      displayName: Build project
+      steps:
+      - task: DotNetCoreCLI@2
+        displayName: dotnet build
+        inputs:
+          command: build
+          arguments: '-c $(buildConfiguration) -p:Version=$(build.version)'
+          projects: 'src/Lithnet.ResourceManagement.Client.Proxy/Lithnet.ResourceManagement.Client.Proxy.csproj'
+
       - task: DotNetCoreCLI@2
         inputs:
           command: 'custom'
