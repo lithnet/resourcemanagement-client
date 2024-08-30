@@ -185,7 +185,7 @@ stages:
           targetType: 'inline'
           script: |
             $files = @()
-            $files += (Get-ChildItem -Recurse -Path "$(Build.artifactstagingdirectory)\*.exe").FullName
+            $files += (Get-ChildItem -Recurse -Path "$(Build.artifactstagingdirectory)\*.msi").FullName
 
             write-host "Signing $($files.Length) files:"
             write-output $files
