@@ -173,7 +173,7 @@ stages:
           advinstVersion: '21.4'
           advinstLicense: $(advancedInstaller.licenseKey)
           aipPath: "src/Lithnet.ResourceManagement.Proxy.Setup/Lithnet.ResourceManagement.Proxy.Setup.aip"
-          aipPackageName: Lithnet.ResourceManagement.Proxy.Setup
+          aipPackageName: Lithnet.ResourceManagement.Proxy.Setup.msi
           aipOutputFolder: $(build.artifactstagingdirectory)
           aipResetDigSign: true
 
