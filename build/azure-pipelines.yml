@@ -1,0 +1,227 @@
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  - name: buildPlatform 
+    value: 'Any CPU'
+  - name: buildConfiguration
+    value: 'Release'
+  - name: build.version.major
+    value: 2
+  - name: build.version.minor
+    value: 0
+  - name: build.version.revision
+    value: $[counter(format('{0}.{1}', variables['build.version.major'], variables['build.version.minor']), 0)]
+  - name: build.version.suffix
+    value: '-beta'
+  - name: build.version
+    value: $(build.version.major).$(build.version.minor).$(build.version.revision)$(build.version.suffix)
+  - name: build.versionShort
+    value: $(build.version.major).$(build.version.minor).$(build.version.revision)
+  - name: build.date
+    value: $[format('{0:yyyy}-{0:MM}-{0:dd}T{0:HH}:{0:mm}:{0:ss}', pipeline.startTime)]
+  - group: Azure KeyVault Code Signing
+  - group: Advanced Installer License Keys
+
+name: $(build.version.major).$(build.version.minor).$(build.version.revision)$(build.version.suffix)
+trigger: none
+
+stages:
+- stage: build_provider
+  displayName: Build project
+  dependsOn: []
+  jobs:
+    - job: "build_provider_job"
+      displayName: Build project
+      steps:
+      - task: DotNetCoreCLI@2
+        displayName: dotnet build
+        inputs:
+          command: build
+          arguments: '-c $(buildConfiguration) -p:Version=$(build.version) -p:GeneratePackageOnBuild=false'
+          projects: 'src/Lithnet.ResourceManagement.Client/Lithnet.ResourceManagement.Client.csproj'
+
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: 'custom'
+          custom: 'tool'
+          arguments: 'update --global azuresigntool'
+        displayName: Install AzureSignTool
+
+      - task: PowerShell@2
+        displayName: 'Sign files with AzureSignTool'
+        inputs:
+          targetType: 'inline'
+          script: |
+            $files = @()
+            $files += (Get-ChildItem -Recurse -Path "$(Build.SourcesDirectory)\Lithnet*.dll").FullName
+
+            write-host "Signing $($files.Length) files:"
+            write-output $files
+
+            $cmdargs = @(
+              "sign",
+              "-d", "Lithnet Resource Management Client",
+              "-kvu", "$(akv.url)",
+              "-kvi", "$(akv.applicationID)",
+              "-kvs", "$(akv.secret)",
+              "-kvt", "$(akv.tenantId)",
+              "-kvc", "$(akv.certificateName)",
+              "-tr", "http://timestamp.digicert.com",
+              "-td", "sha256"
+            )
+
+            $cmdargs += $files
+        
+            & AzureSignTool $cmdargs
+          failOnStderr: true
+          showWarnings: true
+
+      - task: DotNetCoreCLI@2
+        displayName: dotnet pack
+        inputs:
+          command: 'pack'
+          packagesToPack: 'src/Lithnet.ResourceManagement.Client/Lithnet.ResourceManagement.Client.csproj'
+          packDirectory: '$(Build.ArtifactStagingDirectory)\cp'
+          nobuild: true
+          includesymbols: true
+          versioningScheme: 'byEnvVar'
+          versionEnvVar: 'build.version'
+
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: 'custom'
+          custom: 'tool'
+          arguments: 'update --global NuGetKeyVaultSignTool'
+        displayName: Install NugetKeyVaultSignTool
+
+      - task: PowerShell@2
+        displayName: 'Sign Nuget package'
+        inputs:
+          targetType: 'inline'
+          script: |
+            $cmdargs = @(
+              "sign", "$(Build.ArtifactStagingDirectory)\cp\Lithnet.ResourceManagement.Client.$(build.version).nupkg"
+              "-fd", "sha256",
+              "-kvu", "$(akv.url)",
+              "-kvi", "$(akv.applicationID)",
+              "-kvs", "$(akv.secret)",
+              "-kvt", "$(akv.tenantId)",
+              "-kvc", "$(akv.certificateName)",
+              "-tr", "http://timestamp.digicert.com",
+              "-td", "sha256"
+            )
+        
+            & NuGetKeyVaultSignTool $cmdargs
+          failOnStderr: true
+          showWarnings: true
+
+      - task: PowerShell@2
+        displayName: 'Sign Nuget symbols package'
+        inputs:
+          targetType: 'inline'
+          script: |
+            $cmdargs = @(
+              "sign", "$(Build.ArtifactStagingDirectory)\cp\Lithnet.ResourceManagement.Client.$(build.version).snupkg"
+              "-fd", "sha256",
+              "-kvu", "$(akv.url)",
+              "-kvi", "$(akv.applicationID)",
+              "-kvs", "$(akv.secret)",
+              "-kvt", "$(akv.tenantId)",
+              "-kvc", "$(akv.certificateName)",
+              "-tr", "http://timestamp.digicert.com",
+              "-td", "sha256"
+            )
+        
+            & NuGetKeyVaultSignTool $cmdargs
+          failOnStderr: true
+          showWarnings: true
+
+      - task: DotNetCoreCLI@2
+        displayName: Publish package to internal feed
+        inputs:
+          command: 'push'
+          packagesToPush: '$(Build.ArtifactStagingDirectory)/cp/*.nupkg'
+          nuGetFeedType: 'internal'
+          publishVstsFeed: '91a552bc-359d-4f28-bdbd-f36f71cfdf81'
+
+      - task: DotNetCoreCLI@2
+        displayName: Publish symbols to internal feed
+        inputs:
+          command: 'push'
+          packagesToPush: '$(Build.ArtifactStagingDirectory)/cp/*.snupkg'
+          nuGetFeedType: 'internal'
+          publishVstsFeed: '91a552bc-359d-4f28-bdbd-f36f71cfdf81'
+
+      - task: PublishPipelineArtifact@1
+        displayName: Publish nuget artifact
+        inputs:
+          targetPath: '$(Build.ArtifactStagingDirectory)/cp'
+          publishLocation: 'pipeline'
+          artifact: cp
+
+      - task: AdvancedInstaller@2
+        displayName: Build Advanced Installer package
+        inputs:
+          advinstVersion: '21.4'
+          advinstLicense: $(advancedInstaller.licenseKey)
+          aipPath: "src\Lithnet.ResourceManagement.Proxy.Setup\Lithnet.ResourceManagement.Proxy.Setup.aip"
+          aipPackageName: Lithnet.ResourceManagement.Proxy.Setup
+          aipOutputFolder: $(build.artifactstagingdirectory)
+          aipResetDigSign: true
+
+      - task: PowerShell@2
+        displayName: 'Sign installer with AzureSignTool'
+        inputs:
+          targetType: 'inline'
+          script: |
+            $files = @()
+            $files += (Get-ChildItem -Recurse -Path "$(Build.artifactstagingdirectory)\*.exe").FullName
+
+            write-host "Signing $($files.Length) files:"
+            write-output $files
+
+            $cmdargs = @(
+              "sign",
+              "-d", "Lithnet Resource Management Client",
+              "-kvu", "$(akv.url)",
+              "-kvi", "$(akv.applicationID)",
+              "-kvs", "$(akv.secret)",
+              "-kvt", "$(akv.tenantId)",
+              "-kvc", "$(akv.certificateName)",
+              "-tr", "http://timestamp.digicert.com",
+              "-td", "sha256"
+            )
+
+            $cmdargs += $files
+        
+            & AzureSignTool $cmdargs
+          failOnStderr: true
+          showWarnings: true
+          
+- stage: publish_nuget
+  displayName: Publish to nuget.org
+  dependsOn: "build_provider"
+  jobs:
+      - deployment: 'PublishPackages'
+        environment: 'Public nuget feed'
+        displayName: Publish packages to public nuget feed 
+        pool:
+          vmImage: windows-2022 
+        strategy:
+          runOnce:
+            deploy:            
+              steps:
+              - checkout: none
+              - download: current
+                artifact: cp
+              - task: NuGetToolInstaller@1
+                inputs:
+                  versionSpec: '>=4.9.0-0'
+              - task: NuGetCommand@2
+                displayName: 'Publish nuget package to public feed'
+                inputs:
+                  command: 'push'
+                  packagesToPush: '$(Pipeline.Workspace)/cp/*.nupkg'
+                  nuGetFeedType: 'external'
+                  publishFeedCredentials: 'WindowsResourceManagementClientkNuget'
