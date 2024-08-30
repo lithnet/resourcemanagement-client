@@ -67,7 +67,7 @@
     <ROW Path="&lt;AI_DICTS&gt;ui_en.ail"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DynamicPropertyComponent">
-    <ROW Property="ProductVersion" Type="0" SourcePath="..\Lithnet.ResourceManagement.Proxy\bin\Debug\net461\Lithnet.ResourceManagement.Proxy.exe"/>
+    <ROW Property="ProductVersion" Type="2" SourcePath="Lithnet.ResourceManagement.Proxy.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.FragmentComponent">
     <ROW Fragment="CommonUI.aip" Path="&lt;AI_FRAGS&gt;CommonUI.aip"/>
