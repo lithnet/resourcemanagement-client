@@ -224,4 +224,4 @@ stages:
                   command: 'push'
                   packagesToPush: '$(Pipeline.Workspace)/cp/*.nupkg'
                   nuGetFeedType: 'external'
-                  publishFeedCredentials: 'WindowsResourceManagementClientkNuget'
+                  publishFeedCredentials: 'ResourceManagementClientNuget'
