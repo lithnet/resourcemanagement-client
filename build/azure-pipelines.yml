@@ -22,6 +22,8 @@ variables:
     value: $[format('{0:yyyy}-{0:MM}-{0:dd}T{0:HH}:{0:mm}:{0:ss}', pipeline.startTime)]
   - group: Azure KeyVault Code Signing
   - group: Advanced Installer License Keys
+  - name: proxy.build.outputFolder
+    value: D:\build\rmc\proxy
 
 name: $(build.version.major).$(build.version.minor).$(build.version.revision)$(build.version.suffix)
 trigger: none
@@ -32,20 +34,20 @@ stages:
   dependsOn: []
   jobs:
     - job: "build_provider_job"
-      displayName: Build project
+      displayName: Build
       steps:
       - task: DotNetCoreCLI@2
-        displayName: dotnet build
+        displayName: Build Resource Management Client
         inputs:
           command: build
           arguments: '-c $(buildConfiguration) -p:Version=$(build.version) -p:GeneratePackageOnBuild=false'
           projects: 'src/Lithnet.ResourceManagement.Client/Lithnet.ResourceManagement.Client.csproj'
 
       - task: DotNetCoreCLI@2
-        displayName: dotnet build
+        displayName: Build Resource Management Proxy
         inputs:
           command: build
-          arguments: '-c $(buildConfiguration) -p:Version=$(build.version)'
+          arguments: '-c $(buildConfiguration) -p:Version=$(build.version) --output "$(proxy.build.outputFolder)"'
           projects: 'src/Lithnet.ResourceManagement.Proxy/Lithnet.ResourceManagement.Proxy.csproj'
 
       - task: DotNetCoreCLI@2
