@@ -13,10 +13,10 @@
     <ROW Property="ARPURLINFOABOUT" Value="https://lithnet.io/support"/>
     <ROW Property="MSIFASTINSTALL" MultiBuildValue="DefaultBuild:2"/>
     <ROW Property="Manufacturer" Value="Lithnet"/>
-    <ROW Property="ProductCode" Value="1033:{FB1512C3-FBDD-4BDB-A771-37B2DF14E45D} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{42DFF605-3042-4C8A-8308-7685CF9B4B17} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="Lithnet Resource Management Client Proxy"/>
-    <ROW Property="ProductVersion" Value="2.0.19.0" Options="20"/>
+    <ROW Property="ProductVersion" Value="2.0.20.0" Options="20"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{1E533207-CCAC-4716-B8B6-D0A8C652F100}"/>
     <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
