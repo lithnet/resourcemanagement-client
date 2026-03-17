@@ -1,26 +1,26 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
-    [TestClass]
+
     public class PutCompositeTests
     {
-        [TestMethod]
-        public void PutCompositeTestMultipleUpdates()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void PutCompositeTestMultipleUpdates(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource1 = null;
             ResourceObject resource2 = null;
 
             try
             {
                 // Create the empty object
-                resource1 = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                resource1 = client.CreateResource(Constants.UnitTestObjectTypeName);
                 UnitTestHelper.PopulateTestUserData(resource1);
                 client.SaveResource(resource1);
 
-                resource2 = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                resource2 = client.CreateResource(Constants.UnitTestObjectTypeName);
                 UnitTestHelper.PopulateTestUserData(resource2);
                 client.SaveResource(resource2);
 
@@ -28,8 +28,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 resource2.Refresh();
 
                 // Make the changes
-                resource1.Attributes[UnitTestHelper.AttributeStringSV].SetValue(UnitTestHelper.TestDataString2);
-                resource2.Attributes[UnitTestHelper.AttributeStringSV].SetValue(UnitTestHelper.TestDataString3);
+                resource1.Attributes[Constants.AttributeStringSV].SetValue(Constants.TestDataString2);
+                resource2.Attributes[Constants.AttributeStringSV].SetValue(Constants.TestDataString3);
 
                 client.SaveResources(new List<ResourceObject>() { resource1, resource2 });
 
@@ -40,8 +40,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 resource1 = client.GetResource(resource1.ObjectID);
                 resource2 = client.GetResource(resource2.ObjectID);
 
-                Assert.AreEqual(UnitTestHelper.TestDataString2, resource1.Attributes[UnitTestHelper.AttributeStringSV].StringValue);
-                Assert.AreEqual(UnitTestHelper.TestDataString3, resource2.Attributes[UnitTestHelper.AttributeStringSV].StringValue);
+                Assert.AreEqual(Constants.TestDataString2, resource1.Attributes[Constants.AttributeStringSV].StringValue);
+                Assert.AreEqual(Constants.TestDataString3, resource2.Attributes[Constants.AttributeStringSV].StringValue);
             }
             finally
             {
@@ -55,7 +55,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                     client.DeleteResource(resource2);
                 }
             }
-
         }
     }
 }

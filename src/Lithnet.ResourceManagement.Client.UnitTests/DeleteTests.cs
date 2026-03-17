@@ -1,34 +1,33 @@
 ﻿using System.Collections.Generic;
-using Microsoft.ResourceManagement.WebServices;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
-    [TestClass]
+
     public class DeleteTests
     {
-        [TestMethod]
-        public void DeleteEmptyListResource()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void DeleteEmptyListResource(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
             client.DeleteResources(new List<ResourceObject>());
         }
 
-        [TestMethod]
-        public void DeleteEmptyListUniqueIdentifier()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void DeleteEmptyListUniqueIdentifier(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
             client.DeleteResources(new List<UniqueIdentifier>());
         }
 
-        [TestMethod]
-        public void DeleteByID()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void DeleteByID(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
-            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource.Save();
 
             client.DeleteResource(resource.ObjectID);
@@ -43,12 +42,12 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void DeleteByGuid()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void DeleteByGuid(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
-            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource.Save();
 
             client.DeleteResource(resource.ObjectID.GetGuid());
@@ -63,12 +62,12 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void DeleteByString()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void DeleteByString(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
-            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource.Save();
 
             client.DeleteResource(resource.ObjectID.Value);
@@ -83,12 +82,12 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void DeleteByObject()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void DeleteByObject(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
-            ResourceObject resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource.Save();
 
             client.DeleteResource(resource);
@@ -103,10 +102,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void DeleteByStringNonExistant()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void DeleteByStringNonExistant(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
             try
             {
@@ -118,20 +117,20 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void CompositeDeleteByObjectTest()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void CompositeDeleteByObjectTest(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
-            ResourceObject resource1 = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceObject resource1 = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource1.Save();
             resource1 = client.GetResource(resource1.ObjectID);
 
-            ResourceObject resource2 = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceObject resource2 = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource2.Save();
             resource2 = client.GetResource(resource2.ObjectID);
 
-            ResourceObject resource3 = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceObject resource3 = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource3.Save();
             resource3 = client.GetResource(resource3.ObjectID);
 
@@ -163,23 +162,22 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch (ResourceNotFoundException)
             {
             }
-
         }
 
-        [TestMethod]
-        public void CompositeDeleteByIDTest()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void CompositeDeleteByIDTest(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
-            ResourceObject resource1 = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceObject resource1 = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource1.Save();
             resource1 = client.GetResource(resource1.ObjectID);
 
-            ResourceObject resource2 = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceObject resource2 = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource2.Save();
             resource2 = client.GetResource(resource2.ObjectID);
 
-            ResourceObject resource3 = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+            ResourceObject resource3 = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource3.Save();
             resource3 = client.GetResource(resource3.ObjectID);
 
@@ -211,7 +209,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch (ResourceNotFoundException)
             {
             }
-
         }
     }
 }

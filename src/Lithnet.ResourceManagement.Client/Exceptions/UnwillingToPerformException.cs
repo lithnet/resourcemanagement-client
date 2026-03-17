@@ -1,8 +1,6 @@
 ﻿namespace Lithnet.ResourceManagement.Client
 {
     using System;
-    using Microsoft.ResourceManagement.WebServices.Exceptions;
-    using Microsoft.ResourceManagement.WebServices.Faults;
 
     /// <summary>
     /// An exception thrown by the resource management service when an invalid request is submitted
@@ -72,7 +70,7 @@
         private static string GetMessage(DispatchRequestFailures failure, string correlationID)
         {
             return string.Format(
-                UnwillingToPerformException.messageFormat,
+                messageFormat,
                 failure.AdministratorDetails?.FailureMessage,
                 failure.AdministratorDetails?.DispatchRequestFailureSource,
                 failure.AdministratorDetails?.AdditionalTextDetails,

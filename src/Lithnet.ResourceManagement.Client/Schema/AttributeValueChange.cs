@@ -1,6 +1,4 @@
-﻿using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
-
-namespace Lithnet.ResourceManagement.Client
+﻿namespace Lithnet.ResourceManagement.Client
 {
     /// <summary>
     /// Defines a pending change to an attribute value

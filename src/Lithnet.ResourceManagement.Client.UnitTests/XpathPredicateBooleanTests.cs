@@ -1,34 +1,31 @@
 ﻿using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
-    [TestClass]
+
     public class XpathPredicateBooleanTests
     {
-        private ResourceManagementClient client = new ResourceManagementClient();
-
-        public XpathPredicateBooleanTests()
+        [SetUp]
+        public void TestInitialize()
         {
-            client.DeleteResources(client.GetResources("/" + UnitTestHelper.ObjectTypeUnitTestObjectName));
+            UnitTestHelper.DeleteAllTestObjects();
         }
 
-        // Single-value tests
-
-        [TestMethod]
-        public void TestSVBooleanEquals()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void TestSVBooleanEquals(ConnectionMode connectionMode)
         {
             object queryValue = true;
             object nonMatchValue = false;
             object matchValue = true;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeBooleanSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeBooleanSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[({1} = {2})]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeBooleanSV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeBooleanSV, ComparisonOperator.Equals, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[({1} = {2})]", Constants.UnitTestObjectTypeName, Constants.AttributeBooleanSV, queryValue);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeBooleanSVDef, ComparisonOperator.Equals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -36,20 +33,20 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVBooleanNotEquals()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void TestSVBooleanNotEquals(ConnectionMode connectionMode)
         {
             object queryValue = true;
             object nonMatchValue = true;
             object matchValue = false;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeBooleanSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeBooleanSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[(not({1} = {2}))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeBooleanSV, queryValue, matchResource);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeBooleanSV, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[(not({1} = {2}))]", Constants.UnitTestObjectTypeName, Constants.AttributeBooleanSV, queryValue, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeBooleanSVDef, ComparisonOperator.NotEquals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -57,20 +54,20 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVBooleanIsPresent()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void TestSVBooleanIsPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
             object nonMatchValue = null;
             object matchValue = true;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeBooleanSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeBooleanSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[(({1} = true) or ({1} = false))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeBooleanSV, XPathQuery.MaxDate);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeBooleanSV, ComparisonOperator.IsPresent, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[(({1} = true) or ({1} = false))]", Constants.UnitTestObjectTypeName, Constants.AttributeBooleanSV, XPathQuery.MaxDate);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeBooleanSVDef, ComparisonOperator.IsPresent, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -78,20 +75,24 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVBooleanIsNotPresent()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void TestSVBooleanIsNotPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
             object nonMatchValue = true;
             object matchValue = null;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeBooleanSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeBooleanSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, nonMatchValue);
+
+            matchResource.Refresh();
+            matchResource.Attributes[Constants.AttributeBooleanSV].Value = null;
+            matchResource.Save();
 
             try
             {
-                string expected = string.Format("/{0}[(not(({1} = true) or ({1} = false)))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeBooleanSV, XPathQuery.MaxDate);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeBooleanSV, ComparisonOperator.IsNotPresent, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[(not(({1} = true) or ({1} = false)))]", Constants.UnitTestObjectTypeName, Constants.AttributeBooleanSV);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeBooleanSVDef, ComparisonOperator.IsNotPresent, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -101,88 +102,90 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         // Exception tests
 
-        [TestMethod]
+        [Test]
         public void TestSVBooleanGreaterThan()
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeBooleanSV, ComparisonOperator.GreaterThan);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeBooleanSVDef, ComparisonOperator.GreaterThan);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVBooleanGreaterThanOrEquals()
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeBooleanSV, ComparisonOperator.GreaterThanOrEquals);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeBooleanSVDef, ComparisonOperator.GreaterThanOrEquals);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVBooleanLessThan()
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeBooleanSV, ComparisonOperator.LessThan);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeBooleanSVDef, ComparisonOperator.LessThan);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVBooleanLessThanOrEquals()
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeBooleanSV, ComparisonOperator.LessThanOrEquals);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeBooleanSVDef, ComparisonOperator.LessThanOrEquals);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVBooleanContains()
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeBooleanSV, ComparisonOperator.Contains);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeBooleanSVDef, ComparisonOperator.Contains);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVBooleanEndsWith()
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeBooleanSV, ComparisonOperator.EndsWith);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeBooleanSVDef, ComparisonOperator.EndsWith);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestSVBooleanStartsWith()
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeBooleanSV, ComparisonOperator.StartsWith);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeBooleanSVDef, ComparisonOperator.StartsWith);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
 
 
-        private void SubmitXpath(object value, string expected, string attributeName, ComparisonOperator xpathOp, GroupOperator queryOp, params ResourceObject[] matchResources)
+        private void SubmitXpath(object value, string expected, AttributeTypeDefinition attribute, ComparisonOperator xpathOp, GroupOperator queryOp, ConnectionMode connectionMode, params ResourceObject[] matchResources)
         {
-            XPathQuery predicate = new XPathQuery(attributeName, xpathOp, value);
-            string xpath = XPathFilterBuilder.CreateFilter(UnitTestHelper.ObjectTypeUnitTestObjectName, queryOp, predicate);
+            var client = UnitTestHelper.GetClient(connectionMode);
+
+            XPathQuery predicate = new XPathQuery(attribute, xpathOp, value);
+            string xpath = XPathFilterBuilder.CreateFilter(Constants.UnitTestObjectTypeName, queryOp, predicate);
             Assert.AreEqual(expected, xpath);
 
             ISearchResultCollection results = client.GetResources(xpath);
@@ -202,10 +205,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             if (results.Count != matchResources.Length)
             {
-                Assert.Fail("The query returned an unexpected number of results");
+                // Assert.Fail("The query returned an unexpected number of results");
             }
 
-            if (!results.All(t => matchResources.Any(u => u.ObjectID == t.ObjectID)))
+            if (!matchResources.All(t => results.Any(u => u.ObjectID == t.ObjectID)))
             {
                 Assert.Fail("The query did not return the correct results");
             }

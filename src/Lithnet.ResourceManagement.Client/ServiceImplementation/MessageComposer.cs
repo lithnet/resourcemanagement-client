@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.ServiceModel.Channels;
-using Microsoft.ResourceManagement.WebServices;
-using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
-using Microsoft.ResourceManagement.WebServices.WSEnumeration;
-using Microsoft.ResourceManagement.WebServices.WSResourceManagement;
 
 namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 {
@@ -70,7 +66,6 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             message.AddHeader(HeaderConstants.ResourceReferenceProperty, id.ToString());
 
             return message;
-
         }
 
         internal static Message CreateCreateMessage(ResourceObject resource)
@@ -91,7 +86,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
         {
             Create op = new Create();
             op.Dialect = Namespaces.RMIdentityAttributeType;
-            
+
             if (resources == null || resources.Length == 0)
             {
                 throw new ArgumentNullException(nameof(resources));
@@ -122,7 +117,6 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
                 fragmentObjectID.TargetIdentifier = resource.ObjectID.ToString(false);
                 fragments.Add(fragmentObjectID);
-
             }
 
             if (fragments.Count == 0)
@@ -304,7 +298,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
         {
             HashSet<string> set = new HashSet<string>(attributes);
 
-            foreach (string item in ResourceManagementSchema.MandatoryAttributes)
+            foreach (string item in SchemaConstants.MandatoryAttributes)
             {
                 set.Add(item);
             }

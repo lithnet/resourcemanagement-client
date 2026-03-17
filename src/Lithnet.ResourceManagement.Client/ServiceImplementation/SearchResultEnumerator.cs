@@ -17,7 +17,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             get
             {
-                return this.collection.GetObjectAtIndex(index);
+                return AsyncHelper.Run(async () => await this.collection.GetObjectAtIndexAsync(this.index).ConfigureAwait(false));
             }
         }
 
@@ -33,7 +33,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             this.index++;
 
-            return this.collection.HasMoreItems(index);
+            return this.collection.HasMoreItems(this.index);
         }
 
         public void Reset()

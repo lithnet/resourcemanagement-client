@@ -149,7 +149,7 @@ namespace Lithnet.ResourceManagement.Client
             {
                 throw new ArgumentNullException(nameof(attributeName));
             }
-            
+
             if (resource.HasValue(attributeName))
             {
                 return resource.Attributes[attributeName].Value;
@@ -158,6 +158,21 @@ namespace Lithnet.ResourceManagement.Client
             {
                 return defaultValue;
             }
+        }
+
+        internal static Uri GetProxyUri(this ResourceManagementClientOptions options)
+        {
+            return UriParser.GetRmcProxyUri(options.BaseUri);
+        }
+
+        internal static Uri GetNetTcpUri(this ResourceManagementClientOptions options)
+        {
+            return UriParser.GetFimServiceNetTcpUri(options.BaseUri);
+        }
+
+        internal static Uri GetFimServiceUri(this ResourceManagementClientOptions options)
+        {
+            return UriParser.GetFimServiceHttpUri(options.BaseUri);
         }
     }
 }

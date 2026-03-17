@@ -1,36 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading;
+using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
-    [TestClass]
+
     public class XpathPredicateStringTests
     {
-        private ResourceManagementClient client = new ResourceManagementClient();
-
-        public XpathPredicateStringTests()
+        [SetUp]
+        public void TestInitialize()
         {
-            client.DeleteResources(client.GetResources("/" + UnitTestHelper.ObjectTypeUnitTestObjectName));
+            UnitTestHelper.DeleteAllTestObjects();
         }
 
         // Single-value tests
-
-        [TestMethod]
-        public void TestSVStringEquals()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void TestSVStringEquals(ConnectionMode connectionMode)
         {
             string queryValue = "user0001";
             string nonMatchValue = "user0002";
             string matchValue = "user0001";
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[({1} = '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringSV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeStringSV, ComparisonOperator.Equals, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[({1} = '{2}')]", Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, queryValue);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.Equals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -38,20 +37,20 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVStringEqualsWithSingleQuote()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void TestSVStringEqualsWithSingleQuote(ConnectionMode connectionMode)
         {
             string queryValue = "user'0001";
             string nonMatchValue = "user0002";
             string matchValue = "user'0001";
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[({1} = \"{2}\")]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringSV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeStringSV, ComparisonOperator.Equals, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[({1} = \"{2}\")]", Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, queryValue);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.Equals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -59,20 +58,20 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVStringEqualsWithDoubleQuote()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void TestSVStringEqualsWithDoubleQuote(ConnectionMode connectionMode)
         {
             string queryValue = "user\"0001";
             string nonMatchValue = "user0002";
             string matchValue = "user\"0001";
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[({1} = '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringSV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeStringSV, ComparisonOperator.Equals, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[({1} = '{2}')]", Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, queryValue);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.Equals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -80,21 +79,20 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-
-        [TestMethod]
-        public void TestSVStringEqualsWithSingleAndDoubleQuote()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void TestSVStringEqualsWithSingleAndDoubleQuote(ConnectionMode connectionMode)
         {
             string queryValue = "user\"'0001";
             string nonMatchValue = "user0002";
             string matchValue = "user\"'0001";
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[({1} = '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringSV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeStringSV, ComparisonOperator.Equals, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[({1} = '{2}')]", Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, queryValue);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.Equals, GroupOperator.And, connectionMode, matchResource);
             }
             catch (ArgumentException)
             {
@@ -108,21 +106,20 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Assert.Fail("The expected exception was not thrown");
         }
 
-
-        [TestMethod]
-        public void TestSVStringNotEquals()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void TestSVStringNotEquals(ConnectionMode connectionMode)
         {
             string queryValue = "user0001";
             string nonMatchValue = "user0001";
             string matchValue = "user0002";
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[(not({1} = '{2}'))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringSV, queryValue, matchResource);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeStringSV, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[(not({1} = '{2}'))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, queryValue, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.NotEquals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -130,8 +127,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVStringContains()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void TestSVStringContains(ConnectionMode connectionMode)
         {
             /*
               FROM https://msdn.microsoft.com/en-us/library/windows/desktop/ee652287(v=vs.100).aspx
@@ -146,13 +143,13 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             string nonMatchValue = "user def";
             string matchValue = "user abc";
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[(contains({1}, '{2}'))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringSV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeStringSV, ComparisonOperator.Contains, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[(contains({1}, '{2}'))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, queryValue);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.Contains, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -160,20 +157,20 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVStringEndsWith()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void TestSVStringEndsWith(ConnectionMode connectionMode)
         {
             string queryValue = "0001";
             string nonMatchValue = "user0002";
             string matchValue = "user0001";
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[(ends-with({1}, '{2}'))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringSV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeStringSV, ComparisonOperator.EndsWith, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[(ends-with({1}, '{2}'))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, queryValue);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.EndsWith, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -181,20 +178,20 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVStringStartsWith()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void TestSVStringStartsWith(ConnectionMode connectionMode)
         {
             string queryValue = "y";
             string nonMatchValue = "xuser0002";
             string matchValue = "yuser0001";
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[(starts-with({1}, '{2}'))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringSV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeStringSV, ComparisonOperator.StartsWith, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[(starts-with({1}, '{2}'))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, queryValue);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.StartsWith, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -202,20 +199,20 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVStringIsPresent()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void TestSVStringIsPresent(ConnectionMode connectionMode)
         {
             string queryValue = null;
             string nonMatchValue = null;
             string matchValue = "user0001";
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[(starts-with({1}, '%'))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringSV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeStringSV, ComparisonOperator.IsPresent, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[(starts-with({1}, '%'))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, queryValue);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.IsPresent, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -223,20 +220,20 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestSVStringIsNotPresent()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void TestSVStringIsNotPresent(ConnectionMode connectionMode)
         {
             string queryValue = null;
             string nonMatchValue = "user0001";
             string matchValue = null;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringSV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[(not(starts-with({1}, '%')))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringSV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeStringSV, ComparisonOperator.IsNotPresent, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[(not(starts-with({1}, '%')))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, queryValue);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringSVDef, ComparisonOperator.IsNotPresent, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -245,21 +242,20 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         }
 
         // Multivalued tests
-
-        [TestMethod]
-        public void TestMVStringEquals()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void TestMVStringEquals(ConnectionMode connectionMode)
         {
             string queryValue = "user0001";
             List<string> nonMatchValue = new List<string>() { "user0003", "user0004" };
             List<string> matchValue = new List<string>() { "user0001", "user0002" };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringMV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[({1} = '{2}')]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringMV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeStringMV, ComparisonOperator.Equals, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[({1} = '{2}')]", Constants.UnitTestObjectTypeName, Constants.AttributeStringMV, queryValue);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringMVDef, ComparisonOperator.Equals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -267,20 +263,20 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVStringNotEquals()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void TestMVStringNotEquals(ConnectionMode connectionMode)
         {
             string queryValue = "user0001";
             List<string> nonMatchValue = new List<string>() { "user0001", "user0002" };
             List<string> matchValue = new List<string>() { "user0003", "user0004" };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringMV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[(not({1} = '{2}'))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringMV, queryValue, matchResource);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeStringMV, ComparisonOperator.NotEquals, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[(not({1} = '{2}'))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringMV, queryValue, matchResource);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringMVDef, ComparisonOperator.NotEquals, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -288,8 +284,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVStringContains()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void TestMVStringContains(ConnectionMode connectionMode)
         {
             /*
               FROM https://msdn.microsoft.com/en-us/library/windows/desktop/ee652287(v=vs.100).aspx
@@ -304,13 +300,13 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<string> nonMatchValue = new List<string>() { "123 def", "456 def" };
             List<string> matchValue = new List<string>() { "sdf abc", "1011 ghi" };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringMV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[(contains({1}, '{2}'))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringMV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeStringMV, ComparisonOperator.Contains, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[(contains({1}, '{2}'))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringMV, queryValue);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringMVDef, ComparisonOperator.Contains, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -318,20 +314,20 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVStringEndsWith()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void TestMVStringEndsWith(ConnectionMode connectionMode)
         {
             string queryValue = "0001";
             List<string> nonMatchValue = new List<string>() { "user0004", "user0003" };
             List<string> matchValue = new List<string>() { "user0002", "user0001" };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringMV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[(ends-with({1}, '{2}'))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringMV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeStringMV, ComparisonOperator.EndsWith, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[(ends-with({1}, '{2}'))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringMV, queryValue);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringMVDef, ComparisonOperator.EndsWith, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -339,20 +335,20 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVStringStartsWith()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void TestMVStringStartsWith(ConnectionMode connectionMode)
         {
             string queryValue = "y";
             List<string> nonMatchValue = new List<string>() { "xuser0004", "xuser0003" };
             List<string> matchValue = new List<string>() { "yuser0002", "yuser0001" };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringMV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[(starts-with({1}, '{2}'))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringMV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeStringMV, ComparisonOperator.StartsWith, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[(starts-with({1}, '{2}'))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringMV, queryValue);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringMVDef, ComparisonOperator.StartsWith, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -360,20 +356,20 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVStringIsPresent()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void TestMVStringIsPresent(ConnectionMode connectionMode)
         {
             string queryValue = null;
             string nonMatchValue = null;
             List<string> matchValue = new List<string>() { "user0001", "user0002" };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringMV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[(starts-with({1}, '%'))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringMV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeStringMV, ComparisonOperator.IsPresent, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[(starts-with({1}, '%'))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringMV, queryValue);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringMVDef, ComparisonOperator.IsPresent, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -381,20 +377,20 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void TestMVStringIsNotPresent()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void TestMVStringIsNotPresent(ConnectionMode connectionMode)
         {
             string queryValue = null;
             List<string> nonMatchValue = new List<string>() { "user0001", "user0002" };
             string matchValue = null;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(UnitTestHelper.AttributeStringMV, nonMatchValue);
+            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringMV, matchValue);
+            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeStringMV, nonMatchValue);
 
             try
             {
-                string expected = string.Format("/{0}[(not(starts-with({1}, '%')))]", UnitTestHelper.ObjectTypeUnitTestObjectName, UnitTestHelper.AttributeStringMV, queryValue);
-                this.SubmitXpath(queryValue, expected, UnitTestHelper.AttributeStringMV, ComparisonOperator.IsNotPresent, GroupOperator.And, matchResource);
+                string expected = string.Format("/{0}[(not(starts-with({1}, '%')))]", Constants.UnitTestObjectTypeName, Constants.AttributeStringMV, queryValue);
+                this.SubmitXpath(queryValue, expected, Constants.AttributeStringMVDef, ComparisonOperator.IsNotPresent, GroupOperator.And, connectionMode, matchResource);
             }
             finally
             {
@@ -402,58 +398,64 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-
         // Exception tests
 
-        [TestMethod]
+        [Test]
         public void TestStringGreaterThan()
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeStringSV, ComparisonOperator.GreaterThan);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeStringSVDef, ComparisonOperator.GreaterThan);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestStringGreaterThanOrEquals()
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeStringSV, ComparisonOperator.GreaterThanOrEquals);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeStringSVDef, ComparisonOperator.GreaterThanOrEquals);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestStringLessThan()
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeStringSV, ComparisonOperator.LessThan);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeStringSVDef, ComparisonOperator.LessThan);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
 
-        [TestMethod]
+        [Test]
         public void TestStringLessThanOrEquals()
         {
             try
             {
-                XPathQuery predicate = new XPathQuery(UnitTestHelper.AttributeStringSV, ComparisonOperator.LessThanOrEquals);
+                XPathQuery predicate = new XPathQuery(Constants.AttributeStringSVDef, ComparisonOperator.LessThanOrEquals);
                 Assert.Fail("The expectedXpath exception was not thrown");
             }
             catch { }
         }
 
-        private void SubmitXpath(string value, string expected, string attributeName, ComparisonOperator xpathOp, GroupOperator queryOp, params ResourceObject[] matchResources)
+        private void SubmitXpath(string value, string expected, AttributeTypeDefinition attribute, ComparisonOperator xpathOp, GroupOperator queryOp, ConnectionMode connectionMode, params ResourceObject[] matchResources)
         {
-            XPathQuery predicate = new XPathQuery(attributeName, xpathOp, value);
-            string xpath = XPathFilterBuilder.CreateFilter(UnitTestHelper.ObjectTypeUnitTestObjectName, queryOp, predicate);
+            var client = UnitTestHelper.GetClient(connectionMode);
+
+            XPathQuery predicate = new XPathQuery(attribute, xpathOp, value);
+            string xpath = XPathFilterBuilder.CreateFilter(Constants.UnitTestObjectTypeName, queryOp, predicate);
             Assert.AreEqual(expected, xpath);
+
+            if (xpathOp == ComparisonOperator.Contains)
+            {
+                Thread.Sleep(8000);
+            }
 
             ISearchResultCollection results = client.GetResources(xpath);
 

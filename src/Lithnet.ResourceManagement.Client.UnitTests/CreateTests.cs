@@ -1,23 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
-    [TestClass]
     public class CreateTests
     {
-        [TestMethod]
-        public void CreateFromClientSaveWithClient()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void CreateFromClientSaveWithClient(ConnectionMode connectionMode)
         {
-            UnitTestHelper.PrepareRMSForUnitTests();
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
             {
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
                 Assert.AreEqual(OperationType.Create, resource.ModificationType);
                 Assert.AreEqual(true, resource.IsPlaceHolder);
                 UnitTestHelper.PopulateTestUserData(resource);
@@ -42,15 +40,15 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void CreateFromClientSaveOnObject()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void CreateFromClientSaveOnObject(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
             {
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
                 Assert.AreEqual(OperationType.Create, resource.ModificationType);
                 Assert.AreEqual(true, resource.IsPlaceHolder);
                 UnitTestHelper.PopulateTestUserData(resource);
@@ -64,7 +62,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 resource = client.GetResource(resource.ObjectID);
 
                 UnitTestHelper.ValidateTestUserData(resource);
-
             }
             finally
             {
@@ -75,15 +72,15 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void CreateByConstructorSaveOnObject()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void CreateByConstructorSaveOnObject(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
             {
-                resource = new ResourceObject(UnitTestHelper.ObjectTypeUnitTestObjectName, client);
+                resource = new ResourceObject(Constants.UnitTestObjectTypeName, client.ClientFactory);
                 Assert.AreEqual(OperationType.Create, resource.ModificationType);
                 Assert.AreEqual(true, resource.IsPlaceHolder);
                 UnitTestHelper.PopulateTestUserData(resource);
@@ -97,7 +94,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 resource = client.GetResource(resource.ObjectID);
 
                 UnitTestHelper.ValidateTestUserData(resource);
-
             }
             finally
             {
@@ -108,15 +104,15 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void CreateByConstructorSaveWithClient()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void CreateByConstructorSaveWithClient(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
             {
-                resource = new ResourceObject(UnitTestHelper.ObjectTypeUnitTestObjectName, client);
+                resource = new ResourceObject(Constants.UnitTestObjectTypeName, client.ClientFactory);
                 Assert.AreEqual(OperationType.Create, resource.ModificationType);
                 Assert.AreEqual(true, resource.IsPlaceHolder);
                 UnitTestHelper.PopulateTestUserData(resource);
@@ -130,7 +126,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 resource = client.GetResource(resource.ObjectID);
 
                 UnitTestHelper.ValidateTestUserData(resource);
-
             }
             finally
             {
@@ -141,17 +136,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void CreateByConstructorSaveWithClientComposite()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void CreateByConstructorSaveWithClientComposite(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
 
             List<ResourceObject> resources = new List<ResourceObject>();
 
-
             for (int i = 0; i < 5; i++)
             {
-                ResourceObject resource = new ResourceObject(UnitTestHelper.ObjectTypeUnitTestObjectName, client);
+                ResourceObject resource = new ResourceObject(Constants.UnitTestObjectTypeName, client.ClientFactory);
                 Assert.AreEqual(OperationType.Create, resource.ModificationType);
                 Assert.AreEqual(true, resource.IsPlaceHolder);
                 UnitTestHelper.PopulateTestUserData(resource);
@@ -172,16 +166,12 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                     ResourceObject resourceFetched = client.GetResource(resource.ObjectID);
 
                     UnitTestHelper.ValidateTestUserData(resourceFetched);
-
                 }
-
             }
             finally
             {
-                    client.DeleteResources(resources.Where(r => r != null && !r.IsPlaceHolder));
+                client.DeleteResources(resources.Where(r => r != null && !r.IsPlaceHolder));
             }
         }
-
-
     }
 }

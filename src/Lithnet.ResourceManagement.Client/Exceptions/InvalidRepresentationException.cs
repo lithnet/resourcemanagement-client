@@ -1,6 +1,5 @@
 ﻿namespace Lithnet.ResourceManagement.Client
 {
-    using Microsoft.ResourceManagement.WebServices.Faults;
     using System;
 
     /// <summary>

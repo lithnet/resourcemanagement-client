@@ -1,31 +1,31 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
-    [TestClass]
+
     public class PutBinaryTests
     {
-        [TestMethod]
-        public void AddBinarySV()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void AddBinarySV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
             {
                 // Create the empty object
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
                 client.SaveResource(resource);
 
                 // Re-get the object 
                 resource = client.GetResource(resource.ObjectID);
 
                 // Make the changes
-                resource.Attributes[UnitTestHelper.AttributeBinarySV].SetValue(UnitTestHelper.TestDataBinary1);
+                resource.Attributes[Constants.AttributeBinarySV].SetValue(Constants.TestDataBinary1);
                 Assert.AreEqual(1, resource.PendingChanges.Count);
-                CollectionAssert.AreEqual(UnitTestHelper.TestDataBinary1, resource.Attributes[UnitTestHelper.AttributeBinarySV].BinaryValue);
+                CollectionAssert.AreEqual(Constants.TestDataBinary1, resource.Attributes[Constants.AttributeBinarySV].BinaryValue);
 
                 // Submit the changes
                 client.SaveResource(resource);
@@ -35,7 +35,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
                 resource = client.GetResource(resource.ObjectID);
 
-                CollectionAssert.AreEqual(UnitTestHelper.TestDataBinary1, resource.Attributes[UnitTestHelper.AttributeBinarySV].BinaryValue);
+                CollectionAssert.AreEqual(Constants.TestDataBinary1, resource.Attributes[Constants.AttributeBinarySV].BinaryValue);
             }
             finally
             {
@@ -46,26 +46,26 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void ModifyBinarySV()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void ModifyBinarySV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
             {
                 // Create the empty object
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
-                resource.Attributes[UnitTestHelper.AttributeBinarySV].SetValue(UnitTestHelper.TestDataBinary1);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+                resource.Attributes[Constants.AttributeBinarySV].SetValue(Constants.TestDataBinary1);
                 client.SaveResource(resource);
 
                 // Re-get the object 
                 resource = client.GetResource(resource.ObjectID);
 
                 // Make the changes
-                resource.Attributes[UnitTestHelper.AttributeBinarySV].SetValue(UnitTestHelper.TestDataBinary2);
+                resource.Attributes[Constants.AttributeBinarySV].SetValue(Constants.TestDataBinary2);
                 Assert.AreEqual(1, resource.PendingChanges.Count);
-                CollectionAssert.AreEqual(UnitTestHelper.TestDataBinary2, resource.Attributes[UnitTestHelper.AttributeBinarySV].BinaryValue);
+                CollectionAssert.AreEqual(Constants.TestDataBinary2, resource.Attributes[Constants.AttributeBinarySV].BinaryValue);
 
                 // Submit the changes
                 client.SaveResource(resource);
@@ -75,7 +75,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
                 resource = client.GetResource(resource.ObjectID);
 
-                CollectionAssert.AreEqual(UnitTestHelper.TestDataBinary2, resource.Attributes[UnitTestHelper.AttributeBinarySV].BinaryValue);
+                CollectionAssert.AreEqual(Constants.TestDataBinary2, resource.Attributes[Constants.AttributeBinarySV].BinaryValue);
             }
             finally
             {
@@ -86,26 +86,26 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void DeleteBinarySV()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void DeleteBinarySV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
             {
                 // Create the empty object
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
-                resource.Attributes[UnitTestHelper.AttributeBinarySV].SetValue(UnitTestHelper.TestDataBinary1);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+                resource.Attributes[Constants.AttributeBinarySV].SetValue(Constants.TestDataBinary1);
                 client.SaveResource(resource);
 
                 // Re-get the object 
                 resource = client.GetResource(resource.ObjectID);
 
                 // Make the changes
-                resource.Attributes[UnitTestHelper.AttributeBinarySV].RemoveValue(UnitTestHelper.TestDataBinary1);
+                resource.Attributes[Constants.AttributeBinarySV].RemoveValue(Constants.TestDataBinary1);
                 Assert.AreEqual(1, resource.PendingChanges.Count);
-                Assert.IsTrue(resource.Attributes[UnitTestHelper.AttributeBinarySV].IsNull);
+                Assert.IsTrue(resource.Attributes[Constants.AttributeBinarySV].IsNull);
 
                 // Submit the changes
                 client.SaveResource(resource);
@@ -115,7 +115,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
                 resource = client.GetResource(resource.ObjectID);
 
-                Assert.IsTrue(resource.Attributes[UnitTestHelper.AttributeBinarySV].IsNull);
+                Assert.IsTrue(resource.Attributes[Constants.AttributeBinarySV].IsNull);
             }
             finally
             {
@@ -126,16 +126,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void DeleteAllValueBinarySV()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void DeleteAllValueBinarySV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
             {
                 // Create the empty object
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
                 UnitTestHelper.PopulateTestUserData(resource);
                 client.SaveResource(resource);
 
@@ -143,9 +143,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 resource = client.GetResource(resource.ObjectID);
 
                 // Make the changes
-                resource.Attributes[UnitTestHelper.AttributeBinarySV].RemoveValues();
+                resource.Attributes[Constants.AttributeBinarySV].RemoveValues();
                 Assert.AreEqual(1, resource.PendingChanges.Count);
-                Assert.IsTrue(resource.Attributes[UnitTestHelper.AttributeBinarySV].IsNull);
+                Assert.IsTrue(resource.Attributes[Constants.AttributeBinarySV].IsNull);
 
                 // Submit the changes
                 client.SaveResource(resource);
@@ -154,7 +154,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 Assert.AreEqual(0, resource.PendingChanges.Count);
 
                 resource = client.GetResource(resource.ObjectID);
-                Assert.IsTrue(resource.Attributes[UnitTestHelper.AttributeBinarySV].IsNull);
+                Assert.IsTrue(resource.Attributes[Constants.AttributeBinarySV].IsNull);
             }
             finally
             {
@@ -165,29 +165,29 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void AddFirstBinaryMV()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void AddFirstBinaryMV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
             {
                 // Create the empty object
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
                 client.SaveResource(resource);
 
                 // Re-get the object 
                 resource = client.GetResource(resource.ObjectID);
 
                 // Make the changes
-                resource.Attributes[UnitTestHelper.AttributeBinaryMV].AddValue(UnitTestHelper.TestDataBinary2);
+                resource.Attributes[Constants.AttributeBinaryMV].AddValue(Constants.TestDataBinary2);
                 Assert.AreEqual(1, resource.PendingChanges.Count);
 
                 List<byte[]> expectedValues = new List<byte[]>();
-                expectedValues.Add(UnitTestHelper.TestDataBinary2);
+                expectedValues.Add(Constants.TestDataBinary2);
 
-                this.AreByteArraysEqual(expectedValues, resource.Attributes[UnitTestHelper.AttributeBinaryMV].BinaryValues);
+                this.AreByteArraysEqual(expectedValues, resource.Attributes[Constants.AttributeBinaryMV].BinaryValues);
 
                 // Submit the changes
                 client.SaveResource(resource);
@@ -197,8 +197,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
                 resource = client.GetResource(resource.ObjectID);
 
-                this.AreByteArraysEqual(expectedValues, resource.Attributes[UnitTestHelper.AttributeBinaryMV].BinaryValues);
-
+                this.AreByteArraysEqual(expectedValues, resource.Attributes[Constants.AttributeBinaryMV].BinaryValues);
             }
             finally
             {
@@ -219,31 +218,31 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void AddSecondBinaryMV()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void AddSecondBinaryMV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
             {
                 // Create the empty object
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
-                resource.Attributes[UnitTestHelper.AttributeBinaryMV].AddValue(UnitTestHelper.TestDataBinary1);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+                resource.Attributes[Constants.AttributeBinaryMV].AddValue(Constants.TestDataBinary1);
                 client.SaveResource(resource);
 
                 // Re-get the object 
                 resource = client.GetResource(resource.ObjectID);
 
                 // Make the changes
-                resource.Attributes[UnitTestHelper.AttributeBinaryMV].AddValue(UnitTestHelper.TestDataBinary2);
+                resource.Attributes[Constants.AttributeBinaryMV].AddValue(Constants.TestDataBinary2);
                 Assert.AreEqual(1, resource.PendingChanges.Count);
 
                 List<byte[]> expectedValues = new List<byte[]>();
-                expectedValues.Add(UnitTestHelper.TestDataBinary1);
-                expectedValues.Add(UnitTestHelper.TestDataBinary2);
+                expectedValues.Add(Constants.TestDataBinary1);
+                expectedValues.Add(Constants.TestDataBinary2);
 
-                this.AreByteArraysEqual(expectedValues, resource.Attributes[UnitTestHelper.AttributeBinaryMV].BinaryValues);
+                this.AreByteArraysEqual(expectedValues, resource.Attributes[Constants.AttributeBinaryMV].BinaryValues);
 
                 // Submit the changes
                 client.SaveResource(resource);
@@ -253,7 +252,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
                 resource = client.GetResource(resource.ObjectID);
 
-                this.AreByteArraysEqual(expectedValues, resource.Attributes[UnitTestHelper.AttributeBinaryMV].BinaryValues);
+                this.AreByteArraysEqual(expectedValues, resource.Attributes[Constants.AttributeBinaryMV].BinaryValues);
             }
             finally
             {
@@ -264,26 +263,26 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void ReplaceBinaryMV()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void ReplaceBinaryMV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
             {
                 // Create the empty object
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
-                resource.Attributes[UnitTestHelper.AttributeBinaryMV].SetValue(UnitTestHelper.TestDataBinary1MV);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+                resource.Attributes[Constants.AttributeBinaryMV].SetValue(Constants.TestDataBinary1MV);
                 client.SaveResource(resource);
 
                 // Re-get the object 
                 resource = client.GetResource(resource.ObjectID);
 
                 // Make the changes
-                resource.Attributes[UnitTestHelper.AttributeBinaryMV].SetValue(UnitTestHelper.TestDataBinary2MV);
+                resource.Attributes[Constants.AttributeBinaryMV].SetValue(Constants.TestDataBinary2MV);
                 Assert.AreEqual(1, resource.PendingChanges.Count);
-                this.AreByteArraysEqual(UnitTestHelper.TestDataBinary2MV, resource.Attributes[UnitTestHelper.AttributeBinaryMV].BinaryValues);
+                this.AreByteArraysEqual(Constants.TestDataBinary2MV, resource.Attributes[Constants.AttributeBinaryMV].BinaryValues);
 
                 // Submit the changes
                 client.SaveResource(resource);
@@ -293,7 +292,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
                 resource = client.GetResource(resource.ObjectID);
 
-                this.AreByteArraysEqual(UnitTestHelper.TestDataBinary2MV, resource.Attributes[UnitTestHelper.AttributeBinaryMV].BinaryValues);
+                this.AreByteArraysEqual(Constants.TestDataBinary2MV, resource.Attributes[Constants.AttributeBinaryMV].BinaryValues);
             }
             finally
             {
@@ -304,16 +303,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void DeleteFirstValueBinaryMV()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void DeleteFirstValueBinaryMV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
             {
                 // Create the empty object
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
                 UnitTestHelper.PopulateTestUserData(resource);
                 client.SaveResource(resource);
 
@@ -321,14 +320,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 resource = client.GetResource(resource.ObjectID);
 
                 // Make the changes
-                resource.Attributes[UnitTestHelper.AttributeBinaryMV].RemoveValue(UnitTestHelper.TestDataBinary1MV[0]);
+                resource.Attributes[Constants.AttributeBinaryMV].RemoveValue(Constants.TestDataBinary1MV[0]);
                 Assert.AreEqual(1, resource.PendingChanges.Count);
 
                 List<byte[]> expectedValues = new List<byte[]>();
-                expectedValues.Add(UnitTestHelper.TestDataBinary1MV[1]);
-                expectedValues.Add(UnitTestHelper.TestDataBinary1MV[2]);
+                expectedValues.Add(Constants.TestDataBinary1MV[1]);
+                expectedValues.Add(Constants.TestDataBinary1MV[2]);
 
-                this.AreByteArraysEqual(expectedValues, resource.Attributes[UnitTestHelper.AttributeBinaryMV].BinaryValues);
+                this.AreByteArraysEqual(expectedValues, resource.Attributes[Constants.AttributeBinaryMV].BinaryValues);
 
                 // Submit the changes
                 client.SaveResource(resource);
@@ -338,7 +337,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
                 resource = client.GetResource(resource.ObjectID);
 
-                this.AreByteArraysEqual(expectedValues, resource.Attributes[UnitTestHelper.AttributeBinaryMV].BinaryValues);
+                this.AreByteArraysEqual(expectedValues, resource.Attributes[Constants.AttributeBinaryMV].BinaryValues);
             }
             finally
             {
@@ -349,16 +348,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void DeleteAllValueBinaryMV()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void DeleteAllValueBinaryMV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
             {
                 // Create the empty object
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
                 UnitTestHelper.PopulateTestUserData(resource);
                 client.SaveResource(resource);
 
@@ -366,9 +365,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 resource = client.GetResource(resource.ObjectID);
 
                 // Make the changes
-                resource.Attributes[UnitTestHelper.AttributeBinaryMV].RemoveValues();
+                resource.Attributes[Constants.AttributeBinaryMV].RemoveValues();
                 Assert.AreEqual(1, resource.PendingChanges.Count);
-                Assert.IsTrue(resource.Attributes[UnitTestHelper.AttributeBinaryMV].IsNull);
+                Assert.IsTrue(resource.Attributes[Constants.AttributeBinaryMV].IsNull);
 
                 // Submit the changes
                 client.SaveResource(resource);
@@ -377,7 +376,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 Assert.AreEqual(0, resource.PendingChanges.Count);
 
                 resource = client.GetResource(resource.ObjectID);
-                Assert.IsTrue(resource.Attributes[UnitTestHelper.AttributeBinaryMV].IsNull);
+                Assert.IsTrue(resource.Attributes[Constants.AttributeBinaryMV].IsNull);
             }
             finally
             {

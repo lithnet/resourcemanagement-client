@@ -6,7 +6,7 @@
     public enum ApprovalStatus
     {
         /// <summary>
-        /// The status is unkown
+        /// The status is unknown
         /// </summary>
         Unknown,
 

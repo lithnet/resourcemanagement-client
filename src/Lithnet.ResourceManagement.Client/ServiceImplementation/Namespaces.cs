@@ -1,7 +1,7 @@
 ﻿
 namespace Lithnet.ResourceManagement.Client
 {
-    internal class Namespaces
+    internal static class Namespaces
     {
         public const string Create = "http://schemas.xmlsoap.org/ws/2004/09/transfer/Create";
         public const string CreateResponse = "http://schemas.xmlsoap.org/ws/2004/09/transfer/CreateResponse";

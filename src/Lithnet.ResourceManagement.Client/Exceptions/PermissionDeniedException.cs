@@ -1,8 +1,6 @@
 ﻿namespace Lithnet.ResourceManagement.Client
 {
     using System;
-    using Microsoft.ResourceManagement.WebServices.Exceptions;
-    using Microsoft.ResourceManagement.WebServices.Faults;
 
     /// <summary>
     /// An exception thrown by the resource management service when permission to perform an action is denied
@@ -94,7 +92,7 @@
                 }
 
                 return string.Format(
-                    PermissionDeniedException.messageFormat,
+                    messageFormat,
                     details.FailureMessage,
                     attributes,
                     details.RequestFailureSource,

@@ -61,16 +61,18 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         static AttributeTypeDefinition()
         {
-            AttributeTypeDefinition.ReadOnlyAttributeNames = new List<string>();
-            AttributeTypeDefinition.ReadOnlyAttributeNames.Add(AttributeNames.ObjectID);
-            AttributeTypeDefinition.ReadOnlyAttributeNames.Add("Creator");
-            AttributeTypeDefinition.ReadOnlyAttributeNames.Add("CreatedTime");
-            AttributeTypeDefinition.ReadOnlyAttributeNames.Add("ExpectedRulesList");
-            AttributeTypeDefinition.ReadOnlyAttributeNames.Add("DetectedRulesList");
-            AttributeTypeDefinition.ReadOnlyAttributeNames.Add("DeletedTime");
-            AttributeTypeDefinition.ReadOnlyAttributeNames.Add("ResourceTime");
-            AttributeTypeDefinition.ReadOnlyAttributeNames.Add("ComputedMember");
-            AttributeTypeDefinition.ReadOnlyAttributeNames.Add("ComputedActor");
+            ReadOnlyAttributeNames = new List<string>
+            {
+                AttributeNames.ObjectID,
+                "Creator",
+                "CreatedTime",
+                "ExpectedRulesList",
+                "DetectedRulesList",
+                "DeletedTime",
+                "ResourceTime",
+                "ComputedMember",
+                "ComputedActor"
+            };
         }
 
         /// <summary>
@@ -107,7 +109,7 @@ namespace Lithnet.ResourceManagement.Client
             this.SystemName = schemaObject.Name;
             this.GetAttributeDetails(schemaObject.Annotation);
 
-            if (AttributeTypeDefinition.ReadOnlyAttributeNames.Contains(this.SystemName))
+            if (ReadOnlyAttributeNames.Contains(this.SystemName))
             {
                 this.IsReadOnly = true;
             }
@@ -288,7 +290,6 @@ namespace Lithnet.ResourceManagement.Client
 
                 default:
                     throw new ArgumentException("Unknown attribute type in schema " + typeName);
-
             }
         }
 

@@ -1,7 +1,4 @@
-﻿using Microsoft.ResourceManagement.WebServices.Exceptions;
-using Microsoft.ResourceManagement.WebServices.Faults;
-
-namespace Lithnet.ResourceManagement.Client
+﻿namespace Lithnet.ResourceManagement.Client
 {
     /// <summary>
     /// An exception that is thrown when an unsupported attempt is made to modify an attribute
@@ -79,7 +76,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="failure">The object containing the details of the failure</param>
         /// <param name="correlationID">The ID of the failed request </param>
         public AttributeRepresentationFailureException(AttributeRepresentationFailure failure, string correlationID)
-            : base(AttributeRepresentationFailureException.GetMessage(failure, correlationID),  correlationID)
+            : base(GetMessage(failure, correlationID),  correlationID)
         {
             this.failure = failure;
         }
@@ -93,7 +90,7 @@ namespace Lithnet.ResourceManagement.Client
         private static string GetMessage(AttributeRepresentationFailure failure, string correlationID)
         {
             return string.Format(
-                AttributeRepresentationFailureException.messageFormat,
+                messageFormat,
                 failure.FailureMessage,
                 failure.AttributeType, 
                 failure.AttributeValue, 

@@ -1,29 +1,29 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
-    [TestClass]
+
     public class PutIntegerTests
     {
-        [TestMethod]
-        public void AddIntegerSV()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void AddIntegerSV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
             {
                 // Create the empty object
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
                 client.SaveResource(resource);
 
                 // Re-get the object 
                 resource = client.GetResource(resource.ObjectID);
 
                 // Make the changes
-                resource.Attributes[UnitTestHelper.AttributeIntegerSV].SetValue(UnitTestHelper.TestDataInteger1);
+                resource.Attributes[Constants.AttributeIntegerSV].SetValue(Constants.TestDataInteger1);
                 Assert.AreEqual(1, resource.PendingChanges.Count);
-                Assert.AreEqual(UnitTestHelper.TestDataInteger1, resource.Attributes[UnitTestHelper.AttributeIntegerSV].IntegerValue);
+                Assert.AreEqual(Constants.TestDataInteger1, resource.Attributes[Constants.AttributeIntegerSV].IntegerValue);
 
                 // Submit the changes
                 client.SaveResource(resource);
@@ -33,7 +33,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
                 resource = client.GetResource(resource.ObjectID);
 
-                Assert.AreEqual(UnitTestHelper.TestDataInteger1, resource.Attributes[UnitTestHelper.AttributeIntegerSV].IntegerValue);
+                Assert.AreEqual(Constants.TestDataInteger1, resource.Attributes[Constants.AttributeIntegerSV].IntegerValue);
             }
             finally
             {
@@ -44,26 +44,26 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void ModifyIntegerSV()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void ModifyIntegerSV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
             {
                 // Create the empty object
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
-                resource.Attributes[UnitTestHelper.AttributeIntegerSV].SetValue(UnitTestHelper.TestDataInteger1);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+                resource.Attributes[Constants.AttributeIntegerSV].SetValue(Constants.TestDataInteger1);
                 client.SaveResource(resource);
 
                 // Re-get the object 
                 resource = client.GetResource(resource.ObjectID);
 
                 // Make the changes
-                resource.Attributes[UnitTestHelper.AttributeIntegerSV].SetValue(UnitTestHelper.TestDataInteger2);
+                resource.Attributes[Constants.AttributeIntegerSV].SetValue(Constants.TestDataInteger2);
                 Assert.AreEqual(1, resource.PendingChanges.Count);
-                Assert.AreEqual(UnitTestHelper.TestDataInteger2, resource.Attributes[UnitTestHelper.AttributeIntegerSV].IntegerValue);
+                Assert.AreEqual(Constants.TestDataInteger2, resource.Attributes[Constants.AttributeIntegerSV].IntegerValue);
 
                 // Submit the changes
                 client.SaveResource(resource);
@@ -73,7 +73,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
                 resource = client.GetResource(resource.ObjectID);
 
-                Assert.AreEqual(UnitTestHelper.TestDataInteger2, resource.Attributes[UnitTestHelper.AttributeIntegerSV].IntegerValue);
+                Assert.AreEqual(Constants.TestDataInteger2, resource.Attributes[Constants.AttributeIntegerSV].IntegerValue);
             }
             finally
             {
@@ -84,26 +84,26 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void DeleteIntegerSV()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void DeleteIntegerSV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
             {
                 // Create the empty object
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
-                resource.Attributes[UnitTestHelper.AttributeIntegerSV].SetValue(UnitTestHelper.TestDataInteger1);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+                resource.Attributes[Constants.AttributeIntegerSV].SetValue(Constants.TestDataInteger1);
                 client.SaveResource(resource);
 
                 // Re-get the object 
                 resource = client.GetResource(resource.ObjectID);
 
                 // Make the changes
-                resource.Attributes[UnitTestHelper.AttributeIntegerSV].RemoveValue(UnitTestHelper.TestDataInteger1);
+                resource.Attributes[Constants.AttributeIntegerSV].RemoveValue(Constants.TestDataInteger1);
                 Assert.AreEqual(1, resource.PendingChanges.Count);
-                Assert.IsTrue(resource.Attributes[UnitTestHelper.AttributeIntegerSV].IsNull);
+                Assert.IsTrue(resource.Attributes[Constants.AttributeIntegerSV].IsNull);
 
                 // Submit the changes
                 client.SaveResource(resource);
@@ -113,7 +113,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
                 resource = client.GetResource(resource.ObjectID);
 
-                Assert.IsTrue(resource.Attributes[UnitTestHelper.AttributeIntegerSV].IsNull);
+                Assert.IsTrue(resource.Attributes[Constants.AttributeIntegerSV].IsNull);
             }
             finally
             {
@@ -124,16 +124,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void DeleteAllValueIntegerSV()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void DeleteAllValueIntegerSV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
             {
                 // Create the empty object
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
                 UnitTestHelper.PopulateTestUserData(resource);
                 client.SaveResource(resource);
 
@@ -141,9 +141,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 resource = client.GetResource(resource.ObjectID);
 
                 // Make the changes
-                resource.Attributes[UnitTestHelper.AttributeIntegerSV].RemoveValues();
+                resource.Attributes[Constants.AttributeIntegerSV].RemoveValues();
                 Assert.AreEqual(1, resource.PendingChanges.Count);
-                Assert.IsTrue(resource.Attributes[UnitTestHelper.AttributeIntegerSV].IsNull);
+                Assert.IsTrue(resource.Attributes[Constants.AttributeIntegerSV].IsNull);
 
                 // Submit the changes
                 client.SaveResource(resource);
@@ -152,7 +152,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 Assert.AreEqual(0, resource.PendingChanges.Count);
 
                 resource = client.GetResource(resource.ObjectID);
-                Assert.IsTrue(resource.Attributes[UnitTestHelper.AttributeIntegerSV].IsNull);
+                Assert.IsTrue(resource.Attributes[Constants.AttributeIntegerSV].IsNull);
             }
             finally
             {
@@ -163,25 +163,25 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void AddFirstIntegerMV()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void AddFirstIntegerMV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
             {
                 // Create the empty object
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
                 client.SaveResource(resource);
 
                 // Re-get the object 
                 resource = client.GetResource(resource.ObjectID);
 
                 // Make the changes
-                resource.Attributes[UnitTestHelper.AttributeIntegerMV].AddValue(UnitTestHelper.TestDataInteger2);
+                resource.Attributes[Constants.AttributeIntegerMV].AddValue(Constants.TestDataInteger2);
                 Assert.AreEqual(1, resource.PendingChanges.Count);
-                CollectionAssert.AreEqual(new long[1] { UnitTestHelper.TestDataInteger2 }, resource.Attributes[UnitTestHelper.AttributeIntegerMV].IntegerValues);
+                CollectionAssert.AreEqual(new long[1] { Constants.TestDataInteger2 }, resource.Attributes[Constants.AttributeIntegerMV].IntegerValues);
 
                 // Submit the changes
                 client.SaveResource(resource);
@@ -191,7 +191,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
                 resource = client.GetResource(resource.ObjectID);
 
-                CollectionAssert.AreEqual(new long[1] { UnitTestHelper.TestDataInteger2 }, resource.Attributes[UnitTestHelper.AttributeIntegerMV].IntegerValues);
+                CollectionAssert.AreEqual(new long[1] { Constants.TestDataInteger2 }, resource.Attributes[Constants.AttributeIntegerMV].IntegerValues);
             }
             finally
             {
@@ -202,26 +202,26 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void AddSecondIntegerMV()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void AddSecondIntegerMV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
             {
                 // Create the empty object
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
-                resource.Attributes[UnitTestHelper.AttributeIntegerMV].AddValue(UnitTestHelper.TestDataInteger1);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+                resource.Attributes[Constants.AttributeIntegerMV].AddValue(Constants.TestDataInteger1);
                 client.SaveResource(resource);
 
                 // Re-get the object 
                 resource = client.GetResource(resource.ObjectID);
 
                 // Make the changes
-                resource.Attributes[UnitTestHelper.AttributeIntegerMV].AddValue(UnitTestHelper.TestDataInteger2);
+                resource.Attributes[Constants.AttributeIntegerMV].AddValue(Constants.TestDataInteger2);
                 Assert.AreEqual(1, resource.PendingChanges.Count);
-                CollectionAssert.AreEqual(new long[2] { UnitTestHelper.TestDataInteger1, UnitTestHelper.TestDataInteger2 }, resource.Attributes[UnitTestHelper.AttributeIntegerMV].IntegerValues);
+                CollectionAssert.AreEqual(new long[2] { Constants.TestDataInteger1, Constants.TestDataInteger2 }, resource.Attributes[Constants.AttributeIntegerMV].IntegerValues);
 
                 // Submit the changes
                 client.SaveResource(resource);
@@ -231,7 +231,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
                 resource = client.GetResource(resource.ObjectID);
 
-                CollectionAssert.AreEqual(new long[2] { UnitTestHelper.TestDataInteger1, UnitTestHelper.TestDataInteger2 }, resource.Attributes[UnitTestHelper.AttributeIntegerMV].IntegerValues);
+                CollectionAssert.AreEqual(new long[2] { Constants.TestDataInteger1, Constants.TestDataInteger2 }, resource.Attributes[Constants.AttributeIntegerMV].IntegerValues);
             }
             finally
             {
@@ -242,26 +242,26 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void ReplaceIntegerMV()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void ReplaceIntegerMV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
             {
                 // Create the empty object
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
-                resource.Attributes[UnitTestHelper.AttributeIntegerMV].SetValue(UnitTestHelper.TestDataInteger1MV);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+                resource.Attributes[Constants.AttributeIntegerMV].SetValue(Constants.TestDataInteger1MV);
                 client.SaveResource(resource);
 
                 // Re-get the object 
                 resource = client.GetResource(resource.ObjectID);
 
                 // Make the changes
-                resource.Attributes[UnitTestHelper.AttributeIntegerMV].SetValue(UnitTestHelper.TestDataInteger2MV);
+                resource.Attributes[Constants.AttributeIntegerMV].SetValue(Constants.TestDataInteger2MV);
                 Assert.AreEqual(1, resource.PendingChanges.Count);
-                CollectionAssert.AreEqual(UnitTestHelper.TestDataInteger2MV, resource.Attributes[UnitTestHelper.AttributeIntegerMV].IntegerValues);
+                CollectionAssert.AreEqual(Constants.TestDataInteger2MV, resource.Attributes[Constants.AttributeIntegerMV].IntegerValues);
 
                 // Submit the changes
                 client.SaveResource(resource);
@@ -271,7 +271,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
                 resource = client.GetResource(resource.ObjectID);
 
-                CollectionAssert.AreEqual(UnitTestHelper.TestDataInteger2MV, resource.Attributes[UnitTestHelper.AttributeIntegerMV].IntegerValues);
+                CollectionAssert.AreEqual(Constants.TestDataInteger2MV, resource.Attributes[Constants.AttributeIntegerMV].IntegerValues);
             }
             finally
             {
@@ -282,16 +282,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void DeleteFirstValueIntegerMV()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void DeleteFirstValueIntegerMV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
             {
                 // Create the empty object
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
                 UnitTestHelper.PopulateTestUserData(resource);
                 client.SaveResource(resource);
 
@@ -299,9 +299,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 resource = client.GetResource(resource.ObjectID);
 
                 // Make the changes
-                resource.Attributes[UnitTestHelper.AttributeIntegerMV].RemoveValue(UnitTestHelper.TestDataInteger1MV[0]);
+                resource.Attributes[Constants.AttributeIntegerMV].RemoveValue(Constants.TestDataInteger1MV[0]);
                 Assert.AreEqual(1, resource.PendingChanges.Count);
-                CollectionAssert.AreEqual(new long[2] { UnitTestHelper.TestDataInteger1MV[1], UnitTestHelper.TestDataInteger1MV[2] }, resource.Attributes[UnitTestHelper.AttributeIntegerMV].IntegerValues);
+                CollectionAssert.AreEqual(new long[2] { Constants.TestDataInteger1MV[1], Constants.TestDataInteger1MV[2] }, resource.Attributes[Constants.AttributeIntegerMV].IntegerValues);
 
                 // Submit the changes
                 client.SaveResource(resource);
@@ -311,7 +311,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
                 resource = client.GetResource(resource.ObjectID);
 
-                CollectionAssert.AreEqual(new long[2] { UnitTestHelper.TestDataInteger1MV[1], UnitTestHelper.TestDataInteger1MV[2] }, resource.Attributes[UnitTestHelper.AttributeIntegerMV].IntegerValues);
+                CollectionAssert.AreEqual(new long[2] { Constants.TestDataInteger1MV[1], Constants.TestDataInteger1MV[2] }, resource.Attributes[Constants.AttributeIntegerMV].IntegerValues);
             }
             finally
             {
@@ -322,16 +322,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        [TestMethod]
-        public void DeleteAllValueIntegerMV()
+        [TestCaseSource(typeof(ConnectionModeSources))]
+        public void DeleteAllValueIntegerMV(ConnectionMode connectionMode)
         {
-            ResourceManagementClient client = new ResourceManagementClient();
+            var client = UnitTestHelper.GetClient(connectionMode);
             ResourceObject resource = null;
 
             try
             {
                 // Create the empty object
-                resource = client.CreateResource(UnitTestHelper.ObjectTypeUnitTestObjectName);
+                resource = client.CreateResource(Constants.UnitTestObjectTypeName);
                 UnitTestHelper.PopulateTestUserData(resource);
                 client.SaveResource(resource);
 
@@ -339,9 +339,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 resource = client.GetResource(resource.ObjectID);
 
                 // Make the changes
-                resource.Attributes[UnitTestHelper.AttributeIntegerMV].RemoveValues();
+                resource.Attributes[Constants.AttributeIntegerMV].RemoveValues();
                 Assert.AreEqual(1, resource.PendingChanges.Count);
-                Assert.IsTrue(resource.Attributes[UnitTestHelper.AttributeIntegerMV].IsNull);
+                Assert.IsTrue(resource.Attributes[Constants.AttributeIntegerMV].IsNull);
 
                 // Submit the changes
                 client.SaveResource(resource);
@@ -350,7 +350,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 Assert.AreEqual(0, resource.PendingChanges.Count);
 
                 resource = client.GetResource(resource.ObjectID);
-                Assert.IsTrue(resource.Attributes[UnitTestHelper.AttributeIntegerMV].IsNull);
+                Assert.IsTrue(resource.Attributes[Constants.AttributeIntegerMV].IsNull);
             }
             finally
             {

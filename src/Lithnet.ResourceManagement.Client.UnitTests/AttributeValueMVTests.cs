@@ -1,20 +1,18 @@
 ﻿using System;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.ResourceManagement.WebServices;
-using Microsoft.ResourceManagement.WebServices.IdentityManagementOperation;
 using System.Collections.Generic;
+using System.Linq;
+using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
 {
-    [TestClass]
+
     public class AttributeValueMVTests
     {
         AttributeValueEqualityComparer comparer = new AttributeValueEqualityComparer();
 
         // Multivalued string 
 
-        [TestMethod]
+        [Test]
         public void TestMVAddStringWithNullInitialValue()
         {
             List<object> testValues = new List<object>() { "myvalue1", "myvalue2" };
@@ -24,15 +22,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestAdd(AttributeType.String, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVBlindRemoveString()
         {
             List<object> testValues = new List<object>() { "myvalue1" };
             this.ExecuteMVTestRemoveBlind(AttributeType.String, testValues);
         }
 
-
-        [TestMethod]
+        [Test]
         public void TestMVSetStringWithNullInitialValue()
         {
             List<object> testValues = new List<object>() { "myvalue1", "myvalue2" };
@@ -42,7 +39,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestSet(AttributeType.String, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVRemoveStringWithNullInitalValue()
         {
             List<object> testValues = new List<object>() { "myvalue1", "myvalue2" };
@@ -52,7 +49,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestRemove(AttributeType.String, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVAddStringWithInitialValue()
         {
             List<object> testValues = new List<object>() { "myvalue1", "myvalue2" };
@@ -62,7 +59,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestAdd(AttributeType.String, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVSetStringWithInitialValue()
         {
             List<object> testValues = new List<object>() { "myvalue1", "myvalue2" };
@@ -72,7 +69,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestSet(AttributeType.String, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVRemoveStringWithInitialValue()
         {
             List<object> testValues = new List<object>() { "myvalue1", "myvalue2" };
@@ -82,10 +79,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestRemove(AttributeType.String, initialValues, testValues, expectedValues);
         }
 
-
         // Multivalued long 
 
-        [TestMethod]
+        [Test]
         public void TestMVAddIntegerWithNullInitialValue()
         {
             List<object> testValues = new List<object>() { 1, 2 };
@@ -95,7 +91,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestAdd(AttributeType.Integer, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVSetIntegerWithNullInitialValue()
         {
             List<object> testValues = new List<object>() { 1, 2 };
@@ -105,7 +101,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestSet(AttributeType.Integer, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVRemoveIntegerWithNullInitalValue()
         {
             List<object> testValues = new List<object>() { 1, 2 };
@@ -115,7 +111,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestRemove(AttributeType.Integer, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVAddIntegerWithInitialValue()
         {
             List<object> testValues = new List<object>() { 1, 2 };
@@ -125,7 +121,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestAdd(AttributeType.Integer, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVSetIntegerWithInitialValue()
         {
             List<object> testValues = new List<object>() { 1, 2 };
@@ -135,7 +131,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestSet(AttributeType.Integer, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVRemoveIntegerWithInitialValue()
         {
             List<object> testValues = new List<object>() { 1, 2 };
@@ -147,7 +143,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         // Multivalued DateTime 
 
-        [TestMethod]
+        [Test]
         public void TestMVAddDateTimeWithNullInitialValue()
         {
             DateTime value1 = DateTime.Now;
@@ -159,7 +155,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestAdd(AttributeType.DateTime, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVSetDateTimeWithNullInitialValue()
         {
             DateTime value1 = DateTime.Now;
@@ -171,7 +167,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestSet(AttributeType.DateTime, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVRemoveDateTimeWithNullInitalValue()
         {
             DateTime value1 = DateTime.Now;
@@ -183,7 +179,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestRemove(AttributeType.DateTime, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVAddDateTimeWithInitialValue()
         {
             DateTime value1 = DateTime.Now;
@@ -197,7 +193,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestAdd(AttributeType.DateTime, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVSetDateTimeWithInitialValue()
         {
             DateTime value1 = DateTime.Now;
@@ -211,7 +207,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestSet(AttributeType.DateTime, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVRemoveDateTimeWithInitialValue()
         {
             DateTime value1 = DateTime.Now;
@@ -226,7 +222,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         // Multivalued UniqueIdentifier 
 
-        [TestMethod]
+        [Test]
         public void TestMVAddReferenceWithNullInitialValue()
         {
             UniqueIdentifier value1 = new UniqueIdentifier("0dcafc9f-d4cf-4754-b10d-4716d9a05be6");
@@ -238,7 +234,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestAdd(AttributeType.Reference, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVSetReferenceWithNullInitialValue()
         {
             UniqueIdentifier value1 = new UniqueIdentifier("0dcafc9f-d4cf-4754-b10d-4716d9a05be6");
@@ -250,7 +246,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestSet(AttributeType.Reference, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVRemoveReferenceWithNullInitalValue()
         {
             UniqueIdentifier value1 = new UniqueIdentifier("0dcafc9f-d4cf-4754-b10d-4716d9a05be6");
@@ -262,7 +258,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestRemove(AttributeType.Reference, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVAddReferenceWithInitialValue()
         {
             UniqueIdentifier value1 = new UniqueIdentifier("0dcafc9f-d4cf-4754-b10d-4716d9a05be6");
@@ -276,7 +272,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestAdd(AttributeType.Reference, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVSetReferenceWithInitialValue()
         {
             UniqueIdentifier value1 = new UniqueIdentifier("0dcafc9f-d4cf-4754-b10d-4716d9a05be6");
@@ -290,7 +286,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestSet(AttributeType.Reference, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVRemoveReferenceWithInitialValue()
         {
             UniqueIdentifier value1 = new UniqueIdentifier("0dcafc9f-d4cf-4754-b10d-4716d9a05be6");
@@ -305,7 +301,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         // Multivalued byte[] 
 
-        [TestMethod]
+        [Test]
         public void TestMVAddBinaryWithNullInitialValue()
         {
             byte[] value1 = new byte[4] { 0x01, 0x02, 0x03, 0x04 };
@@ -318,7 +314,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestAdd(AttributeType.Binary, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVSetBinaryWithNullInitialValue()
         {
             byte[] value1 = new byte[4] { 0x01, 0x02, 0x03, 0x04 };
@@ -331,7 +327,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestSet(AttributeType.Binary, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVRemoveBinaryWithNullInitalValue()
         {
             byte[] value1 = new byte[4] { 0x01, 0x02, 0x03, 0x04 };
@@ -344,7 +340,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestRemove(AttributeType.Binary, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVAddBinaryWithInitialValue()
         {
             byte[] value1 = new byte[4] { 0x01, 0x02, 0x03, 0x04 };
@@ -359,7 +355,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestAdd(AttributeType.Binary, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVSetBinaryWithInitialValue()
         {
             byte[] value1 = new byte[4] { 0x01, 0x02, 0x03, 0x04 };
@@ -374,7 +370,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             this.ExecuteMVTestSet(AttributeType.Binary, initialValues, testValues, expectedValues);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMVRemoveBinaryWithInitialValue()
         {
             byte[] value1 = new byte[4] { 0x01, 0x02, 0x03, 0x04 };
@@ -384,10 +380,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<object> testValues = new List<object>() { value1, value2 };
             List<object> initialValues = new List<object>() { value1, value2, value3 };
             List<object> expectedValues = new List<object>() { value3.Clone() };
-            
+
             this.ExecuteMVTestRemove(AttributeType.Binary, initialValues, testValues, expectedValues);
         }
-
 
         private void ExecuteMVTestAdd(AttributeType type, IList<object> initialValues, IList<object> testValues, IList<object> expectedValues)
         {
