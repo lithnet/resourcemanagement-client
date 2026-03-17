@@ -172,7 +172,7 @@ stages:
       - task: AdvancedInstaller@2
         displayName: Build Advanced Installer package
         inputs:
-          advinstVersion: '21.4'
+          advinstVersion: '23.5.1'
           advinstLicense: $(advancedInstaller.licenseKey)
           aipPath: "src/Lithnet.ResourceManagement.Proxy.Setup/Lithnet.ResourceManagement.Proxy.Setup.aip"
           aipPackageName: Lithnet.ResourceManagement.Proxy.Setup.msi
