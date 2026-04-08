@@ -65,14 +65,14 @@
 
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.3" />
-		<PackageReference Include="Microsoft.Extensions.Options" Version="10.0.3" />
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.5" />
+		<PackageReference Include="Microsoft.Extensions.Options" Version="10.0.5" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="System.Formats.Asn1" Version="10.0.3" />
-		<PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.3" />
+		<PackageReference Include="System.Formats.Asn1" Version="10.0.5" />
+		<PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.5" />
 		<PackageReference Include="System.Security.Cryptography.Xml" Version="4.7.1" />
 	</ItemGroup>
 
