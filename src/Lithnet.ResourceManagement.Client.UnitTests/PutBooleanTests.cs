@@ -9,7 +9,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void AddBooleanSV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = null;
+            IResourceObject resource = null;
 
             try
             {
@@ -37,7 +37,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }
@@ -48,7 +48,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void ModifyBooleanSV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = null;
+            IResourceObject resource = null;
 
             try
             {
@@ -77,7 +77,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }
@@ -88,7 +88,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void DeleteBooleanSV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = null;
+            IResourceObject resource = null;
 
             try
             {
@@ -117,7 +117,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }
@@ -128,7 +128,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void DeleteAllValueBooleanSV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = null;
+            IResourceObject resource = null;
 
             try
             {
@@ -156,7 +156,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }

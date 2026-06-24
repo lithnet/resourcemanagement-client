@@ -17,7 +17,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             this.client = client;
         }
 
-        public async Task CreateAsync(ResourceObject resource)
+        public async Task CreateAsync(IResourceObject resource)
         {
             if (resource == null)
             {
@@ -36,7 +36,10 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
                         ResourceCreatedType response = responseMessage.DeserializeMessageWithPayload<ResourceCreatedType>();
                         UniqueIdentifier id = new UniqueIdentifier(response.EndpointReference.ReferenceProperties.ResourceReferenceProperty.Text);
-                        resource.CompleteCreateOperation(id);
+                       if (resource is ResourceObject concreteResource)
+                        {
+                            concreteResource.CompleteCreateOperation(id);
+                        }
                     }
                 }
             }
@@ -46,14 +49,14 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             }
         }
 
-        public async Task CreateAsync(IEnumerable<ResourceObject> resources)
+        public async Task CreateAsync(IEnumerable<IResourceObject> resources)
         {
             if (resources == null)
             {
                 throw new ArgumentNullException(nameof(resources));
             }
 
-            ResourceObject[] resourceArray = resources.ToArray();
+            IResourceObject[] resourceArray = resources.ToArray();
 
             try
             {
@@ -65,7 +68,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
                     {
                         responseMessage.ThrowOnFault();
 
-                        foreach (ResourceObject resource in resourceArray)
+                        foreach (ResourceObject resource in resourceArray.OfType<ResourceObject>())
                         {
                             resource.CompleteCreateOperation(resource.ObjectID);
                         }

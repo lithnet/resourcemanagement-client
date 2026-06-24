@@ -22,8 +22,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             string expected = string.Format("({0} = '{1}')", Constants.AttributeStringSV, testValue1);
 
-            ResourceObject matchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, testValue1);
-            ResourceObject nonMatchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, nonMatchValue);
+            IResourceObject matchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, testValue1);
+            IResourceObject nonMatchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, nonMatchValue);
 
             try
             {
@@ -47,8 +47,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             string expected = string.Format("(({0} = '{1}') and ({2} = '{3}'))", Constants.AttributeStringSV, testValue1, Constants.AttributeStringMV, testValue2);
 
-            ResourceObject matchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, testValue1);
-            ResourceObject nonMatchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, nonMatchValue);
+            IResourceObject matchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, testValue1);
+            IResourceObject nonMatchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, nonMatchValue);
             matchObject.Attributes[Constants.AttributeStringMV].SetValue(testValue2);
             matchObject.Save();
 
@@ -74,8 +74,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             string expected = string.Format("(({0} = '{1}') or ({2} = '{3}'))", Constants.AttributeStringSV, testValue1, Constants.AttributeStringMV, testValue2);
 
-            ResourceObject matchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, testValue1);
-            ResourceObject nonMatchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, nonMatchValue);
+            IResourceObject matchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, testValue1);
+            IResourceObject nonMatchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, nonMatchValue);
 
             try
             {
@@ -102,8 +102,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             string expected = string.Format("(({4} = {5}) and (({0} = '{1}') or ({2} = '{3}')))", Constants.AttributeStringSV, testValue1, Constants.AttributeStringMV, testValue2, Constants.AttributeIntegerSV, testValue3);
 
-            ResourceObject matchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, testValue1);
-            ResourceObject nonMatchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, nonMatchValue);
+            IResourceObject matchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, testValue1);
+            IResourceObject nonMatchObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, nonMatchValue);
             matchObject.Attributes[Constants.AttributeIntegerSV].SetValue(testValue3);
             matchObject.Save();
 
@@ -117,7 +117,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        private void SubmitXpath(XPathQueryGroup group, string expectedXpath, ConnectionMode connectionMode, params ResourceObject[] matchResources)
+        private void SubmitXpath(XPathQueryGroup group, string expectedXpath, ConnectionMode connectionMode, params IResourceObject[] matchResources)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
 

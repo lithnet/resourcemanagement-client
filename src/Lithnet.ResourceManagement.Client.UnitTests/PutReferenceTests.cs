@@ -9,7 +9,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void AddReferenceSV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = null;
+            IResourceObject resource = null;
 
             try
             {
@@ -37,7 +37,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }
@@ -48,7 +48,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void ModifyReferenceSV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = null;
+            IResourceObject resource = null;
 
             try
             {
@@ -77,7 +77,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }
@@ -88,7 +88,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void DeleteReferenceSV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = null;
+            IResourceObject resource = null;
 
             try
             {
@@ -117,7 +117,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }
@@ -128,7 +128,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void DeleteAllValueReferenceSV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = null;
+            IResourceObject resource = null;
 
             try
             {
@@ -156,7 +156,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }
@@ -167,7 +167,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void AddFirstReferenceMV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = null;
+            IResourceObject resource = null;
 
             try
             {
@@ -195,7 +195,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }
@@ -206,7 +206,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void AddSecondReferenceMV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = null;
+            IResourceObject resource = null;
 
             try
             {
@@ -235,7 +235,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }
@@ -246,7 +246,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void ReplaceReferenceMV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = null;
+            IResourceObject resource = null;
 
             try
             {
@@ -275,7 +275,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }
@@ -286,7 +286,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void DeleteFirstValueReferenceMV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = null;
+            IResourceObject resource = null;
 
             try
             {
@@ -315,7 +315,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }
@@ -326,7 +326,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void DeleteAllValueReferenceMV(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = null;
+            IResourceObject resource = null;
 
             try
             {
@@ -354,7 +354,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }

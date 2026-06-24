@@ -2,7 +2,7 @@
 
 namespace Lithnet.ResourceManagement.Client
 {
-    internal class SearchResultEnumerator : IEnumerator<ResourceObject>
+    internal class SearchResultEnumerator : IEnumerator<IResourceObject>
     {
         private int index = -1;
 
@@ -13,7 +13,7 @@ namespace Lithnet.ResourceManagement.Client
             this.collection = collection;
         }
 
-        public ResourceObject Current
+        public IResourceObject Current
         {
             get
             {

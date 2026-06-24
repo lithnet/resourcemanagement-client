@@ -43,7 +43,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="resource">The resource to add the value to</param>
         /// <param name="attributeName">Name of the attribute</param>
         /// <param name="value">The value to add</param>
-        public static void AddValue(this ResourceObject resource, string attributeName, object value)
+        public static void AddValue(this IResourceObject resource, string attributeName, object value)
         {
             if (resource == null)
             {
@@ -65,7 +65,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="attributeName">Name of the attribute</param>
         /// <param name="value">The value to check</param>
         /// <returns>Returns false if ResourceObject is null or true or false depending on if the value exists on the given attribute</returns>
-        public static bool HasValue(this ResourceObject resource, string attributeName, object value)
+        public static bool HasValue(this IResourceObject resource, string attributeName, object value)
         {
             if (resource == null)
             {
@@ -86,7 +86,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="resource">The resource to remove the value from</param>
         /// <param name="attributeName">Name of the attribute</param>
         /// <param name="value">The value to remove</param>
-        public static void RemoveValue(this ResourceObject resource, string attributeName, object value)
+        public static void RemoveValue(this IResourceObject resource, string attributeName, object value)
         {
             if (resource == null)
             {
@@ -107,7 +107,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="resource">The resource to set the value on</param>
         /// <param name="attributeName">Name of the attribute</param>
         /// <param name="value">The value to set</param>
-        public static void SetValue(this ResourceObject resource, string attributeName, object value)
+        public static void SetValue(this IResourceObject resource, string attributeName, object value)
         {
             if (resource == null)
             {
@@ -127,7 +127,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <param name="resource">The resource to set the value on</param>
         /// <param name="attributeName">The name of the attribute</param>
-        public static object GetValueOrDefault(this ResourceObject resource, string attributeName)
+        public static object GetValueOrDefault(this IResourceObject resource, string attributeName)
         {
             return resource.GetValueOrDefault(attributeName, null);
         }
@@ -138,7 +138,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="resource">The resource to set the value on</param>
         /// <param name="attributeName">Name of the attribute</param>
         /// <param name="defaultValue">The defaultValue to return if attribute doesn't exist</param>
-        public static object GetValueOrDefault(this ResourceObject resource, string attributeName, object defaultValue)
+        public static object GetValueOrDefault(this IResourceObject resource, string attributeName, object defaultValue)
         {
             if (resource == null)
             {

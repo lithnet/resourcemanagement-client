@@ -21,8 +21,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = "3000-01-01T00:00:00.000";
             object matchValue = "2000-01-01T00:00:00.000";
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
 
             try
             {
@@ -42,8 +42,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = "2000-01-01T00:00:00.000";
             object matchValue = "3000-01-01T00:00:00.000";
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
 
             try
             {
@@ -63,8 +63,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = null;
             object matchValue = "2000-01-01T00:00:00.000";
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
 
             try
             {
@@ -84,8 +84,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = "2000-01-01T00:00:00.000";
             object matchValue = null;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
 
             try
             {
@@ -105,8 +105,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = "2000-01-01T00:00:00.000";
             object matchValue = "3100-01-01T00:00:00.000";
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
 
             try
             {
@@ -126,8 +126,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = "2000-01-01T00:00:00.000";
             object matchValue = "3000-01-01T00:00:00.000";
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
 
             try
             {
@@ -147,8 +147,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = "2000-01-01T00:00:00.000";
             object matchValue = "3000-01-01T00:00:00.000";
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
 
             try
             {
@@ -168,8 +168,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = "2000-01-01T00:00:00.000";
             object matchValue = "3000-01-01T00:00:00.000";
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
 
             try
             {
@@ -189,8 +189,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = "2100-01-01T00:00:00.000";
             object matchValue = "1900-01-01T00:00:00.000";
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
 
             try
             {
@@ -210,8 +210,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = "3000-01-01T00:00:00.000";
             object matchValue = "2000-01-01T00:00:00.000";
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
 
             try
             {
@@ -231,8 +231,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = "2100-01-01T00:00:00.000";
             object matchValue = "2000-01-01T00:00:00.000";
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
 
             try
             {
@@ -252,8 +252,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = "3000-01-01T00:00:00.000";
             object matchValue = "2000-01-01T00:00:00.000";
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeSV, nonMatchValue);
 
             try
             {
@@ -275,8 +275,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<string> nonMatchValue = new List<string>() { "2100-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
             List<string> matchValue = new List<string>() { "2300-01-01T00:00:00.000", "2000-01-01T00:00:00.000" };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
 
             try
             {
@@ -296,8 +296,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<string> nonMatchValue = new List<string>() { "2000-01-01T00:00:00.000", "2100-01-01T00:00:00.000" };
             List<string> matchValue = new List<string>() { "2200-01-01T00:00:00.000", "2300-01-01T00:00:00.000" };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
 
             try
             {
@@ -317,8 +317,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = null;
             List<string> matchValue = new List<string>() { "2000-01-01T00:00:00.000", "2100-01-01T00:00:00.000" };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
 
             try
             {
@@ -338,8 +338,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<string> nonMatchValue = new List<string>() { "2000-01-01T00:00:00.000", "2100-01-01T00:00:00.000" };
             object matchValue = null;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
 
             try
             {
@@ -359,8 +359,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<object> nonMatchValue = new List<object>() { "1900-01-01T00:00:00.000", "1800-01-01T00:00:00.000" };
             List<object> matchValue = new List<object>() { "2100-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
 
             try
             {
@@ -380,8 +380,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<object> nonMatchValue = new List<object>() { "1900-01-01T00:00:00.000", "1800-01-01T00:00:00.000" };
             List<object> matchValue = new List<object>() { "2100-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
 
             try
             {
@@ -401,8 +401,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<object> nonMatchValue = new List<object>() { "1900-01-01T00:00:00.000", "1800-01-01T00:00:00.000" };
             List<object> matchValue = new List<object>() { "2000-01-01T00:00:00.000", "2100-01-01T00:00:00.000" };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
 
             try
             {
@@ -422,8 +422,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<object> nonMatchValue = new List<object>() { "1900-01-01T00:00:00.000", "1800-01-01T00:00:00.000" };
             List<object> matchValue = new List<object>() { "2000-01-01T00:00:00.000", "2100-01-01T00:00:00.000" };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
 
             try
             {
@@ -443,8 +443,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<object> nonMatchValue = new List<object>() { "2100-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
             List<object> matchValue = new List<object>() { "1900-01-01T00:00:00.000", "1800-01-01T00:00:00.000" };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
 
             try
             {
@@ -464,8 +464,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<object> nonMatchValue = new List<object>() { "2100-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
             List<object> matchValue = new List<object>() { "1900-01-01T00:00:00.000", "1800-01-01T00:00:00.000" };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
 
             try
             {
@@ -485,8 +485,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<object> nonMatchValue = new List<object>() { "2100-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
             List<object> matchValue = new List<object>() { "2000-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
 
             try
             {
@@ -506,8 +506,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<object> nonMatchValue = new List<object>() { "2100-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
             List<object> matchValue = new List<object>() { "2000-01-01T00:00:00.000", "2200-01-01T00:00:00.000" };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeDateTimeMV, nonMatchValue);
 
             try
             {
@@ -589,7 +589,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         }
 
 
-        private void SubmitXpath(object value, string expected, AttributeTypeDefinition attribute, ComparisonOperator xpathOp, GroupOperator queryOp, ConnectionMode connectionMode, params ResourceObject[] matchResources)
+        private void SubmitXpath(object value, string expected, AttributeTypeDefinition attribute, ComparisonOperator xpathOp, GroupOperator queryOp, ConnectionMode connectionMode, params IResourceObject[] matchResources)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
 

@@ -517,7 +517,7 @@ namespace Lithnet.ResourceManagement.Client
                 value is bool ||
                 value is UniqueIdentifier ||
                 value is DateTime ||
-                value is ResourceObject ||
+                value is IResourceObject ||
                 value is XPathExpression ||
                 value is XPathDereferencedExpression))
             {

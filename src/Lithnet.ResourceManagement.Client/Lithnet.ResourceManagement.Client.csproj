@@ -7,6 +7,7 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Configurations>Debug;Release</Configurations>
 		<EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
+		<LangVersion>latest</LangVersion>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -65,15 +66,15 @@
 
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.5" />
-		<PackageReference Include="Microsoft.Extensions.Options" Version="10.0.5" />
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.9" />
+		<PackageReference Include="Microsoft.Extensions.Options" Version="10.0.9" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="System.Formats.Asn1" Version="10.0.5" />
-		<PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.5" />
-		<PackageReference Include="System.Security.Cryptography.Xml" Version="4.7.1" />
+		<PackageReference Include="System.Formats.Asn1" Version="10.0.9" />
+		<PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.9" />
+		<PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.9" />
 	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFrameworkIdentifier) == '.NETFramework'">
@@ -85,7 +86,7 @@
 		<PackageReference Include="System.ServiceModel.Http" Version="4.7.0" />
 		<PackageReference Include="System.ServiceModel.NetTcp" Version="4.7.0" />
 		<PackageReference Include="System.ServiceModel.Security" Version="4.7.0" />
-		<PackageReference Include="StreamJsonRpc" Version="2.24.84" />
+		<PackageReference Include="StreamJsonRpc" Version="2.25.29" />
 	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFrameworkIdentifier) != '.NETFramework'">

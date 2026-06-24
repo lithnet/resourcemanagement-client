@@ -240,7 +240,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example performs a search for all Group objects, and passes the resulting enumerable to the delete function
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_DeleteResourceExamples.cs" region="DeleteResources(IEnumerable{ResourceObject})"/>
         /// </example>
-        public void DeleteResources(IEnumerable<ResourceObject> resources)
+        public void DeleteResources(IEnumerable<IResourceObject> resources)
         {
             AsyncHelper.Run(async () => await this.DeleteResourcesAsync(resources).ConfigureAwait(false));
         }
@@ -256,11 +256,11 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example performs a search for all Group objects, and passes the resulting enumerable to the delete function
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_DeleteResourceExamples.cs" region="DeleteResources(IEnumerable{ResourceObject})"/>
         /// </example>
-        public async Task DeleteResourcesAsync(IEnumerable<ResourceObject> resources)
+        public async Task DeleteResourcesAsync(IEnumerable<IResourceObject> resources)
         {
             await this.ResourceClient.DeleteAsync(resources).ConfigureAwait(false);
 
-            foreach (ResourceObject resource in resources)
+            foreach (ResourceObject resource in resources.OfType<ResourceObject>())
             {
                 resource.IsDeleted = true;
             }
@@ -274,7 +274,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example deletes the specified resource object
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_DeleteResourceExamples.cs" region="DeleteResource(ResourceObject)"/>
         /// </example>
-        public void DeleteResource(ResourceObject resource)
+        public void DeleteResource(IResourceObject resource)
         {
             AsyncHelper.Run(async () => await this.DeleteResourceAsync(resource.ObjectID).ConfigureAwait(false));
         }
@@ -287,10 +287,13 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example deletes the specified resource object
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_DeleteResourceExamples.cs" region="DeleteResource(ResourceObject)"/>
         /// </example>
-        public async Task DeleteResourceAsync(ResourceObject resource)
+        public async Task DeleteResourceAsync(IResourceObject resource)
         {
             await this.DeleteResourceAsync(resource.ObjectID).ConfigureAwait(false);
-            resource.IsDeleted = true;
+            if (resource is ResourceObject concreteResource)
+            {
+                concreteResource.IsDeleted = true;
+            }
         }
 
         /// <summary>
@@ -375,21 +378,21 @@ namespace Lithnet.ResourceManagement.Client
         /// Saves the specified resources in the resource management service. Updates and Adds are committed as a single composite operation.
         /// </summary>
         /// <param name="resources">The resources to update</param>
-        public Task SaveResourcesAsync(params ResourceObject[] resources)
+        public Task SaveResourcesAsync(params IResourceObject[] resources)
         {
-            return this.SaveResourcesAsync((IEnumerable<ResourceObject>)resources);
+            return this.SaveResourcesAsync((IEnumerable<IResourceObject>)resources);
         }
 
         /// <summary>
         /// Saves the specified resources in the resource management service. Updates and Adds are committed as a single composite operation.
         /// </summary>
         /// <param name="resources">The resources to update</param>
-        public void SaveResources(params ResourceObject[] resources)
+        public void SaveResources(params IResourceObject[] resources)
         {
-            this.SaveResources((IEnumerable<ResourceObject>)resources);
+            this.SaveResources((IEnumerable<IResourceObject>)resources);
         }
 
-        public void SaveResources(IEnumerable<ResourceObject> resources)
+        public void SaveResources(IEnumerable<IResourceObject> resources)
         {
             AsyncHelper.Run(async () => await this.SaveResourcesAsync(resources).ConfigureAwait(false));
         }
@@ -398,16 +401,16 @@ namespace Lithnet.ResourceManagement.Client
         /// Saves the specified resources in the resource management service. Updates and Adds are committed as a single composite operation.
         /// </summary>
         /// <param name="resources">The collection of resources to update</param>
-        public async Task SaveResourcesAsync(IEnumerable<ResourceObject> resources)
+        public async Task SaveResourcesAsync(IEnumerable<IResourceObject> resources)
         {
-            IList<ResourceObject> resourceObjects = resources as IList<ResourceObject> ?? resources.ToList();
+            IList<IResourceObject> resourceObjects = resources as IList<IResourceObject> ?? resources.ToList();
 
             if (resourceObjects.Any(t => t.Locale != null))
             {
                 throw new InvalidOperationException("Cannot perform a composite save on a localized resource");
             }
 
-            List<ResourceObject> objectsToCreate = resourceObjects.Where(t => t.ModificationType == OperationType.Create).ToList();
+            List<IResourceObject> objectsToCreate = resourceObjects.Where(t => t.ModificationType == OperationType.Create).ToList();
             if (objectsToCreate.Count > 0)
             {
                 if (objectsToCreate.Count > 1)
@@ -420,8 +423,8 @@ namespace Lithnet.ResourceManagement.Client
                 }
             }
 
-            List<ResourceObject> objectsToDelete = resourceObjects.Where(t => t.ModificationType == OperationType.Delete).ToList();
-            List<ResourceObject> objectsToUpdate = resourceObjects.Where(t => t.ModificationType == OperationType.Update).ToList();
+            List<IResourceObject> objectsToDelete = resourceObjects.Where(t => t.ModificationType == OperationType.Delete).ToList();
+            List<IResourceObject> objectsToUpdate = resourceObjects.Where(t => t.ModificationType == OperationType.Update).ToList();
 
             if (objectsToDelete.Count > 0)
             {
@@ -446,7 +449,7 @@ namespace Lithnet.ResourceManagement.Client
         /// This method will reorder the operations to perform creates first, followed by updates and finally deletes
         /// </remarks>
         /// <param name="resources">The resources to save</param>
-        public void SaveResourcesParallel(IEnumerable<ResourceObject> resources)
+        public void SaveResourcesParallel(IEnumerable<IResourceObject> resources)
         {
             this.SaveResourcesParallel(resources, 0, null);
         }
@@ -459,7 +462,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </remarks>
         /// <param name="resources">The resources to save</param>
         /// <param name="maxDegreeOfParallelism">The maximum number of threads to use for the operation</param>
-        public void SaveResourcesParallel(IEnumerable<ResourceObject> resources, int maxDegreeOfParallelism)
+        public void SaveResourcesParallel(IEnumerable<IResourceObject> resources, int maxDegreeOfParallelism)
         {
             this.SaveResourcesParallel(resources, maxDegreeOfParallelism, null);
         }
@@ -473,11 +476,11 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="resources">The resources to save</param>
         /// <param name="maxDegreeOfParallelism">The maximum number of threads to use for the operation</param>
         /// <param name="locale">The localization culture to use when saving the object</param>
-        public void SaveResourcesParallel(IEnumerable<ResourceObject> resources, int maxDegreeOfParallelism, CultureInfo locale)
+        public void SaveResourcesParallel(IEnumerable<IResourceObject> resources, int maxDegreeOfParallelism, CultureInfo locale)
         {
-            ConcurrentQueue<ResourceObject> createResources = new ConcurrentQueue<ResourceObject>(resources.Where(t => t.ModificationType == OperationType.Create));
-            ConcurrentQueue<ResourceObject> updateResources = new ConcurrentQueue<ResourceObject>(resources.Where(t => t.ModificationType == OperationType.Update));
-            ConcurrentQueue<ResourceObject> deleteResources = new ConcurrentQueue<ResourceObject>(resources.Where(t => t.ModificationType == OperationType.Delete));
+            ConcurrentQueue<IResourceObject> createResources = new ConcurrentQueue<IResourceObject>(resources.Where(t => t.ModificationType == OperationType.Create));
+            ConcurrentQueue<IResourceObject> updateResources = new ConcurrentQueue<IResourceObject>(resources.Where(t => t.ModificationType == OperationType.Update));
+            ConcurrentQueue<IResourceObject> deleteResources = new ConcurrentQueue<IResourceObject>(resources.Where(t => t.ModificationType == OperationType.Delete));
 
             ParallelOptions op = new ParallelOptions();
             if (maxDegreeOfParallelism > 0)
@@ -490,7 +493,7 @@ namespace Lithnet.ResourceManagement.Client
             Parallel.ForEach(deleteResources, op, resource => this.SaveResource(resource, locale));
         }
 
-        public void SaveResource(ResourceObject resource)
+        public void SaveResource(IResourceObject resource)
         {
             AsyncHelper.Run(async () => await this.SaveResourceAsync(resource).ConfigureAwait(false));
         }
@@ -499,12 +502,12 @@ namespace Lithnet.ResourceManagement.Client
         /// Saves the specified resource in the resource management service
         /// </summary>
         /// <param name="resource">The resource to save</param>
-        public async Task SaveResourceAsync(ResourceObject resource)
+        public async Task SaveResourceAsync(IResourceObject resource)
         {
             await this.SaveResourceAsync(resource, null).ConfigureAwait(false);
         }
 
-        public void SaveResource(ResourceObject resource, CultureInfo locale)
+        public void SaveResource(IResourceObject resource, CultureInfo locale)
         {
             AsyncHelper.Run(async () => await this.SaveResourceAsync(resource, locale).ConfigureAwait(false));
         }
@@ -514,7 +517,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <param name="resource">The resource to save</param>
         /// <param name="locale">The localization culture to use when saving the object</param>
-        public async Task SaveResourceAsync(ResourceObject resource, CultureInfo locale)
+        public async Task SaveResourceAsync(IResourceObject resource, CultureInfo locale)
         {
             switch (resource.ModificationType)
             {
@@ -527,7 +530,10 @@ namespace Lithnet.ResourceManagement.Client
 
                 case OperationType.Update:
                     await this.PutResourceAsync(resource, locale).ConfigureAwait(false);
-                    resource.CommitChanges();
+                    if (resource is ResourceObject concreteResource)
+                    {
+                        concreteResource.CommitChanges();
+                    }
                     break;
 
                 case OperationType.Delete:
@@ -548,7 +554,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to create a new resource in the Resource Management Service
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_CreateResourceExamples.cs" region="CreateResource(String)"/>
         /// </example>
-        public ResourceObject CreateResource(string objectType)
+        public IResourceObject CreateResource(string objectType)
         {
             return new ResourceObject(objectType, this.ClientFactory);
         }
@@ -565,7 +571,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to create a blank template of an object used to update the Resource Management Service
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_CreateResourceExamples.cs" region="CreateResourceTemplateForUpdate(String, UniqueIdentifier)"/>
         /// </example>
-        public ResourceObject CreateResourceTemplateForUpdate(string objectType, UniqueIdentifier id)
+        public IResourceObject CreateResourceTemplateForUpdate(string objectType, UniqueIdentifier id)
         {
             return new ResourceObject(objectType, id, this.ClientFactory);
         }
@@ -579,7 +585,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a known GUID value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(Guid)"/>
         /// </example>
-        public ResourceObject GetResource(Guid id)
+        public IResourceObject GetResource(Guid id)
         {
             return this.GetResource(new UniqueIdentifier(id), null, null);
         }
@@ -593,7 +599,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a known GUID value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(Guid)"/>
         /// </example>
-        public Task<ResourceObject> GetResourceAsync(Guid id)
+        public Task<IResourceObject> GetResourceAsync(Guid id)
         {
             return this.GetResourceAsync(new UniqueIdentifier(id), null, null);
         }
@@ -604,7 +610,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="id">The ID of the resource to get</param>
         /// <param name="locale">The culture to use to request a localized version of the object</param>
         /// <returns>The resource represented by the specified ID</returns>
-        public ResourceObject GetResource(Guid id, CultureInfo locale)
+        public IResourceObject GetResource(Guid id, CultureInfo locale)
         {
             return this.GetResource(new UniqueIdentifier(id), null, locale);
         }
@@ -615,7 +621,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="id">The ID of the resource to get</param>
         /// <param name="locale">The culture to use to request a localized version of the object</param>
         /// <returns>The resource represented by the specified ID</returns>
-        public Task<ResourceObject> GetResourceAsync(Guid id, CultureInfo locale)
+        public Task<IResourceObject> GetResourceAsync(Guid id, CultureInfo locale)
         {
             return this.GetResourceAsync(new UniqueIdentifier(id), null, locale);
         }
@@ -630,7 +636,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a known GUID value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(Guid)"/>
         /// </example>
-        public ResourceObject GetResource(Guid id, IEnumerable<string> attributesToGet)
+        public IResourceObject GetResource(Guid id, IEnumerable<string> attributesToGet)
         {
             return this.GetResource(new UniqueIdentifier(id), attributesToGet);
         }
@@ -645,7 +651,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a known GUID value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(Guid)"/>
         /// </example>
-        public Task<ResourceObject> GetResourceAsync(Guid id, IEnumerable<string> attributesToGet)
+        public Task<IResourceObject> GetResourceAsync(Guid id, IEnumerable<string> attributesToGet)
         {
             return this.GetResourceAsync(new UniqueIdentifier(id), attributesToGet);
         }
@@ -657,7 +663,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="attributesToGet">The list of attributes to retrieve</param>
         /// <param name="locale">The culture to use to request a localized version of the object</param>
         /// <returns>The resource represented by the specified ID</returns>
-        public ResourceObject GetResource(Guid id, IEnumerable<string> attributesToGet, CultureInfo locale)
+        public IResourceObject GetResource(Guid id, IEnumerable<string> attributesToGet, CultureInfo locale)
         {
             return this.GetResource(new UniqueIdentifier(id), attributesToGet, locale);
         }
@@ -669,7 +675,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="attributesToGet">The list of attributes to retrieve</param>
         /// <param name="locale">The culture to use to request a localized version of the object</param>
         /// <returns>The resource represented by the specified ID</returns>
-        public Task<ResourceObject> GetResourceAsync(Guid id, IEnumerable<string> attributesToGet, CultureInfo locale)
+        public Task<IResourceObject> GetResourceAsync(Guid id, IEnumerable<string> attributesToGet, CultureInfo locale)
         {
             return this.GetResourceAsync(new UniqueIdentifier(id), attributesToGet, locale);
         }
@@ -683,7 +689,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a known GUID value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(String)"/>
         /// </example>
-        public ResourceObject GetResource(string id)
+        public IResourceObject GetResource(string id)
         {
             return this.GetResource(new UniqueIdentifier(id), null, null);
         }
@@ -697,7 +703,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a known GUID value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(String)"/>
         /// </example>
-        public Task<ResourceObject> GetResourceAsync(string id)
+        public Task<IResourceObject> GetResourceAsync(string id)
         {
             return this.GetResourceAsync(new UniqueIdentifier(id), null, null);
         }
@@ -712,7 +718,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a known GUID value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(String)"/>
         /// </example>
-        public ResourceObject GetResource(string id, bool getPermissionHints)
+        public IResourceObject GetResource(string id, bool getPermissionHints)
         {
             return this.GetResource(new UniqueIdentifier(id), null, null, getPermissionHints);
         }
@@ -727,7 +733,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a known GUID value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(String)"/>
         /// </example>
-        public Task<ResourceObject> GetResourceAsync(string id, bool getPermissionHints)
+        public Task<IResourceObject> GetResourceAsync(string id, bool getPermissionHints)
         {
             return this.GetResourceAsync(new UniqueIdentifier(id), null, null, getPermissionHints);
         }
@@ -738,7 +744,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="id">The ID of the resource to get as a GUID in string format</param>
         /// <param name="locale">The culture to use to request a localized version of the object</param>
         /// <returns>The resource represented by the specified ID</returns>
-        public ResourceObject GetResource(string id, CultureInfo locale)
+        public IResourceObject GetResource(string id, CultureInfo locale)
         {
             return this.GetResource(new UniqueIdentifier(id), null, locale);
         }
@@ -749,7 +755,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="id">The ID of the resource to get as a GUID in string format</param>
         /// <param name="locale">The culture to use to request a localized version of the object</param>
         /// <returns>The resource represented by the specified ID</returns>
-        public Task<ResourceObject> GetResourceAsync(string id, CultureInfo locale)
+        public Task<IResourceObject> GetResourceAsync(string id, CultureInfo locale)
         {
             return this.GetResourceAsync(new UniqueIdentifier(id), null, locale);
         }
@@ -761,7 +767,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="locale">The culture to use to request a localized version of the object</param>
         /// <param name="getPermissionHints">Gets the permission hints for each attribute of the resource</param>
         /// <returns>The resource represented by the specified ID</returns>
-        public ResourceObject GetResource(string id, CultureInfo locale, bool getPermissionHints)
+        public IResourceObject GetResource(string id, CultureInfo locale, bool getPermissionHints)
         {
             return this.GetResource(new UniqueIdentifier(id), null, locale, getPermissionHints);
         }
@@ -773,7 +779,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="locale">The culture to use to request a localized version of the object</param>
         /// <param name="getPermissionHints">Gets the permission hints for each attribute of the resource</param>
         /// <returns>The resource represented by the specified ID</returns>
-        public Task<ResourceObject> GetResourceAsync(string id, CultureInfo locale, bool getPermissionHints)
+        public Task<IResourceObject> GetResourceAsync(string id, CultureInfo locale, bool getPermissionHints)
         {
             return this.GetResourceAsync(new UniqueIdentifier(id), null, locale, getPermissionHints);
         }
@@ -788,7 +794,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a known GUID value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(String)"/>
         /// </example>
-        public ResourceObject GetResource(string id, IEnumerable<string> attributesToGet)
+        public IResourceObject GetResource(string id, IEnumerable<string> attributesToGet)
         {
             return this.GetResource(new UniqueIdentifier(id), attributesToGet);
         }
@@ -803,7 +809,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a known GUID value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(String)"/>
         /// </example>
-        public Task<ResourceObject> GetResourceAsync(string id, IEnumerable<string> attributesToGet)
+        public Task<IResourceObject> GetResourceAsync(string id, IEnumerable<string> attributesToGet)
         {
             return this.GetResourceAsync(new UniqueIdentifier(id), attributesToGet);
         }
@@ -819,7 +825,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a known GUID value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(String)"/>
         /// </example>
-        public ResourceObject GetResource(string id, IEnumerable<string> attributesToGet, bool getPermissionHints)
+        public IResourceObject GetResource(string id, IEnumerable<string> attributesToGet, bool getPermissionHints)
         {
             return this.GetResource(new UniqueIdentifier(id), attributesToGet, getPermissionHints);
         }
@@ -835,7 +841,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a known GUID value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(String)"/>
         /// </example>
-        public Task<ResourceObject> GetResourceAsync(string id, IEnumerable<string> attributesToGet, bool getPermissionHints)
+        public Task<IResourceObject> GetResourceAsync(string id, IEnumerable<string> attributesToGet, bool getPermissionHints)
         {
             return this.GetResourceAsync(new UniqueIdentifier(id), attributesToGet, getPermissionHints);
         }
@@ -847,7 +853,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="attributesToGet">The list of attributes to retrieve</param>
         /// <param name="locale">The culture to use to request a localized version of the object</param>
         /// <returns>The resource represented by the specified ID</returns>
-        public ResourceObject GetResource(string id, IEnumerable<string> attributesToGet, CultureInfo locale)
+        public IResourceObject GetResource(string id, IEnumerable<string> attributesToGet, CultureInfo locale)
         {
             return this.GetResource(new UniqueIdentifier(id), attributesToGet, locale);
         }
@@ -859,7 +865,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="attributesToGet">The list of attributes to retrieve</param>
         /// <param name="locale">The culture to use to request a localized version of the object</param>
         /// <returns>The resource represented by the specified ID</returns>
-        public Task<ResourceObject> GetResourceAsync(string id, IEnumerable<string> attributesToGet, CultureInfo locale)
+        public Task<IResourceObject> GetResourceAsync(string id, IEnumerable<string> attributesToGet, CultureInfo locale)
         {
             return this.GetResourceAsync(new UniqueIdentifier(id), attributesToGet, locale);
         }
@@ -872,7 +878,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="locale">The culture to use to request a localized version of the object</param>
         /// <param name="getPermissionHints">Gets the permission hints for each attribute of the resource</param>
         /// <returns>The resource represented by the specified ID</returns>
-        public ResourceObject GetResource(string id, IEnumerable<string> attributesToGet, CultureInfo locale, bool getPermissionHints)
+        public IResourceObject GetResource(string id, IEnumerable<string> attributesToGet, CultureInfo locale, bool getPermissionHints)
         {
             return this.GetResource(new UniqueIdentifier(id), attributesToGet, locale, getPermissionHints);
         }
@@ -885,7 +891,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="locale">The culture to use to request a localized version of the object</param>
         /// <param name="getPermissionHints">Gets the permission hints for each attribute of the resource</param>
         /// <returns>The resource represented by the specified ID</returns>
-        public Task<ResourceObject> GetResourceAsync(string id, IEnumerable<string> attributesToGet, CultureInfo locale, bool getPermissionHints)
+        public Task<IResourceObject> GetResourceAsync(string id, IEnumerable<string> attributesToGet, CultureInfo locale, bool getPermissionHints)
         {
             return this.GetResourceAsync(new UniqueIdentifier(id), attributesToGet, locale, getPermissionHints);
         }
@@ -899,7 +905,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a reference value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(UniqueIdentifier)"/>
         /// </example>
-        public ResourceObject GetResource(UniqueIdentifier id)
+        public IResourceObject GetResource(UniqueIdentifier id)
         {
             return this.GetResource(id, null, null, false);
         }
@@ -913,7 +919,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a reference value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(UniqueIdentifier)"/>
         /// </example>
-        public Task<ResourceObject> GetResourceAsync(UniqueIdentifier id)
+        public Task<IResourceObject> GetResourceAsync(UniqueIdentifier id)
         {
             return this.GetResourceAsync(id, null, null, false);
         }
@@ -928,7 +934,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a reference value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(UniqueIdentifier)"/>
         /// </example>
-        public ResourceObject GetResource(UniqueIdentifier id, bool getPermissionHints)
+        public IResourceObject GetResource(UniqueIdentifier id, bool getPermissionHints)
         {
             return this.GetResource(id, null, null, getPermissionHints);
         }
@@ -943,7 +949,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a reference value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(UniqueIdentifier)"/>
         /// </example>
-        public Task<ResourceObject> GetResourceAsync(UniqueIdentifier id, bool getPermissionHints)
+        public Task<IResourceObject> GetResourceAsync(UniqueIdentifier id, bool getPermissionHints)
         {
             return this.GetResourceAsync(id, null, null, getPermissionHints);
         }
@@ -954,7 +960,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="id">The ID of the resource to get</param>
         /// <param name="locale">The culture to use to request a localized version of the object</param>
         /// <returns>The resource represented by the specified ID</returns>
-        public ResourceObject GetResource(UniqueIdentifier id, CultureInfo locale)
+        public IResourceObject GetResource(UniqueIdentifier id, CultureInfo locale)
         {
             return this.GetResource(id, null, locale, false);
         }
@@ -965,7 +971,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="id">The ID of the resource to get</param>
         /// <param name="locale">The culture to use to request a localized version of the object</param>
         /// <returns>The resource represented by the specified ID</returns>
-        public Task<ResourceObject> GetResourceAsync(UniqueIdentifier id, CultureInfo locale)
+        public Task<IResourceObject> GetResourceAsync(UniqueIdentifier id, CultureInfo locale)
         {
             return this.GetResourceAsync(id, null, locale, false);
         }
@@ -977,7 +983,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="locale">The culture to use to request a localized version of the object</param>
         /// <param name="getPermissionHints">Gets the permission hints for each attribute of the resource</param>
         /// <returns>The resource represented by the specified ID</returns>
-        public ResourceObject GetResource(UniqueIdentifier id, CultureInfo locale, bool getPermissionHints)
+        public IResourceObject GetResource(UniqueIdentifier id, CultureInfo locale, bool getPermissionHints)
         {
             return this.GetResource(id, null, locale, getPermissionHints);
         }
@@ -989,7 +995,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="locale">The culture to use to request a localized version of the object</param>
         /// <param name="getPermissionHints">Gets the permission hints for each attribute of the resource</param>
         /// <returns>The resource represented by the specified ID</returns>
-        public Task<ResourceObject> GetResourceAsync(UniqueIdentifier id, CultureInfo locale, bool getPermissionHints)
+        public Task<IResourceObject> GetResourceAsync(UniqueIdentifier id, CultureInfo locale, bool getPermissionHints)
         {
             return this.GetResourceAsync(id, null, locale, getPermissionHints);
         }
@@ -1004,7 +1010,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a reference value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(UniqueIdentifier)"/>
         /// </example>
-        public ResourceObject GetResource(UniqueIdentifier id, IEnumerable<string> attributesToGet)
+        public IResourceObject GetResource(UniqueIdentifier id, IEnumerable<string> attributesToGet)
         {
             return this.GetResource(id, attributesToGet, null, false);
         }
@@ -1019,7 +1025,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a reference value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(UniqueIdentifier)"/>
         /// </example>
-        public Task<ResourceObject> GetResourceAsync(UniqueIdentifier id, IEnumerable<string> attributesToGet)
+        public Task<IResourceObject> GetResourceAsync(UniqueIdentifier id, IEnumerable<string> attributesToGet)
         {
             return this.GetResourceAsync(id, attributesToGet, null, false);
         }
@@ -1035,7 +1041,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a reference value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(UniqueIdentifier)"/>
         /// </example>
-        public ResourceObject GetResource(UniqueIdentifier id, IEnumerable<string> attributesToGet, bool getPermissionHints)
+        public IResourceObject GetResource(UniqueIdentifier id, IEnumerable<string> attributesToGet, bool getPermissionHints)
         {
             return this.GetResource(id, attributesToGet, null, getPermissionHints);
         }
@@ -1051,7 +1057,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a reference value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(UniqueIdentifier)"/>
         /// </example>
-        public Task<ResourceObject> GetResourceAsync(UniqueIdentifier id, IEnumerable<string> attributesToGet, bool getPermissionHints)
+        public Task<IResourceObject> GetResourceAsync(UniqueIdentifier id, IEnumerable<string> attributesToGet, bool getPermissionHints)
         {
             return this.GetResourceAsync(id, attributesToGet, null, getPermissionHints);
         }
@@ -1067,7 +1073,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a reference value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(UniqueIdentifier)"/>
         /// </example>
-        public ResourceObject GetResource(UniqueIdentifier id, IEnumerable<string> attributesToGet, CultureInfo locale)
+        public IResourceObject GetResource(UniqueIdentifier id, IEnumerable<string> attributesToGet, CultureInfo locale)
         {
             return this.GetResource(id, attributesToGet, locale, false);
         }
@@ -1083,7 +1089,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a reference value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(UniqueIdentifier)"/>
         /// </example>
-        public Task<ResourceObject> GetResourceAsync(UniqueIdentifier id, IEnumerable<string> attributesToGet, CultureInfo locale)
+        public Task<IResourceObject> GetResourceAsync(UniqueIdentifier id, IEnumerable<string> attributesToGet, CultureInfo locale)
         {
             return this.GetResourceAsync(id, attributesToGet, locale, false);
         }
@@ -1100,7 +1106,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a reference value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(UniqueIdentifier)"/>
         /// </example>
-        public ResourceObject GetResource(UniqueIdentifier id, IEnumerable<string> attributesToGet, CultureInfo locale, bool getPermissionHints)
+        public IResourceObject GetResource(UniqueIdentifier id, IEnumerable<string> attributesToGet, CultureInfo locale, bool getPermissionHints)
         {
             return AsyncHelper.Run(async () => await this.GetResourceAsync(id, attributesToGet, locale, getPermissionHints).ConfigureAwait(false));
         }
@@ -1117,7 +1123,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how to get an object from a reference value
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceExamples.cs" region="GetResource(UniqueIdentifier)"/>
         /// </example>
-        public async Task<ResourceObject> GetResourceAsync(UniqueIdentifier id, IEnumerable<string> attributesToGet, CultureInfo locale, bool getPermissionHints)
+        public async Task<IResourceObject> GetResourceAsync(UniqueIdentifier id, IEnumerable<string> attributesToGet, CultureInfo locale, bool getPermissionHints)
         {
             return await this.ResourceClient.GetAsync(id, attributesToGet, locale, getPermissionHints).ConfigureAwait(false);
         }
@@ -1134,7 +1140,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how get a user by its AccountName attribute
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, String, String)"/>
         /// </example>
-        public ResourceObject GetResourceByKey(string objectType, string attributeName, object value)
+        public IResourceObject GetResourceByKey(string objectType, string attributeName, object value)
         {
             return this.GetResourceByKey(objectType, attributeName, value, null, null);
         }
@@ -1151,7 +1157,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how get a user by its AccountName attribute
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, String, String)"/>
         /// </example>
-        public Task<ResourceObject> GetResourceByKeyAsync(string objectType, string attributeName, object value)
+        public Task<IResourceObject> GetResourceByKeyAsync(string objectType, string attributeName, object value)
         {
             return this.GetResourceByKeyAsync(objectType, attributeName, value, null, null);
         }
@@ -1169,7 +1175,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how get a user by its AccountName attribute
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, String, String)"/>
         /// </example>
-        public ResourceObject GetResourceByKey(string objectType, string attributeName, object value, CultureInfo locale)
+        public IResourceObject GetResourceByKey(string objectType, string attributeName, object value, CultureInfo locale)
         {
             return this.GetResourceByKey(objectType, attributeName, value, null, locale);
         }
@@ -1187,7 +1193,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how get a user by its AccountName attribute
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, String, String)"/>
         /// </example>
-        public Task<ResourceObject> GetResourceByKeyAsync(string objectType, string attributeName, object value, CultureInfo locale)
+        public Task<IResourceObject> GetResourceByKeyAsync(string objectType, string attributeName, object value, CultureInfo locale)
         {
             return this.GetResourceByKeyAsync(objectType, attributeName, value, null, locale);
         }
@@ -1205,7 +1211,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how get a user by its AccountName attribute
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, String, String)"/>
         /// </example>
-        public Task<ResourceObject> GetResourceByKeyAsync(string objectType, string attributeName, object value, IEnumerable<string> attributesToGet)
+        public Task<IResourceObject> GetResourceByKeyAsync(string objectType, string attributeName, object value, IEnumerable<string> attributesToGet)
         {
             Dictionary<string, object> values = new Dictionary<string, object>
             {
@@ -1228,7 +1234,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how get a user by its AccountName attribute
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, String, String)"/>
         /// </example>
-        public ResourceObject GetResourceByKey(string objectType, string attributeName, object value, IEnumerable<string> attributesToGet)
+        public IResourceObject GetResourceByKey(string objectType, string attributeName, object value, IEnumerable<string> attributesToGet)
         {
             Dictionary<string, object> values = new Dictionary<string, object>
             {
@@ -1252,7 +1258,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how get a user by its AccountName attribute
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, String, String)"/>
         /// </example>
-        public ResourceObject GetResourceByKey(string objectType, string attributeName, object value, IEnumerable<string> attributesToGet, CultureInfo locale)
+        public IResourceObject GetResourceByKey(string objectType, string attributeName, object value, IEnumerable<string> attributesToGet, CultureInfo locale)
         {
             Dictionary<string, object> values = new Dictionary<string, object>
             {
@@ -1276,7 +1282,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how get a user by its AccountName attribute
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, String, String)"/>
         /// </example>
-        public Task<ResourceObject> GetResourceByKeyAsync(string objectType, string attributeName, object value, IEnumerable<string> attributesToGet, CultureInfo locale)
+        public Task<IResourceObject> GetResourceByKeyAsync(string objectType, string attributeName, object value, IEnumerable<string> attributesToGet, CultureInfo locale)
         {
             Dictionary<string, object> values = new Dictionary<string, object>
             {
@@ -1297,7 +1303,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how get a user by using the AccountName and Domain pair of anchor attributes
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, Dictionary{String, String})"/>
         /// </example>
-        public ResourceObject GetResourceByKey(string objectType, Dictionary<string, object> attributeValuePairs)
+        public IResourceObject GetResourceByKey(string objectType, Dictionary<string, object> attributeValuePairs)
         {
             return this.GetResourceByKey(objectType, attributeValuePairs, null);
         }
@@ -1313,7 +1319,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how get a user by using the AccountName and Domain pair of anchor attributes
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, Dictionary{String, String})"/>
         /// </example>
-        public Task<ResourceObject> GetResourceByKeyAsync(string objectType, Dictionary<string, object> attributeValuePairs)
+        public Task<IResourceObject> GetResourceByKeyAsync(string objectType, Dictionary<string, object> attributeValuePairs)
         {
             return this.GetResourceByKeyAsync(objectType, attributeValuePairs, null);
         }
@@ -1330,7 +1336,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how get a user by using the AccountName and Domain pair of anchor attributes
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, Dictionary{String, String})"/>
         /// </example>
-        public ResourceObject GetResourceByKey(string objectType, Dictionary<string, object> attributeValuePairs, IEnumerable<string> attributesToGet)
+        public IResourceObject GetResourceByKey(string objectType, Dictionary<string, object> attributeValuePairs, IEnumerable<string> attributesToGet)
         {
             return this.GetResourceByKey(objectType, attributeValuePairs, attributesToGet, null);
         }
@@ -1347,7 +1353,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how get a user by using the AccountName and Domain pair of anchor attributes
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, Dictionary{String, String})"/>
         /// </example>
-        public Task<ResourceObject> GetResourceByKeyAsync(string objectType, Dictionary<string, object> attributeValuePairs, IEnumerable<string> attributesToGet)
+        public Task<IResourceObject> GetResourceByKeyAsync(string objectType, Dictionary<string, object> attributeValuePairs, IEnumerable<string> attributesToGet)
         {
             return this.GetResourceByKeyAsync(objectType, attributeValuePairs, attributesToGet, null);
         }
@@ -1365,7 +1371,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how get a user by using the AccountName and Domain pair of anchor attributes
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, Dictionary{String, String})"/>
         /// </example>
-        public ResourceObject GetResourceByKey(string objectType, Dictionary<string, object> attributeValuePairs, IEnumerable<string> attributesToGet, CultureInfo locale)
+        public IResourceObject GetResourceByKey(string objectType, Dictionary<string, object> attributeValuePairs, IEnumerable<string> attributesToGet, CultureInfo locale)
         {
             return AsyncHelper.Run(async () => await this.GetResourceByKeyAsync(objectType, attributeValuePairs, attributesToGet, locale).ConfigureAwait(false));
         }
@@ -1383,7 +1389,7 @@ namespace Lithnet.ResourceManagement.Client
         /// The following example shows how get a user by using the AccountName and Domain pair of anchor attributes
         /// <code language="cs" title="Example" source="..\Lithnet.ResourceManagement.Client.Help.Examples\ResourceManagementClient_GetResourceByKeyExamples.cs" region="GetResourceByKey(String, Dictionary{String, String})"/>
         /// </example>
-        public async Task<ResourceObject> GetResourceByKeyAsync(string objectType, Dictionary<string, object> attributeValuePairs, IEnumerable<string> attributesToGet, CultureInfo locale)
+        public async Task<IResourceObject> GetResourceByKeyAsync(string objectType, Dictionary<string, object> attributeValuePairs, IEnumerable<string> attributesToGet, CultureInfo locale)
         {
             objectType = await this.SchemaClient.GetCorrectObjectTypeNameCaseAsync(objectType);
 
@@ -1894,7 +1900,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="approvalRequest">The approval object to process.The object must be in the 'pending' state</param>
         /// <param name="approve">A value indicating is the request should be approved</param>
         /// <param name="reason">An optional reason for the approval or rejection</param>
-        public void Approve(ResourceObject approvalRequest, bool approve, string reason = null)
+        public void Approve(IResourceObject approvalRequest, bool approve, string reason = null)
         {
             AsyncHelper.Run(async () => await this.ApproveAsync(approvalRequest, approve, reason).ConfigureAwait(false));
         }
@@ -1906,7 +1912,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="approvalRequest">The approval object to process.The object must be in the 'pending' state</param>
         /// <param name="approve">A value indicating is the request should be approved</param>
         /// <param name="reason">An optional reason for the approval or rejection</param>
-        public async Task ApproveAsync(ResourceObject approvalRequest, bool approve, string reason = null)
+        public async Task ApproveAsync(IResourceObject approvalRequest, bool approve, string reason = null)
         {
             if (approvalRequest.ObjectTypeName != ObjectTypeNames.Approval)
             {
@@ -2208,7 +2214,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <param name="resource">The object to refresh</param>
         /// <returns>An XML representation of the resource</returns>
-        internal async Task<XmlDictionaryReader> RefreshResourceAsync(ResourceObject resource)
+        internal async Task<XmlDictionaryReader> RefreshResourceAsync(IResourceObject resource)
         {
             return await this.ResourceClient.GetFullObjectForUpdateAsync(resource).ConfigureAwait(false);
         }
@@ -2217,16 +2223,16 @@ namespace Lithnet.ResourceManagement.Client
         /// Submits a resource template to the resource management service for creation
         /// </summary>
         /// <param name="resource">The resource template to create</param>
-        internal async Task CreateResourceAsync(ResourceObject resource)
+        internal async Task CreateResourceAsync(IResourceObject resource)
         {
-            await this.ResourceFactoryClient.CreateAsync(resource).ConfigureAwait(false);
+            await this.ResourceFactoryClient.CreateAsync((ResourceObject)resource).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Submits a list of resources template to the resource management service for creation
         /// </summary>
         /// <param name="resources">A collection of resource objects to create</param>
-        internal async Task CreateResourcesAsync(IEnumerable<ResourceObject> resources)
+        internal async Task CreateResourcesAsync(IEnumerable<IResourceObject> resources)
         {
             await this.ResourceFactoryClient.CreateAsync(resources).ConfigureAwait(false);
         }
@@ -2236,7 +2242,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <param name="resource">The resource to update</param>
         /// <param name="locale">The culture to use when saving a localized version of the object</param>
-        internal async Task PutResourceAsync(ResourceObject resource, CultureInfo locale)
+        internal async Task PutResourceAsync(IResourceObject resource, CultureInfo locale)
         {
             await this.ResourceClient.PutAsync(resource, locale).ConfigureAwait(false);
         }

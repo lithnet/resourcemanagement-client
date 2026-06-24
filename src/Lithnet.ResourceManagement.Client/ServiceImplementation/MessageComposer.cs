@@ -68,12 +68,12 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             return message;
         }
 
-        internal static Message CreateCreateMessage(ResourceObject resource)
+        internal static Message CreateCreateMessage(IResourceObject resource)
         {
             Create op = new Create
             {
                 Dialect = Namespaces.RMIdentityAttributeType,
-                Fragments = resource.GetPutFragements().ToArray<FragmentType>()
+                Fragments = MessageComposer.GetPutFragements(resource).ToArray<FragmentType>()
             };
 
             Message message = Message.CreateMessage(MessageVersion.Default, Namespaces.Create, new SerializerBodyWriter(op));
@@ -82,7 +82,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             return message;
         }
 
-        internal static Message CreateCreateMessage(ResourceObject[] resources)
+        internal static Message CreateCreateMessage(IResourceObject[] resources)
         {
             Create op = new Create();
             op.Dialect = Namespaces.RMIdentityAttributeType;
@@ -100,7 +100,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
             foreach (ResourceObject resource in resources)
             {
-                foreach (PutFragmentType fragment in resource.GetPutFragements())
+                foreach (PutFragmentType fragment in MessageComposer.GetPutFragements(resource))
                 {
                     fragment.TargetIdentifier = resource.ObjectID.ToString(false);
                     fragments.Add(fragment);
@@ -134,12 +134,12 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             return message;
         }
 
-        internal static Message CreatePutMessage(ResourceObject resource, CultureInfo locale)
+        internal static Message CreatePutMessage(IResourceObject resource, CultureInfo locale)
         {
             Put op = new Put
             {
                 Dialect = Namespaces.RMIdentityAttributeType,
-                Fragments = resource.GetPutFragements().ToArray()
+                Fragments = MessageComposer.GetPutFragements(resource).ToArray()
             };
 
             if (op.Fragments == null || op.Fragments.Length == 0)
@@ -159,7 +159,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             return message;
         }
 
-        internal static Message CreatePutMessage(ResourceObject[] resources)
+        internal static Message CreatePutMessage(IResourceObject[] resources)
         {
             if (resources == null || resources.Length == 0)
             {
@@ -177,7 +177,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 
             foreach (ResourceObject resource in resources)
             {
-                foreach (PutFragmentType fragment in resource.GetPutFragements())
+                foreach (PutFragmentType fragment in MessageComposer.GetPutFragements(resource))
                 {
                     fragment.TargetIdentifier = resource.ObjectID.Value;
                     fragments.Add(fragment);
@@ -325,6 +325,63 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             {
                 throw new InvalidOperationException($"A request to delete a built-in resource has been stopped by the client library. Resource: {id}");
             }
+        }
+        
+        /// <summary>
+        /// Gets a list of attribute changes as Put fragments for submission to the Resource Management Service
+        /// </summary>
+        /// <returns>A list of PutFragmentType objects containing all the value changes pending on the object</returns>
+        private static List<PutFragmentType> GetPutFragements(IResourceObject resource)
+        {
+            List<PutFragmentType> fragments = new List<PutFragmentType>();
+            foreach (KeyValuePair<string, List<AttributeValueChange>> kvp in resource.PendingChanges)
+            {
+                AttributeTypeDefinition type = resource.ObjectType[kvp.Key];
+
+                if (SchemaConstants.ComputedAttributes.Contains(type.SystemName))
+                {
+                    continue;
+                }
+
+                foreach (AttributeValueChange change in kvp.Value)
+                {
+                    string value = null;
+
+                    if (change.Value != null)
+                    {
+                        switch (type.Type)
+                        {
+                            case AttributeType.Binary:
+                                value = Convert.ToBase64String((byte[])change.Value);
+                                break;
+
+                            case AttributeType.DateTime:
+                                value = ((DateTime)change.Value).ToResourceManagementServiceDateFormat();
+                                break;
+
+                            case AttributeType.Integer:
+                            case AttributeType.Boolean:
+                            case AttributeType.String:
+                            case AttributeType.Text:
+                                value = change.Value.ToString();
+                                break;
+
+                            case AttributeType.Reference:
+                                value = ((UniqueIdentifier)change.Value).ToString();
+                                break;
+
+                            case AttributeType.Unknown:
+                            default:
+                                throw new ArgumentException(string.Format("Unknown value type {0}", change.Value.GetType().Name));
+                        }
+                    }
+
+                    PutFragmentType fragment = new PutFragmentType(kvp.Key, change.ChangeType, kvp.Key, null, false, value);
+                    fragments.Add(fragment);
+                }
+            }
+
+            return fragments;
         }
     }
 }

@@ -19,8 +19,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = false;
             object matchValue = true;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, nonMatchValue);
 
             try
             {
@@ -40,8 +40,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = true;
             object matchValue = false;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, nonMatchValue);
 
             try
             {
@@ -61,8 +61,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = null;
             object matchValue = true;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, nonMatchValue);
 
             try
             {
@@ -82,8 +82,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = true;
             object matchValue = null;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeBooleanSV, nonMatchValue);
 
             matchResource.Refresh();
             matchResource.Attributes[Constants.AttributeBooleanSV].Value = null;
@@ -180,7 +180,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         }
 
 
-        private void SubmitXpath(object value, string expected, AttributeTypeDefinition attribute, ComparisonOperator xpathOp, GroupOperator queryOp, ConnectionMode connectionMode, params ResourceObject[] matchResources)
+        private void SubmitXpath(object value, string expected, AttributeTypeDefinition attribute, ComparisonOperator xpathOp, GroupOperator queryOp, ConnectionMode connectionMode, params IResourceObject[] matchResources)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
 

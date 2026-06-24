@@ -21,7 +21,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             int count = 0;
 
-            foreach (ResourceObject o in results)
+            foreach (IResourceObject o in results)
             {
                 Debug.WriteLine("UT got object " + o.ObjectID);
                 count++;
@@ -40,7 +40,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             int count = 0;
 
-            foreach (ResourceObject o in results)
+            foreach (IResourceObject o in results)
             {
                 Debug.WriteLine("UT got object " + o.ObjectID);
                 count++;
@@ -58,7 +58,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 ISearchResultCollection results = client.GetResources("!not a filter!", 200);
                 Debug.WriteLine("Getting {0} results", results.Count);
 
-                foreach (ResourceObject o in results)
+                foreach (IResourceObject o in results)
                 {
                     Debug.WriteLine("UT got object " + o.ObjectID);
                 }
@@ -80,7 +80,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             string query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
 
             ISearchResultCollection results = client.GetResources(query, -1, new string[] { "AccountName" }, sortAttributes);
-            ResourceObject[] arrayResults = results.ToArray();
+            IResourceObject[] arrayResults = results.ToArray();
 
             Assert.AreEqual(6, results.Count);
             Assert.AreEqual("reftest1", arrayResults[0].Attributes[AttributeNames.AccountName].StringValue);
@@ -100,7 +100,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             string query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
 
             ISearchResultCollection results = client.GetResources(query, -1, new string[] { "AccountName" }, sortAttributes);
-            ResourceObject[] arrayResults = results.ToArray();
+            IResourceObject[] arrayResults = results.ToArray();
 
             Assert.AreEqual(6, results.Count);
             Assert.AreEqual("reftest6", arrayResults[0].Attributes[AttributeNames.AccountName].StringValue);
@@ -120,7 +120,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             string query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
 
             ISearchResultCollection results = await client.GetResourcesAsync(query, -1, new string[] { "AccountName" }, sortAttributes).ConfigureAwait(false);
-            ResourceObject[] arrayResults = results.ToArray();
+            IResourceObject[] arrayResults = results.ToArray();
 
             Assert.AreEqual(6, results.Count);
             Assert.AreEqual("reftest1", arrayResults[0].Attributes[AttributeNames.AccountName].StringValue);
@@ -140,7 +140,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             string query = String.Format("/{0}[starts-with('{1}', 'reftest')]", Constants.UnitTestObjectTypeName, AttributeNames.AccountName);
 
             ISearchResultCollection results = await client.GetResourcesAsync(query, -1, new string[] { "AccountName" }, sortAttributes).ConfigureAwait(false);
-            ResourceObject[] arrayResults = results.ToArray();
+            IResourceObject[] arrayResults = results.ToArray();
 
             Assert.AreEqual(6, results.Count);
             Assert.AreEqual("reftest6", arrayResults[0].Attributes[AttributeNames.AccountName].StringValue);
@@ -161,7 +161,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             int count = 0;
 
-            foreach (ResourceObject o in results)
+            foreach (IResourceObject o in results)
             {
                 Debug.WriteLine("UT got object " + o.ObjectID);
                 count++;
@@ -181,7 +181,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             int count = 0;
 
-            foreach (ResourceObject o in results)
+            foreach (IResourceObject o in results)
             {
                 Debug.WriteLine("UT got object " + o.ObjectID);
                 count++;
@@ -206,7 +206,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             Debug.WriteLine("Getting {0} results", results.Count);
             int count = 0;
 
-            foreach (ResourceObject o in results)
+            foreach (IResourceObject o in results)
             {
                 Debug.WriteLine("UT got object " + o.ObjectID);
                 count++;

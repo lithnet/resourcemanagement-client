@@ -17,8 +17,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVReferenceEquals(ConnectionMode connectionMode)
         {
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, null);
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, nonMatchResource.ObjectID);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, null);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, nonMatchResource.ObjectID);
 
             object queryValue = nonMatchResource.ObjectID.Value;
 
@@ -36,8 +36,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestSVReferenceNotEquals(ConnectionMode connectionMode)
         {
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, null);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, matchResource.ObjectID);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, null);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, matchResource.ObjectID);
 
             object queryValue = matchResource.ObjectID.Value;
 
@@ -57,8 +57,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             object queryValue = null;
 
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, null);
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, nonMatchResource.ObjectID);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, null);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, nonMatchResource.ObjectID);
 
             try
             {
@@ -75,8 +75,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void TestSVReferenceIsNotPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, null);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, matchResource.ObjectID);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, null);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, matchResource.ObjectID);
 
             try
             {
@@ -93,9 +93,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVReferenceEquals(ConnectionMode connectionMode)
         {
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, null);
-            ResourceObject nonMatchResource2 = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, null);
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, new List<object>() { nonMatchResource.ObjectID, nonMatchResource2.ObjectID });
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, null);
+            IResourceObject nonMatchResource2 = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, null);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, new List<object>() { nonMatchResource.ObjectID, nonMatchResource2.ObjectID });
 
             object queryValue = nonMatchResource.ObjectID.Value;
 
@@ -113,9 +113,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         [TestCaseSource(typeof(ConnectionModeSources))]
         public void TestMVReferenceNotEquals(ConnectionMode connectionMode)
         {
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, null);
-            ResourceObject nonMatchResource2 = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, matchResource.ObjectID);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, new List<object>() { matchResource.ObjectID, nonMatchResource2.ObjectID });
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, null);
+            IResourceObject nonMatchResource2 = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, matchResource.ObjectID);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, new List<object>() { matchResource.ObjectID, nonMatchResource2.ObjectID });
 
             object queryValue = matchResource.ObjectID.Value;
 
@@ -135,10 +135,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             object queryValue = null;
 
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, null);
-            ResourceObject nonMatchResource2 = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, null);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, null);
+            IResourceObject nonMatchResource2 = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, null);
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, new List<object>() { nonMatchResource.ObjectID, nonMatchResource.ObjectID });
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, new List<object>() { nonMatchResource.ObjectID, nonMatchResource.ObjectID });
 
 
             try
@@ -156,9 +156,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void TestMVReferenceIsNotPresent(ConnectionMode connectionMode)
         {
             object queryValue = null;
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, null);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, matchResource.ObjectID);
-            ResourceObject nonMatchResource2 = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, new List<object>() { matchResource.ObjectID, nonMatchResource.ObjectID });
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, null);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, matchResource.ObjectID);
+            IResourceObject nonMatchResource2 = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceMV, new List<object>() { matchResource.ObjectID, nonMatchResource.ObjectID });
 
             try
             {
@@ -328,7 +328,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        private void SubmitXpath(object value, string expected, AttributeTypeDefinition attribute, ComparisonOperator xpathOp, GroupOperator queryOp, ConnectionMode connectionMode, params ResourceObject[] matchResources)
+        private void SubmitXpath(object value, string expected, AttributeTypeDefinition attribute, ComparisonOperator xpathOp, GroupOperator queryOp, ConnectionMode connectionMode, params IResourceObject[] matchResources)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
 

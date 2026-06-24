@@ -10,8 +10,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void PutCompositeTestMultipleUpdates(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource1 = null;
-            ResourceObject resource2 = null;
+            IResourceObject resource1 = null;
+            IResourceObject resource2 = null;
 
             try
             {
@@ -31,7 +31,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
                 resource1.Attributes[Constants.AttributeStringSV].SetValue(Constants.TestDataString2);
                 resource2.Attributes[Constants.AttributeStringSV].SetValue(Constants.TestDataString3);
 
-                client.SaveResources(new List<ResourceObject>() { resource1, resource2 });
+                client.SaveResources(new List<IResourceObject>() { resource1, resource2 });
 
                 // Ensure there are no pending changes
                 Assert.AreEqual(0, resource1.PendingChanges.Count);
@@ -45,12 +45,12 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource1 != null && !resource1.IsPlaceHolder)
+                if (resource1 != null && !((ResourceObject)resource1).IsPlaceHolder)
                 {
                     client.DeleteResource(resource1);
                 }
 
-                if (resource2 != null && !resource2.IsPlaceHolder)
+                if (resource2 != null && !((ResourceObject)resource2).IsPlaceHolder)
                 {
                     client.DeleteResource(resource2);
                 }

@@ -17,7 +17,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             this.client = client;
         }
 
-        public async Task PutAsync(ResourceObject resource, CultureInfo locale)
+        public async Task PutAsync(IResourceObject resource, CultureInfo locale)
         {
             if (resource == null)
             {
@@ -39,7 +39,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             }
         }
 
-        public async Task PutAsync(IEnumerable<ResourceObject> resources)
+        public async Task PutAsync(IEnumerable<IResourceObject> resources)
         {
             if (resources == null)
             {
@@ -101,7 +101,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             }
         }
 
-        public async Task DeleteAsync(IEnumerable<ResourceObject> resources)
+        public async Task DeleteAsync(IEnumerable<IResourceObject> resources)
         {
             if (resources == null)
             {
@@ -136,7 +136,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             }
         }
 
-        public async Task DeleteAsync(ResourceObject resource)
+        public async Task DeleteAsync(IResourceObject resource)
         {
             if (resource == null)
             {
@@ -164,7 +164,7 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
             }
         }
 
-        public async Task<XmlDictionaryReader> GetFullObjectForUpdateAsync(ResourceObject resource)
+        public async Task<XmlDictionaryReader> GetFullObjectForUpdateAsync(IResourceObject resource)
         {
             if (resource == null)
             {

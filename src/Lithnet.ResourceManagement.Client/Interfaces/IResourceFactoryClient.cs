@@ -5,8 +5,8 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 {
     internal interface IResourceFactoryClient
     {
-        Task CreateAsync(IEnumerable<ResourceObject> resources);
+        Task CreateAsync(IEnumerable<IResourceObject> resources);
 
-        Task CreateAsync(ResourceObject resource);
+        Task CreateAsync(IResourceObject resource);
     }
 }

@@ -7,20 +7,20 @@ namespace Lithnet.ResourceManagement.Client.ResourceManagementService
 {
     internal interface IResourceClient
     {
-        Task DeleteAsync(IEnumerable<ResourceObject> resources);
+        Task DeleteAsync(IEnumerable<IResourceObject> resources);
 
         Task DeleteAsync(IEnumerable<UniqueIdentifier> resourceIDs);
 
-        Task DeleteAsync(ResourceObject resource);
+        Task DeleteAsync(IResourceObject resource);
 
         Task DeleteAsync(UniqueIdentifier id);
 
         Task<ResourceObject> GetAsync(UniqueIdentifier id, IEnumerable<string> attributes, CultureInfo locale, bool getPermissions);
 
-        Task<XmlDictionaryReader> GetFullObjectForUpdateAsync(ResourceObject resource);
+        Task<XmlDictionaryReader> GetFullObjectForUpdateAsync(IResourceObject resource);
 
-        Task PutAsync(IEnumerable<ResourceObject> resources);
+        Task PutAsync(IEnumerable<IResourceObject> resources);
 
-        Task PutAsync(ResourceObject resource, CultureInfo locale);
+        Task PutAsync(IResourceObject resource, CultureInfo locale);
     }
 }

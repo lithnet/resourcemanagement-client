@@ -103,7 +103,7 @@ namespace Lithnet.ResourceManagement.Client
         /// Populates the internal result set with the items obtained from the search response
         /// </summary>
         /// <param name="items">The items obtained from the enumeration or pull response</param>
-        private IEnumerable<ResourceObject> EnumerateResultSet(ItemListType items)
+        private IEnumerable<IResourceObject> EnumerateResultSet(ItemListType items)
         {
             if (items != null)
             {
@@ -118,7 +118,7 @@ namespace Lithnet.ResourceManagement.Client
         /// Gets the next page of search results from the Resource Management Service
         /// </summary>
         /// <returns>An enumeration of the ResourceObjects in the page</returns>
-        public async IAsyncEnumerable<ResourceObject> GetNextPageAsync()
+        public async IAsyncEnumerable<IResourceObject> GetNextPageAsync()
         {
             PullResponse r = await this.client.SearchClient.PullAsync(this.context, this.PageSize).ConfigureAwait(false);
             if (r.EndOfSequence != null)

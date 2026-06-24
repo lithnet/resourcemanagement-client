@@ -20,12 +20,12 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// The result set obtained from the Resource Management Service
         /// </summary>
-        private BlockingCollection<ResourceObject> resultSet;
+        private BlockingCollection<IResourceObject> resultSet;
 
         /// <summary>
         /// The internal enumerable that consumes results as they are generated
         /// </summary>
-        private IEnumerable<ResourceObject> consumingEnumerable;
+        private IEnumerable<IResourceObject> consumingEnumerable;
 
         /// <summary>
         /// The cancellation token used to abort the operation
@@ -55,7 +55,7 @@ namespace Lithnet.ResourceManagement.Client
                 throw new ArgumentNullException(nameof(pager));
             }
 
-            this.resultSet = new BlockingCollection<ResourceObject>();
+            this.resultSet = new BlockingCollection<IResourceObject>();
             this.consumingEnumerable = this.resultSet.GetConsumingEnumerable();
 
             if (tokenSource != null)
@@ -80,7 +80,7 @@ namespace Lithnet.ResourceManagement.Client
         {
             while (this.pager.HasMoreItems)
             {
-                await foreach (ResourceObject result in this.pager.GetNextPageAsync())
+                await foreach (IResourceObject result in this.pager.GetNextPageAsync())
                 {
                     this.resultSet.Add(result);
                 }
@@ -93,7 +93,7 @@ namespace Lithnet.ResourceManagement.Client
         /// Gets an enumerator that can iterate over the search results obtained from the Resource Management Service
         /// </summary>
         /// <returns>An enumerator for the search results</returns>
-        public IEnumerator<ResourceObject> GetEnumerator()
+        public IEnumerator<IResourceObject> GetEnumerator()
         {
             return this.consumingEnumerable.GetEnumerator();
         }

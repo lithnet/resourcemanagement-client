@@ -18,7 +18,7 @@ namespace Lithnet.ResourceManagement.Client
         /// <summary>
         /// The result set obtained from the Resource Management Service
         /// </summary>
-        private List<ResourceObject> resultSet;
+        private List<IResourceObject> resultSet;
 
         /// <summary>
         /// Gets the number of results in the search response
@@ -43,7 +43,7 @@ namespace Lithnet.ResourceManagement.Client
             }
 
             this.pager = pager;
-            this.resultSet = new List<ResourceObject>();
+            this.resultSet = new List<IResourceObject>();
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        internal async Task<ResourceObject> GetObjectAtIndexAsync(int index)
+        internal async Task<IResourceObject> GetObjectAtIndexAsync(int index)
         {
             if (index >= this.Count)
             {
@@ -102,7 +102,7 @@ namespace Lithnet.ResourceManagement.Client
         /// Gets an enumerator that can iterate over the search results obtained from the Resource Management Service
         /// </summary>
         /// <returns>An enumerator for the search results</returns>
-        public IEnumerator<ResourceObject> GetEnumerator()
+        public IEnumerator<IResourceObject> GetEnumerator()
         {
             return new SearchResultEnumerator(this);
         }

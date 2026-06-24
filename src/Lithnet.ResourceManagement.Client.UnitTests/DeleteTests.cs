@@ -11,7 +11,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             var client = UnitTestHelper.GetClient(connectionMode);
 
-            client.DeleteResources(new List<ResourceObject>());
+            client.DeleteResources(new List<IResourceObject>());
         }
 
         [TestCaseSource(typeof(ConnectionModeSources))]
@@ -27,7 +27,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             var client = UnitTestHelper.GetClient(connectionMode);
 
-            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource.Save();
 
             client.DeleteResource(resource.ObjectID);
@@ -47,7 +47,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             var client = UnitTestHelper.GetClient(connectionMode);
 
-            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource.Save();
 
             client.DeleteResource(resource.ObjectID.GetGuid());
@@ -67,7 +67,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             var client = UnitTestHelper.GetClient(connectionMode);
 
-            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource.Save();
 
             client.DeleteResource(resource.ObjectID.Value);
@@ -87,7 +87,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             var client = UnitTestHelper.GetClient(connectionMode);
 
-            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource.Save();
 
             client.DeleteResource(resource);
@@ -122,19 +122,19 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             var client = UnitTestHelper.GetClient(connectionMode);
 
-            ResourceObject resource1 = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource1 = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource1.Save();
             resource1 = client.GetResource(resource1.ObjectID);
 
-            ResourceObject resource2 = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource2 = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource2.Save();
             resource2 = client.GetResource(resource2.ObjectID);
 
-            ResourceObject resource3 = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource3 = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource3.Save();
             resource3 = client.GetResource(resource3.ObjectID);
 
-            client.DeleteResources(new List<ResourceObject>() { resource1, resource2, resource3 });
+            client.DeleteResources(new List<IResourceObject>() { resource1, resource2, resource3 });
 
             try
             {
@@ -169,15 +169,15 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             var client = UnitTestHelper.GetClient(connectionMode);
 
-            ResourceObject resource1 = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource1 = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource1.Save();
             resource1 = client.GetResource(resource1.ObjectID);
 
-            ResourceObject resource2 = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource2 = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource2.Save();
             resource2 = client.GetResource(resource2.ObjectID);
 
-            ResourceObject resource3 = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource3 = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource3.Save();
             resource3 = client.GetResource(resource3.ObjectID);
 

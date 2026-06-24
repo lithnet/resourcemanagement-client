@@ -39,10 +39,10 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             string expected = string.Format("/{0}[({1} = /{0}[({2} = '{3}')])]", Constants.UnitTestObjectTypeName, Constants.AttributeReferenceSV, Constants.AttributeStringSV, testValue1);
 
-            ResourceObject filterTargetObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, testValue1);
-            ResourceObject childObject1 = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, filterTargetObject.ObjectID);
-            ResourceObject childObject2 = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, filterTargetObject.ObjectID);
-            ResourceObject childObject3 = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, filterTargetObject.ObjectID);
+            IResourceObject filterTargetObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, testValue1);
+            IResourceObject childObject1 = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, filterTargetObject.ObjectID);
+            IResourceObject childObject2 = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, filterTargetObject.ObjectID);
+            IResourceObject childObject3 = UnitTestHelper.CreateTestResource(Constants.AttributeReferenceSV, filterTargetObject.ObjectID);
 
             try
             {
@@ -63,8 +63,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             string expected = string.Format("/{0}[({1} = '{2}')]/{3}", Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, testValue1, Constants.AttributeReferenceSV);
 
-            ResourceObject parentObject1 = UnitTestHelper.CreateTestResource();
-            ResourceObject filterTargetObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, testValue1, Constants.AttributeReferenceSV, parentObject1);
+            IResourceObject parentObject1 = UnitTestHelper.CreateTestResource();
+            IResourceObject filterTargetObject = UnitTestHelper.CreateTestResource(Constants.AttributeStringSV, testValue1, Constants.AttributeReferenceSV, parentObject1);
 
             try
             {
@@ -76,7 +76,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        private void SubmitXpath(XPathExpression expression, string expectedXpath, ConnectionMode connectionMode, params ResourceObject[] matchResources)
+        private void SubmitXpath(XPathExpression expression, string expectedXpath, ConnectionMode connectionMode, params IResourceObject[] matchResources)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
 

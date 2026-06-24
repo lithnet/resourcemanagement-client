@@ -6,7 +6,7 @@ namespace Lithnet.ResourceManagement.Client
     /// <summary>
     /// Contains a collection of attributes and values
     /// </summary>
-    public class AttributeValueCollection : IEnumerable<AttributeValue>
+    public class AttributeValueCollection : IAttributeValueCollection
     {
         /// <summary>
         /// The internal dictionary of attribute and value pairs

@@ -11,7 +11,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void GetObjectByIDWithAllAttributes(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
 
             try
             {
@@ -23,7 +23,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }
@@ -34,7 +34,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void GetObjectByIDStringWithAllAttributes(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
 
             try
             {
@@ -47,7 +47,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }
@@ -58,7 +58,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void GetObjectByIDGuidWithAllAttributes(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
 
             try
             {
@@ -71,7 +71,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }
@@ -82,7 +82,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void GetObjectByIDWithSelectedAttributes(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             List<string> attributesToGet = new List<string>() { Constants.AttributeBooleanSV, Constants.AttributeStringSV, Constants.AttributeReferenceMV };
 
             try
@@ -96,7 +96,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }
@@ -107,7 +107,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void GetObjectByIDStringWithSelectedAttributes(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             List<string> attributesToGet = new List<string>() { Constants.AttributeBooleanSV, Constants.AttributeStringSV, Constants.AttributeReferenceMV };
 
             try
@@ -121,7 +121,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }
@@ -132,7 +132,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void GetObjectByIDGuidWithSelectedAttributes(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             List<string> attributesToGet = new List<string>() { Constants.AttributeBooleanSV, Constants.AttributeStringSV, Constants.AttributeReferenceMV };
 
             try
@@ -146,7 +146,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }
@@ -157,7 +157,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void GetObjectByKeyWithSelectedAttributes(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             string newID = Guid.NewGuid().ToString();
             List<string> attributesToGet = new List<string>() { AttributeNames.AccountName, Constants.AttributeBooleanSV, Constants.AttributeStringSV, Constants.AttributeReferenceMV };
 
@@ -172,7 +172,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }
@@ -183,7 +183,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void GetObjectByKeyWithAllAttributes(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             string newID = Guid.NewGuid().ToString();
 
             try
@@ -197,7 +197,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }
@@ -208,7 +208,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void GetObjectByMultipleKeysWithSelectedAttributes(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             string newID = Guid.NewGuid().ToString();
             List<string> attributesToGet = new List<string>() { AttributeNames.AccountName, Constants.AttributeBooleanSV, Constants.AttributeStringSV, Constants.AttributeReferenceMV };
 
@@ -227,7 +227,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }
@@ -238,7 +238,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void GetObjectByMultipleKeysWithAllAttributes(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             string newID = Guid.NewGuid().ToString();
             Dictionary<string, object> keys = new Dictionary<string, object>();
             keys.Add(AttributeNames.AccountName, newID);
@@ -254,7 +254,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource != null && !resource.IsPlaceHolder)
+                if (resource != null && !((ResourceObject)resource).IsPlaceHolder)
                 {
                     client.DeleteResource(resource);
                 }
@@ -265,8 +265,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void GetObjectByKeyFailsOnMultipleResults(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject resource1 = client.CreateResource(Constants.UnitTestObjectTypeName);
-            ResourceObject resource2 = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource1 = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource2 = client.CreateResource(Constants.UnitTestObjectTypeName);
             string newID = Guid.NewGuid().ToString();
 
             try
@@ -288,12 +288,12 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (resource1 != null && !resource1.IsPlaceHolder)
+                if (resource1 != null && !((ResourceObject)resource1).IsPlaceHolder)
                 {
                     client.DeleteResource(resource1);
                 }
 
-                if (resource2 != null && !resource2.IsPlaceHolder)
+                if (resource2 != null && !((ResourceObject)resource2).IsPlaceHolder)
                 {
                     client.DeleteResource(resource2);
                 }
@@ -305,7 +305,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             var client = UnitTestHelper.GetClient(connectionMode);
 
-            ResourceObject resource1 = client.GetResourceByKey(Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, Guid.NewGuid().ToString());
+            IResourceObject resource1 = client.GetResourceByKey(Constants.UnitTestObjectTypeName, Constants.AttributeStringSV, Guid.NewGuid().ToString());
             Assert.IsNull(resource1);
         }
     }

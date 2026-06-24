@@ -21,8 +21,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = 2;
             object matchValue = 1;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, nonMatchValue);
 
             try
             {
@@ -42,8 +42,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = 1;
             object matchValue = 2;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, nonMatchValue);
 
             try
             {
@@ -63,8 +63,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = null;
             object matchValue = 1;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, nonMatchValue);
 
             try
             {
@@ -84,8 +84,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = 1;
             object matchValue = null;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, nonMatchValue);
 
             try
             {
@@ -105,8 +105,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = 5;
             object matchValue = 11;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, nonMatchValue);
 
             try
             {
@@ -126,8 +126,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = 5;
             object matchValue = 10;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, nonMatchValue);
 
             try
             {
@@ -147,8 +147,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = 15;
             object matchValue = 9;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, nonMatchValue);
 
             try
             {
@@ -168,8 +168,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = 15;
             object matchValue = 10;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerSV, nonMatchValue);
 
             try
             {
@@ -190,8 +190,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<long> nonMatchValue = new List<long>() { 2, 3 };
             List<long> matchValue = new List<long>() { 1, 4 };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, nonMatchValue);
 
             try
             {
@@ -211,8 +211,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<long> nonMatchValue = new List<long>() { 1, 3 };
             List<long> matchValue = new List<long>() { 3, 4 };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, nonMatchValue);
 
             try
             {
@@ -232,8 +232,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             object nonMatchValue = null;
             List<long> matchValue = new List<long>() { 1, 2 };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, nonMatchValue);
 
             try
             {
@@ -253,8 +253,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<long> nonMatchValue = new List<long>() { 1, 2 };
             object matchValue = null;
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, nonMatchValue);
 
             try
             {
@@ -274,8 +274,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<object> nonMatchValue = new List<object>() { 9, 8 };
             List<object> matchValue = new List<object>() { 9, 11 };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, nonMatchValue);
 
             try
             {
@@ -295,8 +295,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<object> nonMatchValue = new List<object>() { 9, 8 };
             List<object> matchValue = new List<object>() { 9, 10 };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, nonMatchValue);
 
             try
             {
@@ -316,8 +316,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<object> nonMatchValue = new List<object>() { 15, 20 };
             List<object> matchValue = new List<object>() { 9, 20 };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, nonMatchValue);
 
             try
             {
@@ -337,8 +337,8 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             List<object> nonMatchValue = new List<object>() { 15, 20 };
             List<object> matchValue = new List<object>() { 10, 20 };
 
-            ResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, matchValue);
-            ResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, nonMatchValue);
+            IResourceObject matchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, matchValue);
+            IResourceObject nonMatchResource = UnitTestHelper.CreateTestResource(Constants.AttributeIntegerMV, nonMatchValue);
 
             try
             {
@@ -419,7 +419,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             catch { }
         }
 
-        private void SubmitXpath(object value, string expected, AttributeTypeDefinition attribute, ComparisonOperator xpathOp, GroupOperator queryOp, ConnectionMode connectionMode, params ResourceObject[] matchResources)
+        private void SubmitXpath(object value, string expected, AttributeTypeDefinition attribute, ComparisonOperator xpathOp, GroupOperator queryOp, ConnectionMode connectionMode, params IResourceObject[] matchResources)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
 

@@ -136,9 +136,9 @@ namespace Lithnet.ResourceManagement.Client
             {
                 return new UniqueIdentifier((string)value);
             }
-            else if (value is ResourceObject)
+            else if (value is IResourceObject r)
             {
-                return ((ResourceObject)value).ObjectID;
+                return r.ObjectID;
             }
             else
             {

@@ -17,12 +17,12 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             return mapper(connectionMode);
         }
 
-        internal static void PopulateTestUserData(ResourceObject resource)
+        internal static void PopulateTestUserData(IResourceObject resource)
         {
             PopulateTestUserData(resource, null);
         }
 
-        internal static void PopulateTestUserData(ResourceObject resource, string accountName)
+        internal static void PopulateTestUserData(IResourceObject resource, string accountName)
         {
             resource.Attributes[Constants.AttributeStringSV].SetValue(Constants.TestDataString1);
             resource.Attributes[Constants.AttributeStringMV].SetValue(Constants.TestDataString1MV);
@@ -44,7 +44,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        internal static void ValidateTestUserData(ResourceObject resource)
+        internal static void ValidateTestUserData(IResourceObject resource)
         {
             // Validate single-valued attributes
 
@@ -77,7 +77,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        internal static void ValidateTestUserData(ResourceObject resource, List<string> attributesToCheck)
+        internal static void ValidateTestUserData(IResourceObject resource, List<string> attributesToCheck)
         {
             // Validate single-valued attributes
 
@@ -158,25 +158,25 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        internal static ResourceObject CreateTestResource()
+        internal static IResourceObject CreateTestResource()
         {
-            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource.Save();
             return resource;
         }
 
-        internal static ResourceObject CreateTestResource(string attributeName1, object value1, string attributeName2, object value2)
+        internal static IResourceObject CreateTestResource(string attributeName1, object value1, string attributeName2, object value2)
         {
-            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource.Attributes[attributeName1].SetValue(value1);
             resource.Attributes[attributeName2].SetValue(value2);
             resource.Save();
             return resource;
         }
 
-        internal static ResourceObject CreateTestResource(string attributeName1, object value1)
+        internal static IResourceObject CreateTestResource(string attributeName1, object value1)
         {
-            ResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
+            IResourceObject resource = client.CreateResource(Constants.UnitTestObjectTypeName);
             resource.Attributes[attributeName1].SetValue(value1);
             resource.Save();
             return resource;
@@ -187,14 +187,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             client.DeleteResources(client.GetResources("/" + Constants.UnitTestObjectTypeName));
         }
 
-        internal static void CleanupTestResources(params ResourceObject[] resources)
+        internal static void CleanupTestResources(params IResourceObject[] resources)
         {
             if (resources == null)
             {
                 return;
             }
 
-            foreach (ResourceObject resource in resources)
+            foreach (IResourceObject resource in resources)
             {
                 if (resource.ModificationType == OperationType.Update)
                 {
@@ -203,7 +203,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
         }
 
-        public static void ValidateSelectedAttributePresence(ResourceObject resource, List<string> attributes)
+        public static void ValidateSelectedAttributePresence(IResourceObject resource, List<string> attributes)
         {
             foreach (AttributeValue value in resource.Attributes)
             {

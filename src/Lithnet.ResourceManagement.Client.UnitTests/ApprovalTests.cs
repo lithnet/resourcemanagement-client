@@ -44,9 +44,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         {
             var client = UnitTestHelper.GetClient(connectionMode);
 
-            ResourceObject group = null;
-            ResourceObject owner = null;
-            ResourceObject member = null;
+            IResourceObject group = null;
+            IResourceObject owner = null;
+            IResourceObject member = null;
 
             string groupName = Guid.NewGuid().ToString();
 
@@ -108,14 +108,14 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (group?.IsPlaceHolder == false)
+                if (group != null && !((ResourceObject)group).IsPlaceHolder)
                 {
                     client.DeleteResource(group);
                 }
             }
         }
 
-        private void AddTestUserToGroup(ResourceObject group, ResourceObject member, ConnectionMode connectionMode)
+        private void AddTestUserToGroup(IResourceObject group, IResourceObject member, ConnectionMode connectionMode)
         {
             var original = UnitTestHelper.ServiceProvider.GetService<IOptions<ResourceManagementClientOptions>>();
             var options = ResourceManagementClientOptions.Clone(original.Value);
@@ -125,7 +125,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
             var newClient = new ResourceManagementClient(options);
 
-            ResourceObject group2 = newClient.GetResource(group.ObjectID);
+            IResourceObject group2 = newClient.GetResource(group.ObjectID);
             group2.AddValue("ExplicitMember", member);
             group2.Save();
         }
@@ -134,9 +134,9 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public void TestRejectionForCurrentUser(ConnectionMode connectionMode)
         {
             var client = UnitTestHelper.GetClient(connectionMode);
-            ResourceObject group = null;
-            ResourceObject owner = null;
-            ResourceObject member = null;
+            IResourceObject group = null;
+            IResourceObject owner = null;
+            IResourceObject member = null;
 
             string groupName = Guid.NewGuid().ToString();
 
@@ -192,7 +192,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
             }
             finally
             {
-                if (group?.IsPlaceHolder == false)
+                if (group != null && !((ResourceObject)group).IsPlaceHolder)
                 {
                     client.DeleteResource(group);
                 }
