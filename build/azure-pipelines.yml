@@ -48,9 +48,13 @@ variables:
     value: 'D:\build\rmc\proxy'
   # Advanced Installer resolves the project path through its COM automation
   # host, which does not share the agent's working directory, so the .aip must
-  # be passed as an absolute path.
+  # be passed as an absolute path. It must also use backslashes throughout:
+  # Advanced Installer takes the project's base directory from the last
+  # backslash in the path, so a mixed-separator path makes it resolve the
+  # relative source folder of the APPDIR synchronized folder against the wrong
+  # base and the proxy build output is not found.
   - name: setupDir
-    value: '$(Build.SourcesDirectory)/src/Lithnet.ResourceManagement.Proxy.Setup'
+    value: '$(Build.SourcesDirectory)\src\Lithnet.ResourceManagement.Proxy.Setup'
   - name: nupkgDir
     value: '$(Build.ArtifactStagingDirectory)/cp'
   - name: installerDir
@@ -140,7 +144,7 @@ stages:
         # executable from $(proxy.build.outputFolder).
         - template: templates/build-advanced-installer-package.yaml@release_tools
           parameters:
-            aipPath: '$(setupDir)/Lithnet.ResourceManagement.Proxy.Setup.aip'
+            aipPath: '$(setupDir)\Lithnet.ResourceManagement.Proxy.Setup.aip'
             aipPackageName: 'Lithnet.ResourceManagement.Proxy.Setup.msi'
             azureSubscription: '$(azure.subscription)'
             environment: 'prod'
