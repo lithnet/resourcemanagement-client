@@ -95,30 +95,62 @@ stages:
         - task: NuGetAuthenticate@1
           displayName: Authenticate with NuGet
 
-        - task: DotNetCoreCLI@2
-          displayName: Build Resource Management Client
-          inputs:
-            command: build
-            arguments: '-c $(buildConfiguration) -p:Version=$(build.version) -p:GeneratePackageOnBuild=false'
-            projects: 'src/Lithnet.ResourceManagement.Client/Lithnet.ResourceManagement.Client.csproj'
-
+        # The proxy MUST be built first. The client embeds the proxy executable
+        # as a managed resource named Host.exe (see the ProjectReference with
+        # OutputItemType=EmbeddedResource in the client csproj), and extracts and
+        # executes it at runtime for ConnectionMode.LocalProxy. MSBuild embeds
+        # the proxy's build output at client compile time, so the executable has
+        # to exist and be signed before the client is compiled. Signing the
+        # client assembly afterwards signs only its PE headers, not the resource
+        # bytes carried inside it.
         - task: DotNetCoreCLI@2
           displayName: Build Resource Management Proxy
           inputs:
             command: build
-            arguments: '-c $(buildConfiguration) -p:Version=$(build.version) --output "$(proxy.build.outputFolder)"'
+            arguments: '-c $(buildConfiguration) -p:Version=$(build.version)'
             projects: 'src/Lithnet.ResourceManagement.Proxy/Lithnet.ResourceManagement.Proxy.csproj'
 
-        # Sign the client assembly and the proxy executable BEFORE they are
-        # packed or harvested into the installer.
+        # Sign the proxy executable before anything consumes it. Both the bin and
+        # obj copies are signed so that no later copy step can replace a signed
+        # executable with an unsigned intermediate one.
+        - template: templates/codesign.yaml@release_tools
+          parameters:
+            path:
+              - '$(Build.SourcesDirectory)/src/Lithnet.ResourceManagement.Proxy/**/Lithnet.ResourceManagement.Proxy.exe'
+            environment: 'prod'
+            azureSubscription: '$(azure.subscription)'
+            description: 'Lithnet Resource Management Client'
+
+        # BuildProjectReferences=false stops MSBuild rebuilding the proxy as part
+        # of the client build, which would overwrite the signed executable with a
+        # freshly compiled unsigned one. MSBuild instead resolves the proxy's
+        # existing target path and embeds that signed executable as Host.exe.
+        - task: DotNetCoreCLI@2
+          displayName: Build Resource Management Client
+          inputs:
+            command: build
+            arguments: '-c $(buildConfiguration) -p:Version=$(build.version) -p:GeneratePackageOnBuild=false -p:BuildProjectReferences=false'
+            projects: 'src/Lithnet.ResourceManagement.Client/Lithnet.ResourceManagement.Client.csproj'
+
         - template: templates/codesign.yaml@release_tools
           parameters:
             path:
               - '$(Build.SourcesDirectory)/**/Lithnet.ResourceManagement.Client.dll'
-              - '$(proxy.build.outputFolder)/Lithnet.ResourceManagement.Proxy.exe'
             environment: 'prod'
             azureSubscription: '$(azure.subscription)'
             description: 'Lithnet Resource Management Client'
+
+        # Stage the already-signed proxy for the installer to harvest. --no-build
+        # copies the existing signed output rather than recompiling it.
+        - task: DotNetCoreCLI@2
+          displayName: Stage signed proxy for the installer
+          inputs:
+            command: publish
+            arguments: '-c $(buildConfiguration) --no-build --output "$(proxy.build.outputFolder)"'
+            projects: 'src/Lithnet.ResourceManagement.Proxy/Lithnet.ResourceManagement.Proxy.csproj'
+            publishWebProjects: false
+            zipAfterPublish: false
+            modifyOutputPath: false
 
         - task: DotNetCoreCLI@2
           displayName: dotnet pack
