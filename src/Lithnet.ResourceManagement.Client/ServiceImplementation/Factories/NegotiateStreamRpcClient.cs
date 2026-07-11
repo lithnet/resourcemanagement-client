@@ -43,7 +43,7 @@ namespace Lithnet.ResourceManagement.Client
             }
             catch (Exception ex)
             {
-                throw new RmcProxyConnectionException($"Could not connect to the RMC proxy on {host}:{port}. Ensure the Lithnet Resource Management Proxy service has been installed and is running on the host. See https://go.lithnet.io/fwlink/XXXXXX for more information", ex);
+                throw new RmcProxyConnectionException($"Could not connect to the RMC proxy on {host}:{port}. Ensure the Lithnet Resource Management Proxy service has been installed and is running on the host. See https://go.lithnet.io/wlsmt041 for more information", ex);
             }
 
             var stream = this.client.GetStream();
