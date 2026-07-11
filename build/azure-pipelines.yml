@@ -42,6 +42,9 @@ variables:
   - name: azure.subscription
     value: 'ProductionServices'
 
+  - name: tfmProxy
+    value: 'net472'
+
   # The .aip harvests the proxy from this absolute path. Do not change it
   # without also updating the source path in the setup project.
   - name: proxy.build.outputFolder
@@ -141,12 +144,14 @@ stages:
             description: 'Lithnet Resource Management Client'
 
         # Stage the already-signed proxy for the installer to harvest. --no-build
-        # copies the existing signed output rather than recompiling it.
+        # copies the existing signed output rather than recompiling it. The proxy
+        # declares TargetFrameworks (plural), so it counts as a cross-targeting
+        # project and publish requires the framework to be named explicitly.
         - task: DotNetCoreCLI@2
           displayName: Stage signed proxy for the installer
           inputs:
             command: publish
-            arguments: '-c $(buildConfiguration) --no-build --output "$(proxy.build.outputFolder)"'
+            arguments: '-c $(buildConfiguration) -f $(tfmProxy) --no-build --output "$(proxy.build.outputFolder)"'
             projects: 'src/Lithnet.ResourceManagement.Proxy/Lithnet.ResourceManagement.Proxy.csproj'
             publishWebProjects: false
             zipAfterPublish: false
