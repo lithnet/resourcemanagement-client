@@ -259,6 +259,25 @@ stages:
       steps:
         - checkout: self
 
+        # The lab agent is a bare VM with no .NET SDK on the PATH; every
+        # consumer of the self-hosted pools installs its own toolchain
+        # in-pipeline. The SDK builds all four test target frameworks and
+        # runs the net10.0-windows legs; the 8.x runtime is needed to run
+        # the net8.0-windows legs. The .NET Framework legs build against
+        # the Microsoft.NETFramework.ReferenceAssemblies package and run
+        # on the OS-provided .NET Framework runtime.
+        - task: UseDotNet@2
+          displayName: Install .NET SDK
+          inputs:
+            packageType: 'sdk'
+            version: '10.x'
+
+        - task: UseDotNet@2
+          displayName: Install .NET 8 runtime
+          inputs:
+            packageType: 'runtime'
+            version: '8.x'
+
         - task: NuGetAuthenticate@1
           displayName: Authenticate with NuGet
 

@@ -16,6 +16,12 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.9" />
+		<!-- Supplies the .NET Framework reference assemblies for the net472/net48
+		     targets, so they build on machines without the targeting packs
+		     installed (such as the lab test agent). -->
+		<PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3">
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
 		<PackageReference Include="nunit" Version="3.13.3" />
 		<PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
