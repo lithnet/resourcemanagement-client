@@ -76,20 +76,6 @@ Or, when running on .NET Framework, simply provide a hostname and the library wi
 var client = new ResourceManagementClient("mimserver");
 ```
 
-**.NET Framework app.config:**
-
-```xml
-<configuration>
-  <configSections>
-    <section name="lithnetResourceManagementClient"
-             type="Lithnet.ResourceManagement.Client.ClientConfigurationSection, Lithnet.ResourceManagement.Client"/>
-  </configSections>
-
-  <lithnetResourceManagementClient
-    resourceManagementServiceBaseAddress="http://mimserver:5725" />
-</configuration>
-```
-
 ---
 
 ### 2. Direct Net.Tcp (`DirectNetTcp`)

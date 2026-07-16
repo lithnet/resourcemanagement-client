@@ -79,7 +79,6 @@
 
 	<ItemGroup Condition="$(TargetFrameworkIdentifier) == '.NETFramework'">
 		<Reference Include="System.ServiceModel" />
-		<Reference Include="System.Configuration" />
 	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFrameworkIdentifier) != '.NETFramework'">

@@ -48,29 +48,6 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
                     return new ResourceManagementClient(n);
                 });
-                
-#if NETFRAMEWORK
-                services.PostConfigure<ResourceManagementClientOptions>((op) =>
-                {
-                    if (!FrameworkUtilities.IsFramework)
-                    {
-                        return;
-                    }
-
-                    //var op2 = ClientConfigurationSection.GetOptionsFromConfiguration();
-                    //if (op2 != null)
-                    //{
-                    //    op.BaseUri = op2.BaseUri;
-                    //    op.Spn = op2.Spn;
-                    //    op.ConcurrentConnectionLimit = op2.ConcurrentConnectionLimit;
-                    //    op.ConnectTimeoutSeconds = op2.ConnectTimeoutSeconds;
-                    //    op.SendTimeoutSeconds = op2.SendTimeoutSeconds;
-                    //    op.RecieveTimeoutSeconds = op2.RecieveTimeoutSeconds;
-                    //    op.Password = op2.Password;
-                    //    op.Username = op2.Username;
-                    //}
-                });
-#endif
             });
 
             var host = builder.Build();
