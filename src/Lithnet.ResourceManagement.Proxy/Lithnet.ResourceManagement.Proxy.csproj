@@ -9,6 +9,7 @@
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<Nullable>disable</Nullable>
 	    <Prefer32Bit>False</Prefer32Bit>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -25,6 +26,7 @@
 
 	<ItemGroup>
 		<Reference Include="System.Configuration.Install" />
+		<Reference Include="System.DirectoryServices.AccountManagement" />
 		<Reference Include="System.Management" />
 		<Reference Include="System.ServiceModel" />
 		<Reference Include="System.ServiceProcess" />
@@ -32,6 +34,9 @@
 
 	<ItemGroup>
 		<PackageReference Include="StreamJsonRpc" Version="2.25.29" />
+		<PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.275">
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
 	</ItemGroup>
 
 	<ItemGroup>

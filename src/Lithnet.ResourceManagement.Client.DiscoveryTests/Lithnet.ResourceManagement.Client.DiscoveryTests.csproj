@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<IsPackable>false</IsPackable>
+		<Platforms>AnyCPU</Platforms>
+		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+	</PropertyGroup>
+
+	<!--
+		These are pure host-discovery / connection-mode-detection tests. They deliberately do NOT
+		reference the MIM-integration test project or its SetUpFixture, so they run with no MIM
+		service and no schema-admin rights.
+	-->
+	<ItemGroup>
+		<PackageReference Include="nunit" Version="3.13.3" />
+		<PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Lithnet.ResourceManagement.Client\Lithnet.ResourceManagement.Client.csproj" />
+	</ItemGroup>
+
+</Project>

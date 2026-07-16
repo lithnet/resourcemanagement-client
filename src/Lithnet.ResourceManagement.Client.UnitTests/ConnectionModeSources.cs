@@ -7,10 +7,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public IEnumerator GetEnumerator()
         {
             yield return ConnectionMode.LocalProxy;
-            //if (!FrameworkUtilities.IsFramework)
-            {
-                yield return ConnectionMode.RemoteProxy;
-            }
+            yield return ConnectionMode.RemoteProxy;
             yield return ConnectionMode.DirectNetTcp;
 #if NETFRAMEWORK
             yield return ConnectionMode.DirectWsHttp;
@@ -23,10 +20,7 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
         public IEnumerator GetEnumerator()
         {
             yield return ConnectionMode.LocalProxy;
-            if (!FrameworkUtilities.IsFramework)
-            {
-                yield return ConnectionMode.RemoteProxy;
-            }
+            yield return ConnectionMode.RemoteProxy;
 #if NETFRAMEWORK
             yield return ConnectionMode.DirectWsHttp;
 #endif

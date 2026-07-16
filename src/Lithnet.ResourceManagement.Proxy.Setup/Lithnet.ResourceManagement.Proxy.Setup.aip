@@ -10,6 +10,7 @@
     <ROW Property="AI_REQUIRED_DOTNET_VERSION" MultiBuildValue="DefaultBuild:4.6.1" ValueLocId="-"/>
     <ROW Property="ALLUSERS" Value="1"/>
     <ROW Property="ARPCOMMENTS" Value="This installer database contains the logic and data required to install [|ProductName]." ValueLocId="*"/>
+    <ROW Property="INSTALL_SERVICE" Value="1"/>
     <ROW Property="ARPURLINFOABOUT" Value="https://lithnet.io/support"/>
     <ROW Property="MSIFASTINSTALL" MultiBuildValue="DefaultBuild:2"/>
     <ROW Property="Manufacturer" Value="Lithnet"/>
@@ -17,7 +18,7 @@
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="Lithnet Resource Management Client Proxy"/>
     <ROW Property="ProductVersion" Value="2.0.20.0" Options="20"/>
-    <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
+    <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;INSTALL_SERVICE"/>
     <ROW Property="UpgradeCode" Value="{1E533207-CCAC-4716-B8B6-D0A8C652F100}"/>
     <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
     <ROW Property="WindowsType9XDisplay" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
@@ -98,8 +99,16 @@
     <ROW Name="aicustact.dll" SourcePath="&lt;AI_CUSTACTS&gt;aicustact.dll"/>
     <ROW Name="lzmaextractor.dll" SourcePath="&lt;AI_CUSTACTS&gt;lzmaextractor.dll"/>
   </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiCheckBoxComponent">
+    <ROW Property="INSTALL_SERVICE" Value="1"/>
+  </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlComponent">
     <ROW Dialog_="LicenseAgreementDlg" Control="AgreementText" Type="ScrollableText" X="20" Y="60" Width="330" Height="120" Attributes="7" Text="license.rtf" Order="400" TextLocId="Control.Text.LicenseAgreementDlg#AgreementText" MsiKey="LicenseAgreementDlg#AgreementText"/>
+    <ROW Dialog_="VerifyReadyDlg" Control="InstallServiceCheck" Type="CheckBox" X="21" Y="180" Width="330" Height="17" Attributes="3" Property="INSTALL_SERVICE" Text="Install the proxy service (requires the MIM Service on this machine)" Order="450" MsiKey="VerifyReadyDlg#InstallServiceCheck"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiControlConditionComponent">
+    <ROW Dialog_="VerifyReadyDlg" Control_="InstallServiceCheck" Action="Disable" Condition="NOT SERVICE_USERNAME"/>
+    <ROW Dialog_="VerifyReadyDlg" Control_="InstallServiceCheck" Action="Hide" Condition="NOT AI_INSTALL"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlEventComponent">
     <ROW Dialog_="WelcomeDlg" Control_="Next" Event="NewDialog" Argument="LicenseAgreementDlg" Condition="AI_INSTALL" Ordering="1"/>
@@ -151,7 +160,10 @@
     <ROW Action="AI_ResolveKnownFolders" Type="1" Source="aicustact.dll" Target="AI_ResolveKnownFolders"/>
     <ROW Action="AI_SHOW_LOG" Type="65" Source="aicustact.dll" Target="LaunchLogFile" WithoutSeq="true"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
+    <ROW Action="InstallProxyService" Type="3090" Source="Lithnet.ResourceManagement.Proxy.exe" Target="/installservice"/>
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFiles64Folder][Manufacturer]\[ProductName]"/>
+    <ROW Action="SET_INSTALL_SERVICE_OFF" Type="51" Source="INSTALL_SERVICE" Target="0"/>
+    <ROW Action="UninstallProxyService" Type="3090" Source="Lithnet.ResourceManagement.Proxy.exe" Target="/uninstallservice"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
   </COMPONENT>
@@ -178,8 +190,12 @@
     <ROW Action="AI_ExtractLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="1549" Builds="DefaultBuild"/>
     <ROW Action="AI_DeleteRLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="1548" Builds="DefaultBuild"/>
     <ROW Action="AI_DeleteLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="6599" Builds="DefaultBuild"/>
+    <ROW Action="SET_INSTALL_SERVICE_OFF" Condition="NOT SERVICE_USERNAME" Sequence="1398"/>
+    <ROW Action="UninstallProxyService" Condition="( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) AND NOT UPGRADINGPRODUCTCODE )" Sequence="2001"/>
+    <ROW Action="InstallProxyService" Condition="( ( NOT Installed ) OR ( Installed AND REMOVE &lt;&gt; &quot;ALL&quot; AND AI_INSTALL_MODE &lt;&gt; &quot;Remove&quot; ) ) AND ( INSTALL_SERVICE = &quot;1&quot; ) AND SERVICE_USERNAME" Sequence="6401"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
+    <ROW Action="SET_INSTALL_SERVICE_OFF" Condition="NOT SERVICE_USERNAME" Sequence="999"/>
     <ROW Action="AI_PRESERVE_INSTALL_TYPE" Sequence="199"/>
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
     <ROW Action="AI_ResolveKnownFolders" Sequence="53"/>
@@ -202,6 +218,7 @@
     <ROW Signature_="AppSearchSign" Root="2" Key="SYSTEM\CurrentControlSet\Services\FIMService" Name="ObjectName" Type="18"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRegsComponent">
+    <ROW Registry="HostPath" Root="-1" Key="SOFTWARE\Lithnet\Resource Management Client" Name="HostPath" Value="[APPDIR]Lithnet.ResourceManagement.Proxy.exe" Component_="ProductInformation"/>
     <ROW Registry="Manufacturer" Root="-1" Key="Software\[Manufacturer]" Name="\"/>
     <ROW Registry="Path" Root="-1" Key="Software\[Manufacturer]\[ProductName]" Name="Path" Value="[APPDIR]" Component_="ProductInformation"/>
     <ROW Registry="ProductName" Root="-1" Key="Software\[Manufacturer]\[ProductName]" Name="\"/>
@@ -209,10 +226,7 @@
     <ROW Registry="Version" Root="-1" Key="Software\[Manufacturer]\[ProductName]" Name="Version" Value="[ProductVersion]" Component_="ProductInformation"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiServCtrlComponent">
-    <ROW ServiceControl="Lithnet.ResourceManagement.Client.H" Name="Lithnet.ResourceManagement.Proxy.exe" Event="161" Wait="1" Component_="Lithnet.ResourceManagement.Proxy.exe"/>
-  </COMPONENT>
-  <COMPONENT cid="caphyon.advinst.msicomp.MsiServInstComponent">
-    <ROW ServiceInstall="Lithnet.ResourceManagement.Client.H" Name="Lithnet.ResourceManagement.Proxy.exe" DisplayName="Lithnet Resource Management Proxy" ServiceType="16" StartType="2" ErrorControl="32769" Dependencies="FIMService" StartName="[SERVICE_USERNAME]" Password="63998CA4E193D003338085539C428211E4FB5B7A84803F00A496AD071368E4228D0A77D0" Arguments="/service" Component_="Lithnet.ResourceManagement.Proxy.exe" Description="Provides support for .NET Core and non-Windows clients accessing the MIM service"/>
+    <ROW ServiceControl="Lithnet.ResourceManagement.Client.H" Name="LithnetRMCProxy" Event="34" Wait="1" Component_="Lithnet.ResourceManagement.Proxy.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiThemeComponent">
     <ATTRIBUTE name="UsedTheme" value="classic"/>

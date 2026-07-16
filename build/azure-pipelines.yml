@@ -42,6 +42,18 @@ variables:
   - name: azure.subscription
     value: 'ProductionServices'
 
+  # The lab test environment: VMs tagged environment=testEnvironment in
+  # testResourceGroup back the agent pool of the same name. They are
+  # deallocated when idle; the pipeline starts and stops them around the
+  # test stage. devAzureSubscription is the service connection with rights
+  # on that resource group.
+  - name: testEnvironment
+    value: 'UnitTest1'
+  - name: testResourceGroup
+    value: 'rg-ams-testhosts'
+  - name: devAzureSubscription
+    value: 'DevEnvironment'
+
   - name: tfmProxy
     value: 'net472'
 
@@ -210,12 +222,85 @@ stages:
             publishLocation: 'pipeline'
             artifact: installer
 
+# ── Start the lab test VM (deallocated when idle) ────────────────────────
+- stage: start_test_vms
+  displayName: Start lab test VMs
+  dependsOn: build
+  jobs:
+    - template: templates/azure-vm-start.yaml@release_tools
+      parameters:
+        jobName: start_test_vms
+        deployEnvironment: $(testEnvironment)
+        distroType: win
+        resourceGroup: $(testResourceGroup)
+        azureSubscription: $(devAzureSubscription)
+        agentMode: pool
+        targetPoolName: $(testEnvironment)
+
+# ── Test against the lab MIM service (release gate) ──────────────────────
+# Runs the NUnit integration suite and the discovery/SPN unit tests against
+# the lab MIM service. The integration suite multi-targets net472, net48,
+# net8.0-windows, and net10.0-windows, and parameterises every case across
+# the connection modes viable on each runtime (ConnectionModeSources), so a
+# plain dotnet test covers the full runtime x transport matrix - the same
+# thing Visual Studio runs. The variable group supplies the second-user
+# credential the approval tests require - approvals are the most complex
+# flow and must be exercised on every gate.
+- stage: test
+  displayName: Unit tests against lab MIM
+  dependsOn: start_test_vms
+  variables:
+    - group: MIM lab test credentials
+  jobs:
+    - job: nunit_job
+      displayName: Run client test suites
+      pool: UnitTest1
+      timeoutInMinutes: 120
+      steps:
+        - checkout: self
+
+        - task: NuGetAuthenticate@1
+          displayName: Authenticate with NuGet
+
+        - task: DotNetCoreCLI@2
+          displayName: Discovery and SPN unit tests
+          inputs:
+            command: test
+            projects: 'src/Lithnet.ResourceManagement.Client.DiscoveryTests/Lithnet.ResourceManagement.Client.DiscoveryTests.csproj'
+            arguments: '-c $(buildConfiguration)'
+
+        - task: DotNetCoreCLI@2
+          displayName: Integration tests against lab MIM (all target frameworks)
+          condition: succeededOrFailed()
+          inputs:
+            command: test
+            projects: 'src/Lithnet.ResourceManagement.Client.UnitTests/Lithnet.ResourceManagement.Client.UnitTests.csproj'
+            arguments: '-c $(buildConfiguration)'
+          env:
+            UnitTestApprovalUserName: $(LITHNETRMA_TEST_APPROVAL_USER)
+            UnitTestApprovalUserDomain: $(LITHNETRMA_TEST_APPROVAL_DOMAIN)
+            UnitTestApprovalUserPassword: $(LITHNETRMA_TEST_APPROVAL_PASSWORD)
+
+# ── Deallocate the lab test VM ────────────────────────────────────────────
+- stage: stop_test_vms
+  displayName: Stop lab test VMs
+  dependsOn: test
+  condition: always()
+  jobs:
+    - template: templates/azure-vm-stop.yaml@release_tools
+      parameters:
+        jobName: stop_test_vms
+        deployEnvironment: $(testEnvironment)
+        distroType: win
+        resourceGroup: $(testResourceGroup)
+        azureSubscription: $(devAzureSubscription)
+
 # ── Publish to nuget.org and GitHub (requires approval) ──────────────────
 # The GitHub release is sequenced after the nuget.org push, so a failed push
 # can never leave a tagged release with no matching package.
 - stage: publish_prod
   displayName: Publish to nuget.org and GitHub
-  dependsOn: build
+  dependsOn: test
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   jobs:
     - deployment: publish_nuget

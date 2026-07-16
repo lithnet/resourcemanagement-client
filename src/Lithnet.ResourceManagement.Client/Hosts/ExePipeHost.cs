@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
-using Microsoft.Win32;
 
 namespace Lithnet.ResourceManagement.Client
 {
@@ -79,27 +76,19 @@ namespace Lithnet.ResourceManagement.Client
 
         private static string GetOrExtractHost(ResourceManagementClientOptions p)
         {
-            if (!string.IsNullOrWhiteSpace(p.RmcHostExe))
-            {
-                return p.RmcHostExe;
-            }
+            string installedPath = ProxyHostResolver.ResolveInstalledHost(p);
 
-            var installedPath = GetInstalledHostPath();
-            if (!string.IsNullOrWhiteSpace(installedPath))
+            if (installedPath != null)
             {
-                Trace.WriteLine("Found installed host");
                 return installedPath;
             }
 
-            var temp = Path.GetTempPath();
-            var hostFile = Path.Combine(temp, "LithnetRmcProxy", "Lithnet.ResourceManagement.Proxy.exe");
-            if (File.Exists(hostFile))
+            string hostFile = Path.Combine(Path.GetTempPath(), "LithnetRmcProxy", ProxyHostResolver.HostExeName);
+
+            if (File.Exists(hostFile) && GetFileHash(hostFile) == GetEmbeddedBinaryHash())
             {
-                if (GetFileHash(hostFile) == GetEmbeddedBinaryHash())
-                {
-                    Trace.WriteLine("Found existing extracted binary");
-                    return hostFile;
-                }
+                Trace.WriteLine("Found existing extracted binary");
+                return hostFile;
             }
 
             Trace.WriteLine("Extracting embedded binary");
@@ -107,16 +96,6 @@ namespace Lithnet.ResourceManagement.Client
             File.WriteAllBytes(hostFile, GetEmbeddedBinary());
 
             return hostFile;
-        }
-
-        public static string GetInstalledHostPath()
-        {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                return null;
-            }
-
-            return Registry.LocalMachine.GetValue(@"Software\Lithnet\Resource Management Client\HostPath", null) as string;
         }
 
         public static string GetFileHash(string filePath)
@@ -156,84 +135,6 @@ namespace Lithnet.ResourceManagement.Client
             }
 
             return embeddedBinary;
-        }
-        private static string FindHostPath()
-        {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                throw new PlatformNotSupportedException();
-            }
-
-            List<string> probePaths = new List<string>()
-            {
-                RmcConfiguration.FxHostPath,
-                Registry.CurrentUser.GetValue("Software\\Lithnet\\ResourceManagementClient\\FxHostPath", null) as string,
-                Registry.LocalMachine.GetValue("Software\\Lithnet\\ResourceManagementClient\\FxHostPath", null) as string,
-                GetParentPath(Assembly.GetExecutingAssembly()?.Location),
-                GetParentPath(Assembly.GetCallingAssembly()?.Location),
-                GetParentPath(Assembly.GetEntryAssembly()?.Location)
-            };
-
-            foreach (var probePath in probePaths)
-            {
-                if (string.IsNullOrWhiteSpace(probePath))
-                {
-                    continue;
-                }
-
-                Trace.WriteLine($"Looking in probe path {probePath}");
-
-                var result = ProbePath(probePath);
-
-                if (result != null)
-                {
-                    return result;
-                }
-            }
-
-            return null;
-        }
-
-        private static string GetParentPath(string path)
-        {
-            if (string.IsNullOrWhiteSpace(path))
-            {
-                return null;
-            }
-
-            return Path.GetDirectoryName(path);
-        }
-
-        private static string ProbePath(string path)
-        {
-            var expectedPath = Path.Combine(path, "fxhost\\Lithnet.ResourceManagement.Proxy.exe");
-
-            if (File.Exists(expectedPath))
-            {
-                Trace.WriteLine($"Found file at {expectedPath}");
-                return expectedPath;
-            }
-
-            expectedPath = Path.Combine(path, "Lithnet.ResourceManagement.Proxy.exe");
-            if (File.Exists(expectedPath))
-            {
-                Trace.WriteLine($"Found file at {expectedPath}");
-                return expectedPath;
-            }
-
-            Trace.WriteLine($"File was not found at {path}");
-
-            return null;
-        }
-
-        public static bool HasHostExe()
-        {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                throw new PlatformNotSupportedException();
-            }
-
-            return FindHostPath() != null;
         }
     }
 }

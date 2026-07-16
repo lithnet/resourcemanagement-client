@@ -17,3 +17,4 @@ using System.Runtime.InteropServices;
 
 [assembly: Guid("16c52ae4-9734-4452-8085-33d7f7be6305")]
 [assembly: InternalsVisibleTo("Lithnet.ResourceManagement.Client.UnitTests")]
+[assembly: InternalsVisibleTo("Lithnet.ResourceManagement.Client.DiscoveryTests")]
