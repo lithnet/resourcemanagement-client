@@ -1,9 +1,11 @@
 ﻿using System.ServiceModel.Channels;
 using System.Threading.Tasks;
+using StreamJsonRpc;
 
 namespace Lithnet.ResourceManagement.Client
 {
-    internal interface IApprovalService
+    [JsonRpcContract]
+    internal partial interface IApprovalService
     {
         Task<Message> ApproveAsync(string endpoint, Message message);
     }

@@ -1,11 +1,13 @@
 ﻿using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Threading.Tasks;
+using StreamJsonRpc;
 
 namespace Lithnet.ResourceManagement.Client
 {
     [ServiceContract(Namespace = "http://schemas.xmlsoap.org/ws/2004/09/transfer", ConfigurationName = "Resource")]
-    internal interface IResource
+    [JsonRpcContract]
+    internal partial interface IResource
     {
         [OperationContract(Action = "http://schemas.xmlsoap.org/ws/2004/09/transfer/Get", ReplyAction = "http://schemas.xmlsoap.org/ws/2004/09/transfer/GetResponse")]
         [FaultContract(typeof(RepresentationFailures), Action = "http://schemas.xmlsoap.org/ws/2004/09/transfer/fault", Name = "InvalidRepresentation")]

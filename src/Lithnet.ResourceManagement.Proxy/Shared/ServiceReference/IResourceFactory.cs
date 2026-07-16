@@ -1,11 +1,13 @@
 ﻿using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Threading.Tasks;
+using StreamJsonRpc;
 
 namespace Lithnet.ResourceManagement.Client
 {
     [ServiceContract(Namespace = "http://schemas.xmlsoap.org/ws/2004/09/transfer", ConfigurationName = "ResourceFactory")]
-    internal interface IResourceFactory
+    [JsonRpcContract]
+    internal partial interface IResourceFactory
     {
         [OperationContract(Action = "http://schemas.xmlsoap.org/ws/2004/09/transfer/Create", ReplyAction = "http://schemas.xmlsoap.org/ws/2004/09/transfer/CreateResponse")]
         [FaultContract(typeof(DataRequiredFault), Action = "http://schemas.microsoft.com/2006/11/ResourceManagement/fault", Name = "DataRequiredFault", Namespace = "http://schemas.microsoft.com/2006/11/ResourceManagement")]

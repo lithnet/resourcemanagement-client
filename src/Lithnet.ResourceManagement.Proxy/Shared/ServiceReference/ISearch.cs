@@ -1,11 +1,13 @@
 ﻿using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Threading.Tasks;
+using StreamJsonRpc;
 
 namespace Lithnet.ResourceManagement.Client
 {
     [ServiceContract(Namespace = "http://schemas.xmlsoap.org/ws/2004/09/enumeration", ConfigurationName = "Search")]
-    internal interface ISearch
+    [JsonRpcContract]
+    internal partial interface ISearch
     {
         [OperationContract(Action = "http://schemas.xmlsoap.org/ws/2004/09/enumeration/Enumerate", ReplyAction = "http://schemas.xmlsoap.org/ws/2004/09/enumeration/EnumerateResponse")]
         [FaultContract(typeof(CannotProcessFilterFault), Action = "http://schemas.xmlsoap.org/ws/2004/09/enumeration/fault", Name = "CannotProcessFilter")]

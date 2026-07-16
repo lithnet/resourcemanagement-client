@@ -8,6 +8,12 @@
 		<Configurations>Debug;Release</Configurations>
 		<EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
 		<LangVersion>latest</LangVersion>
+		<!-- StreamJsonRpc0008 recommends PolyType [GenerateShape] on the RPC
+		     contracts, which only benefits the Nerdbank.MessagePack formatter.
+		     This codebase uses JsonMessageFormatter / the classic MessagePack
+		     formatter (RpcCore.GetMessageHandler), so the shapes would never be
+		     consumed. -->
+		<NoWarn>$(NoWarn);StreamJsonRpc0008</NoWarn>
 	</PropertyGroup>
 
 	<PropertyGroup>
