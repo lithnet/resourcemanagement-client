@@ -212,7 +212,7 @@ Locations 1 to 5 are explicit configuration. If one of them is set but the file 
 
 **Application control policies (WDAC / AppLocker):**
 
-The embedded copy is extracted to `%TEMP%\LithnetRmcProxy\`, a user-writable path that application control policies routinely block. On a machine with such a policy, install the **Lithnet Resource Management Client Proxy** MSI. The installer places the proxy executable in Program Files, where it can be trusted by publisher or path rule, and writes the `HostPath` registry value so every client on the machine finds and prefers the installed copy automatically.
+The embedded copy is extracted to `%TEMP%\LithnetRmcProxy\`, a user-writable path that application control policies routinely block. On a machine with such a policy, install the **Lithnet Resource Management Client Proxy** MSI (see the [proxy installation guide](https://github.com/lithnet/resourcemanagement-client/wiki/Proxy-installation-guide)). The installer places the proxy executable in Program Files, where it can be trusted by publisher or path rule, and writes the `HostPath` registry value so every client on the machine finds and prefers the installed copy automatically.
 
 ---
 
@@ -240,7 +240,7 @@ This mode connects to the **Lithnet Resource Management Proxy** service, which i
 
 **Server-side setup:**
 
-1. Install the `Lithnet.ResourceManagement.Proxy` MSI on the FIM/MIM server. When the FIM Service is present on the machine, the installer registers a Windows service named `LithnetRMCProxy` running as `NT AUTHORITY\NetworkService` and starts it. It listens on TCP port **5735** by default.
+1. Install the `Lithnet.ResourceManagement.Proxy` MSI on the FIM/MIM server (see the [proxy installation guide](https://github.com/lithnet/resourcemanagement-client/wiki/Proxy-installation-guide) for full details, including silent installation). When the FIM Service is present on the machine, the installer registers a Windows service named `LithnetRMCProxy` running as `NT AUTHORITY\NetworkService` and starts it. It listens on TCP port **5735** by default.
 2. Grant users access by adding them to the **Lithnet RMC Proxy Users** local group, which the installer creates and seeds with the local Administrators group. Only members of this group can connect to the proxy.
 3. (Optional) Configure ports and the authorization group via the registry at `HKLM\SYSTEM\CurrentControlSet\Services\LithnetRMCProxy`:
    - `ProxyPort` (DWORD) -- the TCP port the proxy listens on (default: `5735`).
