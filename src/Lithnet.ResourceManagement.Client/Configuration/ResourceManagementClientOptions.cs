@@ -79,6 +79,7 @@
                 ConnectTimeoutSeconds = original.ConnectTimeoutSeconds,
                 Password = original.Password,
                 RecieveTimeoutSeconds = original.RecieveTimeoutSeconds,
+                RmcHostExe = original.RmcHostExe,
                 SendTimeoutSeconds = original.SendTimeoutSeconds,
                 Spn = original.Spn,
                 Username = original.Username
