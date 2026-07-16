@@ -3,11 +3,13 @@
 # =========================================================================
 # Builds the client library and the proxy service, signs the assemblies and
 # the proxy executable with the Lithnet EV code-signing certificate, packs
-# and signs the NuGet package, builds and signs the MSI installer with
-# Advanced Installer, and publishes to the internal Azure Artifacts feed.
+# and signs the NuGet package, and builds and signs the MSI installer with
+# Advanced Installer.
 #
-# After approval, the package is pushed to nuget.org and a GitHub release is
-# created with the installer and package attached.
+# Publishing is gated on the lab test stage: the internal Azure Artifacts
+# feed only ever receives packages that have passed the full test suite.
+# After approval, the tested package is pushed to nuget.org and a GitHub
+# release is created with the installer and package attached.
 #
 # Signing note:
 #   The proxy is a Windows service executable that embeds all of its
@@ -77,9 +79,10 @@ variables:
 
 name: $(build.version.major).$(build.version.minor).$(build.version.revision)
 
-# Every push to master builds, signs, and publishes to the internal feed. The
-# public nuget.org and GitHub publish stage remains gated by its environment
-# approval. Documentation-only changes don't burn a version.
+# Every push to master builds, signs, tests, and publishes to the internal
+# feed once the test gate passes. The public nuget.org and GitHub publish
+# stage remains gated by its environment approval. Documentation-only changes
+# don't burn a version.
 trigger:
   branches:
     include:
@@ -200,14 +203,6 @@ stages:
             outputFolder: '$(installerDir)'
             sign: true
 
-        # Publish to the internal Azure Artifacts feed.
-        - template: templates/publish-nuget.yaml@release_tools
-          parameters:
-            nugetPackagePath: '$(nupkgDir)/*.nupkg'
-            symbolPackagePath: '$(nupkgDir)/*.snupkg'
-            publishInternal: true
-            publishExternal: false
-
         - task: PublishPipelineArtifact@1
           displayName: Publish nuget artifact
           inputs:
@@ -236,6 +231,9 @@ stages:
         azureSubscription: $(devAzureSubscription)
         agentMode: pool
         targetPoolName: $(testEnvironment)
+        # A cold start from deallocated regularly exceeds the template's
+        # 300-second default before the agent registers.
+        timeoutSeconds: 900
 
 # ── Test against the lab MIM service (release gate) ──────────────────────
 # Runs the NUnit integration suite and the discovery/SPN unit tests against
@@ -295,12 +293,38 @@ stages:
         resourceGroup: $(testResourceGroup)
         azureSubscription: $(devAzureSubscription)
 
+# ── Publish the tested package to the internal feed ──────────────────────
+# Runs only after the test gate passes, so the internal feed never holds an
+# untested package. Consuming pipelines (including the PowerShell module)
+# restore the client from this feed.
+- stage: publish_internal
+  displayName: Publish to internal feed
+  dependsOn: test
+  condition: succeeded()
+  jobs:
+    - job: publish_internal_job
+      displayName: Publish package to internal feed
+      steps:
+        - checkout: none
+
+        - download: current
+          artifact: cp
+
+        - template: templates/publish-nuget.yaml@release_tools
+          parameters:
+            nugetPackagePath: '$(Pipeline.Workspace)/cp/*.nupkg'
+            symbolPackagePath: '$(Pipeline.Workspace)/cp/*.snupkg'
+            publishInternal: true
+            publishExternal: false
+
 # ── Publish to nuget.org and GitHub (requires approval) ──────────────────
-# The GitHub release is sequenced after the nuget.org push, so a failed push
-# can never leave a tagged release with no matching package.
+# Sequenced after the internal publish so the public feeds can never carry a
+# package the internal feed does not. The GitHub release is sequenced after
+# the nuget.org push, so a failed push can never leave a tagged release with
+# no matching package.
 - stage: publish_prod
   displayName: Publish to nuget.org and GitHub
-  dependsOn: test
+  dependsOn: publish_internal
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   jobs:
     - deployment: publish_nuget
