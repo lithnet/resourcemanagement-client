@@ -71,7 +71,7 @@ namespace Lithnet.ResourceManagement.Client
 
             stream.WriteByte(RpcCore.Ack);
 
-            var spn = this.parameters.Spn ?? $"FIMService/{host}";
+            var spn = GetAuthenticationSpn(this.parameters.Spn, host);
 
             NetworkCredential credentials;
 
@@ -88,7 +88,19 @@ namespace Lithnet.ResourceManagement.Client
 
             Trace.WriteLine($"Attempting to connect to remote proxy {host}:{port}:{spn}");
 
-            var protectedStream = await RpcCore.GetClientNegotiateStreamAsync(stream, credentials, spn, impersonationLevel);
+            Stream protectedStream;
+
+            try
+            {
+                protectedStream = await RpcCore.GetClientNegotiateStreamAsync(stream, credentials, spn, impersonationLevel);
+            }
+            catch (System.Security.Authentication.AuthenticationException ex)
+            {
+                throw new RmcProxyConnectionException(
+                    $"Authentication with the RMC proxy on {host}:{port} failed using the service principal name '{spn}'. " +
+                    "The SPN must match the account the proxy service runs as. The default targets the host computer account, which is correct when the proxy service runs as a machine identity such as Network Service. " +
+                    $"If the proxy service runs as a custom account, set the Spn option to an SPN held by that account (for example 'FIMService/{host}' when it runs as the MIM service account), or upgrade the proxy service installation.", ex);
+            }
 
             protectedStream.WriteByte(RpcCore.MessageClientPostAuthInitialization);
 
@@ -107,6 +119,22 @@ namespace Lithnet.ResourceManagement.Client
             }
 
             return protectedStream;
+        }
+
+        /// <summary>
+        /// Gets the service principal name to authenticate the proxy connection with. The default
+        /// targets the host computer account (host/), because the proxy service runs under a
+        /// machine identity (Network Service). A caller-supplied SPN always wins, for deployments
+        /// where the service runs as a custom account.
+        /// </summary>
+        internal static string GetAuthenticationSpn(string configuredSpn, string host)
+        {
+            if (!string.IsNullOrWhiteSpace(configuredSpn))
+            {
+                return configuredSpn;
+            }
+
+            return $"host/{host}";
         }
 
         private static void ValidateNegotiateStreamSupport()

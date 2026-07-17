@@ -31,8 +31,10 @@ When `ConnectionMode` is set to `Auto` (the default), the library inspects the `
 
 2. **Runtime detection** (when the scheme is `http://` or unspecified):
    - If running on **.NET Framework**, `DirectWsHttp` is used.
-   - If running on **.NET Core on Windows** and the embedded proxy host executable is available, `LocalProxy` is used.
+   - If running on **.NET Core on Windows**, `LocalProxy` is used. The proxy host executable is always available: an installed copy is preferred, and the embedded copy is extracted otherwise.
    - Otherwise, `RemoteProxy` is used as a fallback.
+
+Under `Auto`, the candidate modes form a fallback chain: if the first mode fails to connect, the library tries the next one. If every mode fails, the resulting `AggregateException` contains the failure from each mode that was attempted. When you set `ConnectionMode` to a specific value there is no fallback, and a connection failure surfaces directly.
 
 You can override automatic selection by setting the `ConnectionMode` property on `ResourceManagementClientOptions` to a specific value.
 
@@ -72,20 +74,6 @@ Or, when running on .NET Framework, simply provide a hostname and the library wi
 
 ```csharp
 var client = new ResourceManagementClient("mimserver");
-```
-
-**.NET Framework app.config:**
-
-```xml
-<configuration>
-  <configSections>
-    <section name="lithnetResourceManagementClient"
-             type="Lithnet.ResourceManagement.Client.ClientConfigurationSection, Lithnet.ResourceManagement.Client"/>
-  </configSections>
-
-  <lithnetResourceManagementClient
-    resourceManagementServiceBaseAddress="http://mimserver:5725" />
-</configuration>
 ```
 
 ---
@@ -200,10 +188,17 @@ var options = new ResourceManagementClientOptions
 The library also checks the following locations for the proxy executable, in order:
 1. The `RmcHostExe` property on `ResourceManagementClientOptions`.
 2. The `RmcConfiguration.FxHostPath` static property.
-3. The Windows registry key `HKCU\Software\Lithnet\ResourceManagementClient\FxHostPath`.
-4. The Windows registry key `HKLM\Software\Lithnet\ResourceManagementClient\FxHostPath`.
-5. The directory of the executing, calling, and entry assemblies (looking for `fxhost\Lithnet.ResourceManagement.Proxy.exe` or `Lithnet.ResourceManagement.Proxy.exe`).
-6. The embedded resource, extracted to the `%TEMP%\LithnetRmcProxy\` directory.
+3. The Windows registry value `HKCU\Software\Lithnet\ResourceManagementClient\FxHostPath`.
+4. The Windows registry value `HKLM\Software\Lithnet\ResourceManagementClient\FxHostPath`.
+5. The Windows registry value `HKLM\SOFTWARE\Lithnet\Resource Management Client\HostPath`, written by the Lithnet Resource Management Client Proxy installer.
+6. The directory of the executing, calling, and entry assemblies (looking for `fxhost\Lithnet.ResourceManagement.Proxy.exe` or `Lithnet.ResourceManagement.Proxy.exe`).
+7. The embedded resource, extracted to the `%TEMP%\LithnetRmcProxy\` directory.
+
+Locations 1 to 5 are explicit configuration. If one of them is set but the file it names does not exist, the library throws a `FileNotFoundException` naming the configuration source rather than silently falling back to the embedded copy, because a stale path means a broken install that should be repaired.
+
+**Application control policies (WDAC / AppLocker):**
+
+The embedded copy is extracted to `%TEMP%\LithnetRmcProxy\`, a user-writable path that application control policies routinely block. On a machine with such a policy, install the **Lithnet Resource Management Client Proxy** MSI (see the [proxy installation guide](https://github.com/lithnet/resourcemanagement-client/wiki/Proxy-installation-guide)). The installer places the proxy executable in Program Files, where it can be trusted by publisher or path rule, and writes the `HostPath` registry value so every client on the machine finds and prefers the installed copy automatically.
 
 ---
 
@@ -231,12 +226,14 @@ This mode connects to the **Lithnet Resource Management Proxy** service, which i
 
 **Server-side setup:**
 
-1. Install the `Lithnet.ResourceManagement.Proxy` service on the FIM/MIM server. The installer registers a Windows service named `LithnetRMCProxy`.
-2. Start the service. It listens on TCP port **5735** by default.
-3. (Optional) Configure the authorized users group and ports via the registry at `HKLM\SYSTEM\CurrentControlSet\Services\LithnetRMCProxy`:
+1. Install the `Lithnet.ResourceManagement.Proxy` MSI on the FIM/MIM server (see the [proxy installation guide](https://github.com/lithnet/resourcemanagement-client/wiki/Proxy-installation-guide) for full details, including silent installation). When the FIM Service is present on the machine, the installer registers a Windows service named `LithnetRMCProxy` running as `NT AUTHORITY\NetworkService` and starts it. It listens on TCP port **5735** by default.
+2. Grant users access by adding them to the **Lithnet RMC Proxy Users** local group, which the installer creates and seeds with the local Administrators group. Only members of this group can connect to the proxy.
+3. (Optional) Configure ports and the authorization group via the registry at `HKLM\SYSTEM\CurrentControlSet\Services\LithnetRMCProxy`:
    - `ProxyPort` (DWORD) -- the TCP port the proxy listens on (default: `5735`).
    - `ResourceManagementServicePort` (DWORD) -- the port of the local FIM Service (default: `5725`).
-   - `AuthorizedUsers` (String) -- the SID of a group whose members are authorized to connect (default: the built-in Administrators group).
+   - `AuthorizedUsers` (String) -- the SID of a single group whose members are authorized to connect. The installer sets this to the Lithnet RMC Proxy Users group; if the value is missing or invalid, the proxy falls back to the built-in Administrators group. The value must be a group SID -- a user's own SID never matches the membership check.
+
+   The service reads these values at startup, so restart it after making changes.
 
 **Configuration:**
 
@@ -265,7 +262,7 @@ The remote proxy uses `NegotiateStream` for mutual authentication. The client au
 - The current Windows identity (default), or
 - Explicit credentials provided via the `Username` and `Password` properties.
 
-The SPN used for authentication defaults to `FIMService/{hostname}` and can be overridden with the `Spn` property.
+In this mode the SPN authenticates the **proxy service**, not the MIM Service, so the default differs from every other connection mode: it is `host/{hostname}`, which targets the host's computer account and matches the proxy service's default identity of `NT AUTHORITY\NetworkService`. If the proxy service runs as a custom account, set the `Spn` property to an SPN held by that account (for example `FIMService/{hostname}` when it runs as the MIM service account). All other connection modes authenticate the MIM Service itself and keep the `FIMService/{hostname}` default.
 
 ```csharp
 var client = new ResourceManagementClient(new ResourceManagementClientOptions
@@ -327,7 +324,7 @@ Is your application running on .NET Framework?
 | `ConnectionMode` | `ConnectionMode` | `Auto` | The connection mode to use. Set to a specific value to override automatic detection. |
 | `Username` | `string` | `null` | The username to authenticate with. Leave blank to use the current Windows identity. |
 | `Password` | `string` | `null` | The password for the specified username. |
-| `Spn` | `string` | `null` | The service principal name. Defaults to `FIMService/{hostname}` if not specified. |
+| `Spn` | `string` | `null` | The service principal name of the service being authenticated. Defaults to `FIMService/{hostname}` (the MIM Service) for `DirectWsHttp`, `DirectNetTcp`, and `LocalProxy`. For `RemoteProxy` only, the SPN authenticates the proxy service and defaults to `host/{hostname}`. |
 | `ConcurrentConnectionLimit` | `int` | `10000` | The maximum number of concurrent connections to the MIM Service. |
 | `ConnectTimeoutSeconds` | `int` | `30` | The maximum time in seconds to wait for a connection to be established. |
 | `RecieveTimeoutSeconds` | `int` | `1200` | The maximum time in seconds to wait for incoming data. |
@@ -361,7 +358,7 @@ The Net.Tcp connection mode does not support the approval endpoint. Switch to `D
 Ensure the Lithnet Resource Management Proxy service is installed and running on the target server, and that TCP port **5735** (or your configured port) is accessible from the client machine.
 
 ### `UnauthorizedAccessException: Access to the RMC proxy was denied`
-The connecting user must be a member of the authorized proxy users group on the proxy server. By default, this is the local `Administrators` group. The authorized group can be changed via the `AuthorizedUsers` registry value under `HKLM\SYSTEM\CurrentControlSet\Services\LithnetRMCProxy`.
+The connecting user must be a member of the authorized proxy users group on the proxy server -- by default the **Lithnet RMC Proxy Users** local group created by the installer. Add the user to that group. The proxy logs each denied connection to the Application event log on the proxy server (source `LithnetResourceManagementClientFxHost`), naming the group it enforced and the identity it authenticated. The authorization group can be changed via the `AuthorizedUsers` registry value under `HKLM\SYSTEM\CurrentControlSet\Services\LithnetRMCProxy` (a single group SID); restart the service after changing it.
 
 ### The local proxy executable cannot be found
 The library looks for `Lithnet.ResourceManagement.Proxy.exe` in several locations. You can set the path explicitly via the `RmcHostExe` option, or set the `RmcConfiguration.FxHostPath` static property before creating the client. The library will also attempt to extract an embedded copy to `%TEMP%\LithnetRmcProxy\`.

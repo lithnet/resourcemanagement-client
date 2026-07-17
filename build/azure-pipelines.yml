@@ -3,11 +3,13 @@
 # =========================================================================
 # Builds the client library and the proxy service, signs the assemblies and
 # the proxy executable with the Lithnet EV code-signing certificate, packs
-# and signs the NuGet package, builds and signs the MSI installer with
-# Advanced Installer, and publishes to the internal Azure Artifacts feed.
+# and signs the NuGet package, and builds and signs the MSI installer with
+# Advanced Installer.
 #
-# After approval, the package is pushed to nuget.org and a GitHub release is
-# created with the installer and package attached.
+# Publishing is gated on the lab test stage: the internal Azure Artifacts
+# feed only ever receives packages that have passed the full test suite.
+# After approval, the tested package is pushed to nuget.org and a GitHub
+# release is created with the installer and package attached.
 #
 # Signing note:
 #   The proxy is a Windows service executable that embeds all of its
@@ -42,6 +44,18 @@ variables:
   - name: azure.subscription
     value: 'ProductionServices'
 
+  # The lab test environment: VMs tagged environment=testEnvironment in
+  # testResourceGroup back the agent pool of the same name. They are
+  # deallocated when idle; the pipeline starts and stops them around the
+  # test stage. devAzureSubscription is the service connection with rights
+  # on that resource group.
+  - name: testEnvironment
+    value: 'UnitTest1'
+  - name: testResourceGroup
+    value: 'rg-ams-testhosts'
+  - name: devAzureSubscription
+    value: 'DevEnvironment'
+
   - name: tfmProxy
     value: 'net472'
 
@@ -65,9 +79,10 @@ variables:
 
 name: $(build.version.major).$(build.version.minor).$(build.version.revision)
 
-# Every push to master builds, signs, and publishes to the internal feed. The
-# public nuget.org and GitHub publish stage remains gated by its environment
-# approval. Documentation-only changes don't burn a version.
+# Every push to master builds, signs, tests, and publishes to the internal
+# feed once the test gate passes. The public nuget.org and GitHub publish
+# stage remains gated by its environment approval. Documentation-only changes
+# don't burn a version.
 trigger:
   branches:
     include:
@@ -188,14 +203,6 @@ stages:
             outputFolder: '$(installerDir)'
             sign: true
 
-        # Publish to the internal Azure Artifacts feed.
-        - template: templates/publish-nuget.yaml@release_tools
-          parameters:
-            nugetPackagePath: '$(nupkgDir)/*.nupkg'
-            symbolPackagePath: '$(nupkgDir)/*.snupkg'
-            publishInternal: true
-            publishExternal: false
-
         - task: PublishPipelineArtifact@1
           displayName: Publish nuget artifact
           inputs:
@@ -210,12 +217,130 @@ stages:
             publishLocation: 'pipeline'
             artifact: installer
 
+# ── Start the lab test VM (deallocated when idle) ────────────────────────
+- stage: start_test_vms
+  displayName: Start lab test VMs
+  dependsOn: build
+  jobs:
+    - template: templates/azure-vm-start.yaml@release_tools
+      parameters:
+        jobName: start_test_vms
+        deployEnvironment: $(testEnvironment)
+        distroType: win
+        resourceGroup: $(testResourceGroup)
+        azureSubscription: $(devAzureSubscription)
+        agentMode: pool
+        targetPoolName: $(testEnvironment)
+
+# ── Test against the lab MIM service (release gate) ──────────────────────
+# Runs the NUnit integration suite and the discovery/SPN unit tests against
+# the lab MIM service. The integration suite multi-targets net472, net48,
+# net8.0-windows, and net10.0-windows, and parameterises every case across
+# the connection modes viable on each runtime (ConnectionModeSources), so a
+# plain dotnet test covers the full runtime x transport matrix - the same
+# thing Visual Studio runs. The variable group supplies the second-user
+# credential the approval tests require - approvals are the most complex
+# flow and must be exercised on every gate.
+- stage: test
+  displayName: Unit tests against lab MIM
+  dependsOn: start_test_vms
+  variables:
+    - group: MIM lab test credentials
+  jobs:
+    - job: nunit_job
+      displayName: Run client test suites
+      pool: UnitTest1
+      timeoutInMinutes: 120
+      steps:
+        - checkout: self
+
+        # The lab agent is a bare VM with no .NET SDK on the PATH; every
+        # consumer of the self-hosted pools installs its own toolchain
+        # in-pipeline. The SDK builds all four test target frameworks and
+        # runs the net10.0-windows legs; the 8.x runtime is needed to run
+        # the net8.0-windows legs. The .NET Framework legs build against
+        # the Microsoft.NETFramework.ReferenceAssemblies package and run
+        # on the OS-provided .NET Framework runtime.
+        - task: UseDotNet@2
+          displayName: Install .NET SDK
+          inputs:
+            packageType: 'sdk'
+            version: '10.x'
+
+        - task: UseDotNet@2
+          displayName: Install .NET 8 runtime
+          inputs:
+            packageType: 'runtime'
+            version: '8.x'
+
+        - task: NuGetAuthenticate@1
+          displayName: Authenticate with NuGet
+
+        - task: DotNetCoreCLI@2
+          displayName: Discovery and SPN unit tests
+          inputs:
+            command: test
+            projects: 'src/Lithnet.ResourceManagement.Client.DiscoveryTests/Lithnet.ResourceManagement.Client.DiscoveryTests.csproj'
+            arguments: '-c $(buildConfiguration)'
+
+        - task: DotNetCoreCLI@2
+          displayName: Integration tests against lab MIM (all target frameworks)
+          condition: succeededOrFailed()
+          inputs:
+            command: test
+            projects: 'src/Lithnet.ResourceManagement.Client.UnitTests/Lithnet.ResourceManagement.Client.UnitTests.csproj'
+            arguments: '-c $(buildConfiguration)'
+          env:
+            UnitTestApprovalUserName: $(LITHNETRMA_TEST_APPROVAL_USER)
+            UnitTestApprovalUserDomain: $(LITHNETRMA_TEST_APPROVAL_DOMAIN)
+            UnitTestApprovalUserPassword: $(LITHNETRMA_TEST_APPROVAL_PASSWORD)
+
+# ── Deallocate the lab test VM ────────────────────────────────────────────
+- stage: stop_test_vms
+  displayName: Stop lab test VMs
+  dependsOn: test
+  condition: always()
+  jobs:
+    - template: templates/azure-vm-stop.yaml@release_tools
+      parameters:
+        jobName: stop_test_vms
+        deployEnvironment: $(testEnvironment)
+        distroType: win
+        resourceGroup: $(testResourceGroup)
+        azureSubscription: $(devAzureSubscription)
+
+# ── Publish the tested package to the internal feed ──────────────────────
+# Runs only after the test gate passes, so the internal feed never holds an
+# untested package. Consuming pipelines (including the PowerShell module)
+# restore the client from this feed.
+- stage: publish_internal
+  displayName: Publish to internal feed
+  dependsOn: test
+  condition: succeeded()
+  jobs:
+    - job: publish_internal_job
+      displayName: Publish package to internal feed
+      steps:
+        - checkout: none
+
+        - download: current
+          artifact: cp
+
+        - template: templates/publish-nuget.yaml@release_tools
+          parameters:
+            nugetPackagePath: '$(Pipeline.Workspace)/cp/*.nupkg'
+            symbolPackagePath: '$(Pipeline.Workspace)/cp/*.snupkg'
+            publishInternal: true
+            publishExternal: false
+
 # ── Publish to nuget.org and GitHub (requires approval) ──────────────────
-# The GitHub release is sequenced after the nuget.org push, so a failed push
-# can never leave a tagged release with no matching package.
+# Sequenced after the internal publish so the public feeds can never carry a
+# package the internal feed does not. The GitHub release is sequenced after
+# the nuget.org push, so a failed push can never leave a tagged release with
+# no matching package.
 - stage: publish_prod
   displayName: Publish to nuget.org and GitHub
-  dependsOn: build
+  dependsOn: publish_internal
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   jobs:
     - deployment: publish_nuget

@@ -2,13 +2,23 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net472</TargetFrameworks>
-		<LangVersion>9</LangVersion>
+		<!-- The StreamJsonRpc proxy source generator emits code that requires a
+		     current language version; the language version is independent of the
+		     target framework. -->
+		<LangVersion>latest</LangVersion>
 		<OutputType>Exe</OutputType>
 		<RestoreProjectStyle>PackageReference</RestoreProjectStyle>
 		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<Nullable>disable</Nullable>
 	    <Prefer32Bit>False</Prefer32Bit>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<!-- StreamJsonRpc0008 recommends PolyType [GenerateShape] on the RPC
+		     contracts, which only benefits the Nerdbank.MessagePack formatter.
+		     This codebase uses JsonMessageFormatter / the classic MessagePack
+		     formatter (RpcCore.GetMessageHandler), so the shapes would never be
+		     consumed. -->
+		<NoWarn>$(NoWarn);StreamJsonRpc0008</NoWarn>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -25,6 +35,7 @@
 
 	<ItemGroup>
 		<Reference Include="System.Configuration.Install" />
+		<Reference Include="System.DirectoryServices.AccountManagement" />
 		<Reference Include="System.Management" />
 		<Reference Include="System.ServiceModel" />
 		<Reference Include="System.ServiceProcess" />
@@ -32,6 +43,9 @@
 
 	<ItemGroup>
 		<PackageReference Include="StreamJsonRpc" Version="2.25.29" />
+		<PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.275">
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
 	</ItemGroup>
 
 	<ItemGroup>

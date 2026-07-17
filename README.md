@@ -6,7 +6,7 @@ The Lithnet FIM/MIM Service .NET client library is a nuget package that develope
 
 ## Installation
 You can install this package directly from [NuGet](https://www.nuget.org/packages/Lithnet.ResourceManagement.Client/)
-See the [config file guide](https://github.com/lithnet/resourcemanagement-client/wiki/configuration-file-reference) for instructions on how to configure your web/app.config file
+See the [connection guide](https://github.com/lithnet/resourcemanagement-client/wiki/Connection-guide) for the connection modes, platform support, and configuration options
 
 ## Getting started
 Read the getting started [quick guide](https://github.com/lithnet/resourcemanagement-client/wiki/getting-started) or review the [API documentation](https://lithnet.github.io/documentation/rmc)

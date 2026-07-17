@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
@@ -44,48 +44,86 @@ namespace Lithnet.ResourceManagement.Client
 
         private static async Task<IClient> CreateClientAsync(string id, ResourceManagementClientOptions p)
         {
-            IClient client;
-
 #if NETFRAMEWORK
             Trace.WriteLine("Initializing native .NET framework factory (netfx)");
-            client = new WsHttpClient(p);
-#else
-            client = GetClient(p);
-#endif
+            IClient client = new WsHttpClient(p);
             await client.InitializeClientsAsync().ConfigureAwait(false);
 
             Trace.WriteLine($"Created new client of type {client.GetType().Name} with ID {id}");
             return client;
+#else
+            // DetectConnectionModes yields an ordered candidate list. When the caller named an
+            // explicit connection mode it yields exactly that one mode, so the original exception
+            // surfaces directly with no fallback, exactly as it did before the fallback chain
+            // existed. Fallback across modes exists only under Auto, and every attempt's exception
+            // is retained so an early failure (for example an application control policy blocking
+            // the local proxy host) is never masked by a later mode's connection error.
+            List<Exception> originalFailures = new List<Exception>();
+            List<Exception> describedFailures = new List<Exception>();
+
+            foreach (ConnectionMode mode in DetectConnectionModes(p))
+            {
+                IClient client = null;
+
+                try
+                {
+                    client = CreateClientForMode(mode, p);
+                    await client.InitializeClientsAsync().ConfigureAwait(false);
+
+                    Trace.WriteLine($"Created new client of type {client.GetType().Name} using {mode} with ID {id}");
+                    return client;
+                }
+                catch (Exception ex)
+                {
+                    Trace.WriteLine($"Connection mode {mode} failed: {ex}");
+                    originalFailures.Add(ex);
+                    describedFailures.Add(new ResourceManagementException($"Connection mode {mode} failed: {ex.Message}", ex));
+
+                    if (client != null)
+                    {
+                        client.Dispose();
+                    }
+                }
+            }
+
+            if (originalFailures.Count == 1)
+            {
+                ExceptionDispatchInfo.Capture(originalFailures[0]).Throw();
+            }
+
+            throw new AggregateException(
+                "Unable to connect to the Resource Management Service using any available connection mode. See the inner exceptions for the failure from each mode that was attempted.",
+                describedFailures);
+#endif
         }
 
 #if !NETFRAMEWORK
-        private static IClient GetClient(ResourceManagementClientOptions p)
+        private static IClient CreateClientForMode(ConnectionMode mode, ResourceManagementClientOptions p)
         {
-            var connectionModes = DetectConnectionModes(p).ToList();
-
-            if (connectionModes.Contains(ConnectionMode.DirectWsHttp))
+            switch (mode)
             {
-                Trace.WriteLine("Using direct wshttp mode");
-                return new WsHttpClient(p);
-            }
+                case ConnectionMode.DirectWsHttp:
+                    Trace.WriteLine("Attempting direct wshttp mode");
+                    return new WsHttpClient(p);
 
-            if (connectionModes.Contains(ConnectionMode.DirectNetTcp))
-            {
-                Trace.WriteLine("Using direct nettcp mode");
-                return new NetTcpClient(p);
-            }
+                case ConnectionMode.DirectNetTcp:
+                    Trace.WriteLine("Attempting direct nettcp mode");
+                    return new NetTcpClient(p);
 
-            if (connectionModes.Contains(ConnectionMode.LocalProxy))
-            {
-                Trace.WriteLine("Using local proxy");
-                return new PipeRpcClient(p);
-            }
+                case ConnectionMode.LocalProxy:
+                    Trace.WriteLine("Attempting local proxy mode");
+                    return new PipeRpcClient(p);
 
-            Trace.WriteLine("Using remote proxy");
-            return new NegotiateStreamRpcClient(p);
+                case ConnectionMode.RemoteProxy:
+                    Trace.WriteLine("Attempting remote proxy mode");
+                    return new NegotiateStreamRpcClient(p);
+
+                default:
+                    throw new InvalidOperationException($"Unknown connection mode {mode}");
+            }
         }
 
-        private static IEnumerable<ConnectionMode> DetectConnectionModes(ResourceManagementClientOptions p)
+        internal static IEnumerable<ConnectionMode> DetectConnectionModes(ResourceManagementClientOptions p)
         {
             if (p.ConnectionMode != ConnectionMode.Auto &&
                 !(p.ConnectionMode == ConnectionMode.DirectWsHttp && !RuntimeInformation.IsOSPlatform(OSPlatform.Windows)))
@@ -123,10 +161,10 @@ namespace Lithnet.ResourceManagement.Client
                     yield return ConnectionMode.DirectWsHttp;
                 }
 
-                if (ExePipeHost.HasHostExe())
-                {
-                    yield return ConnectionMode.LocalProxy;
-                }
+                // The embedded proxy host is always available on Windows (an installed host is
+                // preferred, and the embedded copy is extracted otherwise), so LocalProxy is always
+                // a candidate here.
+                yield return ConnectionMode.LocalProxy;
             }
 
             yield return ConnectionMode.RemoteProxy;

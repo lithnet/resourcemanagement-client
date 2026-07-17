@@ -22,7 +22,12 @@
         public string Password { get; set; }
 
         /// <summary>
-        /// Optional. The service principal name of the MIM Service. Defaults to 'FIMService/{hostname}`
+        /// Optional. The service principal name of the service being authenticated. Defaults to
+        /// 'FIMService/{hostname}', which authenticates the MIM Service and applies to the
+        /// DirectWsHttp, DirectNetTcp, and LocalProxy connection modes. When connecting via the
+        /// remote proxy, the SPN authenticates the proxy service instead, and defaults to
+        /// 'host/{hostname}' to match the proxy service's machine identity; set it explicitly if
+        /// the proxy service runs as a custom account
         /// </summary>
         public string Spn { get; set; }
 
@@ -74,6 +79,7 @@
                 ConnectTimeoutSeconds = original.ConnectTimeoutSeconds,
                 Password = original.Password,
                 RecieveTimeoutSeconds = original.RecieveTimeoutSeconds,
+                RmcHostExe = original.RmcHostExe,
                 SendTimeoutSeconds = original.SendTimeoutSeconds,
                 Spn = original.Spn,
                 Username = original.Username

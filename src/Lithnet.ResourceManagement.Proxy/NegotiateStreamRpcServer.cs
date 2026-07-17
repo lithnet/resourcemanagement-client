@@ -24,6 +24,20 @@ namespace Lithnet.ResourceManagement.Proxy
             return new Uri($"http://127.0.0.1:{port}");
         }
 
+        private protected override string MapSpn(string spn)
+        {
+            // This service always connects to the MIM service on the local machine, so the identity
+            // of that connection is a local deployment fact. A remote client's SPN applies only to
+            // its connection to this proxy, and must not steer this service's outbound
+            // authentication target.
+            if (!string.IsNullOrWhiteSpace(spn))
+            {
+                Logger.LogTrace($"Ignoring the client-supplied SPN '{spn}' for the local MIM service connection");
+            }
+
+            return null;
+        }
+
         private protected override Uri MapApprovalUri(string uri)
         {
             UriBuilder builder = new UriBuilder(uri);

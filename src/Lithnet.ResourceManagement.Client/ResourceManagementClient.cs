@@ -64,15 +64,7 @@ namespace Lithnet.ResourceManagement.Client
         /// </example>
         public ResourceManagementClient()
         {
-            ResourceManagementClientOptions options;
-
-#if NETFRAMEWORK
-            options = ClientConfigurationSection.GetOptionsFromConfiguration() ?? new ResourceManagementClientOptions();
-#else
-            options = new ResourceManagementClientOptions();
-#endif
-
-            this.InitializeClients(options);
+            this.InitializeClients(new ResourceManagementClientOptions());
         }
 
         public ResourceManagementClient(IOptions<ResourceManagementClientOptions> options) : this(options.Value)

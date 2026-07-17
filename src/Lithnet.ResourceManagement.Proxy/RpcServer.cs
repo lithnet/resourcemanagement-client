@@ -58,6 +58,17 @@ namespace Lithnet.ResourceManagement.Proxy
 
         private protected abstract Uri MapBaseUri(string uri);
 
+        /// <summary>
+        /// Maps the client-supplied SPN to the SPN used for this host's connection to the MIM
+        /// service. The local pipe host honours the client's value because it connects to whatever
+        /// MIM service the client named. The remote proxy service overrides this to ignore client
+        /// input, because its MIM connection is always local
+        /// </summary>
+        private protected virtual string MapSpn(string spn)
+        {
+            return spn;
+        }
+
         public Task InitializeClientsAsync(string baseUri, string spn, int concurrentConnectionLimit, int sendTimeout, int recieveTimeout, string username, string password)
         {
             if (this.initialized)
@@ -86,9 +97,10 @@ namespace Lithnet.ResourceManagement.Proxy
             }
 
             var uri = this.MapBaseUri(baseUri);
-            Trace.WriteLine($"Mapped {baseUri} to {uri} with supplied SPN {spn}");
+            var mappedSpn = this.MapSpn(spn);
+            Trace.WriteLine($"Mapped {baseUri} to {uri} with SPN {mappedSpn ?? "(default)"}");
 
-            var endpoints = new EndpointManager(uri, spn);
+            var endpoints = new EndpointManager(uri, mappedSpn);
 
             sendTimeout = Math.Max(10, sendTimeout);
             recieveTimeout = Math.Max(10, recieveTimeout);

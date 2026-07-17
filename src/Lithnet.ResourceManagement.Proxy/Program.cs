@@ -51,6 +51,18 @@ namespace Lithnet.ResourceManagement.Proxy
                         return 3;
                     }
                 }
+                else if (args[0] == "/installservice")
+                {
+                    Setup.Install();
+                    Console.WriteLine("Service installed successfully");
+                    return 0;
+                }
+                else if (args[0] == "/uninstallservice")
+                {
+                    Setup.Uninstall();
+                    Console.WriteLine("Service uninstalled successfully");
+                    return 0;
+                }
                 else if (args[0] == "/servicei")
                 {
                     var cts = new CancellationTokenSource();
