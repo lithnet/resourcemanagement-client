@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using System.Linq;
 using NUnit.Framework;
 
@@ -173,159 +174,27 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         // Exception tests
 
-        [Test]
-        public void TestSVReferenceGreaterThan()
+        [TestCase(false, ComparisonOperator.GreaterThan)]
+        [TestCase(false, ComparisonOperator.GreaterThanOrEquals)]
+        [TestCase(false, ComparisonOperator.LessThan)]
+        [TestCase(false, ComparisonOperator.LessThanOrEquals)]
+        [TestCase(false, ComparisonOperator.Contains)]
+        [TestCase(false, ComparisonOperator.EndsWith)]
+        [TestCase(false, ComparisonOperator.StartsWith)]
+        [TestCase(true, ComparisonOperator.GreaterThan)]
+        [TestCase(true, ComparisonOperator.GreaterThanOrEquals)]
+        [TestCase(true, ComparisonOperator.LessThan)]
+        [TestCase(true, ComparisonOperator.LessThanOrEquals)]
+        [TestCase(true, ComparisonOperator.Contains)]
+        [TestCase(true, ComparisonOperator.EndsWith)]
+        [TestCase(true, ComparisonOperator.StartsWith)]
+        public void TestReferenceUnsupportedOperator(bool multivalued, ComparisonOperator comparisonOperator)
         {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeReferenceSVDef, ComparisonOperator.GreaterThan);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
+            AttributeTypeDefinition attribute = multivalued
+                ? Constants.AttributeReferenceMVDef
+                : Constants.AttributeReferenceSVDef;
 
-        [Test]
-        public void TestSVReferenceGreaterThanOrEquals()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeReferenceSVDef, ComparisonOperator.GreaterThanOrEquals);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestSVReferenceLessThan()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeReferenceSVDef, ComparisonOperator.LessThan);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestSVReferenceLessThanOrEquals()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeReferenceSVDef, ComparisonOperator.LessThanOrEquals);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestSVReferenceContains()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeReferenceSVDef, ComparisonOperator.Contains);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestSVReferenceEndsWith()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeReferenceSVDef, ComparisonOperator.EndsWith);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestSVReferenceStartsWith()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeReferenceSVDef, ComparisonOperator.StartsWith);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-
-        [Test]
-        public void TestMVReferenceGreaterThan()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeReferenceMVDef, ComparisonOperator.GreaterThan);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestMVReferenceGreaterThanOrEquals()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeReferenceMVDef, ComparisonOperator.GreaterThanOrEquals);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestMVReferenceLessThan()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeReferenceMVDef, ComparisonOperator.LessThan);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestMVReferenceLessThanOrEquals()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeReferenceMVDef, ComparisonOperator.LessThanOrEquals);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestMVReferenceContains()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeReferenceMVDef, ComparisonOperator.Contains);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestMVReferenceEndsWith()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeReferenceMVDef, ComparisonOperator.EndsWith);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestMVReferenceStartsWith()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeReferenceMVDef, ComparisonOperator.StartsWith);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
+            Assert.Throws<NotSupportedException>(() => new XPathQuery(attribute, comparisonOperator, Guid.Empty));
         }
 
         private void SubmitXpath(object value, string expected, AttributeTypeDefinition attribute, ComparisonOperator xpathOp, GroupOperator queryOp, ConnectionMode connectionMode, params IResourceObject[] matchResources)

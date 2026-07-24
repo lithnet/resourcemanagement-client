@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using System.Linq;
 using NUnit.Framework;
 
@@ -522,70 +523,19 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         // Exception tests
 
-        [Test]
-        public void TestMVDateTimeContains()
+        [TestCase(false, ComparisonOperator.Contains)]
+        [TestCase(false, ComparisonOperator.EndsWith)]
+        [TestCase(false, ComparisonOperator.StartsWith)]
+        [TestCase(true, ComparisonOperator.Contains)]
+        [TestCase(true, ComparisonOperator.EndsWith)]
+        [TestCase(true, ComparisonOperator.StartsWith)]
+        public void TestDateTimeUnsupportedOperator(bool multivalued, ComparisonOperator comparisonOperator)
         {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeDateTimeMVDef, ComparisonOperator.Contains);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
+            AttributeTypeDefinition attribute = multivalued
+                ? Constants.AttributeDateTimeMVDef
+                : Constants.AttributeDateTimeSVDef;
 
-        [Test]
-        public void TestMVDateTimeEndsWith()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeDateTimeMVDef, ComparisonOperator.EndsWith);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestMVDateTimeStartsWith()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeDateTimeMVDef, ComparisonOperator.StartsWith);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestSVDateTimeContains()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeDateTimeSVDef, ComparisonOperator.Contains);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestSVDateTimeEndsWith()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeDateTimeSVDef, ComparisonOperator.EndsWith);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestSVDateTimeStartsWith()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeDateTimeSVDef, ComparisonOperator.StartsWith);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
+            Assert.Throws<NotSupportedException>(() => new XPathQuery(attribute, comparisonOperator, DateTime.UtcNow));
         }
 
 

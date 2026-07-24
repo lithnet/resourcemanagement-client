@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<!--
-		These are pure host-discovery / connection-mode-detection tests. They deliberately do NOT
+		These are pure client tests. They deliberately do NOT
 		reference the MIM-integration test project or its SetUpFixture, so they run with no MIM
 		service and no schema-admin rights.
 	-->

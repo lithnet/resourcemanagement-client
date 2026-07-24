@@ -108,7 +108,8 @@ namespace Lithnet.ResourceManagement.Client
 
         private void SetupBuilder(AttributeTypeDefinition attribute, ComparisonOperator comparisonOperator, object value, bool negate)
         {
-            this.SetupBuilder(attribute.SystemName, attribute.Type, comparisonOperator, value, negate);
+            XPathQueryValidator.Validate(attribute, comparisonOperator, value, negate);
+            this.SetQueryProperties(attribute.SystemName, attribute.Type, comparisonOperator, value, negate);
         }
 
         /// <summary>
@@ -120,28 +121,17 @@ namespace Lithnet.ResourceManagement.Client
         /// <param name="negate">Indicates if the query should be negated with the not() operator</param>
         private void SetupBuilder(string attributeName, AttributeType attributeType, ComparisonOperator comparisonOperator, object value, bool negate)
         {
-            if (string.IsNullOrWhiteSpace(attributeName))
-            {
-                throw new ArgumentNullException(attributeName);
-            }
+            XPathQueryValidator.Validate(attributeName, attributeType, comparisonOperator, value, negate);
+            this.SetQueryProperties(attributeName, attributeType, comparisonOperator, value, negate);
+        }
 
-            if (value == null)
-            {
-                if (comparisonOperator != ComparisonOperator.IsNotPresent && comparisonOperator != ComparisonOperator.IsPresent)
-                {
-                    throw new InvalidOperationException("An object value is required unless the operator is IsPresent or IsNotPresent");
-                }
-            }
-
+        private void SetQueryProperties(string attributeName, AttributeType attributeType, ComparisonOperator comparisonOperator, object value, bool negate)
+        {
             this.AttributeName = attributeName;
             this.Operator = comparisonOperator;
             this.Value = value;
             this.Negate = negate;
-
             this.attributeType = attributeType;
-
-            this.ThrowOnInvalidTypeOperatorCombination();
-            this.ThrowOnInvalidNegateCombination();
         }
 
         /// <summary>
@@ -475,173 +465,6 @@ namespace Lithnet.ResourceManagement.Client
             }
 
             return expression;
-        }
-
-        /// <summary>
-        /// Throws an exception when an invalid data type and comparison operator is detected
-        /// </summary>
-        private void ThrowOnInvalidTypeOperatorCombination()
-        {
-            switch (this.attributeType)
-            {
-                case AttributeType.Binary:
-                    this.ThrowOnInvalidBinaryOperator();
-                    break;
-
-                case AttributeType.Boolean:
-                    this.ThrowOnInvalidBooleanOperator();
-                    break;
-
-                case AttributeType.DateTime:
-                    this.ThrowOnInvalidDateTimeOperator();
-                    break;
-
-                case AttributeType.Integer:
-                    this.ThrowOnInvalidIntegerOperator();
-                    break;
-
-                case AttributeType.Reference:
-                    this.ThrowOnInvalidReferenceOperator();
-                    break;
-
-                case AttributeType.String:
-                    this.ThrowOnInvalidStringOperator();
-                    break;
-
-                case AttributeType.Text:
-                    this.ThrowOnInvalidTextOperator();
-                    break;
-
-                case AttributeType.Unknown:
-                default:
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Throws an exception when an invalid comparison operator is used with an integer data type
-        /// </summary>
-        private void ThrowOnInvalidIntegerOperator()
-        {
-            switch (this.Operator)
-            {
-                case ComparisonOperator.Contains:
-                case ComparisonOperator.StartsWith:
-                case ComparisonOperator.EndsWith:
-                    throw new NotSupportedException(string.Format("The operator {0} is not compatible with data type {1}", this.Operator, this.attributeType));
-                default:
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Throws an exception when an invalid comparison operator is used with a date time data type
-        /// </summary>
-        private void ThrowOnInvalidDateTimeOperator()
-        {
-            switch (this.Operator)
-            {
-                case ComparisonOperator.Contains:
-                case ComparisonOperator.StartsWith:
-                case ComparisonOperator.EndsWith:
-                    throw new NotSupportedException(string.Format("The operator {0} is not compatible with data type {1}", this.Operator, this.attributeType));
-                default:
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Throws an exception when an invalid comparison operator is used with a string data type
-        /// </summary>
-        private void ThrowOnInvalidStringOperator()
-        {
-            switch (this.Operator)
-            {
-                case ComparisonOperator.GreaterThan:
-                case ComparisonOperator.GreaterThanOrEquals:
-                case ComparisonOperator.LessThan:
-                case ComparisonOperator.LessThanOrEquals:
-                    throw new NotSupportedException(string.Format("The operator {0} is not compatible with data type {1}", this.Operator, this.attributeType));
-
-                default:
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Throws an exception when an invalid comparison operator is used with a reference data type
-        /// </summary>
-        private void ThrowOnInvalidReferenceOperator()
-        {
-            switch (this.Operator)
-            {
-                case ComparisonOperator.GreaterThan:
-                case ComparisonOperator.GreaterThanOrEquals:
-                case ComparisonOperator.LessThan:
-                case ComparisonOperator.LessThanOrEquals:
-                case ComparisonOperator.Contains:
-                case ComparisonOperator.StartsWith:
-                case ComparisonOperator.EndsWith:
-                    throw new NotSupportedException(string.Format("The operator {0} is not compatible with data type {1}", this.Operator, this.attributeType));
-                default:
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Throws an exception when attempting to query a binary attribute type
-        /// </summary>
-        private void ThrowOnInvalidBinaryOperator()
-        {
-            throw new NotSupportedException("Cannot search on an attribute of type 'Binary'");
-        }
-
-        /// <summary>
-        /// Throws an exception when attempting to query a text attribute type
-        /// </summary>
-        private void ThrowOnInvalidTextOperator()
-        {
-            throw new NotSupportedException("Cannot search on an attribute of type 'Text'");
-        }
-
-        /// <summary>
-        /// Throws an exception when an invalid comparison operator is used with a boolean data type
-        /// </summary>
-        private void ThrowOnInvalidBooleanOperator()
-        {
-            switch (this.Operator)
-            {
-                case ComparisonOperator.GreaterThan:
-                case ComparisonOperator.GreaterThanOrEquals:
-                case ComparisonOperator.LessThan:
-                case ComparisonOperator.LessThanOrEquals:
-                case ComparisonOperator.Contains:
-                case ComparisonOperator.StartsWith:
-                case ComparisonOperator.EndsWith:
-                    throw new NotSupportedException(string.Format("The operator {0} is not compatible with data type {1}", this.Operator, this.attributeType));
-                default:
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Throws an exception when trying to negate an expression that does not support negation
-        /// </summary>
-        private void ThrowOnInvalidNegateCombination()
-        {
-            if (this.Negate)
-            {
-                switch (this.Operator)
-                {
-                    case ComparisonOperator.NotEquals:
-                    case ComparisonOperator.IsPresent:
-                    case ComparisonOperator.IsNotPresent:
-                        throw new InvalidOperationException(string.Format("Cannot negate a query with a {0} operator", this.Operator));
-
-                    default:
-                        break;
-                }
-            }
         }
 
         private string QuoteTextValue(string value)

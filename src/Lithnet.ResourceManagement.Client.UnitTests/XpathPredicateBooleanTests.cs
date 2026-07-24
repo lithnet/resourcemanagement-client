@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System;
 using NUnit.Framework;
 
 namespace Lithnet.ResourceManagement.Client.UnitTests
@@ -102,81 +103,16 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         // Exception tests
 
-        [Test]
-        public void TestSVBooleanGreaterThan()
+        [TestCase(ComparisonOperator.GreaterThan)]
+        [TestCase(ComparisonOperator.GreaterThanOrEquals)]
+        [TestCase(ComparisonOperator.LessThan)]
+        [TestCase(ComparisonOperator.LessThanOrEquals)]
+        [TestCase(ComparisonOperator.Contains)]
+        [TestCase(ComparisonOperator.EndsWith)]
+        [TestCase(ComparisonOperator.StartsWith)]
+        public void TestBooleanUnsupportedOperator(ComparisonOperator comparisonOperator)
         {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeBooleanSVDef, ComparisonOperator.GreaterThan);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestSVBooleanGreaterThanOrEquals()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeBooleanSVDef, ComparisonOperator.GreaterThanOrEquals);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestSVBooleanLessThan()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeBooleanSVDef, ComparisonOperator.LessThan);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestSVBooleanLessThanOrEquals()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeBooleanSVDef, ComparisonOperator.LessThanOrEquals);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestSVBooleanContains()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeBooleanSVDef, ComparisonOperator.Contains);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestSVBooleanEndsWith()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeBooleanSVDef, ComparisonOperator.EndsWith);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestSVBooleanStartsWith()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeBooleanSVDef, ComparisonOperator.StartsWith);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
+            Assert.Throws<NotSupportedException>(() => new XPathQuery(Constants.AttributeBooleanSVDef, comparisonOperator, true));
         }
 
 

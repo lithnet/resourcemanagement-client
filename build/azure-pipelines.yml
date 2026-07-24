@@ -277,7 +277,7 @@ stages:
           displayName: Authenticate with NuGet
 
         - task: DotNetCoreCLI@2
-          displayName: Discovery and SPN unit tests
+          displayName: Client unit tests that do not require MIM
           inputs:
             command: test
             projects: 'src/Lithnet.ResourceManagement.Client.DiscoveryTests/Lithnet.ResourceManagement.Client.DiscoveryTests.csproj'

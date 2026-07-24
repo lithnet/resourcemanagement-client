@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using System.Linq;
 using NUnit.Framework;
 
@@ -353,70 +354,19 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         // Exception tests
 
-        [Test]
-        public void TestMVIntegerContains()
+        [TestCase(false, ComparisonOperator.Contains)]
+        [TestCase(false, ComparisonOperator.EndsWith)]
+        [TestCase(false, ComparisonOperator.StartsWith)]
+        [TestCase(true, ComparisonOperator.Contains)]
+        [TestCase(true, ComparisonOperator.EndsWith)]
+        [TestCase(true, ComparisonOperator.StartsWith)]
+        public void TestIntegerUnsupportedOperator(bool multivalued, ComparisonOperator comparisonOperator)
         {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeIntegerMVDef, ComparisonOperator.Contains);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
+            AttributeTypeDefinition attribute = multivalued
+                ? Constants.AttributeIntegerMVDef
+                : Constants.AttributeIntegerSVDef;
 
-        [Test]
-        public void TestMVIntegerEndsWith()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeIntegerMVDef, ComparisonOperator.EndsWith);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestMVIntegerStartsWith()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeIntegerMVDef, ComparisonOperator.StartsWith);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestSVIntegerContains()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeIntegerSVDef, ComparisonOperator.Contains);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestSVIntegerEndsWith()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeIntegerSVDef, ComparisonOperator.EndsWith);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestSVIntegerStartsWith()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeIntegerSVDef, ComparisonOperator.StartsWith);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
+            Assert.Throws<NotSupportedException>(() => new XPathQuery(attribute, comparisonOperator, 1));
         }
 
         private void SubmitXpath(object value, string expected, AttributeTypeDefinition attribute, ComparisonOperator xpathOp, GroupOperator queryOp, ConnectionMode connectionMode, params IResourceObject[] matchResources)

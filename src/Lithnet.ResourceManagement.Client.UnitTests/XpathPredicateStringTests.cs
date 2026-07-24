@@ -400,48 +400,13 @@ namespace Lithnet.ResourceManagement.Client.UnitTests
 
         // Exception tests
 
-        [Test]
-        public void TestStringGreaterThan()
+        [TestCase(ComparisonOperator.GreaterThan)]
+        [TestCase(ComparisonOperator.GreaterThanOrEquals)]
+        [TestCase(ComparisonOperator.LessThan)]
+        [TestCase(ComparisonOperator.LessThanOrEquals)]
+        public void TestStringUnsupportedOperator(ComparisonOperator comparisonOperator)
         {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeStringSVDef, ComparisonOperator.GreaterThan);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestStringGreaterThanOrEquals()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeStringSVDef, ComparisonOperator.GreaterThanOrEquals);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestStringLessThan()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeStringSVDef, ComparisonOperator.LessThan);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
-        }
-
-        [Test]
-        public void TestStringLessThanOrEquals()
-        {
-            try
-            {
-                XPathQuery predicate = new XPathQuery(Constants.AttributeStringSVDef, ComparisonOperator.LessThanOrEquals);
-                Assert.Fail("The expectedXpath exception was not thrown");
-            }
-            catch { }
+            Assert.Throws<NotSupportedException>(() => new XPathQuery(Constants.AttributeStringSVDef, comparisonOperator, "value"));
         }
 
         private void SubmitXpath(string value, string expected, AttributeTypeDefinition attribute, ComparisonOperator xpathOp, GroupOperator queryOp, ConnectionMode connectionMode, params IResourceObject[] matchResources)
